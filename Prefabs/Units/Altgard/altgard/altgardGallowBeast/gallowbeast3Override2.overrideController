@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: gallowbeast3Override2
+  m_Controller: {fileID: 9100000, guid: 4020ef0dc7b08cd4a815c9eda3a76537, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: bc459f3943a6900448e16eacce69679f, type: 2}
+    m_OverrideClip: {fileID: -623603649343465320, guid: 1e67f42992c320c44bf4c7525175e96f,
+      type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: c43c4825dda0b834fbe07a3fb79dc0b8, type: 2}
+    m_OverrideClip: {fileID: -7274183553172779577, guid: 1e67f42992c320c44bf4c7525175e96f,
+      type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 3da88a021c8fb854ca70cc4b4ec8f197, type: 2}
+    m_OverrideClip: {fileID: -623603649343465320, guid: efab0b041f288a94d9d9e2b63e55c0b4,
+      type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 61fa50bfb9208714dbea61db57431553, type: 2}
+    m_OverrideClip: {fileID: 2531191425544750173, guid: 1e67f42992c320c44bf4c7525175e96f,
+      type: 3}

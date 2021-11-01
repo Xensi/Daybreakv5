@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: MusketeerAnimations
+  m_Controller: {fileID: 9100000, guid: 9b27148fabdc11d47a81c8b6a67898f7, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 630d574e77ecfc64bb758fa1d6287e72, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 806b0893eeff307438cca008ac45085f, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 8e8e0ef0929f63f4c9f32f66a7a3b7f2, type: 2}
+    m_OverrideClip: {fileID: -623603649343465320, guid: 9e02f9ed83ddf5d42ad70a6b9174bb1d, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 542a4105129ec5c48b7fff7ab05c98b1, type: 2}
+    m_OverrideClip: {fileID: 9215611039192183181, guid: 9e02f9ed83ddf5d42ad70a6b9174bb1d, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: e659635a936861f4e984236ec8d60567, type: 2}
+    m_OverrideClip: {fileID: -4554986578899444436, guid: 9e02f9ed83ddf5d42ad70a6b9174bb1d, type: 3}

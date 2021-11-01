@@ -1,0 +1,392 @@
+using Photon.Pun;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
+
+public class GameInitializer : MonoBehaviour
+{
+    [Header("Game mode dependent objects")]
+    [SerializeField] private SingleplayerChessGameController singleplayerChessGameControllerPrefab;
+    [SerializeField] private MultiplayerChessGameController multiplayerChessGameControllerPrefab;
+    [SerializeField] private SinglePlayerBoard singleplayerBoardPrefab;
+    [SerializeField] private MultiplayerBoard multiplayerBoardPrefab;
+
+    [Header("Scene references")]
+
+    [SerializeField] private NetworkManager networkManager;
+    [SerializeField] private ChessUIManager uiManager;
+    [SerializeField] private Transform boardAnchor;
+    [SerializeField] private CameraSetup cameraSetup;
+    [SerializeField] private LevelGenerator levelGen;
+
+    [SerializeField] public GameObject dropDownParent;
+    [SerializeField] public TMP_Dropdown actionDropdown;
+    [SerializeField] public GameObject executeButtonParent;
+    [SerializeField] public GameObject formationDropDownParent;
+    [SerializeField] public TMP_Dropdown formationDropDown;
+    Camera cam;
+    private ChessGameController chessController;
+
+    //[Header("Team colors")]
+    public Material[] teamColors;
+    public Material[] unlitTeamUI;
+
+    public TeamColor[] teamColorDefinitions;
+
+    public Material disengageMaterial;
+    public Material attackMaterial;
+    //[SerializeField] private Material sprintMaterial;
+    public Material turnMaterial;
+    public Material defaultMaterial;
+    public Material red;
+
+    public string action = "move";
+    public string formation = "rectangle";
+    public Board board;
+    private void Start()
+    {
+        var camObj = GameObject.Find("Main Camera");
+        cam = camObj.GetComponent(typeof(Camera)) as Camera;
+        StartCoroutine(SlowUpdate());
+    }
+    public void CreateMultiplayerBoard()
+    {
+        executeButtonParent.SetActive(true);
+        if (!networkManager.IsRoomFull())
+        {
+            //only first player instantiates the board
+            PhotonNetwork.Instantiate(multiplayerBoardPrefab.name, boardAnchor.position, boardAnchor.rotation);
+            levelGen.FindBoard();
+            levelGen.GenerateLevel();
+        }
+        //both players need to find this board, then do level generation stuff
+        //FindBoard();
+        //disabled because it seems like it has problems finding it with this;
+    }
+    private void FindBoard()
+    {
+
+        board = FindObjectOfType<SinglePlayerBoard>();
+        if (board == null) //couldn't find a singleplayer board
+        {
+            Debug.Log("SP board not found");
+            board = FindObjectOfType<MultiplayerBoard>();
+        }
+
+        if (board != null)
+        {
+            Debug.Log("Board found");
+        }
+        //once you've found the board do level generation
+        //levelGen.FindBoard();
+        //levelGen.GenerateLevel();
+
+    }
+
+    public void CreateSinglePlayerBoard()
+    { 
+        executeButtonParent.SetActive(true);
+        Instantiate(singleplayerBoardPrefab, boardAnchor);
+        levelGen.FindBoard();
+        levelGen.GenerateLevel();
+        FindBoard();
+    }
+    public void InitializeMultiplayerController()
+    {
+
+        Debug.Log("instantiating multiplayer controller");
+        MultiplayerChessGameController controller = Instantiate(multiplayerChessGameControllerPrefab);
+        if (controller != null)
+        {
+            Debug.Log("instantiated");
+        }
+
+        controller.SetDependencies(uiManager, board, cameraSetup);
+        controller.CreatePlayers();
+        controller.SetNetworkDependencies(networkManager);
+        networkManager.SetDependencies(controller);
+
+        if (board != null)
+        {
+            Debug.Log("Board" + board + "controller" + controller);
+        }
+        if (board == null)
+        {
+            Debug.Log("Board missing");
+        }
+        if (controller == null)
+        {
+            Debug.Log("controller missing");
+        }
+        board.SetDependencies(controller, true);
+        chessController = controller;
+    }
+
+    /*private void Update()
+    {
+        FindBoard();
+    }*/
+    private IEnumerator SlowUpdate()
+    {
+        if (board == null) //if no board find it!
+        {
+            FindBoard();
+        }
+        yield return new WaitForSeconds(0.1f);
+        if (board == null) //if still no board try again
+        {
+            StartCoroutine(SlowUpdate());
+        }
+        else
+        {
+            levelGen.FindBoard();
+            levelGen.GenerateLevel();
+        }
+    }
+
+    public void InitializeSinglePlayerController()
+    {
+        SingleplayerChessGameController controller = Instantiate(singleplayerChessGameControllerPrefab);
+        controller.SetDependencies(uiManager, board, cameraSetup);
+        controller.CreatePlayers();
+        board.SetDependencies(controller, false);
+        controller.StartNewGame();
+
+        chessController = controller;
+    }
+
+    public void SubmitExecute() //prevent further inputs from the one that clicked this
+    {
+        //then check if both players have clicked button
+        //then tell board to update pieces positions
+        //then clear any errant selectors
+
+        Debug.Log("Executing moves (SP)");
+        board.squareSelector.ClearSelection(); //clear selector squares
+        board.selectedPiece = null; //so that you can't queue movement erroneously
+        board.ExecuteMoveForAllPieces();
+    }
+
+    public void PieceSprint()
+    {
+
+        board.ChangeStance(board.selectedPiece.unitID, "sprint");
+        Debug.Log("Sprint");
+
+    }
+    public void PieceMove()
+    {
+
+        board.ChangeStance(board.selectedPiece.unitID, "move");
+        Debug.Log("move");
+
+    }
+    public void PieceDisengage()
+    {
+
+
+        board.ChangeStance(board.selectedPiece.unitID, "disengage");
+        Debug.Log("disengage");
+
+
+    }
+    public void PieceAttack()
+    {
+
+        board.ChangeStance(board.selectedPiece.unitID, "attack");
+        Debug.Log("attack");
+
+    }
+    public void PieceMoveAttack()
+    {
+
+        board.ChangeStance(board.selectedPiece.unitID, "MoveAttack");
+        Debug.Log("MoveAttack");
+
+    }
+
+    public void PieceTurn()
+    {
+        board.ChangeStance(board.selectedPiece.unitID, "turn");
+        Debug.Log("turn");
+
+    }
+    public void ShowDropDown()
+    {
+        dropDownParent.SetActive(true);
+        actionDropdown.value = 0;
+        board.selectedPiece.DisplayFormation(board.selectedPiece.queuedFormation);
+
+        List<string> dropOptions = new List<string> { "Move", "Attack", "Switch Formation", "Sprint", "Disengage" };
+        if (board.selectedPiece.attackType == "ranged")
+        {
+            dropOptions = new List<string> { "Move", "Steady Attack", "Move and Attack", "Switch Formation", "Sprint", "Disengage" };
+        }
+        else if(board.selectedPiece.attackType == "melee")
+        {
+            dropOptions = new List<string> { "Move", "Attack", "Switch Formation", "Sprint", "Disengage" };
+        }
+
+        actionDropdown.ClearOptions();
+        actionDropdown.AddOptions(dropOptions);
+
+    }
+    public void HideDropDown()
+    {
+        dropDownParent.SetActive(false);
+        formationDropDownParent.SetActive(false);
+
+    }
+    public void ChooseAction()
+    {
+        if (board.selectedPiece == null)
+        {
+            return;
+        }
+        int val = actionDropdown.value;
+        if (board.selectedPiece.attackType == "melee")
+        {
+            if (val == 0)
+            {
+                action = "move";
+            }
+            else if (val == 1)
+            {
+                action = "attack"; //becomes steady attack when ranged
+            }
+            else if (val == 2)
+            {
+                action = "switchFormation";
+            }
+            else if (val == 3)
+            {
+                action = "sprint";
+            }
+            else if (val == 4)
+            {
+                action = "disengage";
+            }
+        }
+        else if (board.selectedPiece.attackType == "ranged")
+        {
+            if (val == 0)
+            {
+                action = "move";
+            }
+            else if (val == 1)
+            {
+                action = "attack"; //becomes steady attack when ranged
+            }
+            else if (val == 2)
+            {
+                action = "rangedMoveAndAttack"; //move and attack
+            }
+            else if (val == 3)
+            {
+                action = "switchFormation";
+            }
+            else if (val == 4)
+            {
+                action = "sprint";
+            }
+            else if (val == 5)
+            {
+                action = "disengage";
+            }
+        }
+        
+        //Debug.Log(action);
+        ProcessAction(action);
+    }
+    public void ChooseFormation()
+    {
+        if (board.selectedPiece == null)
+        {
+            return;
+        }
+        int val = formationDropDown.value;
+        if (val == 0)
+        {
+            formation = "nothing";
+        }
+        else if (val == 1)
+        {
+            formation = "rectangle";
+        }
+        else if (val == 2)
+        {
+            formation = "braced";
+        }
+        else if (val == 3)
+        {
+            formation = "circle";
+        }
+        else if (val == 4)
+        {
+            formation = "staggered";
+        }
+        //board.selectedPiece.ChangeFormation(formation);
+        board.selectedPiece.queuedFormation = formation;
+
+        if (val != 0)
+        {
+            board.selectedPiece.DisplayFormation(formation);
+            board.selectingAction = false;
+            formationDropDownParent.SetActive(false);
+            board.DeselectPiece();
+            dropDownParent.SetActive(false);
+        }
+
+    }
+    private void ProcessAction(string action)
+    {
+        if (action == null || action == "move")
+        {
+            PieceMove();
+            board.selectingAction = false;
+            formationDropDownParent.SetActive(false);
+            board.selectedPiece.queuedFormation = "nothing";
+        }
+        else if (action == "attack")
+        {
+            PieceAttack();
+            board.selectingAction = false;
+            formationDropDownParent.SetActive(false);
+            board.selectedPiece.queuedFormation = "nothing";
+        }
+        else if (action == "rangedMoveAndAttack")
+        {
+            PieceMoveAttack();
+            board.selectingAction = false;
+            formationDropDownParent.SetActive(false);
+            board.selectedPiece.queuedFormation = "nothing";
+        }
+        else if (action == "switchFormation")
+        {
+            formationDropDown.value = 0;
+            formationDropDownParent.SetActive(true);
+            if (board.selectedPiece != null)
+            {
+                board.selectedPiece.ClearQueuedMoves();
+                board.selectedPiece.speed = 0;
+                board.selectedPiece.remainingMovement = 0;
+                board.ShowSelectionSquares(board.selectedPiece.SelectAvailableSquares(board.selectedPiece.occupiedSquare), board.selectedPiece);
+            }
+        }
+        else if (action == "sprint")
+        {
+            board.selectingAction = false;
+            formationDropDownParent.SetActive(false);
+            board.selectedPiece.queuedFormation = "nothing";
+            PieceSprint();
+        }
+        else if (action == "disengage")
+        {
+            board.selectingAction = false;
+            formationDropDownParent.SetActive(false);
+            board.selectedPiece.queuedFormation = "nothing";
+            PieceDisengage();
+        }
+    }
+}
