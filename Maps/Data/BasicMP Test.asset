@@ -20,4 +20,12 @@ MonoBehaviour:
   - position: {x: 5, y: 5}
     pieceType: 0
     teamColor: 0
+    direction: 4
+  - position: {x: 3, y: 4}
+    pieceType: 3
+    teamColor: 1
     direction: 0
+  - position: {x: 5, y: 6}
+    pieceType: 3
+    teamColor: 0
+    direction: 4

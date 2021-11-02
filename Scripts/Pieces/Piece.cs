@@ -237,6 +237,11 @@ public abstract class Piece : MonoBehaviour
     public string OnTerrainType = null;
     public string currentFormation = "rectangle";
     public string queuedFormation = "nothing";
+    private bool waitingForFirstAttack = false;
+    private int markedSoldiersCount = 0;
+    private float accuracy;
+    private Vector3 oldRotation;
+    private Vector3 rotationGoal;
 
     public abstract List<Vector2Int> SelectAvailableSquares(Vector2Int startingSquare);
 
@@ -2667,7 +2672,7 @@ public abstract class Piece : MonoBehaviour
     {
         return availableMoves.Contains(coords);
     }
-    public void ClearQueuedMoves()
+    public void ClearQueuedMoves() 
     {
         Debug.Log("Clear moves and lines");
         board.ClearMoves(unitID);
@@ -2893,12 +2898,14 @@ public abstract class Piece : MonoBehaviour
                 {
                     if (absDistance > remainingMovement) //basically, we don't care if how much distance there is but we still need to respect range
                     {
+                        Debug.LogError("Cancelling movement 1");
                         turnTime--;
                         return;
                     }
                 }
                 else if (moveAndAttackEnabled && attackType == "ranged" && attacking && turnTime <= 0)
                 {
+                    Debug.LogError("Cancelling movement 2");
                     turnTime--; //every time we cancel a move, we need to reset the turn time
                     return;
                 }
@@ -2906,17 +2913,20 @@ public abstract class Piece : MonoBehaviour
                 {
                     if (absDistance > remainingMovement) //basically, we don't care if how much distance there is but we still need to respect range
                     {
+                        Debug.LogError("Cancelling movement 3");
                         turnTime--;
                         return;
                     }
                 }
                 else if (attackType == "ranged" && !attacking)
                 {
+                    Debug.LogError("Cancelling movement 4");
                     turnTime--; //every time we cancel a move, we need to reset the turn time
                     return;
                 }
                 else if (attackType == "melee")
                 {
+                    Debug.LogError("Cancelling movement 5");
                     turnTime--; //every time we cancel a move, we need to reset the turn time
                     return;
                 }
@@ -2938,7 +2948,7 @@ public abstract class Piece : MonoBehaviour
         {
             speed = originalSpeed;
         }*/
-
+        Debug.LogError("Placing marker");
         PlaceMarker(coords, queuedPosition); //just place a marker
 
 
@@ -3418,7 +3428,7 @@ public abstract class Piece : MonoBehaviour
         Debug.Log("ranged multiplier" + rangedMultiplier);
         Debug.Log("energy multiplier" + energyMultiplier);
         Debug.Log("flanking damage" + flankingDamage);
-        tempDamage = models * calculatedDamage * damageEffect * meleeMultiplier * rangedMultiplier * energyMultiplier * flankingDamage;
+        tempDamage = models * calculatedDamage * damageEffect * meleeMultiplier * rangedMultiplier * energyMultiplier * flankingDamage * accuracy;
         float deadDefenders = tempDamage / targetToAttackPiece.health;
         float defendersKilled;
         if (targetToAttackPiece.disengaging && attackType == "melee")
@@ -3706,6 +3716,7 @@ public abstract class Piece : MonoBehaviour
             }
             else //if no moves, stop
             {
+                Debug.LogError("Setting queue time to 0");
                 queueTime = 0;
                 oneStepFinished = true;
                 FinishedMoving = true;
@@ -3865,7 +3876,7 @@ public abstract class Piece : MonoBehaviour
             hasMoved = true;
             remainingMovement = speed;
             ClearQueuedMoves();
-            SelectAvailableSquares(occupiedSquare);
+            SelectAvailableSquares(occupiedSquare); 
             conflict = false;
             wonTieBreak = false;
             //board.CheckIfAllMovesFinished();
@@ -3956,7 +3967,7 @@ public abstract class Piece : MonoBehaviour
         var tileNumber = 0;
 
         var tileDistance = targetedSquare - occupiedSquare;
-        Debug.Log(tileDistance); //we can check to see if it's within our existing arrays to find how far it is away;
+        Debug.Log(tileDistance + " tile distance"); //we can check to see if it's within our existing arrays to find how far it is away;
         bool foundIt = false;
         foreach (var item in adjacentTiles) //first look through here
         {
@@ -3994,7 +4005,7 @@ public abstract class Piece : MonoBehaviour
         }
         if (!foundIt)
         {
-            foreach (var item in speed4) //first look through here
+            foreach (var item in speed4) //
             {
                 if (tileDistance == item)
                 {
@@ -4004,7 +4015,90 @@ public abstract class Piece : MonoBehaviour
                 }
             }
         }
-
+        if (!foundIt)
+        {
+            foreach (var item in speed5) //
+            {
+                if (tileDistance == item)
+                {
+                    foundIt = true;
+                    tileNumber = 5;
+                    break;
+                }
+            }
+        }
+        if (!foundIt)
+        {
+            foreach (var item in speed6) //
+            {
+                if (tileDistance == item)
+                {
+                    foundIt = true;
+                    tileNumber = 6;
+                    break;
+                }
+            }
+        }
+        if (!foundIt)
+        {
+            foreach (var item in speed7) //
+            {
+                if (tileDistance == item)
+                {
+                    foundIt = true;
+                    tileNumber = 7;
+                    break;
+                }
+            }
+        }
+        if (!foundIt)
+        {
+            foreach (var item in speed8) //
+            {
+                if (tileDistance == item)
+                {
+                    foundIt = true;
+                    tileNumber = 8;
+                    break;
+                }
+            }
+        }
+        if (!foundIt)
+        {
+            foreach (var item in speed9) //
+            {
+                if (tileDistance == item)
+                {
+                    foundIt = true;
+                    tileNumber = 9;
+                    break;
+                }
+            }
+        }
+        if (!foundIt)
+        {
+            foreach (var item in speed10) //
+            {
+                if (tileDistance == item)
+                {
+                    foundIt = true;
+                    tileNumber = 10;
+                    break;
+                }
+            }
+        }
+        /*if (!foundIt)
+        {
+            foreach (var item in speed11) //
+            {
+                if (tileDistance == item)
+                {
+                    foundIt = true;
+                    tileNumber = 11;
+                    break;
+                }
+            }
+        }*/
         if (foundIt)
         {
             Debug.Log("Found it" + tileNumber);
@@ -4044,7 +4138,7 @@ public abstract class Piece : MonoBehaviour
 
     public void ApplyAccuracy(int tileNumber)
     {
-        float accuracy = 1f;
+        accuracy = 1f;
 
 
         if (tileNumber == 1) //point blank
@@ -4061,15 +4155,15 @@ public abstract class Piece : MonoBehaviour
         }
         else if (tileNumber <= longRange) // longrange
         {
-            accuracy = .1f;
+            accuracy = .25f;
         }
         else if (tileNumber >= beyondTargetableRange) //beyond targetable, so no damage
         {
             accuracy = 0f;
         }
         //Debug.Log(midRange + " " + longRange + " " + beyondTargetableRange);
-
-        var damageAfterAccuracy = tempDamage * accuracy;
+        Debug.Log("accuracy" + accuracy + "temp damage" + tempDamage);
+        /*var damageAfterAccuracy = tempDamage * accuracy;
 
         Debug.Log("damage after accuracy" + damageAfterAccuracy);
 
@@ -4081,7 +4175,7 @@ public abstract class Piece : MonoBehaviour
             defendersKilled = deadDefenders;
         queuedDamage = Mathf.RoundToInt(defendersKilled);
         if (queuedDamage < 0)
-            queuedDamage = 0; //just make sure damage can never be negative
+            queuedDamage = 0; //just make sure damage can never be negative*/
     }
     public void ApplyDamage() //physical and morale damage
     {
@@ -4118,16 +4212,39 @@ public abstract class Piece : MonoBehaviour
         }
 
         Vector2Int directionVector = attackTile - occupiedSquare; //start investigation here: attack tile is not being updated for some reason. occupied square is
-        for (int t = 0; t < adjacentTiles.Length; t++) //check cardinal directions to see if they match up
+        if (attackTile.x < occupiedSquare.x) //if target is on left of us
+        {
+            directionVector.x = -1;
+        }
+        else if (attackTile.x > occupiedSquare.x) //if target is on right of us
+        {
+
+            directionVector.x = 1;
+        }
+
+        if (attackTile.y < occupiedSquare.y) //if target is beneath us
+        {
+
+            directionVector.y = -1;
+        }
+        else if (attackTile.y > occupiedSquare.y) //if target is above us
+        {
+
+            directionVector.y = 1;
+        }
+        Debug.Log(directionVector + "dir vector" + occupiedSquare + "occ square");
+        for (int t = 0; t < adjacentTiles.Length; t++) //check cardinal directions to see if they match up// this doesnt work because the attack tile is not adjacent
         {
             if (adjacentTiles[t] == directionVector)
             {
                 facingDirection = t;
+                Debug.Log("updated facing direction");
             }
         }
-        Vector3 rotationGoal = new Vector3(0, 45 * facingDirection, 0);
+        oldRotation = transform.localEulerAngles;
+        rotationGoal = new Vector3(0, 45 * facingDirection, 0);
         Tween rotateTween = transform.DORotate(rotationGoal, 1);
-
+        
         SubtractEnergy();
         board.PieceTriggerAttacksForSoldiers(unitID); //this works in mp! so why not define flanks?
 
@@ -4150,6 +4267,19 @@ public abstract class Piece : MonoBehaviour
                 inflictedDeaths = 0;
                 updater.navOffsetAdd = 0;
                 updater.numberOfAttacks = 0;
+                updater.idleSet = false;
+                updater.moveSet = false;
+                if (oldRotation != rotationGoal && attackType == "ranged")
+                {
+                    updater.rangedAndNeedsToTurnToFaceEnemy = true;
+                    updater.rotationGoal = rotationGoal;
+                    Debug.LogError("old rotation does not equal rotation goal" + oldRotation + rotationGoal);
+                }
+                else if (attackType == "ranged")
+                {
+                    updater.ableToAttack = true;
+                }
+
                 updater.StartCoroutine(updater.AttackInterval());
                 updater.StartCoroutine(updater.Freeze());
             }
@@ -4172,12 +4302,14 @@ public abstract class Piece : MonoBehaviour
 
     public void OnMarkForDeath(int damage) //after communicating with mp
     {
+        Debug.Log("Marking for death " + damage);
         //int scaledDamage = Mathf.RoundToInt(damage / downscale);
         int scaledDamage = Mathf.RoundToInt(damage);
 
         for (int i = 0; i < scaledDamage; i++)
         {
             markedSoldiers.Add(soldierObjects[i]);
+            Debug.Log("marked " + i);
         }
         //TODO need to make this start depending on direction . . .
         /*int num = 0;
@@ -4234,6 +4366,8 @@ public abstract class Piece : MonoBehaviour
                 }
             }
         }*/
+        waitingForFirstAttack = true;
+        markedSoldiersCount = markedSoldiers.Count;
         StartCoroutine(KillOff());
     }
 
@@ -4242,9 +4376,13 @@ public abstract class Piece : MonoBehaviour
     {
         if (markedSoldiers.Count > 0) //if there are still soldiers to kill
         {
-            yield return new WaitUntil(() => attackerPiece.soldierAttacked == true); //wait until the attacker has attacked with at least one unit
-            attackerPiece.soldierAttacked = false; //set it to false to be ready for the next one
-            yield return new WaitForSeconds(Random.Range(0.1f, 2));
+            if (waitingForFirstAttack)
+            {
+                yield return new WaitUntil(() => attackerPiece.soldierAttacked == true); //wait until the attacker has attacked with at least one unit
+                waitingForFirstAttack = false;
+                attackerPiece.soldierAttacked = false; //set it to false to be ready for the next one
+            }
+            yield return new WaitForSeconds(Random.Range(0.1f, 10/markedSoldiersCount)); //this should make soldiers die in a more timely fashion. soldiers die faster the more there are to kill
 
 
             //initiate kill function
@@ -4545,6 +4683,7 @@ public abstract class Piece : MonoBehaviour
         holdingPosition = false;
         markedDeaths = false;
         arbitratedConflict = false;
+        Debug.LogError("Setting queue time to 0");
         queueTime = 0;
         queuedDamage = 0;
         flankingDamage = 1;
@@ -4669,6 +4808,7 @@ public abstract class Piece : MonoBehaviour
 
 
             speed = longRange;
+            remainingMovement = speed;
         }
         else
         {
@@ -4716,7 +4856,7 @@ public abstract class Piece : MonoBehaviour
         attacking = true;
         turning = false;
         sprinting = false;
-
+        Debug.Log("Move and attack enabled");
         moveAndAttackEnabled = true;
 
         ClearQueuedMoves();

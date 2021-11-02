@@ -13,63 +13,63 @@ MonoBehaviour:
   m_Name: HemmedIn
   m_EditorClassIdentifier: 
   boardSquares:
-  - position: {x: 9, y: 1}
-    pieceType: 8
-    teamColor: 2
-    direction: 0
-  - position: {x: 9, y: 2}
-    pieceType: 8
-    teamColor: 2
-    direction: 0
   - position: {x: 10, y: 2}
-    pieceType: 7
-    teamColor: 2
+    pieceType: 8
+    teamColor: 5
     direction: 0
-  - position: {x: 10, y: 10}
+  - position: {x: 10, y: 3}
+    pieceType: 8
+    teamColor: 5
+    direction: 0
+  - position: {x: 11, y: 3}
+    pieceType: 7
+    teamColor: 5
+    direction: 0
+  - position: {x: 11, y: 11}
     pieceType: 6
     teamColor: 3
     direction: 4
-  - position: {x: 10, y: 12}
+  - position: {x: 11, y: 13}
     pieceType: 0
     teamColor: 3
     direction: 0
-  - position: {x: 10, y: 8}
+  - position: {x: 11, y: 9}
     pieceType: 0
     teamColor: 3
     direction: 0
-  - position: {x: 12, y: 10}
+  - position: {x: 13, y: 11}
     pieceType: 3
     teamColor: 3
     direction: 0
-  - position: {x: 8, y: 10}
+  - position: {x: 9, y: 11}
     pieceType: 3
     teamColor: 3
     direction: 0
-  - position: {x: 1, y: 8}
+  - position: {x: 2, y: 9}
     pieceType: 8
-    teamColor: 2
+    teamColor: 5
     direction: 0
-  - position: {x: 1, y: 9}
+  - position: {x: 2, y: 10}
     pieceType: 8
-    teamColor: 2
+    teamColor: 5
     direction: 0
-  - position: {x: 1, y: 10}
+  - position: {x: 2, y: 11}
     pieceType: 8
-    teamColor: 2
+    teamColor: 5
     direction: 0
-  - position: {x: 1, y: 11}
+  - position: {x: 2, y: 12}
     pieceType: 8
-    teamColor: 2
+    teamColor: 5
     direction: 0
-  - position: {x: 18, y: 11}
+  - position: {x: 19, y: 12}
     pieceType: 8
-    teamColor: 2
+    teamColor: 5
     direction: 0
-  - position: {x: 18, y: 10}
+  - position: {x: 19, y: 11}
     pieceType: 8
-    teamColor: 2
+    teamColor: 5
     direction: 0
-  - position: {x: 18, y: 9}
+  - position: {x: 19, y: 10}
     pieceType: 8
-    teamColor: 2
+    teamColor: 5
     direction: 0

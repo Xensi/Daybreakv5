@@ -66,8 +66,8 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 0.5
+  m_PlayOnAwake: 0
+  m_Volume: 0.05
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -163,7 +163,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c120fb9f28a96204aa36f20386c83204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dead: 0
   thisNavPoint: {fileID: 0}
+  positionInUnitList: 0
   navAgent: {fileID: 0}
   animator: {fileID: 0}
   parentPiece: {fileID: 0}
@@ -179,7 +181,11 @@ MonoBehaviour:
   animationSpeed: 1
   queuedDamage: 0
   freeze: 0
-  navOffset: 0.5
+  navOffset: 0.325
+  navOffsetAdd: 0
+  navOffsetAddClamp: 0.325
+  attackerRadius: 0.06
+  movingRadius: 0.03
   effectSpawnTransform: {fileID: 0}
   attackEffect: {fileID: 0}
   attackSoundEffect:
@@ -189,6 +195,16 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5aa5d2086d3d16d41b33b72ef6624621, type: 3}
   AllColliders: []
   AllRigidbodies: []
+  projectilePrefab: {fileID: 0}
+  spread: 0
+  angle: 10
+  animationsEnabled: 0
+  navmeshDestination: {x: 0, y: 0, z: 0}
+  debugVelocity: {x: 0, y: 0, z: 0}
+  targetedSoldierDebug: {fileID: 0}
+  setInPlace: 0
+  rangedAndNeedsToTurnToFaceEnemy: 0
+  rotationGoal: {x: 0, y: 0, z: 0}
 --- !u!114 &5076445286326577303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,6 +217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a53d7d69476de934cb1613cd60cf3d6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skinnedMeshRenderers: []
   meshRenderers: []
 --- !u!195 &7129701099515193313
 NavMeshAgent:

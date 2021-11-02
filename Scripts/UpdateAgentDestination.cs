@@ -23,7 +23,7 @@ public class UpdateAgentDestination : MonoBehaviour
     public bool idleSet = false;
     public bool moveSet = false;
     public float animationSpeed = 1;
-    public int queuedDamage;
+    public int queuedDamage; //this is set by parent piece
     public bool freeze = false;
 
     //public float distanceToNotAttack = 1f;
@@ -56,6 +56,9 @@ public class UpdateAgentDestination : MonoBehaviour
     public GameObject targetedSoldierDebug;
 
     public bool setInPlace = false;
+    public bool rangedAndNeedsToTurnToFaceEnemy = false;
+    public Vector3 rotationGoal = Vector3.zero;
+
     //public bool marked = false;
     // Update is called once per frame  
     private void Awake()
@@ -159,6 +162,37 @@ public class UpdateAgentDestination : MonoBehaviour
                 }
             }
         }
+        else if (attacking && parentPiece.attackType == "ranged" && navAgent.enabled && rangedAndNeedsToTurnToFaceEnemy)
+        {
+            if (!moveSet) //play looping animation once
+            {
+                animator.Play("BaseMove");
+                moveSet = true;
+            }
+            navAgent.stoppingDistance = 0f;
+            if (thisNavPoint != null && navAgent != null && navAgent.enabled)
+            {
+
+                navAgent.destination = thisNavPoint.transform.position;
+            }
+            if (navAgent.remainingDistance <= navAgent.stoppingDistance) //if met stopping distance
+            {
+                if (!navAgent.hasPath || navAgent.velocity.sqrMagnitude == 0f) //if has no path or velocity = 0
+                {
+                    if (!idleSet)
+                    {
+                        animator.Play("BaseIdle");
+                        idleSet = true;
+                    }
+                    /*var rotationSpeed = 1f; 
+                    Vector3 lookPos = rotationGoal - transform.position;
+                    lookPos.y = 0;
+                    Quaternion rotation = Quaternion.LookRotation(lookPos);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, rotation, rotationSpeed);*/
+                    StartCoroutine(rotateToFaceEnemy());
+                }
+            }
+        }
         else if (!attacking) //if not attacking (ergo unit is moving)
         {
             navAgent.radius = movingRadius;
@@ -174,6 +208,14 @@ public class UpdateAgentDestination : MonoBehaviour
 
 
     }
+    private IEnumerator rotateToFaceEnemy()
+    {
+
+        Tween rotateTween = transform.DORotate(rotationGoal, 1);
+        yield return new WaitForSeconds(rotateTween.Duration());
+        ableToAttack = true; // now able to attack, having met destination and rotated to face enemy
+    }
+
     private void MoveAnimate()
     {
         if (animator != null && navAgent.enabled)
@@ -233,30 +275,40 @@ public class UpdateAgentDestination : MonoBehaviour
     }
     public IEnumerator AttackInterval()
     {
-        GameObject tMin = null;
-        float minDist = Mathf.Infinity;
-        Vector3 currentPos = transform.position; //this soldier's position
+        if (parentPiece.attackType == "melee")
+        {
+            GameObject tMin = null;
+            float minDist = Mathf.Infinity;
+            Vector3 currentPos = transform.position; //this soldier's position
 
-        for (int i = 0; i < targetPiece.soldierObjects.Count; i++) //todo this process will probably be laggy with more soldiers
-        {
-            float dist = Vector3.Distance(targetPiece.soldierObjects[i].transform.position, currentPos);
-            if (dist < minDist)
+            for (int i = 0; i < targetPiece.soldierObjects.Count; i++) //todo this process will probably be laggy with more soldiers
             {
-                tMin = targetPiece.soldierObjects[i];
-                minDist = dist;
-                //Debug.LogError("min dist " + minDist);
+                float dist = Vector3.Distance(targetPiece.soldierObjects[i].transform.position, currentPos);
+                if (dist < minDist)
+                {
+                    tMin = targetPiece.soldierObjects[i];
+                    minDist = dist;
+                    //Debug.LogError("min dist " + minDist);
+                }
             }
+            if (tMin != null)
+            {
+                navAgent.destination = tMin.transform.position;
+                targetedSoldierDebug = tMin;
+            }
+            //basically, find the closest soldier and make that our move target
         }
-        if (tMin != null)
-        {
-            navAgent.destination = tMin.transform.position;
-            targetedSoldierDebug = tMin;
-        }
-        //basically, find the closest soldier and make that our move target
+
 
         Debug.Log("Attempting to attack!" + parentPiece);
-        //yield return new WaitForSeconds(Random.Range(.1f, 2f));
-        if (parentPiece.attackType == "ranged" && numberOfAttacks < maxNumberOfAttacks)
+
+        if (parentPiece.attackType == "ranged")
+        {
+
+            yield return new WaitForSeconds(Random.Range(.1f, 2f)); //add attack delay if we are a ranged unit
+        }
+
+        if (ableToAttack && parentPiece.attackType == "ranged" && numberOfAttacks < maxNumberOfAttacks)
         {
             animator.Play("BaseAttack");
             numberOfAttacks++;
@@ -347,6 +399,7 @@ public class UpdateAgentDestination : MonoBehaviour
         }
         if (projectilePrefab != null && effectSpawnTransform != null)
         {
+            Debug.LogError("Spawning projectile");
             CreateProjectile();
         }
 

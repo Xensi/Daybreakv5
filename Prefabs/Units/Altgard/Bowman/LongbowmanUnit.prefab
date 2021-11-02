@@ -123,7 +123,7 @@ MonoBehaviour:
   originalSpeed: 1
   models: 42
   health: 10
-  damage: 4
+  damage: 2
   armor: 1
   morale: 15
   energy: 20
@@ -174,6 +174,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2e85fd6290866e948b59cf0c30546da2, type: 3}
   - {fileID: 8300000, guid: 7e5b6fba4f403784a9cda469d0fd8855, type: 3}
   - {fileID: 8300000, guid: fd4f4dc92bf45c34286651a4df6106c3, type: 3}
+  terrainSpeedModifier: 0
   flankingDamage: 1
   originalEffectiveRange: 1
   originalMidRange: 1
@@ -225,6 +226,7 @@ MonoBehaviour:
   markerPrefab: {fileID: -3448499949545424200, guid: 8db87e2c4101ff649b604177e46799df, type: 3}
   targetToAttackPiece: {fileID: 0}
   tieBreakPiece: {fileID: 0}
+  facingDirection: 0
   flankedByHowMany: 0
   moving: 1
   sprinting: 0
@@ -277,6 +279,7 @@ MonoBehaviour:
   arbitratedConflict: 0
   conflictTime: 0
   markedDeaths: 0
+  inflictedDeaths: 0
   OnTerrainType: 
   currentFormation: rectangle
   queuedFormation: nothing
@@ -506,6 +509,7 @@ MonoBehaviour:
   hpType: model
   hpText: {fileID: 3286682917291554979}
   teamColor: {fileID: 9100232078835698690}
+  isFloat: 0
 --- !u!1 &920364682341164368
 GameObject:
   m_ObjectHideFlags: 0
@@ -1758,6 +1762,7 @@ MonoBehaviour:
   hpType: energy
   hpText: {fileID: 3626465969237127802}
   teamColor: {fileID: 0}
+  isFloat: 0
 --- !u!1 &6965623998859406458
 GameObject:
   m_ObjectHideFlags: 0
@@ -2046,6 +2051,7 @@ MonoBehaviour:
   hpType: morale
   hpText: {fileID: 2784626762662020175}
   teamColor: {fileID: 0}
+  isFloat: 0
 --- !u!1 &8803136895636682215
 GameObject:
   m_ObjectHideFlags: 0

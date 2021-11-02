@@ -256,7 +256,7 @@ public abstract class Board : MonoBehaviour
         {
 
             //selectedPiece.SetStanceMoveAttack();
-            UnitList[id].ResetStance();
+            UnitList[id].SetStanceMoveAttack();
         }
         else if (stance == "reset")
         {
@@ -423,7 +423,7 @@ public abstract class Board : MonoBehaviour
                     }
 
                     selectedPiece.ClearQueuedMoves(); //needs to come before because it will be deselected afterwards
-                    DeselectPiece(); //deselect it and hide movement paths
+                    DeselectPiece(); //deselect it and hide movement paths (deselected because we clicked it twice
                     return;
                 }
 
@@ -444,7 +444,7 @@ public abstract class Board : MonoBehaviour
 
                     selectedPiece.holdingPosition = true;
                     //selectedPiece.holdTime = selectedPiece.turnTime;
-                    DeselectPiece(); //deselect it and hide movement paths
+                    DeselectPiece(); //deselect it and hide movement paths (deselected because we are ending our movement early)
 
                 }
                 else if (piece != null && selectedPiece != piece && !piece.IsFromSameTeam(selectedPiece)) //if we click on a different piece and it's an enemy and our selectedPiece is attacking
@@ -776,8 +776,8 @@ public abstract class Board : MonoBehaviour
             selectedPiece.QueueMove(coords);//tell piece to remember these coords and place a marker there //got error
         }
 
-        if (selectedPiece.attacking && selectedPiece.attackType == "ranged" && selectedPiece.moveAndAttackEnabled && selectedPiece.turnTime >= 2)
-        { //deselect after the first move is queued (steady attack)
+        if (selectedPiece.attacking && selectedPiece.attackType == "ranged" && selectedPiece.moveAndAttackEnabled && selectedPiece.turnTime >= 2) //if ranged attacking piece is move and attacking, and turn time is >= 2
+        { //deselect because we're done moving
             selectedPiece.markForDeselect = false;
             DeselectPiece();
         }

@@ -46,7 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   piecesPrefabs:
   - {fileID: 114028, guid: 11f4714176799f548a527bf7369ef40c, type: 3}
-  - {fileID: 114028, guid: 0ad8f72bbdb84854780ec6875b56baed, type: 3}
+  - {fileID: 114028, guid: 8212fcafc5be37f44a76e59b76a9ce95, type: 3}
   blackMaterial: {fileID: 2100000, guid: a57b0d8b6bbaa1b4589e5a905a043a3e, type: 2}
   whiteMaterial: {fileID: 2100000, guid: 73cb68aac7695be4685110735525beef, type: 2}
 --- !u!114 &8379632266262161800
