@@ -38,6 +38,7 @@ public class GameInitializer : MonoBehaviour
     public Material attackMaterial;
     //[SerializeField] private Material sprintMaterial;
     public Material turnMaterial;
+    public Material orangeMaterial;
     public Material defaultMaterial;
     public Material red;
 

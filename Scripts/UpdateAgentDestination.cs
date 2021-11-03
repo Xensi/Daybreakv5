@@ -332,7 +332,7 @@ public class UpdateAgentDestination : MonoBehaviour
             if (!parentPiece.markedDeaths) //only update health bar once
             {
                 parentPiece.markedDeaths = true;
-                //Debug.LogError("Attacking and updating enemy hp to" + targetPiece.models);
+                Debug.LogError("Attacking and updating enemy hp to" + targetPiece.models);
                 targetPiece.modelBar.SetHealth(targetPiece.models); //update enemy's hp bar to actual value when attacking
                 targetPiece.MarkForDeath(queuedDamage);
                 //Debug.Log("models" + targetPiece.models);
@@ -368,6 +368,9 @@ public class UpdateAgentDestination : MonoBehaviour
         //animationSpeed = 0;
         DOTween.To(() => animationSpeed, x => animationSpeed = x, 0, 3);
         DOTween.To(() => navAgent.speed, x => navAgent.speed = x, 0, 3);
+
+        parentPiece.soldierAttacked = true; //set this after freeze just in case
+
     }
 
     public void SpawnEffect() //called using animation events. generally signifies when attack hits

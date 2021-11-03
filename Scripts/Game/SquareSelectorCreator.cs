@@ -39,7 +39,7 @@ public class SquareSelectorCreator : MonoBehaviour
 
     }
 
-    public void UpdateSelection(Dictionary<Vector3, bool> squareData)
+    public void UpdateSelection(Dictionary<Vector3, bool> squareData) //change colors of squares based on distance
     {
         //Debug.Log("Attempt to update selection squares");
         for (int i = 0; i < instantiatedSelectors.Count; i++)
@@ -84,6 +84,7 @@ public class SquareSelectorCreator : MonoBehaviour
         if (selectedPiece.attacking && selectedPiece.attackType == "ranged") //if ranged and attacking, set accuracy indicators
         {
 
+            var adjacent = SetRanges(1);
             var effectiveRange = SetRanges(selectedPiece.effectiveRange);
 
             var midRange = SetRanges(selectedPiece.midRange);
@@ -133,6 +134,22 @@ public class SquareSelectorCreator : MonoBehaviour
                         foreach (var matSetter in selector.GetComponentsInChildren<MaterialSetter>()) //necessary to change all the pieces
                         {
                             matSetter.SetSingleMaterial(gameInit.turnMaterial);
+                        }
+                        break;
+                    }
+
+                }
+                for (int i = 0; i < adjacent.Length; i++) //cycle through adjacent tile or other tiles
+                {
+                    Vector2Int nextCoords = piecePos + adjacent[i]; //fetch a position relative to the selected piece
+
+                    Vector3 position = board.CalculatePositionFromCoords(nextCoords); //convert to vector 3 world coords
+
+                    if (selector.transform.position.x == position.x && selector.transform.position.z == position.z)
+                    {
+                        foreach (var matSetter in selector.GetComponentsInChildren<MaterialSetter>()) //necessary to change all the pieces
+                        {
+                            matSetter.SetSingleMaterial(gameInit.orangeMaterial);
                         }
                         break;
                     }

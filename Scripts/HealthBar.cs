@@ -94,6 +94,10 @@ public class HealthBar : MonoBehaviour
         {
             piece.StartCoroutine(piece.SelfDestruct());
         }
+        if (health <= 0 && hpType == "morale") //self destruct when morale hit 0 for now
+        {
+            piece.StartCoroutine(piece.SelfDestruct());
+        }
 
     }
 }

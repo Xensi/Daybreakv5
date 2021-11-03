@@ -746,7 +746,7 @@ public abstract class Board : MonoBehaviour
         {
             AllPieces[i].CheckIfRouting();
         }
-        for (int i = 0; i < AllPieces.Length; i++) //queue rout movement for routing units
+        /*for (int i = 0; i < AllPieces.Length; i++) //queue rout movement for routing units
         {
             //Debug.Log(AllPieces[i]);
 
@@ -754,7 +754,7 @@ public abstract class Board : MonoBehaviour
             {
                 AllPieces[i].QueueRout();
             }
-        }
+        }*/
         for (int i = 0; i < AllPieces.Length; i++)
         {
             AllPieces[i].FinishedMoving = false;

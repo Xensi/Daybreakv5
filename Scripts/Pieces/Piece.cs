@@ -216,7 +216,7 @@ public abstract class Piece : MonoBehaviour
     private int bonusMoraleDamage;
 
     private float actualOffset;
-    private float armyLossesThreshold;
+    public float armyLossesThreshold;
     public bool markedDeaths = false;
     public int inflictedDeaths = 0;
     private Vector2Int forwardVector;
@@ -3428,6 +3428,10 @@ public abstract class Piece : MonoBehaviour
         Debug.Log("ranged multiplier" + rangedMultiplier);
         Debug.Log("energy multiplier" + energyMultiplier);
         Debug.Log("flanking damage" + flankingDamage);
+        if (attackType == "melee") //ignores accuracy for melee units
+        {
+            accuracy = 1f;
+        }
         tempDamage = models * calculatedDamage * damageEffect * meleeMultiplier * rangedMultiplier * energyMultiplier * flankingDamage * accuracy;
         float deadDefenders = tempDamage / targetToAttackPiece.health;
         float defendersKilled;
@@ -3619,7 +3623,7 @@ public abstract class Piece : MonoBehaviour
 
     public IEnumerator MovePiece()
     {
-        if (routing)
+        /*if (routing)
         {
             //If they run into a friendly unit, stop the frliendly’s movement. If they end on friendly, idk
             //If they run into an enemy unit, they attack them
@@ -3723,8 +3727,8 @@ public abstract class Piece : MonoBehaviour
                 HandleMovementStoppage(); //then we shall attempt to stop our movement
                 yield break;
             }
-        }
-        else if (queuedFormation != "nothing")
+        }*/
+        if (queuedFormation != "nothing")
         {
             currentFormation = queuedFormation;
             ChangeFormation(queuedFormation);
@@ -4380,7 +4384,7 @@ public abstract class Piece : MonoBehaviour
             {
                 yield return new WaitUntil(() => attackerPiece.soldierAttacked == true); //wait until the attacker has attacked with at least one unit
                 waitingForFirstAttack = false;
-                attackerPiece.soldierAttacked = false; //set it to false to be ready for the next one
+                //attackerPiece.soldierAttacked = false; //set it to false to be ready for the next one
             }
             yield return new WaitForSeconds(Random.Range(0.1f, 10/markedSoldiersCount)); //this should make soldiers die in a more timely fashion. soldiers die faster the more there are to kill
 
@@ -4391,34 +4395,7 @@ public abstract class Piece : MonoBehaviour
 
             markedSoldiers.RemoveAt(0); //remove listing
             soldierObjects.RemoveAt(0);
-            /*int num = 0;
-            foreach (var color in gameInit.teamColorDefinitions) //TODO make this based on direction
-            {
-                num++;
-                if (team == color)
-                {
-                    if (num == 1)
-                    {
-                        soldierID = soldierObjects.Count - 1; 
-                        soldierObjects.RemoveAt(soldierID); //remove final
-
-                    }
-                    else if (num == 2)
-                    {
-                        soldierObjects.RemoveAt(0);
-                    }
-                    else if(num == 3)
-                    {
-                        soldierID = soldierObjects.Count - 1;
-                        soldierObjects.RemoveAt(soldierID); //remove final
-
-                    }
-                    else if (num == 4)
-                    {
-                        soldierObjects.RemoveAt(0);
-                    }
-                }
-            }*/
+            
 
             //yield return new WaitForSeconds(Random.Range(.1f, .5f)); //wait for some interval
             StartCoroutine(KillOff()); //prepare for next one
@@ -4486,18 +4463,19 @@ public abstract class Piece : MonoBehaviour
         {
 
             CheckIfFlanked();
-            if (models < armyLossesThreshold && !armyLossesApplied)
+            if (models <= armyLossesThreshold && !armyLossesApplied)
             {
                 morale -= 5;
                 armyLossesApplied = true;
             }
             if (flankedByHowMany > 0)
             {
-                Debug.Log("morale drops by" + flankedByHowMany);
-                morale -= flankedByHowMany + bonusMoraleDamage;
-                moraleBar.SetHealth(morale); //tween hp bar
+                //Debug.Log("morale drops by" + flankedByHowMany);
+                //morale -= flankedByHowMany + bonusMoraleDamage;
+                morale -= bonusMoraleDamage;
             }
         }
+        moraleBar.SetHealth(morale); //tween hp bar
     }
     public void DefineFlanks()
     {
@@ -4535,6 +4513,14 @@ public abstract class Piece : MonoBehaviour
                     if (piece.attacking && piece.targetToAttackPiece == this) //bonus morale damage applied if attacking this in the rear
                     {
                         bonusMoraleDamage += 2;
+                    }
+                }
+
+                if (i == 0 || i == 4) //side tiles
+                {
+                    if (piece.attacking && piece.targetToAttackPiece == this) //bonus morale damage applied if attacking this in the rear
+                    {
+                        bonusMoraleDamage += 1;
                     }
                 }
             }

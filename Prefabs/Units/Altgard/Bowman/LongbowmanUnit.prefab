@@ -15,9 +15,10 @@ GameObject:
   - component: {fileID: -8664805443144399631}
   - component: {fileID: 255507802608927540}
   - component: {fileID: -579645896337733167}
-  m_Layer: 12
+  - component: {fileID: 2795580371672836637}
+  m_Layer: 2
   m_Name: LongbowmanUnit
-  m_TagString: Untagged
+  m_TagString: Unit
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -126,7 +127,7 @@ MonoBehaviour:
   damage: 2
   armor: 1
   morale: 15
-  energy: 20
+  energy: 40
   damageLevel: 1
   armorLevel: 1
   attackType: ranged
@@ -401,6 +402,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!65 &2795580371672836637
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114028}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.0688708, y: 1.8515171, z: 1.0526325}
+  m_Center: {x: -0.00000014901161, y: 0.75352746, z: -0.0163638}
 --- !u!1 &594005615636027531
 GameObject:
   m_ObjectHideFlags: 0
@@ -728,7 +742,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4223498510666725365}
-  m_Layer: 12
+  m_Layer: 2
   m_Name: StaggeredNavPointHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -833,7 +847,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7748925744181954633}
-  m_Layer: 12
+  m_Layer: 2
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1136,7 +1150,7 @@ GameObject:
   - component: {fileID: 6922321902523084494}
   - component: {fileID: 6504832698592662683}
   - component: {fileID: 8806780389146576012}
-  m_Layer: 12
+  m_Layer: 2
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1365,7 +1379,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1415467013965843059}
-  m_Layer: 12
+  m_Layer: 2
   m_Name: RectangleNavPointHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1922,7 +1936,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1036513221749374413}
-  m_Layer: 12
+  m_Layer: 2
   m_Name: CircleNavPointHolder
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -126,7 +126,7 @@ MonoBehaviour:
   health: 9
   damage: 1
   armor: 0
-  morale: 10
+  morale: 20
   energy: 30
   damageLevel: 1
   armorLevel: 1
@@ -279,6 +279,7 @@ MonoBehaviour:
   speed10: []
   arbitratedConflict: 0
   conflictTime: 0
+  armyLossesThreshold: 0
   markedDeaths: 0
   inflictedDeaths: 0
   OnTerrainType: 
@@ -1777,7 +1778,7 @@ MonoBehaviour:
   hpType: energy
   hpText: {fileID: 3626465969237127802}
   teamColor: {fileID: 0}
-  isFloat: 1
+  isFloat: 0
 --- !u!1 &6965623998859406458
 GameObject:
   m_ObjectHideFlags: 0
