@@ -136,7 +136,7 @@ public class UpdateAgentDestination : MonoBehaviour
                             ableToAttack = true;
                             /*if (!idleSet)
                             {*/
-                                animator.Play("BaseIdle");
+                            //animator.Play("BaseIdle");
                             /*    idleSet = true;
                             }*/
                             setInPlace = true;
@@ -154,7 +154,7 @@ public class UpdateAgentDestination : MonoBehaviour
                                 {
 
                                 }
-                                animator.Play("BaseIdle");
+                                //animator.Play("BaseIdle");
                                 idleSet = true;
                             }
                         }
@@ -164,8 +164,10 @@ public class UpdateAgentDestination : MonoBehaviour
         }
         else if (attacking && parentPiece.attackType == "ranged" && navAgent.enabled && rangedAndNeedsToTurnToFaceEnemy)
         {
-            if (!moveSet) //play looping animation once
+
+            if (!moveSet)
             {
+                animator.SetBool("moving", true);
                 animator.Play("BaseMove");
                 moveSet = true;
             }
@@ -181,7 +183,8 @@ public class UpdateAgentDestination : MonoBehaviour
                 {
                     if (!idleSet)
                     {
-                        animator.Play("BaseIdle");
+                        //animator.Play("BaseIdle");
+                        animator.SetBool("moving", false);
                         idleSet = true;
                     }
                     /*var rotationSpeed = 1f; 
@@ -227,13 +230,18 @@ public class UpdateAgentDestination : MonoBehaviour
                     if (!navAgent.hasPath || navAgent.velocity.sqrMagnitude == 0f)
                     {
                         // Done
-                        animator.Play("BaseIdle");
+                        //animator.Play("BaseIdle");
+                        animator.SetBool("moving", false);
                         return;
                     }
                 }
             }
         }
-        animator.Play("BaseMove");
+        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("BaseMove"))
+        {
+            animator.SetBool("moving", true);
+            animator.Play("BaseMove");
+        }
     }
 
     public void Unfreeze()
@@ -369,6 +377,16 @@ public class UpdateAgentDestination : MonoBehaviour
         DOTween.To(() => animationSpeed, x => animationSpeed = x, 0, 3);
         DOTween.To(() => navAgent.speed, x => navAgent.speed = x, 0, 3);
 
+        //do this just in case
+        if (!parentPiece.markedDeaths)
+        {
+            parentPiece.markedDeaths = true;
+
+            targetPiece.modelBar.SetHealth(targetPiece.models); //tween hp bar
+            targetPiece.MarkForDeath(queuedDamage);
+            Debug.Log("models" + targetPiece.models);
+
+        }
         parentPiece.soldierAttacked = true; //set this after freeze just in case
 
     }

@@ -157,7 +157,7 @@ MonoBehaviour:
   rectangleNavParent: {fileID: 6066440291368871999}
   circleNavParent: {fileID: 7885324316243032425}
   staggeredNavParent: {fileID: 1841803912138195433}
-  unitPortrait: {fileID: 21300000, guid: 0a46cbcb283674f43a501e9bbcf3a565, type: 3}
+  unitPortrait: {fileID: 21300000, guid: c4ce637be62f3e9428074b81994651d8, type: 3}
   armorPiercing: 0
   arcingAttack: 0
   attackOrderSoundEffects:

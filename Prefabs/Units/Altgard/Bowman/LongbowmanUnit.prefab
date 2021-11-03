@@ -157,7 +157,7 @@ MonoBehaviour:
   rectangleNavParent: {fileID: 6066440291368871999}
   circleNavParent: {fileID: 7885324316243032425}
   staggeredNavParent: {fileID: 1841803912138195433}
-  unitPortrait: {fileID: 0}
+  unitPortrait: {fileID: 21300000, guid: 48f2842e0bddf7d4dbaf6e21cd15d0ed, type: 3}
   armorPiercing: 0
   arcingAttack: 1
   attackOrderSoundEffects:
@@ -279,6 +279,7 @@ MonoBehaviour:
   speed10: []
   arbitratedConflict: 0
   conflictTime: 0
+  armyLossesThreshold: 0
   markedDeaths: 0
   inflictedDeaths: 0
   OnTerrainType: 
@@ -1129,7 +1130,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e11310bbbc7735341b8f1dc36a84b25d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4619212845c7eae4fb77ebef566e80f3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
