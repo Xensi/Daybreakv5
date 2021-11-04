@@ -125,7 +125,6 @@ MonoBehaviour:
   models: 42
   health: 9
   damage: 1
-  armor: 0
   morale: 10
   energy: 20
   damageLevel: 1
@@ -279,12 +278,15 @@ MonoBehaviour:
   speed10: []
   arbitratedConflict: 0
   conflictTime: 0
+  bonusMoraleDamage: 0
   armyLossesThreshold: 0
   markedDeaths: 0
   inflictedDeaths: 0
   OnTerrainType: 
   currentFormation: rectangle
   queuedFormation: nothing
+  ordersGiven: 0
+  defensiveAttacking: 0
 --- !u!114 &255507802608927540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -904,7 +906,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -148.29999, y: 19}
-  m_SizeDelta: {x: 92.5, y: 92.5}
+  m_SizeDelta: {x: 84.18, y: 83.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5282669910526037180
 CanvasRenderer:

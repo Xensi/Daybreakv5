@@ -26,7 +26,7 @@ public abstract class Piece : MonoBehaviour
     //public float meleeDamage = 1; //per attack!
     //public float rangedDamage = 0; //per attack!
     public float damage = 1f;
-    public float armor = 0; //reduces incoming damage
+    //public float armor = 0; //reduces incoming damage
     public float morale = 10;
     public float energy = 15; //overall energy
     private float startingEnergy; //starting energy, which is set by energy
@@ -113,7 +113,7 @@ public abstract class Piece : MonoBehaviour
     public bool targetAdjacent = false;
     public bool conflict = false;
     public bool markForDeselect;
-    private bool allowedToDie = false;
+    public bool allowedToDie = false;
     public bool startOfTurn = true;
     public bool FinishedMoving = false;
     public bool oneStepFinished = false;
@@ -244,6 +244,7 @@ public abstract class Piece : MonoBehaviour
     private Vector3 rotationGoal;
     public bool ordersGiven = false; //usually true
     public bool defensiveAttacking = false;
+    public bool attackedThisTurn = false;
 
     public abstract List<Vector2Int> SelectAvailableSquares(Vector2Int startingSquare);
 
@@ -3238,9 +3239,9 @@ public abstract class Piece : MonoBehaviour
         if (morale <= 0) //are we routing?
         {// if so delete unit position from grid
 
-            Debug.Log("routing");
+            //Debug.Log("routing");
             board.grid[occupiedSquare.x, occupiedSquare.y] = null;
-            board.routingGrid[occupiedSquare.x, occupiedSquare.y] = this; //add unit pos to routing grid so we can still keep track of it
+            //board.routingGrid[occupiedSquare.x, occupiedSquare.y] = this; //add unit pos to routing grid so we can still keep track of it
             routing = true;
         }
     }
@@ -3401,15 +3402,15 @@ public abstract class Piece : MonoBehaviour
         {
             damage = meleeDamage;
         }*/
-        if (!moveAndAttackEnabled && attackType == "ranged") //steady attacking gives damage bonus
+        /*if (!moveAndAttackEnabled && attackType == "ranged") //steady attacking gives damage bonus
         {
             attackBonus++;
-        }
-        var armor = targetToAttackPiece.armor;
+        }*/
+        /*var armor = targetToAttackPiece.armor;
         if (attackIgnoresArmor)
         {
             armor = 0;
-        }
+        }*/
         //var calculatedDamage = damage + attackBonus - armor - targetToAttackPiece.defenseModifier;
         Debug.Log("Damage" + damage + "Attack bonus" + attackBonus + "Target defense mod" + targetToAttackPiece.defenseModifier);
         var calculatedDamage = damage + attackBonus - targetToAttackPiece.defenseModifier;
@@ -3435,17 +3436,12 @@ public abstract class Piece : MonoBehaviour
             damageVersusArmor = 0;
         }
         var damageEffect = Mathf.Pow(0.5f, damageVersusArmor);
-
-        Debug.Log("Damage effect" + damageEffect);
-        //tempDamage = models * calculatedDamage * meleeMultiplier * rangedMultiplier * energyMultiplier;
-        Debug.Log("melee multiplier" + meleeMultiplier);
-        Debug.Log("ranged multiplier" + rangedMultiplier);
-        Debug.Log("energy multiplier" + energyMultiplier);
-        Debug.Log("flanking damage" + flankingDamage);
         if (attackType == "melee") //ignores accuracy for melee units
         {
             accuracy = 1f;
         }
+        Debug.Log("models" + models + "calculated damage" + calculatedDamage + "Damage effect" + damageEffect + "melee multiplier" + meleeMultiplier + "ranged multiplier" + rangedMultiplier + "energy multiplier" + energyMultiplier + "flanking damage" + flankingDamage + "accuracy" + accuracy);  
+        
         tempDamage = models * calculatedDamage * damageEffect * meleeMultiplier * rangedMultiplier * energyMultiplier * flankingDamage * accuracy;
         float deadDefenders = tempDamage / targetToAttackPiece.health;
         float defendersKilled;
@@ -3635,7 +3631,7 @@ public abstract class Piece : MonoBehaviour
         }
     }
 
-    public IEnumerator MovePiece()
+    public IEnumerator MovePiece() //moves piece once according to queued movement
     {
         /*if (routing)
         {
@@ -4182,11 +4178,9 @@ public abstract class Piece : MonoBehaviour
     public void ApplyAccuracy(int tileNumber)
     {
         accuracy = 1f;
-
-
         if (tileNumber == 1) //point blank
         {
-            accuracy = .75f;
+            accuracy = .5f;
         }
         else if (tileNumber <= effectiveRange) // effective range
         {
@@ -4203,22 +4197,8 @@ public abstract class Piece : MonoBehaviour
         else if (tileNumber >= beyondTargetableRange) //beyond targetable, so no damage
         {
             accuracy = 0f;
-        }
-        //Debug.Log(midRange + " " + longRange + " " + beyondTargetableRange);
-        Debug.Log("accuracy" + accuracy + "temp damage" + tempDamage);
-        /*var damageAfterAccuracy = tempDamage * accuracy;
-
-        Debug.Log("damage after accuracy" + damageAfterAccuracy);
-
-        float deadDefenders = damageAfterAccuracy / targetToAttackPiece.health; // TODO: maybe implement chip damage? right now this system only tracks damage that can kill at least one model
-        float defendersKilled;
-        if (targetToAttackPiece.disengaging && attackType == "melee")
-            defendersKilled = deadDefenders / 2;
-        else
-            defendersKilled = deadDefenders;
-        queuedDamage = Mathf.RoundToInt(defendersKilled);
-        if (queuedDamage < 0)
-            queuedDamage = 0; //just make sure damage can never be negative*/
+        } 
+        Debug.Log("accuracy" + accuracy + "temp damage" + tempDamage); 
     }
     public void ApplyDamage() //physical and morale damage
     {
@@ -4442,10 +4422,10 @@ public abstract class Piece : MonoBehaviour
             //yield return new WaitForSeconds(Random.Range(.1f, .5f)); //wait for some interval
             StartCoroutine(KillOff()); //prepare for next one
 
-            if (markedSoldiers.Count <= 0) //if no more soldiers
+            /*if (markedSoldiers.Count <= 0) //if no more soldiers
             {
                 allowedToDie = true;
-            }
+            }*/
         }
         else //if there are no more soldiers to kill
         {

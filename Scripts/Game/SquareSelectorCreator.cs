@@ -149,7 +149,7 @@ public class SquareSelectorCreator : MonoBehaviour
                     {
                         foreach (var matSetter in selector.GetComponentsInChildren<MaterialSetter>()) //necessary to change all the pieces
                         {
-                            matSetter.SetSingleMaterial(gameInit.orangeMaterial);
+                            matSetter.SetSingleMaterial(gameInit.disengageMaterial);
                         }
                         break;
                     }
