@@ -4469,7 +4469,7 @@ public abstract class Piece : MonoBehaviour
                 }
                 else if (piece != null && !piece.IsFromSameTeam(this) && piece.attacking && piece.targetToAttackPiece == this) //if we detect an enenmy on the flank and it's attacking us
                 {
-                    Debug.Log("attacking enemy on the flank");
+                    Debug.Log("there is an attacking enemy on the flank");
                     if (i >= 1 && i <= 3) //rear tiles
                     {
                         //piece.flankingDamage = 3;

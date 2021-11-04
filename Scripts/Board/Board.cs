@@ -521,9 +521,13 @@ public abstract class Board : MonoBehaviour
             }
 
         }
-        for (int i = 0; i < pieces.Count; i++)
+        for (int i = 0; i < AllPieces.Length; i++)  
         {
-            pieces[i].CheckFlankingDamage(); //if enemies are on our flanks they get bonus damage against us //it;s fine to call this multiple times
+            AllPieces[i].flankingDamage = 1;
+        }
+        for (int i = 0; i < AllPieces.Length; i++) //should calculate for all?
+        {
+            AllPieces[i].CheckFlankingDamage(); //if enemies are on our flanks they get bonus damage against us //it;s fine to call this multiple times
         }
         for (int i = 0; i < pieces.Count; i++)
         {
