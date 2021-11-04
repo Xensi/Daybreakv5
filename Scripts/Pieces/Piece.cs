@@ -22,6 +22,7 @@ public abstract class Piece : MonoBehaviour
     public string unitName;
     public int originalSpeed = 1;
     public int models = 100; //the number of dudes in a squad/unit/battalion whatever
+    public int oldModels = 0;
     public float health = 1; //the health of each model
     //public float meleeDamage = 1; //per attack!
     //public float rangedDamage = 0; //per attack!
@@ -239,7 +240,7 @@ public abstract class Piece : MonoBehaviour
     public string queuedFormation = "nothing";
     private bool waitingForFirstAttack = false;
     private int markedSoldiersCount = 0;
-    private float accuracy;
+    public float accuracy;
     private Vector3 oldRotation;
     private Vector3 rotationGoal;
     public bool ordersGiven = false; //usually true
@@ -3440,9 +3441,9 @@ public abstract class Piece : MonoBehaviour
         {
             accuracy = 1f;
         }
-        Debug.Log("models" + models + "calculated damage" + calculatedDamage + "Damage effect" + damageEffect + "melee multiplier" + meleeMultiplier + "ranged multiplier" + rangedMultiplier + "energy multiplier" + energyMultiplier + "flanking damage" + flankingDamage + "accuracy" + accuracy);  
-        
         tempDamage = models * calculatedDamage * damageEffect * meleeMultiplier * rangedMultiplier * energyMultiplier * flankingDamage * accuracy;
+        Debug.Log("temp damage" + tempDamage + "models" + models + "calculated damage" + calculatedDamage + "Damage effect" + damageEffect + "melee multiplier" + meleeMultiplier + "ranged multiplier" + rangedMultiplier + "energy multiplier" + energyMultiplier + "flanking damage" + flankingDamage + "accuracy" + accuracy);
+
         float deadDefenders = tempDamage / targetToAttackPiece.health;
         float defendersKilled;
         if (targetToAttackPiece.disengaging && attackType == "melee")
@@ -4225,6 +4226,7 @@ public abstract class Piece : MonoBehaviour
         Debug.Log("attempting to apply damage" + queuedDamage + "target adjacent" + targetAdjacent + "attacking" + attacking);
 
         targetToAttackPiece.models -= queuedDamage;
+        //targetToAttackPiece.modelBar.SetHealth(targetToAttackPiece.models);
         if (targetToAttackPiece.models < 0) //make sure models can't go below zero
             targetToAttackPiece.models = 0;
 
@@ -4273,7 +4275,7 @@ public abstract class Piece : MonoBehaviour
          
         SubtractEnergy();
         board.PieceTriggerAttacksForSoldiers(unitID); //this works in mp! so why not define flanks?
-
+        ClearQueuedMoves();
         
 
     }
@@ -4328,6 +4330,11 @@ public abstract class Piece : MonoBehaviour
 
     public void OnMarkForDeath(int damage) //after communicating with mp
     {
+        if (damage <= 0)
+        {
+            return;
+        }
+
         Debug.Log("Marking for death " + damage);
         //int scaledDamage = Mathf.RoundToInt(damage / downscale);
         int scaledDamage = Mathf.RoundToInt(damage);
@@ -4335,6 +4342,7 @@ public abstract class Piece : MonoBehaviour
         for (int i = 0; i < scaledDamage; i++)
         {
             markedSoldiers.Add(soldierObjects[i]);
+            soldierObjects.RemoveAt(0); //remove it right away so it can't be marked twice
             Debug.Log("marked " + i);
         }
         //TODO need to make this start depending on direction . . .
@@ -4416,7 +4424,6 @@ public abstract class Piece : MonoBehaviour
             soldierScript.KillThis(markedSoldiers[0]);
 
             markedSoldiers.RemoveAt(0); //remove listing
-            soldierObjects.RemoveAt(0);
             
 
             //yield return new WaitForSeconds(Random.Range(.1f, .5f)); //wait for some interval
@@ -4691,7 +4698,7 @@ public abstract class Piece : MonoBehaviour
         holdingPosition = false;
         markedDeaths = false;
         arbitratedConflict = false;
-        Debug.LogError("Setting queue time to 0");
+        //Debug.LogError("Setting queue time to 0");
         queueTime = 0;
         queuedDamage = 0;
         flankingDamage = 1;

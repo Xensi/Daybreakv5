@@ -310,16 +310,23 @@ public abstract class Board : MonoBehaviour
             //Debug.Log("Trying to move all pieces");
             chessController.AllowInput = false;
             executeButton.interactable = false;
-            //determine if any pieces have been given no orders at all
-            /*for (int i = 0; i < AllPieces.Length; i++) // 
-            {
-                //Debug.Log(AllPieces[i]);
-                AllPieces[i].CheckIfNoOrdersGiven(); // set variable to false if no queued moves
-            }*/
+
             //start of preturn
             Piece[] AllPieces = FindObjectsOfType<Piece>();
 
             Preturn(AllPieces); //turn set up
+
+            List<Piece> piecesReadyToAttack = new List<Piece>(); //have to use list because size is adjustable >>
+            for (int i = 0; i < AllPieces.Length; i++) //go through each piece
+            {
+                if (AllPieces[i].queuedMoves.Count == 1 && AllPieces[i].attacking && AllPieces[i].attackedThisTurn == false) //if exactly one moved queued and attacking, you are eligible to attack immediately
+                {
+                    piecesReadyToAttack.Add(AllPieces[i]);
+                }
+            }
+            //Piece[] piecesReadyToAttackArray = piecesReadyToAttack.ToArray();
+
+            AttackPhaseSetup(piecesReadyToAttack, 0); //allows for immediate attacks by pieces that are ready to attack already
 
             //start of movement phase
             for (int i = 0; i < AllPieces.Length; i++) //Actually start moving
@@ -337,6 +344,7 @@ public abstract class Board : MonoBehaviour
         {
             //Debug.Log(AllPieces[i]);
             AllPieces[i].attackedThisTurn = false; //remind everyone that they have not attacked yet
+            AllPieces[i].markedDeaths = false; //remind everyone that they have not attacked yet
         }
         for (int i = 0; i < AllPieces.Length; i++) //check if enemies adjacent. if so, can't move
         {
@@ -401,50 +409,69 @@ public abstract class Board : MonoBehaviour
         if (!allMovesFinishedCalled)
         {
             allMovesFinishedCalled = true;
-            AttackPhaseSetup(AllPieces); //call this only once
+            List<Piece> piecesReadyToAttackAfterMovement = new List<Piece>(); //have to use list because size is adjustable >>
+            for (int i = 0; i < AllPieces.Length; i++) //go through each piece
+            {
+                if (AllPieces[i].attacking && AllPieces[i].attackedThisTurn == false) //if attacking, you are eligible to attack after movement
+                {
+                    piecesReadyToAttackAfterMovement.Add(AllPieces[i]);
+                }
+            }
+            //Piece[] piecesReadyToAttackAfterMovementArray = piecesReadyToAttackAfterMovement.ToArray();
+
+            AttackPhaseSetup(piecesReadyToAttackAfterMovement, 1); //call this only once
         }
     }
-    public void AttackPhaseSetup(Piece[] AllPieces) //start processing attacks because movement is done
+    public void AttackPhaseSetup(List<Piece> pieces, int phaseNum) //start processing attacks because movement is done (or not in the case of the immediate attacks)
     {
-        turnBeingExecuted = false; //this will disable the checks running in slow update to see if movement is done (because it is!)
-
-
-        for (int i = 0; i < AllPieces.Length; i++)
-        {
-            AllPieces[i].CheckIfEnemyInAttackTile(); //sets target to unit in targeted tile if we have no target and no attack tile already (targeting an empty tile and waiting for a unit to enter it)
+        if (phaseNum == 1)
+        { 
+            turnBeingExecuted = false; //this will disable the checks running in slow update to see if movement is done (because it is!) 
         }
-        for (int i = 0; i < AllPieces.Length; i++)
+
+        for (int i = 0; i < pieces.Count; i++)
         {
-            AllPieces[i].CheckIfEnemiesAdjacent(); //check if enemies are adjacent
+            if (pieces[i].attackedThisTurn == false)  
+            {
+                pieces[i].CheckIfEnemyInAttackTile(); //sets target to unit in targeted tile if we have no target and no attack tile already (targeting an empty tile and waiting for a unit to enter it)
+            }
+            
+        }
+        for (int i = 0; i < pieces.Count; i++)
+        {
+            if (pieces[i].attackedThisTurn == false)
+            {
+                pieces[i].CheckIfEnemiesAdjacent(); //check if enemies are adjacent
+            }
         }
         var numRangedUnits = 0;
-        for (int i = 0; i < AllPieces.Length; i++)
+        for (int i = 0; i < pieces.Count; i++)
         {
-            if (AllPieces[i].attacking && AllPieces[i].attackType == "ranged" && AllPieces[i].targetToAttackPiece != null && AllPieces[i].attackedThisTurn == false) // if attacking, ranged and has a target
+            if (pieces[i].attacking && pieces[i].attackType == "ranged" && pieces[i].targetToAttackPiece != null && pieces[i].attackedThisTurn == false) // if attacking, ranged and has a target
             {
                 numRangedUnits++;
-                AllPieces[i].CalculateLineOfSight(); //create cylinders
+                pieces[i].CalculateLineOfSight(); //create cylinders
             }
         }
         if (numRangedUnits <= 0) //if no ranged units
         {
-            ExecuteAttacks(AllPieces); //skip over to the next part
+            ExecuteAttacks(pieces, phaseNum); //skip over to the next part
         }
-        else //if there are ranged units, start coroutine that will check to see if done processing
+        else 
         {
-            StartCoroutine(CheckIfPhysicsCalculationsProcessed(AllPieces));
+            StartCoroutine(CheckIfPhysicsCalculationsProcessed(pieces, phaseNum)); //if there are ranged units, start coroutine that will check to see if done processing physics
         }
     }
 
-    public IEnumerator CheckIfPhysicsCalculationsProcessed(Piece[] AllPieces) //this exists so that we don't have to do all the processing in one frame
+    public IEnumerator CheckIfPhysicsCalculationsProcessed(List<Piece> pieces, int phaseNum) //this exists so that we don't have to do all the processing in one frame
     {
         Debug.Log("Checking");
         var numNotFinished = 0;
-        for (int i = 0; i < AllPieces.Length; i++) //go through each piece
+        for (int i = 0; i < pieces.Count; i++) //go through each piece
         {
-            if (AllPieces[i].attacking && AllPieces[i].attackType == "ranged") //that's attacking and ranged
+            if (pieces[i].attacking && pieces[i].attackType == "ranged" && pieces[i].attackedThisTurn == false) //that's attacking and ranged
             {
-                foreach (var item in AllPieces[i].instantiatedCylinders) //go through each of their cylinders
+                foreach (var item in pieces[i].instantiatedCylinders) //go through each of their cylinders
                 {
                     var script = item.GetComponent(typeof(LineCollidePrefabScript)) as LineCollidePrefabScript;
                     if (script.finishedProcessing == false) //basically if not finished processing
@@ -456,75 +483,110 @@ public abstract class Board : MonoBehaviour
         }
         if (numNotFinished == 0) //if all of them are finished
         {
-            ExecuteAttacks(AllPieces);
+            ExecuteAttacks(pieces, phaseNum);
             yield return null;
         }
         else
         {
             yield return new WaitForSeconds(.1f);
-            StartCoroutine(CheckIfPhysicsCalculationsProcessed(AllPieces));
+            StartCoroutine(CheckIfPhysicsCalculationsProcessed(pieces, phaseNum));
         }
 
     }
 
-    public void ExecuteAttacks(Piece[] AllPieces) //should be called even if no line of sight calculations occurred
+    public void ExecuteAttacks(List<Piece> pieces, int phaseNum) //should be called even if no line of sight calculations occurred
     {
         //by this point, all physics calculations should be done.
 
-        for (int i = 0; i < AllPieces.Length; i++)
+        for (int i = 0; i < pieces.Count; i++)
         {
-            if (AllPieces[i].attacking && AllPieces[i].attackType == "ranged" && AllPieces[i].targetToAttackPiece != null)
+            if (pieces[i].attacking && pieces[i].attackType == "ranged" && pieces[i].targetToAttackPiece != null && pieces[i].attackedThisTurn == false)
             {
-                AllPieces[i].RunThroughCylinders(); //sets new target to attack or cancels attack if blocked by friendly
+                pieces[i].RunThroughCylinders(); //sets new target to attack or cancels attack if blocked by friendly
             }
         }
         // check if being attacked
+        Piece[] AllPieces = FindObjectsOfType<Piece>(); //this necessarily has to be checked by all units
         for (int i = 0; i < AllPieces.Length; i++)
         {
-            if (AllPieces[i].targetToAttackPiece == null) //if we have no attack target
+            if (AllPieces[i].targetToAttackPiece == null && AllPieces[i].attackedThisTurn == false) //if we have no attack target and have not attacked
             {
-                AllPieces[i].CheckIfAttacked(); //check to see if we're being attacked. if we are, defend yourself
+                Debug.Log("phase num" + phaseNum);
+                AllPieces[i].CheckIfAttacked(); //check to see if we're being attacked. if we are and haven't attacked yet, defend yourself
+                pieces.Add(AllPieces[i]); //this is now an attacker >:)
+                if (AllPieces[i].attackType == "ranged") // accuracy calculations are incompatible with this, so set it manually
+                {
+                    AllPieces[i].accuracy = .5f; //for point blank range
+                }
             }
 
         }
+        for (int i = 0; i < pieces.Count; i++)
+        {
+            pieces[i].CheckFlankingDamage(); //if enemies are on our flanks they get bonus damage against us //it;s fine to call this multiple times
+        }
+        for (int i = 0; i < pieces.Count; i++)
+        {
+            if (pieces[i].attackedThisTurn == false)
+            {
+
+                pieces[i].CalculateDamage(); //calculate attack damage //there isn't a reason to call this more than once
+            }
+        }
+
         for (int i = 0; i < AllPieces.Length; i++)
         {
-            AllPieces[i].CheckFlankingDamage(); //if enemies are on our flanks they get bonus damage against us
+            AllPieces[i].oldModels = AllPieces[i].models;
         }
+
+        for (int i = 0; i < pieces.Count; i++)
+        {
+            if (pieces[i].attackedThisTurn == false)
+            {
+                pieces[i].ApplyDamage(); //set models -= queued damage and triggers attacks for models //very important to only call this once
+            }
+        }
+
         for (int i = 0; i < AllPieces.Length; i++)
         {
-            AllPieces[i].CalculateDamage(); //calculate attack damage
+            var totalDamage = AllPieces[i].oldModels - AllPieces[i].models; //calculate total damage dealt to each unit
+            AllPieces[i].MarkForDeath(totalDamage);
         }
-        for (int i = 0; i < AllPieces.Length; i++)
+
+        for (int i = 0; i < pieces.Count; i++) // all of the pieces called in this function have now attacked
         {
-            AllPieces[i].ApplyDamage(); //set models -= queued damage and triggers attacks for models
-        }
-        for (int i = 0; i < AllPieces.Length; i++) //by this point, all of our attackers have now attacked.
-        {
-            if (AllPieces[i].attacking)
-            { 
-                AllPieces[i].attackedThisTurn = true;
+            if (pieces[i].attacking)
+            {
+                pieces[i].attackedThisTurn = true; //so we can mark it as such
             }
 
         }
 
-        CleanUpPhase(); //apply morale, reset everyone's stance, check if units are dead, check if units are routing
+        List<Piece> AllPiecesList = AllPieces.ToList(); //this necessarily has to be checked by all units
+        if (phaseNum == 1) //if second attack phase then we will call cleanup
+        {
+            CleanUpPhase(AllPiecesList); //apply morale, reset everyone's stance, check if units are dead, check if units are routing
+        }
 
-        for (int i = 0; i < AllPieces.Length; i++) //should call this after all attacks are done
+    } 
+    private void CleanUpPhase(List<Piece> pieces)
+    {
+
+        for (int i = 0; i < pieces.Count; i++) //should call this after all attacks are done
         {
-            AllPieces[i].ApplyMorale(); //only applies model losses morale loss once per unit
-        } 
-        for (int i = 0; i < AllPieces.Length; i++)
-        {
-            AllPieces[i].ResetStance();
+            pieces[i].ApplyMorale(); //only applies model losses morale loss once per unit
         }
-        for (int i = 0; i < AllPieces.Length; i++)
+        for (int i = 0; i < pieces.Count; i++)
         {
-            AllPieces[i].CheckIfDead();
+            pieces[i].ResetStance(); //reset a whole bunch of variables
         }
-        for (int i = 0; i < AllPieces.Length; i++)
+        for (int i = 0; i < pieces.Count; i++)
         {
-            AllPieces[i].CheckIfRouting();
+            pieces[i].CheckIfDead(); //if dead, remove it from the board position
+        }
+        for (int i = 0; i < pieces.Count; i++)
+        {
+            pieces[i].CheckIfRouting(); //if routing, remove it from the board position
         }
         /*for (int i = 0; i < AllPieces.Length; i++) //queue rout movement for routing units
         {
@@ -535,23 +597,16 @@ public abstract class Board : MonoBehaviour
                 AllPieces[i].QueueRout();
             }
         }*/
-        for (int i = 0; i < AllPieces.Length; i++)
+        for (int i = 0; i < pieces.Count; i++) //reset pieces for movement next turn
         {
-            AllPieces[i].FinishedMoving = false;
-            AllPieces[i].oneStepFinished = false;
-        }
-        for (int i = 0; i < AllPieces.Length; i++)
-        {
-            AllPieces[i].startOfTurn = true;
-        }
+            pieces[i].FinishedMoving = false;
+            pieces[i].oneStepFinished = false;
+            pieces[i].targetToAttackPiece = null; //we need to ditch our target to make the defensive attack behavior work properly
+            pieces[i].startOfTurn = true;
+        } 
         //Debug.Log("Allowed Input again");
-        chessController.AllowInput = true; //if you make it through the for loop, enable input again
-        executeButton.interactable = true;
-    }
-
-    private void CleanUpPhase()
-    {
-
+        chessController.AllowInput = true; //since turn is over, input is okay again
+        executeButton.interactable = true; //and we can execute again
     }
 
 

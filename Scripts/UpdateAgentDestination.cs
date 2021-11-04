@@ -326,7 +326,7 @@ public class UpdateAgentDestination : MonoBehaviour
                 parentPiece.markedDeaths = true;
 
                 targetPiece.modelBar.SetHealth(targetPiece.models); //tween hp bar
-                targetPiece.MarkForDeath(queuedDamage);
+                //targetPiece.MarkForDeath(queuedDamage);
                 Debug.Log("models" + targetPiece.models);
 
             }
@@ -342,7 +342,7 @@ public class UpdateAgentDestination : MonoBehaviour
                 parentPiece.markedDeaths = true;
                 Debug.LogError("Attacking and updating enemy hp to" + targetPiece.models);
                 targetPiece.modelBar.SetHealth(targetPiece.models); //update enemy's hp bar to actual value when attacking
-                targetPiece.MarkForDeath(queuedDamage);
+                //targetPiece.MarkForDeath(queuedDamage);
                 //Debug.Log("models" + targetPiece.models);
             }
 
@@ -383,7 +383,7 @@ public class UpdateAgentDestination : MonoBehaviour
             parentPiece.markedDeaths = true;
 
             targetPiece.modelBar.SetHealth(targetPiece.models); //tween hp bar
-            targetPiece.MarkForDeath(queuedDamage);
+            //targetPiece.MarkForDeath(queuedDamage);
             Debug.Log("models" + targetPiece.models);
 
         }
