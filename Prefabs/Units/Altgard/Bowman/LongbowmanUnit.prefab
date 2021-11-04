@@ -127,7 +127,7 @@ MonoBehaviour:
   damage: 2
   armor: 1
   morale: 15
-  energy: 40
+  energy: 25
   damageLevel: 1
   armorLevel: 1
   attackType: ranged

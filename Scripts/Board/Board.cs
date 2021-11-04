@@ -266,13 +266,13 @@ public abstract class Board : MonoBehaviour
         }
     }
 
-    public void OnExecuteMoveForAllPieces(string team)
+    public void OnExecuteMoveForAllPieces(string team) //execute moves for all pieces!
     {
+        //DeselectPiece();
 
+        turnBeingExecuted = true; //tell slow update to start checking if we're done moving or not
 
-        turnBeingExecuted = true;
-
-        for (int i = 0; i < gameInit.teamColorDefinitions.Length; i++)
+        for (int i = 0; i < gameInit.teamColorDefinitions.Length; i++) //set values to be true based on team color
         {
             if (team == gameInit.teamColorDefinitions[i].ToString())
             {
@@ -300,8 +300,8 @@ public abstract class Board : MonoBehaviour
         }
         //if singleplayer, both are set to true by singleplayerboard;
 
-        Debug.Log(whiteReady + "" + blackReady);
-        if (whiteReady && blackReady)
+        //Debug.Log(whiteReady + "" + blackReady);
+        if (whiteReady && blackReady) //if both players are ready
         {
             whiteReady = false;
             blackReady = false;
@@ -311,16 +311,28 @@ public abstract class Board : MonoBehaviour
             chessController.AllowInput = false;
             executeButton.interactable = false;
             Piece[] AllPieces = FindObjectsOfType<Piece>();
-            for (int i = 0; i < AllPieces.Length; i++) //check if enemies adjacent
+            //determine if any pieces have been given no orders at all
+            /*for (int i = 0; i < AllPieces.Length; i++) // 
             {
                 //Debug.Log(AllPieces[i]);
-                AllPieces[i].CheckIfEnemiesAdjacent();
-            }
-            for (int i = 0; i < AllPieces.Length; i++) //check if any markers overlap
+                AllPieces[i].CheckIfNoOrdersGiven(); // set variable to false if no queued moves
+            }*/
+            for (int i = 0; i < AllPieces.Length; i++) //check if enemies adjacent. if so, can't move
             {
                 //Debug.Log(AllPieces[i]);
-                AllPieces[i].CheckIfMarkersOverlap();
+                AllPieces[i].CheckIfEnemiesAdjacent(); //just changes variables but useful for later to determine if movement is allowed
             }
+            for (int i = 0; i < AllPieces.Length; i++) //check if any markers overlap between friendly and enemy
+            {
+                //Debug.Log(AllPieces[i]);
+                AllPieces[i].CheckIfMarkersOverlap(); //important for tie breaking behavior
+            }
+            //before units start moving, allow ranged units to do a volley?
+
+
+
+
+
             for (int i = 0; i < AllPieces.Length; i++) //Actually start moving
             {
                 //Debug.Log(AllPieces[i]);
@@ -329,6 +341,7 @@ public abstract class Board : MonoBehaviour
         }
 
     }
+    
 
 
     public void SetDependencies(ChessGameController chessController, bool mp)
@@ -646,16 +659,16 @@ public abstract class Board : MonoBehaviour
             AllPieces[i].StartMoveCoroutines();
         }
     }
-    public void AllMovesFinished(Piece[] AllPieces)
+    public void AllMovesFinished(Piece[] AllPieces) //start processing attacks because movement is done
     {
         turnBeingExecuted = false;
         for (int i = 0; i < AllPieces.Length; i++)
         {
-            AllPieces[i].CheckIfEnemyInAttackTile();
+            AllPieces[i].CheckIfEnemyInAttackTile(); //sets target to unit in targeted tile if we have no target and no attack tile already (targeting an empty tile and waiting for a unit to enter it)
         }
         for (int i = 0; i < AllPieces.Length; i++)
         {
-            AllPieces[i].CheckIfEnemiesAdjacent();
+            AllPieces[i].CheckIfEnemiesAdjacent(); //check if enemies are adjacent
         }
         var numRangedUnits = 0;
         for (int i = 0; i < AllPieces.Length; i++)
@@ -663,50 +676,18 @@ public abstract class Board : MonoBehaviour
             if (AllPieces[i].attacking && AllPieces[i].attackType == "ranged" && AllPieces[i].targetToAttackPiece != null) // if attacking, ranged and has a target
             {
                 numRangedUnits++;
-                AllPieces[i].CalculateLineOfSight();
+                AllPieces[i].CalculateLineOfSight(); //create cylinders
             }
         }
         if (numRangedUnits <= 0) //if no ranged units
         {
-            SecondPart(AllPieces);
+            SecondPart(AllPieces); //skip over to the next part
         }
         else //if there are ranged units, start coroutine that will check to see if done processing
         {
             StartCoroutine(CheckIfPhysicsCalculationsProcessed(AllPieces));
         }
     }
-
-    public IEnumerator CheckIfPhysicsCalculationsProcessed(Piece[] AllPieces)
-    {
-        Debug.Log("Checking");
-        var numNotFinished = 0;
-        for (int i = 0; i < AllPieces.Length; i++) //go through each piece
-        {
-            if (AllPieces[i].attacking && AllPieces[i].attackType == "ranged") //that's attacking and ranged
-            {
-                foreach (var item in AllPieces[i].instantiatedCylinders) //go through each of their cylinders
-                {
-                    var script = item.GetComponent(typeof(LineCollidePrefabScript)) as LineCollidePrefabScript;
-                    if (script.finishedProcessing == false) //basically if not finished processing
-                    {
-                        numNotFinished++;
-                    }
-                }
-            }
-        }
-        if (numNotFinished == 0) //if all of them are finished
-        {
-            SecondPart(AllPieces);
-            yield return null;
-        }
-        else
-        {
-            yield return new WaitForSeconds(.1f);
-            StartCoroutine(CheckIfPhysicsCalculationsProcessed(AllPieces));
-        }
-
-    }
-
     public void SecondPart(Piece[] AllPieces) //should be called even if no line of sight calculations occurred
     {
         //by this point, all physics calculations should be done.
@@ -715,20 +696,29 @@ public abstract class Board : MonoBehaviour
         {
             if (AllPieces[i].attacking && AllPieces[i].attackType == "ranged" && AllPieces[i].targetToAttackPiece != null)
             {
-                AllPieces[i].RunThroughCylinders();
+                AllPieces[i].RunThroughCylinders(); //sets new target to attack or cancels attack if blocked by friendly
             }
         }
+        // check if being attacked
         for (int i = 0; i < AllPieces.Length; i++)
         {
-            AllPieces[i].CheckFlankingDamage();
+            if (AllPieces[i].targetToAttackPiece == null) //if we have no attack target
+            {
+                AllPieces[i].CheckIfAttacked(); //check to see if we're being attacked. if we are, defend yourself
+            }
+
         }
         for (int i = 0; i < AllPieces.Length; i++)
         {
-            AllPieces[i].CalculateDamage();
+            AllPieces[i].CheckFlankingDamage(); //if enemies are on our flanks they get bonus damage against us
         }
         for (int i = 0; i < AllPieces.Length; i++)
         {
-            AllPieces[i].ApplyDamage();
+            AllPieces[i].CalculateDamage(); //calculate attack damage
+        }
+        for (int i = 0; i < AllPieces.Length; i++)
+        {
+            AllPieces[i].ApplyDamage(); //set models -= queued damage and triggers attacks for models
         }
         for (int i = 0; i < AllPieces.Length; i++)
         {
@@ -769,6 +759,39 @@ public abstract class Board : MonoBehaviour
         executeButton.interactable = true;
     }
 
+
+    public IEnumerator CheckIfPhysicsCalculationsProcessed(Piece[] AllPieces) //this exists so that we don't have to do all the processing in one frame
+    {
+        Debug.Log("Checking");
+        var numNotFinished = 0;
+        for (int i = 0; i < AllPieces.Length; i++) //go through each piece
+        {
+            if (AllPieces[i].attacking && AllPieces[i].attackType == "ranged") //that's attacking and ranged
+            {
+                foreach (var item in AllPieces[i].instantiatedCylinders) //go through each of their cylinders
+                {
+                    var script = item.GetComponent(typeof(LineCollidePrefabScript)) as LineCollidePrefabScript;
+                    if (script.finishedProcessing == false) //basically if not finished processing
+                    {
+                        numNotFinished++;
+                    }
+                }
+            }
+        }
+        if (numNotFinished == 0) //if all of them are finished
+        {
+            SecondPart(AllPieces);
+            yield return null;
+        }
+        else
+        {
+            yield return new WaitForSeconds(.1f);
+            StartCoroutine(CheckIfPhysicsCalculationsProcessed(AllPieces));
+        }
+
+    }
+
+    
     public void OnSelectedPieceMoved(Vector2Int coords) //this shows up in multiplayer
     {
         if (chessController.AllowInput)

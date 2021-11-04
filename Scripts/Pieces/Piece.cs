@@ -213,7 +213,7 @@ public abstract class Piece : MonoBehaviour
     [HideInInspector] public Vector2Int[] speed10;
     [HideInInspector] public bool arbitratedConflict = false;
     public int conflictTime = 0;
-    private int bonusMoraleDamage;
+    public int bonusMoraleDamage;
 
     private float actualOffset;
     public float armyLossesThreshold;
@@ -242,8 +242,22 @@ public abstract class Piece : MonoBehaviour
     private float accuracy;
     private Vector3 oldRotation;
     private Vector3 rotationGoal;
+    public bool ordersGiven = false; //usually true
+    public bool defensiveAttacking = false;
 
     public abstract List<Vector2Int> SelectAvailableSquares(Vector2Int startingSquare);
+
+    public void CheckIfNoOrdersGiven() //just check
+    {
+        if (queuedMoves.Count <= 0) //if no queued moves
+        {
+            ordersGiven = false;
+        }
+        else
+        { 
+            ordersGiven = true;
+        }
+    }
 
     private void Awake()
     {
@@ -4140,6 +4154,31 @@ public abstract class Piece : MonoBehaviour
         ApplyAccuracy(tileNumber);
     }
 
+    public void CheckIfAttacked() //
+    {
+        defensiveAttacking = false;
+        //check adjacent enemy units and see if any of them have a target equal to us
+        for (int i = 0; i < adjacentTiles.Length; i++)
+        {
+            Vector2Int nextCoords = occupiedSquare + adjacentTiles[i];
+            Piece checkTarget = board.GetPieceOnSquare(nextCoords);
+            if (!board.CheckIfCoordinatedAreOnBoard(nextCoords)) //if off board skip
+            {
+                continue;
+            }
+            if (checkTarget != null && !checkTarget.IsFromSameTeam(this) && checkTarget.targetToAttackPiece == this) //if target tile has a piece and it's an enemy and it's attacking us
+            {
+                //we will attack them back. this action does not turn the unit, so flanking damage is still applied. but unit can turn on a normal attack
+                Debug.LogError("im under attack and i've got no orders");
+                targetToAttackPiece = checkTarget; //set our target to be our attacker
+                attacking = true;
+                targetAdjacent = true; //we just proved they're next to us;
+                defensiveAttacking = true; //prevent turning on the attack
+                break;
+            }
+        }
+    }
+
     public void ApplyAccuracy(int tileNumber)
     {
         accuracy = 1f;
@@ -4191,13 +4230,13 @@ public abstract class Piece : MonoBehaviour
 
         if (targetToAttackPiece == null || !attacking || queuedDamage < 0) //if target nonexistent, or not attacking, or queued damage is less than 0. 0 damage is still valid
         {
-            Debug.LogError("Returning");
+            Debug.LogError("Returning1");
             return;
         }
 
         if (!targetToAttackPiece.disengaging && !targetAdjacent && attackType == "melee") //if target is not disengaging and target is not adjacent and attack type is melee
         {
-            Debug.LogError("Returning");
+            Debug.LogError("Returning2");
             return;
         }
         //Debug.Log(targetAdjacent + "" + targetToAttackPiece + "" + attacking + queuedDamage);
@@ -4214,41 +4253,44 @@ public abstract class Piece : MonoBehaviour
             menuController.LoadSpecificScene(targetToAttackPiece.missionToLoad);
 
         }
-
-        Vector2Int directionVector = attackTile - occupiedSquare; //start investigation here: attack tile is not being updated for some reason. occupied square is
-        if (attackTile.x < occupiedSquare.x) //if target is on left of us
+        if (defensiveAttacking == false) //if we are defensive attacking, we do not turn
         {
-            directionVector.x = -1;
-        }
-        else if (attackTile.x > occupiedSquare.x) //if target is on right of us
-        {
-
-            directionVector.x = 1;
-        }
-
-        if (attackTile.y < occupiedSquare.y) //if target is beneath us
-        {
-
-            directionVector.y = -1;
-        }
-        else if (attackTile.y > occupiedSquare.y) //if target is above us
-        {
-
-            directionVector.y = 1;
-        }
-        Debug.Log(directionVector + "dir vector" + occupiedSquare + "occ square");
-        for (int t = 0; t < adjacentTiles.Length; t++) //check cardinal directions to see if they match up// this doesnt work because the attack tile is not adjacent
-        {
-            if (adjacentTiles[t] == directionVector)
+            //this changes the direction of unit based on what direction we are attacking
+            Vector2Int directionVector = attackTile - occupiedSquare; //start investigation here: attack tile is not being updated for some reason. occupied square is
+            if (attackTile.x < occupiedSquare.x) //if target is on left of us
             {
-                facingDirection = t;
-                Debug.Log("updated facing direction");
+                directionVector.x = -1;
             }
+            else if (attackTile.x > occupiedSquare.x) //if target is on right of us
+            {
+
+                directionVector.x = 1;
+            }
+
+            if (attackTile.y < occupiedSquare.y) //if target is beneath us
+            {
+
+                directionVector.y = -1;
+            }
+            else if (attackTile.y > occupiedSquare.y) //if target is above us
+            {
+
+                directionVector.y = 1;
+            }
+            Debug.Log(directionVector + "dir vector" + occupiedSquare + "occ square");
+            for (int t = 0; t < adjacentTiles.Length; t++) //check cardinal directions to see if they match up// this doesnt work because the attack tile is not adjacent
+            {
+                if (adjacentTiles[t] == directionVector)
+                {
+                    facingDirection = t;
+                    Debug.Log("updated facing direction");
+                }
+            }
+            oldRotation = transform.localEulerAngles;
+            rotationGoal = new Vector3(0, 45 * facingDirection, 0);
+            Tween rotateTween = transform.DORotate(rotationGoal, 1);
         }
-        oldRotation = transform.localEulerAngles;
-        rotationGoal = new Vector3(0, 45 * facingDirection, 0);
-        Tween rotateTween = transform.DORotate(rotationGoal, 1);
-        
+         
         SubtractEnergy();
         board.PieceTriggerAttacksForSoldiers(unitID); //this works in mp! so why not define flanks?
 
@@ -4438,7 +4480,7 @@ public abstract class Piece : MonoBehaviour
                 {
                     continue;
                 }
-                else if (piece != null && !piece.IsFromSameTeam(this) && piece.attacking && piece.targetToAttackPiece == this) //if we detect an enenmy on the flank
+                else if (piece != null && !piece.IsFromSameTeam(this) && piece.attacking && piece.targetToAttackPiece == this) //if we detect an enenmy on the flank and it's attacking us
                 {
                     Debug.Log("attacking enemy on the flank");
                     if (i >= 1 && i <= 3) //rear tiles
@@ -4462,7 +4504,7 @@ public abstract class Piece : MonoBehaviour
         if (currentFormation != "circle")
         {
 
-            CheckIfFlanked();
+            CheckIfFlanked(); //check if flanked
             if (models <= armyLossesThreshold && !armyLossesApplied)
             {
                 morale -= 5;

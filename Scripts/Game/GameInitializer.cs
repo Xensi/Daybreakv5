@@ -163,6 +163,11 @@ public class GameInitializer : MonoBehaviour
         //then tell board to update pieces positions
         //then clear any errant selectors
 
+        if (board.selectedPiece != null) //do not allow unless we do not have a unit selected.
+        {
+            return;
+        }
+
         Debug.Log("Executing moves (SP)");
         board.squareSelector.ClearSelection(); //clear selector squares
         board.selectedPiece = null; //so that you can't queue movement erroneously

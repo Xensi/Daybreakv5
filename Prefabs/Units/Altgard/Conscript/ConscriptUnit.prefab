@@ -126,8 +126,8 @@ MonoBehaviour:
   health: 9
   damage: 1
   armor: 0
-  morale: 20
-  energy: 30
+  morale: 10
+  energy: 20
   damageLevel: 1
   armorLevel: 1
   attackType: melee

@@ -5725,7 +5725,7 @@ MonoBehaviour:
   panLimit: {x: 20, y: 20}
   turn: {x: 0, y: 0}
   sensitivity: 1
-  scrollSpeed: 50
+  scrollSpeed: 250
   minY: 0.4
   maxY: 25
   body: {fileID: 670936817}
