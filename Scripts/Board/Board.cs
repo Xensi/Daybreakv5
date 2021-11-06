@@ -326,6 +326,8 @@ public abstract class Board : MonoBehaviour
                 {
                     piecesReadyToAttack.Add(AllPieces[i]);
                 }
+
+                //Debug.LogError(AllPieces[i].attackedThisTurn + "attacked this turn?");
             }
             //Piece[] piecesReadyToAttackArray = piecesReadyToAttack.ToArray();
 
@@ -359,6 +361,10 @@ public abstract class Board : MonoBehaviour
             //Debug.Log(AllPieces[i]);
             AllPieces[i].CheckIfMarkersOverlap(); //important for tie breaking behavior
         }
+        /*for (int i = 0; i < AllPieces.Length; i++)
+        {
+            AllPieces[i].CheckIfEnemyInFirstQueuedMove(); //important to call before moving to see if we can immediate attack
+        }*/
     }
 
     private IEnumerator SlowUpdate(float speed) //calls the function responsible for checking if movement phase should be over or not
@@ -432,6 +438,13 @@ public abstract class Board : MonoBehaviour
         if (!allMovesFinishedCalled)
         {
             allMovesFinishedCalled = true;
+
+            //this doesn't work because queued moves is cleared before this is called
+            /*for (int i = 0; i < AllPieces.Length; i++)
+            {
+                AllPieces[i].CheckIfEnemyInRelativeStashedMove(); //call after moving to see if we can acquire new target
+            }*/
+
             List<Piece> piecesReadyToAttackAfterMovement = new List<Piece>(); //have to use list because size is adjustable >>
             for (int i = 0; i < AllPieces.Length; i++) //go through each piece
             {
@@ -447,6 +460,7 @@ public abstract class Board : MonoBehaviour
     }
     public void AttackPhaseSetup(List<Piece> pieces, int phaseNum) //start processing attacks because movement is done (or not in the case of the immediate attacks)
     {
+
         if (phaseNum == 1)
         { 
             turnBeingExecuted = false; //this will disable the checks running in slow update to see if movement is done (because it is!) 
@@ -454,12 +468,15 @@ public abstract class Board : MonoBehaviour
 
         for (int i = 0; i < pieces.Count; i++)
         {
+             
             if (pieces[i].attackedThisTurn == false)  
             {
                 pieces[i].CheckIfEnemyInAttackTile(); //sets target to unit in targeted tile if we have no target and no attack tile already (targeting an empty tile and waiting for a unit to enter it)
             }
             
         }
+
+
         for (int i = 0; i < pieces.Count; i++)
         {
             if (pieces[i].attackedThisTurn == false)
@@ -467,6 +484,8 @@ public abstract class Board : MonoBehaviour
                 pieces[i].CheckIfEnemiesAdjacent(); //check if enemies are adjacent
             }
         }
+
+
         var numRangedUnits = 0;
         for (int i = 0; i < pieces.Count; i++)
         {
@@ -647,6 +666,7 @@ public abstract class Board : MonoBehaviour
         for (int i = 0; i < AllPieces.Length; i++) //needs to be set after we're done animation wise
         {
             AllPieces[i].targetToAttackPiece = null; // 
+            //AllPieces[i].queuedMoves.Clear();
         }
     }
 
@@ -748,12 +768,47 @@ public abstract class Board : MonoBehaviour
 
                 }
                 else if (selectedPiece != null && selectedPiece.attacking && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece == selectedPiece) //if you click on the same tile twice
-                {
-                    Debug.Log("Markerfound"); //next check if marker belongs to us
+                {// l  &&  
+                    /*Debug.Log("clicked on a position where we already have a marker for movement and we're attacking"); //next check if marker belongs to us
+                    if (selectedPiece.attacking)
+                    {
+                        var lastMarkerVisual = selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1];
 
+                        GameObject markerVisual = Instantiate(selectedPiece.arrowMarkerVisualPrefab, lastMarkerVisual.transform.position, Quaternion.identity);
+
+                        Vector2Int directionVector = Vector2Int.zero;
+
+                        if (selectedPiece.queuedMoves.Count == 1)
+                        { 
+                            directionVector = coords - selectedPiece.occupiedSquare;
+                        }
+                        else if (selectedPiece.queuedMoves.Count > 1)
+                        { 
+                            directionVector = coords - selectedPiece.queuedMoves[selectedPiece.queuedMoves.Count - 2];
+                        }
+
+                        var facingDirection = 0;
+                        for (int t = 0; t < selectedPiece.adjacentTiles.Length; t++) //check cardinal directions to see if they match up
+                        {
+                            if (selectedPiece.adjacentTiles[t] == directionVector)
+                            {
+                                facingDirection = t;
+                            }
+                        }
+
+                        Vector3 rotationGoal = new Vector3(0, 45 * facingDirection, 0); //set rotation goal
+
+                        markerVisual.transform.Rotate(rotationGoal);
+
+                        Destroy(selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1]); //delete the last marker visual so we can replace it 
+
+                        selectedPiece.markerVisuals.Add(markerVisual);
+                    }*/
                     selectedPiece.holdingPosition = true;
                     //selectedPiece.holdTime = selectedPiece.turnTime;
                     DeselectPiece(); //deselect it and hide movement paths (deselected because we are ending our movement early)
+
+                    
 
                 }
                 else if (piece != null && selectedPiece != piece && !piece.IsFromSameTeam(selectedPiece)) //if we click on a different piece and it's an enemy and our selectedPiece is attacking

@@ -51,6 +51,7 @@ public abstract class Piece : MonoBehaviour
     public float circleRadius2 = .5f;
     public float circleRadius3 = .35f;
     [SerializeField] private GameObject markerVisualPrefab;
+    public GameObject arrowMarkerVisualPrefab;
     [SerializeField] private GameObject soldierPrefab;
     [SerializeField] private GameObject navPrefab;
     [SerializeField] private GameObject navPrefab2;
@@ -91,6 +92,7 @@ public abstract class Piece : MonoBehaviour
     public int fireDamageBonus = 0;
     public int unitID = 0;
     public int queueTime = 0;
+    public int safeQueueTime = 0;
     public int speed = 0;
     public int sprintSpeed;
     public int queuedDamage = 0;
@@ -128,6 +130,7 @@ public abstract class Piece : MonoBehaviour
 
     public List<Vector2Int> availableMoves;
     public List<Vector2Int> queuedMoves; //this is where will store future movement information 
+    public List<Vector2Int> stashedMoves; //this is where will store future movement information 
     public List<Marker> instantiatedMarkers = new List<Marker>(); //cache marker info
     public List<GameObject> markerVisuals = new List<GameObject>(); //[SerializeField] private ChessGameController chessController;
     public List<int> flankDirections = new List<int>();
@@ -257,7 +260,7 @@ public abstract class Piece : MonoBehaviour
             ordersGiven = false;
         }
         else
-        { 
+        {
             ordersGiven = true;
         }
     }
@@ -2689,7 +2692,7 @@ public abstract class Piece : MonoBehaviour
     {
         return availableMoves.Contains(coords);
     }
-    public void ClearQueuedMoves() 
+    public void ClearQueuedMoves()
     {
         Debug.Log("Clear moves and lines");
         board.ClearMoves(unitID);
@@ -3008,6 +3011,7 @@ public abstract class Piece : MonoBehaviour
 
     private void PlaceMarker(Vector2Int coords, Vector2Int queuedPosition)
     {
+        //Debug.LogError("Placed marker");
         var x = coords.x;
         var y = coords.y;
         board.CommunicateQueuedMoves(unitID, x, y); //tell multiplayer where pieces will move and stuff and  . . .. also turn time and hold time
@@ -3023,7 +3027,34 @@ public abstract class Piece : MonoBehaviour
         int intRemainMovement = (int)remainingMovement;
         board.CommunicateMarkers(unitID, x2, y2, z2, x, y, team.ToString(), intRemainMovement);
 
-        GameObject markerVisual = Instantiate(markerVisualPrefab, targetPosition, Quaternion.identity);
+        GameObject markerVisual;
+       /* Debug.LogError("remaining movement" + remainingMovement);
+        if (attacking && remainingMovement <= 0) //if attacking and last queued move set arrow instead of circle (not working when clicking on enemy unit twice?
+        {
+            markerVisual = Instantiate(arrowMarkerVisualPrefab, targetPosition, Quaternion.identity);
+
+            var facingDirection = 0;
+            Vector2Int directionVector = coords - queuedPosition;
+            for (int t = 0; t < adjacentTiles.Length; t++) //check cardinal directions to see if they match up
+            {
+                if (adjacentTiles[t] == directionVector)
+                {
+                    facingDirection = t;
+                }
+            }
+
+            Vector3 rotationGoal = new Vector3(0, 45 * facingDirection, 0); //set rotation goal
+
+            markerVisual.transform.Rotate(rotationGoal);
+
+
+        }
+        else
+        {
+
+        }
+*/
+        markerVisual = Instantiate(markerVisualPrefab, targetPosition, Quaternion.identity);
         markerVisuals.Add(markerVisual);
 
         NavMeshHit closestHit;
@@ -3031,9 +3062,9 @@ public abstract class Piece : MonoBehaviour
         {
             Vector3 newPos = new Vector3(closestHit.position.x, closestHit.position.y, closestHit.position.z); // - 0.063f
             markerVisual.transform.position = newPos;
-/*
-            Vector3 temp1 = new Vector3(0, 0.01f, 0);
-            markerVisual.transform.position += temp1;*/
+            /*
+                        Vector3 temp1 = new Vector3(0, 0.01f, 0);
+                        markerVisual.transform.position += temp1;*/
         }
 
 
@@ -3042,7 +3073,7 @@ public abstract class Piece : MonoBehaviour
         //var matSetter = markerVisual.GetComponentsInChildren<MaterialSetter>();
         foreach (var matSetter in markerVisual.GetComponentsInChildren<MaterialSetter>()) //necessary to change all the pieces
         {
-            if (attacking)
+            if (attacking && remainingMovement > 0)
             {
                 matSetter.SetSingleMaterial(gameInit.red);
 
@@ -3125,7 +3156,7 @@ public abstract class Piece : MonoBehaviour
         lineCollisionScript.ApproximateCollision();
         //place aesthetic cylinders
         lineCollisionScript.PlaceAestheticCylinders();
-        
+
 
     }
 
@@ -3155,7 +3186,7 @@ public abstract class Piece : MonoBehaviour
     }
     public void CheckIfEnemiesAdjacent()
     {
-        if (EnemyAdjacent())
+        if (EnemyAdjacent()) //simply checks each adjacent tile to see if there is an enemy there
         {
             enemyAdjacent = true;
         }
@@ -3163,7 +3194,9 @@ public abstract class Piece : MonoBehaviour
         {
             enemyAdjacent = false;
         }
-        if (TargetAdjacent(targetToAttackPiece))
+
+
+        if (targetToAttackPiece != null && TargetAdjacent(targetToAttackPiece)) //if we have a target and they are next to us, then:
         {
             targetAdjacent = true;
         }
@@ -3178,9 +3211,9 @@ public abstract class Piece : MonoBehaviour
     {
         for (int i = 0; i < instantiatedMarkers.Count; i++) // go through each of this piece's markers
         {
-            
+
             //Debug.Log("checking markers");
-            var friendlyMarker = instantiatedMarkers[i]; 
+            var friendlyMarker = instantiatedMarkers[i];
             Vector2Int funnyCoords = instantiatedMarkers[i].coords;
 
             if (board.CheckIfCoordinatedAreOnBoard(funnyCoords)) //if these coords are on the board
@@ -3222,7 +3255,7 @@ public abstract class Piece : MonoBehaviour
                 }
             }
 
-            
+
         }
     }
 
@@ -3760,6 +3793,7 @@ public abstract class Piece : MonoBehaviour
         {
             //agent.destination = navPoint.transform.position;
             queueTime++;
+            safeQueueTime++;
             //Debug.Log(queueTime);
             if (queueTime > 10) //overflow check
             {
@@ -3787,15 +3821,15 @@ public abstract class Piece : MonoBehaviour
                     //Debug.Log("we are moving because we could not find a reason to stop" + team);
                     SubtractEnergy();
                     UnfreezeSoldiers();
-
+                    Debug.Log(queueTime + "queue time");
                     Vector2Int coords = queuedMoves[queueTime - 1]; //get coordinates of the move we are executing
                     Vector3 targetPosition = board.CalculatePositionFromCoords(coords); //find physical space based on coordinates
-                    
+
                     if (!turning) //if we're not turning
                     {
                         //sets new coords be our piece, and old coords to null
                         board.UpdateBoardOnPieceMove(coords, occupiedSquare, this, null); //must be called before occupied square is actually updated
-                        
+
                         //determine direction that we're moving
                         Vector2Int directionVector = coords - occupiedSquare;
                         for (int t = 0; t < adjacentTiles.Length; t++) //check cardinal directions to see if they match up
@@ -3844,6 +3878,7 @@ public abstract class Piece : MonoBehaviour
             }
             else //if no queued moves, stop
             {
+                safeQueueTime = queueTime;
                 queueTime = 0;
                 oneStepFinished = true;
                 FinishedMoving = true;
@@ -3891,8 +3926,8 @@ public abstract class Piece : MonoBehaviour
             FinishedMoving = true;
             hasMoved = true;
             remainingMovement = speed;
-            ClearQueuedMoves();
-            SelectAvailableSquares(occupiedSquare); 
+            //ClearQueuedMoves();
+            SelectAvailableSquares(occupiedSquare);
             conflict = false;
             wonTieBreak = false;
             //board.CheckIfAllMovesFinished();
@@ -3903,7 +3938,7 @@ public abstract class Piece : MonoBehaviour
             FinishedMoving = true;
             hasMoved = true;
             remainingMovement = speed;
-            ClearQueuedMoves();
+            //ClearQueuedMoves();
             SelectAvailableSquares(occupiedSquare);
             conflict = false;
             wonTieBreak = false;
@@ -3917,7 +3952,7 @@ public abstract class Piece : MonoBehaviour
             FinishedMoving = true;
             hasMoved = true;
             remainingMovement = speed;
-            ClearQueuedMoves();
+            //ClearQueuedMoves();
             SelectAvailableSquares(occupiedSquare);
             conflict = false;
             wonTieBreak = false;
@@ -3944,6 +3979,78 @@ public abstract class Piece : MonoBehaviour
             Debug.Log("Found enemy in attack tile");
             targetToAttackPiece = potentialEnemy;
             CalculateDamage();
+        }
+    }
+
+    public void CheckIfEnemyInFirstQueuedMove()
+    {
+        if (queuedMoves.Count <= 0)
+        {
+            //Debug.LogError("we have no moves" + this);
+            return;
+        }
+
+        if (!attacking || !enemyAdjacent )
+        {
+            return;
+        }
+
+
+        if (enemyAdjacent && attacking)
+        {
+
+            Piece piece = board.GetPieceOnSquare(queuedMoves[0]); //if we've moved and then had to stop we adjust this by the number of moves we've done so far
+            if (piece != null && !piece.IsFromSameTeam(this))
+            {
+                //Debug.Log("Piece"  + piece);
+
+                targetToAttackPiece = piece; //set new target
+
+                /*if (queuedMoves.Count > 1)
+                {
+                    queuedMoves.RemoveRange(1, queuedMoves.Count - 1); //get rid of the rest we won't need em
+                }*/
+
+                attackTile = queuedMoves[0];
+
+
+            }
+        }
+    }
+
+    public void CheckIfEnemyInRelativeStashedMove()
+    {
+        if (stashedMoves.Count <= 0)
+        {
+            //Debug.LogError("we have no moves" + this);
+            return;
+        }
+
+        if (!attacking || !enemyAdjacent)
+        {
+            return;
+        }
+
+        Debug.LogError("queuetime" + queueTime);
+        if (enemyAdjacent && attacking)
+        {
+
+            Piece piece = board.GetPieceOnSquare(stashedMoves[queueTime]); //if we've moved and then had to stop we adjust this by the number of moves we've done so far
+            if (piece != null && !piece.IsFromSameTeam(this))
+            {
+                //Debug.Log("Piece"  + piece);
+
+                targetToAttackPiece = piece; //set new target
+
+                /*if (queuedMoves.Count > 1)
+                {
+                    queuedMoves.RemoveRange(1, queuedMoves.Count - 1); //get rid of the rest we won't need em
+                }*/
+
+                attackTile = stashedMoves[queueTime];
+
+
+            }
         }
     }
     public void CalculateLineOfSight() //for attacking, ranged units
@@ -4199,8 +4306,8 @@ public abstract class Piece : MonoBehaviour
         else if (tileNumber >= beyondTargetableRange) //beyond targetable, so no damage
         {
             accuracy = 0f;
-        } 
-        Debug.Log("accuracy" + accuracy + "temp damage" + tempDamage); 
+        }
+        Debug.Log("accuracy" + accuracy + "temp damage" + tempDamage);
     }
     public void ApplyDamage() //physical and morale damage
     {
@@ -4273,11 +4380,11 @@ public abstract class Piece : MonoBehaviour
             rotationGoal = new Vector3(0, 45 * facingDirection, 0);
             Tween rotateTween = transform.DORotate(rotationGoal, 1);
         }
-         
+
         SubtractEnergy();
         board.PieceTriggerAttacksForSoldiers(unitID); //this works in mp! so why not define flanks?
-        ClearQueuedMoves();
-        
+        //ClearQueuedMoves();
+
 
     }
 
@@ -4418,7 +4525,7 @@ public abstract class Piece : MonoBehaviour
                 waitingForFirstAttack = false;
                 //attackerPiece.soldierAttacked = false; //set it to false to be ready for the next one
             }
-            yield return new WaitForSeconds(Random.Range(0.1f, 10/markedSoldiersCount)); //this should make soldiers die in a more timely fashion. soldiers die faster the more there are to kill
+            yield return new WaitForSeconds(Random.Range(0.1f, 5 / markedSoldiersCount)); //this should make soldiers die in a more timely fashion. soldiers die faster the more there are to kill
 
 
             //initiate kill function
@@ -4426,7 +4533,7 @@ public abstract class Piece : MonoBehaviour
             soldierScript.KillThis(markedSoldiers[0]);
 
             markedSoldiers.RemoveAt(0); //remove listing
-            
+
 
             //yield return new WaitForSeconds(Random.Range(.1f, .5f)); //wait for some interval
             StartCoroutine(KillOff()); //prepare for next one
@@ -4702,6 +4809,7 @@ public abstract class Piece : MonoBehaviour
         arbitratedConflict = false;
         //Debug.LogError("Setting queue time to 0");
         queueTime = 0;
+        safeQueueTime = 0;
         queuedDamage = 0;
         flankingDamage = 1;
         conflict = false;
@@ -4836,7 +4944,7 @@ public abstract class Piece : MonoBehaviour
 
         CheckFormationForSpeed();
         board.ShowSelectionSquares(SelectAvailableSquares(occupiedSquare), this);
-    } 
+    }
 
     public void RecalculateAttackRanges()
     {
