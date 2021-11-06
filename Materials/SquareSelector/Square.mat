@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Universal Render Pipeline_NiloCat Extension_Screen Space Decal_Unlit 2
+  m_Name: Square
   m_Shader: {fileID: 4800000, guid: 0fcefeceb91980e40b27ead94333cccb, type: 3}
   m_ShaderKeywords: _UnityFogEnable
   m_LightmapFlags: 4
