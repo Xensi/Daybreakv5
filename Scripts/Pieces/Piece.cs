@@ -11,7 +11,7 @@ using Random = UnityEngine.Random;
 
 public abstract class Piece : MonoBehaviour
 {
-    public Board board { protected get; set; }
+    public Board board { get; set; }
 
     [Header("Campaign stuff")]
     public bool isCampaignToken = false;
@@ -246,6 +246,7 @@ public abstract class Piece : MonoBehaviour
     public bool ordersGiven = false; //usually true
     public bool defensiveAttacking = false;
     public bool attackedThisTurn = false;
+    public bool animationsOver = false;
 
     public abstract List<Vector2Int> SelectAvailableSquares(Vector2Int startingSquare);
 
@@ -4287,6 +4288,7 @@ public abstract class Piece : MonoBehaviour
             if (soldierObjects[i] != null)
             {
                 var updater = soldierObjects[i].GetComponent<UpdateAgentDestination>();
+                updater.enemy = targetToAttackPiece;
                 updater.Unfreeze();
                 updater.queuedDamage = queuedDamage;
                 updater.attacking = true;

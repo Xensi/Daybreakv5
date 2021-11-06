@@ -58,6 +58,7 @@ public class UpdateAgentDestination : MonoBehaviour
     public bool setInPlace = false;
     public bool rangedAndNeedsToTurnToFaceEnemy = false;
     public Vector3 rotationGoal = Vector3.zero;
+    public Piece enemy;
 
     //public bool marked = false;
     // Update is called once per frame  
@@ -283,6 +284,7 @@ public class UpdateAgentDestination : MonoBehaviour
     }
     public IEnumerator AttackInterval()
     {
+        parentPiece.animationsOver = false;
         if (parentPiece.attackType == "melee")
         {
             GameObject tMin = null;
@@ -387,8 +389,11 @@ public class UpdateAgentDestination : MonoBehaviour
             Debug.Log("models" + targetPiece.models);
 
         }
-        parentPiece.soldierAttacked = true; //set this after freeze just in case
+        yield return new WaitForSeconds(3);
 
+        parentPiece.soldierAttacked = true; //set this after freeze just in case
+        parentPiece.animationsOver = true;
+        //parentPiece.board.AllowExecution();
     }
 
     public void SpawnEffect() //called using animation events. generally signifies when attack hits
@@ -449,7 +454,7 @@ public class UpdateAgentDestination : MonoBehaviour
 
         // we're iterating through Mark (Sprite) and Platform (Cube) Transforms. 
 
-        platformOffset = parentPiece.targetToAttackPiece.transform.localPosition.y;
+        platformOffset = enemy.transform.localPosition.y;
 
         return platformOffset;
     }
@@ -459,7 +464,8 @@ public class UpdateAgentDestination : MonoBehaviour
         // think of it as top-down view of vectors: 
         //   we don't care about the y-component(height) of the initial and target position.
         Vector3 projectileXZPos = new Vector3(transform.position.x, 0.0f, transform.position.z);
-        var target = parentPiece.targetToAttackPiece.transform.position;
+        //var target = parentPiece.targetToAttackPiece.transform.position; //targeting the position of the overall unit
+        var target = enemy.soldierObjects[Random.Range(0, enemy.soldierObjects.Count)].transform.position; //set target to a random soldier
         Vector3 targetXZPos = new Vector3(target.x + Random.Range(-spread, spread), 0.0f, target.z + Random.Range(-spread, spread));
 
         // rotate the object to face the target

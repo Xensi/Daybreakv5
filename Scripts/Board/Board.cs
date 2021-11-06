@@ -54,6 +54,8 @@ public abstract class Board : MonoBehaviour
 
     private List<GameObject> instantiatedSelectors = new List<GameObject>();
 
+    private bool waitingToFinishTurn = false;
+
     protected virtual void Awake()
     {
         UnitList = new List<Piece>();
@@ -303,6 +305,7 @@ public abstract class Board : MonoBehaviour
         //Debug.Log(whiteReady + "" + blackReady);
         if (whiteReady && blackReady) //if both players are ready
         {
+            waitingToFinishTurn = false;
             whiteReady = false;
             blackReady = false;
             allMovesFinishedCalled = false;
@@ -367,6 +370,26 @@ public abstract class Board : MonoBehaviour
         }
         yield return new WaitForSeconds(speed);
         StartCoroutine(SlowUpdate(speed)); //start it again 
+
+        /*if (waitingToFinishTurn)
+        {
+            CheckIfWeCanEndTurn();
+        }*/
+    }
+
+    private void CheckIfWeCanEndTurn()
+    {
+        Piece[] AllPieces = FindObjectsOfType<Piece>();
+        for (int i = 0; i < AllPieces.Length; i++) //check if any markers overlap between friendly and enemy
+        {
+            if (AllPieces[i].animationsOver == false && AllPieces[i].attacking) //if we stumble on an attacking unit that has not finished animations
+            {
+                return;
+            }
+        }
+
+        //but if we make it through
+        waitingToFinishTurn = false;
     }
 
     public void OneStepFinished() //checks to see if one step has been finished. if so, start move coroutines again
@@ -605,14 +628,27 @@ public abstract class Board : MonoBehaviour
         {
             pieces[i].FinishedMoving = false;
             pieces[i].oneStepFinished = false;
-            pieces[i].targetToAttackPiece = null; //we need to ditch our target to make the defensive attack behavior work properly
+
             pieces[i].startOfTurn = true;
-        } 
+        }
+        //AllowExecution();
+        //waitingToFinishTurn = true;
+        AllowExecution();
+    }
+
+    public void AllowExecution()
+    {
+
         //Debug.Log("Allowed Input again");
         chessController.AllowInput = true; //since turn is over, input is okay again
         executeButton.interactable = true; //and we can execute again
-    }
 
+        Piece[] AllPieces = FindObjectsOfType<Piece>(); //this necessarily has to be checked by all units
+        for (int i = 0; i < AllPieces.Length; i++) //needs to be set after we're done animation wise
+        {
+            AllPieces[i].targetToAttackPiece = null; // 
+        }
+    }
 
     public void SetDependencies(ChessGameController chessController, bool mp)
     {
