@@ -3926,7 +3926,7 @@ public abstract class Piece : MonoBehaviour
             FinishedMoving = true;
             hasMoved = true;
             remainingMovement = speed;
-            //ClearQueuedMoves();
+            ClearQueuedMoves();
             SelectAvailableSquares(occupiedSquare);
             conflict = false;
             wonTieBreak = false;
@@ -3938,7 +3938,7 @@ public abstract class Piece : MonoBehaviour
             FinishedMoving = true;
             hasMoved = true;
             remainingMovement = speed;
-            //ClearQueuedMoves();
+            ClearQueuedMoves();
             SelectAvailableSquares(occupiedSquare);
             conflict = false;
             wonTieBreak = false;
@@ -3952,7 +3952,7 @@ public abstract class Piece : MonoBehaviour
             FinishedMoving = true;
             hasMoved = true;
             remainingMovement = speed;
-            //ClearQueuedMoves();
+            ClearQueuedMoves();
             SelectAvailableSquares(occupiedSquare);
             conflict = false;
             wonTieBreak = false;
@@ -4383,7 +4383,7 @@ public abstract class Piece : MonoBehaviour
 
         SubtractEnergy();
         board.PieceTriggerAttacksForSoldiers(unitID); //this works in mp! so why not define flanks?
-        //ClearQueuedMoves();
+        ClearQueuedMoves();
 
 
     }
