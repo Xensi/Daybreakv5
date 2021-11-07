@@ -118,7 +118,7 @@ public class UpdateAgentDestination : MonoBehaviour
             }
             navAgent.stoppingDistance = navOffset + navOffsetAdd;
             navAgent.radius = attackerRadius;
-            if (targetedSoldierDebug != null) //if we have a move target, then update our nav target to its position
+            if (targetedSoldierDebug != null && navAgent.isActiveAndEnabled) //if we have a move target, then update our nav target to its position
             {
                 navAgent.destination = targetedSoldierDebug.transform.position;
 
@@ -131,7 +131,7 @@ public class UpdateAgentDestination : MonoBehaviour
                 {
                     if (navAgent.velocity.magnitude < .1f && navOffsetAdd >= navOffsetAddClamp) //if frontline starts causing a ruckus
                     {
-                        if (!setInPlace)
+                        if (!setInPlace && navAgent.isActiveAndEnabled)
                         {
                             navAgent.destination = transform.position;
                             ableToAttack = true;
@@ -301,7 +301,7 @@ public class UpdateAgentDestination : MonoBehaviour
                     //Debug.LogError("min dist " + minDist);
                 }
             }
-            if (tMin != null)
+            if (tMin != null && navAgent.isActiveAndEnabled)
             {
                 navAgent.destination = tMin.transform.position;
                 targetedSoldierDebug = tMin;
@@ -389,8 +389,8 @@ public class UpdateAgentDestination : MonoBehaviour
             Debug.Log("models" + targetPiece.models);
 
         }
-        yield return new WaitForSeconds(3);
-
+        //yield return new WaitForSeconds(3);
+        Debug.LogError("ANIMATIONS OVER.");
         parentPiece.soldierAttacked = true; //set this after freeze just in case
         parentPiece.animationsOver = true;
         //parentPiece.board.AllowExecution();

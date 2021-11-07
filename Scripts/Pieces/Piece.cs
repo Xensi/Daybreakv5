@@ -249,8 +249,10 @@ public abstract class Piece : MonoBehaviour
     public bool ordersGiven = false; //usually true
     public bool defensiveAttacking = false;
     public bool attackedThisTurn = false;
-    public bool animationsOver = false;
-
+    public bool animationsOver = false; //set by soldiers
+    public bool alreadyCalculatedDamage = false;
+    public bool alreadyAppliedDamage = false;
+    public bool movementStopped = true;
     public abstract List<Vector2Int> SelectAvailableSquares(Vector2Int startingSquare);
 
     public void CheckIfNoOrdersGiven() //just check
@@ -2991,6 +2993,13 @@ public abstract class Piece : MonoBehaviour
             int random = Random.Range(0, moveOrderSoundEffects.Length);
             PlayClip(moveOrderSoundEffects[random]);
         }
+
+        stashedMoves.Clear();
+        for (int i = 0; i < queuedMoves.Count; i++)
+        {
+            stashedMoves.Add(queuedMoves[i]);
+        }
+
     }
     public void OnCommunicateAttackTile(int x, int y)
     {
@@ -3028,7 +3037,7 @@ public abstract class Piece : MonoBehaviour
         board.CommunicateMarkers(unitID, x2, y2, z2, x, y, team.ToString(), intRemainMovement);
 
         GameObject markerVisual;
-       /* Debug.LogError("remaining movement" + remainingMovement);
+        Debug.LogError("remaining movement" + remainingMovement);
         if (attacking && remainingMovement <= 0) //if attacking and last queued move set arrow instead of circle (not working when clicking on enemy unit twice?
         {
             markerVisual = Instantiate(arrowMarkerVisualPrefab, targetPosition, Quaternion.identity);
@@ -3052,9 +3061,9 @@ public abstract class Piece : MonoBehaviour
         else
         {
 
+            markerVisual = Instantiate(markerVisualPrefab, targetPosition, Quaternion.identity);
         }
-*/
-        markerVisual = Instantiate(markerVisualPrefab, targetPosition, Quaternion.identity);
+
         markerVisuals.Add(markerVisual);
 
         NavMeshHit closestHit;
@@ -3341,6 +3350,10 @@ public abstract class Piece : MonoBehaviour
     }
     public void CalculateDamage()
     {
+        if (alreadyCalculatedDamage)
+        {
+            return;
+        }
         if (targetToAttackPiece == null)
         {
             return;
@@ -3493,6 +3506,7 @@ public abstract class Piece : MonoBehaviour
         Debug.Log("defenders killed " + queuedDamage);
         //targetToAttackPiece.models -= Mathf.RoundToInt(defendersKilled);
         //Debug.Log("killed" + defendersKilled);
+        alreadyCalculatedDamage = true;
 
     }
     public bool CheckIfStopMove()
@@ -3978,47 +3992,10 @@ public abstract class Piece : MonoBehaviour
         {
             Debug.Log("Found enemy in attack tile");
             targetToAttackPiece = potentialEnemy;
-            CalculateDamage();
         }
     }
 
     public void CheckIfEnemyInFirstQueuedMove()
-    {
-        if (queuedMoves.Count <= 0)
-        {
-            //Debug.LogError("we have no moves" + this);
-            return;
-        }
-
-        if (!attacking || !enemyAdjacent )
-        {
-            return;
-        }
-
-
-        if (enemyAdjacent && attacking)
-        {
-
-            Piece piece = board.GetPieceOnSquare(queuedMoves[0]); //if we've moved and then had to stop we adjust this by the number of moves we've done so far
-            if (piece != null && !piece.IsFromSameTeam(this))
-            {
-                //Debug.Log("Piece"  + piece);
-
-                targetToAttackPiece = piece; //set new target
-
-                /*if (queuedMoves.Count > 1)
-                {
-                    queuedMoves.RemoveRange(1, queuedMoves.Count - 1); //get rid of the rest we won't need em
-                }*/
-
-                attackTile = queuedMoves[0];
-
-
-            }
-        }
-    }
-
-    public void CheckIfEnemyInRelativeStashedMove()
     {
         if (stashedMoves.Count <= 0)
         {
@@ -4031,28 +4008,121 @@ public abstract class Piece : MonoBehaviour
             return;
         }
 
-        Debug.LogError("queuetime" + queueTime);
+
         if (enemyAdjacent && attacking)
         {
 
-            Piece piece = board.GetPieceOnSquare(stashedMoves[queueTime]); //if we've moved and then had to stop we adjust this by the number of moves we've done so far
+            Piece piece = board.GetPieceOnSquare(stashedMoves[0]); //if we've moved and then had to stop we adjust this by the number of moves we've done so far
             if (piece != null && !piece.IsFromSameTeam(this))
-            {
-                //Debug.Log("Piece"  + piece);
-
+            { 
                 targetToAttackPiece = piece; //set new target
-
-                /*if (queuedMoves.Count > 1)
-                {
-                    queuedMoves.RemoveRange(1, queuedMoves.Count - 1); //get rid of the rest we won't need em
-                }*/
-
-                attackTile = stashedMoves[queueTime];
+                 
+                attackTile = stashedMoves[0];
 
 
             }
         }
     }
+
+    public void CheckIfEnemyInRelativeStashedMove()
+    {
+        if (stashedMoves.Count <= 0 || !attacking)
+        {
+            //Debug.LogError("we have no moves" + this);
+            return;
+        }
+          
+        Debug.LogError("queuetime" + queueTime);
+        var normalizedQueueTime = queueTime - 1; //not sure why this is needed, but here we are
+        if (normalizedQueueTime < 0)
+        {
+            normalizedQueueTime = 0;
+        }
+        if (stashedMoves.Count - 1 < normalizedQueueTime)
+        {
+            normalizedQueueTime = stashedMoves.Count - 1;
+        }
+
+        Piece piece = board.GetPieceOnSquare(stashedMoves[normalizedQueueTime]); //if we've moved and then had to stop we adjust this by the number of moves we've done so far
+        if (piece != null && !piece.IsFromSameTeam(this))
+        {  
+            targetToAttackPiece = piece; //set new target 
+            attackTile = stashedMoves[normalizedQueueTime];
+            Debug.LogError(targetToAttackPiece + "target");
+        }
+    }
+
+    public void CheckIfEnemyNearUs()
+    {
+        //let's check to see if out target to attack piece is next to us or not
+
+        for (int i = 0; i < adjacentTiles.Length; i++) //for each adjacent tile
+        {
+            Vector2Int nextCoords = occupiedSquare + adjacentTiles[i];
+            Piece checkTarget = board.GetPieceOnSquare(nextCoords);
+            if (!board.CheckIfCoordinatedAreOnBoard(nextCoords)) //if off board skip
+            {
+                continue;
+            }
+            if (checkTarget != null && !checkTarget.IsFromSameTeam(this) && checkTarget == targetToAttackPiece) //if target tile has a piece and it's an enemy and it's our original target
+            {
+                attackTile = nextCoords; //set this just in case?
+                return; //we can stop because we know the target is next to us and we can fight it
+            }
+        }
+        //if we can't find the target, find a new one from the ones next to us (starting with the tile in front of us, then right, then left, then clockwise?
+        targetToAttackPiece = null;
+        CheckFronts(1); //front
+        if (targetToAttackPiece != null)
+        {
+            return;
+        }
+        CheckFronts(0); //left
+
+        if (targetToAttackPiece != null)
+        {
+            return;
+        }
+        CheckFronts(2); //right
+
+        if (targetToAttackPiece != null)
+        {
+            return;
+        } 
+
+        for (int i = 0; i < adjacentTiles.Length; i++) //for each adjacent tile 
+        {
+            Vector2Int nextCoords = occupiedSquare + adjacentTiles[i];
+            Debug.LogError(this + " checking" + nextCoords);
+            Piece checkTarget = board.GetPieceOnSquare(nextCoords);
+            if (!board.CheckIfCoordinatedAreOnBoard(nextCoords)) //if off board skip
+            {
+                continue;
+            }
+            if (checkTarget != null && !checkTarget.IsFromSameTeam(this)) //if target tile has a piece and it's an enemy 
+            {
+                targetToAttackPiece = checkTarget;
+                attackTile = nextCoords; //set this just in case?
+                break; //we can stop because we know the target is next to us and we can fight it
+            }
+        }
+        
+
+    }
+
+    private void CheckFronts(int front)
+    {
+        int frontNum = frontDirections[front]; //the very front
+        Vector2Int frontCoords = occupiedSquare + adjacentTiles[frontNum];
+        Debug.LogError(this + " checking" + frontCoords);
+        Piece piece = board.GetPieceOnSquare(frontCoords);
+        if (board.CheckIfCoordinatedAreOnBoard(frontCoords) && piece != null && !piece.IsFromSameTeam(this)) //if we detect an enenmy on the front
+        {//they can be our new target
+            targetToAttackPiece = piece;
+            attackTile = frontCoords;
+        }
+    }
+
     public void CalculateLineOfSight() //for attacking, ranged units
     {//TODO ADD ABILITY TO TARGET EMPTY AND DO OVERWATCH, ESSENTIALLY
         Debug.Log("create new line");
@@ -4316,6 +4386,10 @@ public abstract class Piece : MonoBehaviour
 
     public void OnApplyDamage() //after communicating with mp
     {
+        if (alreadyAppliedDamage)
+        {
+            return;
+        }
 
         if (targetToAttackPiece == null || !attacking || queuedDamage < 0) //if target nonexistent, or not attacking, or queued damage is less than 0. 0 damage is still valid
         {
@@ -4338,11 +4412,11 @@ public abstract class Piece : MonoBehaviour
         if (targetToAttackPiece.models < 0) //make sure models can't go below zero
             targetToAttackPiece.models = 0;
 
-        if (targetToAttackPiece != null && queuedDamage > 0 && targetToAttackPiece.isCampaignObjective && menuController != null) //start mission if campaign
+        /*if (targetToAttackPiece != null && queuedDamage > 0 && targetToAttackPiece.isCampaignObjective && menuController != null) //start mission if campaign
         {
             menuController.LoadSpecificScene(targetToAttackPiece.missionToLoad);
 
-        }
+        }*/
         if (defensiveAttacking == false) //if we are defensive attacking, we do not turn
         {
             //this changes the direction of unit based on what direction we are attacking
@@ -4384,7 +4458,7 @@ public abstract class Piece : MonoBehaviour
         SubtractEnergy();
         board.PieceTriggerAttacksForSoldiers(unitID); //this works in mp! so why not define flanks?
         ClearQueuedMoves();
-
+        alreadyAppliedDamage = true;
 
     }
 
@@ -4525,7 +4599,7 @@ public abstract class Piece : MonoBehaviour
                 waitingForFirstAttack = false;
                 //attackerPiece.soldierAttacked = false; //set it to false to be ready for the next one
             }
-            yield return new WaitForSeconds(Random.Range(0.1f, 5 / markedSoldiersCount)); //this should make soldiers die in a more timely fashion. soldiers die faster the more there are to kill
+            yield return new WaitForSeconds(Random.Range(0.1f, 7.5f / markedSoldiersCount)); //this should make soldiers die in a more timely fashion. soldiers die faster the more there are to kill
 
 
             //initiate kill function

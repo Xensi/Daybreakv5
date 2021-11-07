@@ -38,6 +38,7 @@ public abstract class Board : MonoBehaviour
     //private bool damagePhaseCalled = false;
     private bool allMovesFinishedCalled;
     public int BOARD_SIZE = 100;
+    public int secondsPassed = 0;
 
     public Piece defendant;
     public Piece prosecutor;
@@ -56,6 +57,9 @@ public abstract class Board : MonoBehaviour
 
     private bool waitingToFinishTurn = false;
 
+    public List<Piece> piecesReadyToAttack = new List<Piece>();
+
+
     protected virtual void Awake()
     {
         UnitList = new List<Piece>();
@@ -71,7 +75,7 @@ public abstract class Board : MonoBehaviour
     public abstract void ArbitrateConflict();
 
     public abstract void CommunicateQueuedMoves(int id, int x, int y);
-    public abstract void PieceCommunicateAttackTile (int id, int x, int y);
+    public abstract void PieceCommunicateAttackTile(int id, int x, int y);
     public void OnPieceCommunicateAttackTile(int id, int x, int y)
     {
         UnitList[id].OnCommunicateAttackTile(x, y);
@@ -94,7 +98,7 @@ public abstract class Board : MonoBehaviour
     public abstract void PieceTriggerAttacksForSoldiers(int id);
 
     public abstract void PieceCommunicateTargetToAttackPiece(int id, int x, int y);
-     
+
 
     public abstract void PieceMarkForDeath(int id, int damage);
     public void OnPieceMarkForDeath(int id, int damage)
@@ -222,8 +226,8 @@ public abstract class Board : MonoBehaviour
     }
     public abstract void ChangeStance(int id, string stance);
     public void OnChangeStance(int id, string stance) //this should not rely on selected piece, rather unit ID.
-        //using selectedpiece is preferable so you can control what parts of the function are multiplayer, like showing selection squares .. .unless, we can use unit id and check in the function if the
-        //unit is on the same team. if they're not we can prevent showing the squares while still updating the variables
+                                                      //using selectedpiece is preferable so you can control what parts of the function are multiplayer, like showing selection squares .. .unless, we can use unit id and check in the function if the
+                                                      //unit is on the same team. if they're not we can prevent showing the squares while still updating the variables
     {
         if (stance == "sprint")
         {
@@ -318,20 +322,21 @@ public abstract class Board : MonoBehaviour
             Piece[] AllPieces = FindObjectsOfType<Piece>();
 
             Preturn(AllPieces); //turn set up
-
-            List<Piece> piecesReadyToAttack = new List<Piece>(); //have to use list because size is adjustable >>
+             
             for (int i = 0; i < AllPieces.Length; i++) //go through each piece
             {
-                if (AllPieces[i].queuedMoves.Count == 1 && AllPieces[i].attacking && AllPieces[i].attackedThisTurn == false) //if exactly one moved queued and attacking, you are eligible to attack immediately
+                Debug.LogError("allpieces" + AllPieces[i] + AllPieces[i].queuedMoves.Count);
+                if (AllPieces[i].queuedMoves.Count == 1) //if exactly one moved queued and attacking, you are eligible to attack immediately  && AllPieces[i].attacking && AllPieces[i].attackedThisTurn == false
                 {
+                    //Debug.LogError("I HATE YOU");
                     piecesReadyToAttack.Add(AllPieces[i]);
+                    //Debug.LogError("added to pieces ready to immediate attack" + AllPieces[i]);
+
                 }
 
-                //Debug.LogError(AllPieces[i].attackedThisTurn + "attacked this turn?");
             }
-            //Piece[] piecesReadyToAttackArray = piecesReadyToAttack.ToArray();
 
-            AttackPhaseSetup(piecesReadyToAttack, 0); //allows for immediate attacks by pieces that are ready to attack already
+            AttackPhaseSetup(piecesReadyToAttack, 0); //allows for immediate attacks by pieces that are ready to attack already //attack phase setup is adding all pieces to the list for some reason . . .
 
             //start of movement phase
             for (int i = 0; i < AllPieces.Length; i++) //Actually start moving
@@ -348,8 +353,13 @@ public abstract class Board : MonoBehaviour
         for (int i = 0; i < AllPieces.Length; i++) //check if enemies adjacent. if so, can't move
         {
             //Debug.Log(AllPieces[i]);
+
             AllPieces[i].attackedThisTurn = false; //remind everyone that they have not attacked yet
             AllPieces[i].markedDeaths = false; //remind everyone that they have not attacked yet
+            AllPieces[i].alreadyCalculatedDamage = false;
+            AllPieces[i].alreadyAppliedDamage = false;
+            AllPieces[i].animationsOver = false;
+            AllPieces[i].movementStopped = false;
         }
         for (int i = 0; i < AllPieces.Length; i++) //check if enemies adjacent. if so, can't move
         {
@@ -361,10 +371,13 @@ public abstract class Board : MonoBehaviour
             //Debug.Log(AllPieces[i]);
             AllPieces[i].CheckIfMarkersOverlap(); //important for tie breaking behavior
         }
-        /*for (int i = 0; i < AllPieces.Length; i++)
+        for (int i = 0; i < AllPieces.Length; i++)
         {
-            AllPieces[i].CheckIfEnemyInFirstQueuedMove(); //important to call before moving to see if we can immediate attack
-        }*/
+            if (AllPieces[i].attacking && AllPieces[i].attackType == "melee")
+            {
+                AllPieces[i].CheckIfEnemyInFirstQueuedMove(); //important to call before moving to see if we can immediate attack
+            }
+        }
     }
 
     private IEnumerator SlowUpdate(float speed) //calls the function responsible for checking if movement phase should be over or not
@@ -375,28 +388,9 @@ public abstract class Board : MonoBehaviour
             CheckIfAllMovesFinished(); //check to see if all units are a done moving completely. if so, start processing attacks
         }
         yield return new WaitForSeconds(speed);
-        StartCoroutine(SlowUpdate(speed)); //start it again 
-
-        /*if (waitingToFinishTurn)
-        {
-            CheckIfWeCanEndTurn();
-        }*/
+        StartCoroutine(SlowUpdate(speed)); //start it again  
     }
 
-    private void CheckIfWeCanEndTurn()
-    {
-        Piece[] AllPieces = FindObjectsOfType<Piece>();
-        for (int i = 0; i < AllPieces.Length; i++) //check if any markers overlap between friendly and enemy
-        {
-            if (AllPieces[i].animationsOver == false && AllPieces[i].attacking) //if we stumble on an attacking unit that has not finished animations
-            {
-                return;
-            }
-        }
-
-        //but if we make it through
-        waitingToFinishTurn = false;
-    }
 
     public void OneStepFinished() //checks to see if one step has been finished. if so, start move coroutines again
     {
@@ -438,22 +432,42 @@ public abstract class Board : MonoBehaviour
         if (!allMovesFinishedCalled)
         {
             allMovesFinishedCalled = true;
+            foreach (var piece in AllPieces)
+            {
+                piece.movementStopped = true;
+            }
 
             //this doesn't work because queued moves is cleared before this is called
-            /*for (int i = 0; i < AllPieces.Length; i++)
+            for (int i = 0; i < AllPieces.Length; i++)
             {
-                AllPieces[i].CheckIfEnemyInRelativeStashedMove(); //call after moving to see if we can acquire new target
-            }*/
+                if (AllPieces[i].attacking && AllPieces[i].attackType == "melee")
+                { 
+                    AllPieces[i].CheckIfEnemyInRelativeStashedMove(); //call after moving to see if we can acquire new target
+                }
+            }
+            for (int i = 0; i < AllPieces.Length; i++)
+            {
+                if (AllPieces[i].attacking && AllPieces[i].attackType == "melee")
+                { 
+                    AllPieces[i].CheckIfEnemyNearUs(); //last chance to see if we can acquire new target
+                }
+            }
 
             List<Piece> piecesReadyToAttackAfterMovement = new List<Piece>(); //have to use list because size is adjustable >>
             for (int i = 0; i < AllPieces.Length; i++) //go through each piece
             {
+                Debug.Log(AllPieces[i].attackedThisTurn + "attacked this turn" + AllPieces[i]);
                 if (AllPieces[i].attacking && AllPieces[i].attackedThisTurn == false) //if attacking, you are eligible to attack after movement
                 {
                     piecesReadyToAttackAfterMovement.Add(AllPieces[i]);
                 }
             }
-            //Piece[] piecesReadyToAttackAfterMovementArray = piecesReadyToAttackAfterMovement.ToArray();
+
+            /*foreach (var item in piecesReadyToAttackAfterMovement)
+            {
+                Debug.LogError("Pieces ready to attack after movement" + item);
+            }*/
+
 
             AttackPhaseSetup(piecesReadyToAttackAfterMovement, 1); //call this only once
         }
@@ -461,19 +475,20 @@ public abstract class Board : MonoBehaviour
     public void AttackPhaseSetup(List<Piece> pieces, int phaseNum) //start processing attacks because movement is done (or not in the case of the immediate attacks)
     {
 
+
         if (phaseNum == 1)
-        { 
+        {
             turnBeingExecuted = false; //this will disable the checks running in slow update to see if movement is done (because it is!) 
         }
 
         for (int i = 0; i < pieces.Count; i++)
         {
-             
-            if (pieces[i].attackedThisTurn == false)  
+
+            if (pieces[i].attackedThisTurn == false)
             {
                 pieces[i].CheckIfEnemyInAttackTile(); //sets target to unit in targeted tile if we have no target and no attack tile already (targeting an empty tile and waiting for a unit to enter it)
             }
-            
+
         }
 
 
@@ -499,7 +514,7 @@ public abstract class Board : MonoBehaviour
         {
             ExecuteAttacks(pieces, phaseNum); //skip over to the next part
         }
-        else 
+        else
         {
             StartCoroutine(CheckIfPhysicsCalculationsProcessed(pieces, phaseNum)); //if there are ranged units, start coroutine that will check to see if done processing physics
         }
@@ -538,6 +553,7 @@ public abstract class Board : MonoBehaviour
 
     public void ExecuteAttacks(List<Piece> pieces, int phaseNum) //should be called even if no line of sight calculations occurred
     {
+        Debug.LogError("EXECUTING ATTACKS");
         //by this point, all physics calculations should be done.
 
         for (int i = 0; i < pieces.Count; i++)
@@ -551,19 +567,22 @@ public abstract class Board : MonoBehaviour
         Piece[] AllPieces = FindObjectsOfType<Piece>(); //this necessarily has to be checked by all units
         for (int i = 0; i < AllPieces.Length; i++)
         {
-            if (AllPieces[i].targetToAttackPiece == null && AllPieces[i].attackedThisTurn == false) //if we have no attack target and have not attacked
+            if (AllPieces[i].movementStopped && !AllPieces[i].attacking && AllPieces[i].targetToAttackPiece == null && AllPieces[i].attackedThisTurn == false) //if we are not attacking, have no attack target and have not attacked, and have finished moving
             {
                 Debug.Log("phase num" + phaseNum);
                 AllPieces[i].CheckIfAttacked(); //check to see if we're being attacked. if we are and haven't attacked yet, defend yourself
-                pieces.Add(AllPieces[i]); //this is now an attacker >:)
-                if (AllPieces[i].attackType == "ranged") // accuracy calculations are incompatible with this, so set it manually
+                if (AllPieces[i].defensiveAttacking)
                 {
-                    AllPieces[i].accuracy = .5f; //for point blank range
+                    pieces.Add(AllPieces[i]); //this is now an attacker >:)
+                    if (AllPieces[i].attackType == "ranged") // accuracy calculations are incompatible with this, so set it manually
+                    {
+                        AllPieces[i].accuracy = .5f; //for point blank range
+                    }
                 }
             }
 
         }
-        for (int i = 0; i < AllPieces.Length; i++)  
+        for (int i = 0; i < AllPieces.Length; i++)
         {
             AllPieces[i].flankingDamage = 1;
         }
@@ -582,7 +601,9 @@ public abstract class Board : MonoBehaviour
 
         for (int i = 0; i < AllPieces.Length; i++)
         {
+            Debug.Log("old" + AllPieces[i].oldModels + "new" + AllPieces[i].models );
             AllPieces[i].oldModels = AllPieces[i].models;
+            Debug.Log("NEWold" + AllPieces[i].oldModels + "new" + AllPieces[i].models );
         }
 
         for (int i = 0; i < pieces.Count; i++)
@@ -593,16 +614,21 @@ public abstract class Board : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < AllPieces.Length; i++)
+        for (int i = 0; i < AllPieces.Length; i++) //this is gettin called both times is the problem
         {
             var totalDamage = AllPieces[i].oldModels - AllPieces[i].models; //calculate total damage dealt to each unit
-            AllPieces[i].MarkForDeath(totalDamage);
+            if (totalDamage > 0)
+            {
+                Debug.Log("old" + AllPieces[i].oldModels + "new" + AllPieces[i].models + "total damage" + totalDamage);
+                AllPieces[i].MarkForDeath(totalDamage);
+            }
         }
 
         for (int i = 0; i < pieces.Count; i++) // all of the pieces called in this function have now attacked
         {
             if (pieces[i].attacking)
             {
+                Debug.LogError("phase" + phaseNum + pieces[i]);
                 pieces[i].attackedThisTurn = true; //so we can mark it as such
             }
 
@@ -614,10 +640,22 @@ public abstract class Board : MonoBehaviour
             CleanUpPhase(AllPiecesList); //apply morale, reset everyone's stance, check if units are dead, check if units are routing
         }
 
-    } 
+    }
     private void CleanUpPhase(List<Piece> pieces)
     {
 
+        for (int i = 0; i < pieces.Count; i++) //check if any markers overlap between friendly and enemy
+        {
+            if (pieces[i].attacking)
+            {
+                pieces[i].animationsOver = false;
+            }
+            else
+            {
+
+                pieces[i].animationsOver = true;
+            }
+        }
         for (int i = 0; i < pieces.Count; i++) //should call this after all attacks are done
         {
             pieces[i].ApplyMorale(); //only applies model losses morale loss once per unit
@@ -650,11 +688,41 @@ public abstract class Board : MonoBehaviour
 
             pieces[i].startOfTurn = true;
         }
-        //AllowExecution();
         //waitingToFinishTurn = true;
-        AllowExecution();
-    }
+        secondsPassed = 0;
+        StartCoroutine(WaitForAnimationsToBeOver(pieces));
 
+    }
+    
+    public IEnumerator WaitForAnimationsToBeOver(List<Piece> pieces)
+    {
+
+        var num = 0;
+
+        foreach (var piece in pieces)
+        {
+            if (piece.animationsOver)
+            {
+                num++; //if we find one that's done, add it to the count
+            }
+        }
+        Debug.LogError("number done" + num);
+        if (num >= pieces.Count || secondsPassed >= 10) //if all are done
+        {
+            secondsPassed = 0;
+            AllowExecution();
+        }
+        else
+        { 
+            yield return new WaitForSeconds(1);
+            secondsPassed++;
+            StartCoroutine(WaitForAnimationsToBeOver(pieces));
+        }
+
+
+
+    }
+     
     public void AllowExecution()
     {
 
@@ -716,7 +784,7 @@ public abstract class Board : MonoBehaviour
         StartCoroutine(SlowUpdate(1f));
     }
 
-    
+
     public Vector3 CalculatePositionFromCoords(Vector2Int coords)
     {
         return bottomLeftSquareTransform.position + new Vector3(coords.x * squareSize, 0f, coords.y * squareSize);
@@ -769,7 +837,7 @@ public abstract class Board : MonoBehaviour
                 }
                 else if (selectedPiece != null && selectedPiece.attacking && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece == selectedPiece) //if you click on the same tile twice
                 {// l  &&  
-                    /*Debug.Log("clicked on a position where we already have a marker for movement and we're attacking"); //next check if marker belongs to us
+                    Debug.Log("clicked on a position where we already have a marker for movement and we're attacking"); //next check if marker belongs to us
                     if (selectedPiece.attacking)
                     {
                         var lastMarkerVisual = selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1];
@@ -779,11 +847,11 @@ public abstract class Board : MonoBehaviour
                         Vector2Int directionVector = Vector2Int.zero;
 
                         if (selectedPiece.queuedMoves.Count == 1)
-                        { 
+                        {
                             directionVector = coords - selectedPiece.occupiedSquare;
                         }
                         else if (selectedPiece.queuedMoves.Count > 1)
-                        { 
+                        {
                             directionVector = coords - selectedPiece.queuedMoves[selectedPiece.queuedMoves.Count - 2];
                         }
 
@@ -803,12 +871,12 @@ public abstract class Board : MonoBehaviour
                         Destroy(selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1]); //delete the last marker visual so we can replace it 
 
                         selectedPiece.markerVisuals.Add(markerVisual);
-                    }*/
+                    }
                     selectedPiece.holdingPosition = true;
                     //selectedPiece.holdTime = selectedPiece.turnTime;
                     DeselectPiece(); //deselect it and hide movement paths (deselected because we are ending our movement early)
 
-                    
+
 
                 }
                 else if (piece != null && selectedPiece != piece && !piece.IsFromSameTeam(selectedPiece)) //if we click on a different piece and it's an enemy and our selectedPiece is attacking
@@ -959,10 +1027,10 @@ public abstract class Board : MonoBehaviour
         friendly.arbitratedConflict = true;
         enemy.arbitratedConflict = true;
     }
-    
-    
 
-    
+
+
+
     public void OnSelectedPieceMoved(Vector2Int coords) //this shows up in multiplayer
     {
         if (chessController.AllowInput)
@@ -1014,7 +1082,7 @@ public abstract class Board : MonoBehaviour
     {
         Piece piece = GetPieceOnSquare(coords);
 
-        
+
         if (chessController.localPlayer == null || chessController.localPlayer.team == piece.team) //if sp or matches team in mp
         {
             selectedPiece = piece;
