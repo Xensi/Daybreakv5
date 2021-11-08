@@ -135,11 +135,11 @@ public class UpdateAgentDestination : MonoBehaviour
                         {
                             navAgent.destination = transform.position;
                             ableToAttack = true;
-                            /*if (!idleSet)
-                            {*/
-                            //animator.Play("BaseIdle");
-                            /*    idleSet = true;
-                            }*/
+                            if (!idleSet)
+                            {
+                                animator.Play("BaseIdle");
+                                idleSet = true;
+                            }
                             setInPlace = true;
                         }
                     }
@@ -155,7 +155,7 @@ public class UpdateAgentDestination : MonoBehaviour
                                 {
 
                                 }
-                                //animator.Play("BaseIdle");
+                                animator.Play("BaseIdle");
                                 idleSet = true;
                             }
                         }
@@ -184,7 +184,7 @@ public class UpdateAgentDestination : MonoBehaviour
                 {
                     if (!idleSet)
                     {
-                        //animator.Play("BaseIdle");
+                        animator.Play("BaseIdle");
                         animator.SetBool("moving", false);
                         idleSet = true;
                     }
@@ -231,7 +231,7 @@ public class UpdateAgentDestination : MonoBehaviour
                     if (!navAgent.hasPath || navAgent.velocity.sqrMagnitude == 0f)
                     {
                         // Done
-                        //animator.Play("BaseIdle");
+                        animator.Play("BaseIdle");
                         animator.SetBool("moving", false);
                         return;
                     }

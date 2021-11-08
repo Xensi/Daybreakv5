@@ -244,4 +244,18 @@ public class MultiplayerBoard : Board
         OnPieceCommunicateAttackTile(id, x, y);
 
     }
+
+
+    public override void ChangeFormation(int id, string formation) 
+    {
+        photonView.RPC(nameof(RPC_OnChangeFormation), RpcTarget.AllBuffered, new object[] { id, formation });
+    }
+
+    [PunRPC]
+    private void RPC_OnChangeFormation(int id, string formation)
+    {
+        OnChangeFormation(id, formation);
+
+    }
+
 }

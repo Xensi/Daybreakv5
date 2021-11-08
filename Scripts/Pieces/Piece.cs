@@ -4408,7 +4408,7 @@ public abstract class Piece : MonoBehaviour
         Debug.Log("attempting to apply damage" + queuedDamage + "target adjacent" + targetAdjacent + "attacking" + attacking);
 
         targetToAttackPiece.models -= queuedDamage;
-        //targetToAttackPiece.modelBar.SetHealth(targetToAttackPiece.models);
+        targetToAttackPiece.modelBar.SetHealth(targetToAttackPiece.models);
         if (targetToAttackPiece.models < 0) //make sure models can't go below zero
             targetToAttackPiece.models = 0;
 
@@ -4639,15 +4639,15 @@ public abstract class Piece : MonoBehaviour
 
     public void ApplyMorale() //after attacks happen
     {
+        if (models <= armyLossesThreshold && !armyLossesApplied)
+        {
+            morale -= 5;
+            armyLossesApplied = true;
+        }
         if (currentFormation != "circle")
         {
 
             CheckIfFlanked(); //check if flanked
-            if (models <= armyLossesThreshold && !armyLossesApplied)
-            {
-                morale -= 5;
-                armyLossesApplied = true;
-            }
             if (flankedByHowMany > 0)
             {
                 //Debug.Log("morale drops by" + flankedByHowMany);

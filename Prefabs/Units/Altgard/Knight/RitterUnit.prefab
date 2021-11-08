@@ -122,9 +122,9 @@ MonoBehaviour:
   unitName: Ritter
   originalSpeed: 2
   models: 14
+  oldModels: 0
   health: 15
   damage: 4
-  armor: 8
   morale: 30
   energy: 15
   damageLevel: 2
@@ -145,6 +145,7 @@ MonoBehaviour:
   circleRadius2: 0.5
   circleRadius3: 0.35
   markerVisualPrefab: {fileID: 6420406295384315722, guid: 8e848dce9130cfa4c98ced6d70da7b60, type: 3}
+  arrowMarkerVisualPrefab: {fileID: 6420406295384315722, guid: d7a397369c51e7a4b9ff2366dc34fd00, type: 3}
   soldierPrefab: {fileID: 4881819047479752600, guid: d6bca5ea81440f2448019b63ff1890ff, type: 3}
   navPrefab: {fileID: 4300984820108782723, guid: 82cad32952c8bc64391306edffd1644a, type: 3}
   navPrefab2: {fileID: 4300984820108782723, guid: 58cd2a0df9cc99840aaa7617f9b70d24, type: 3}
@@ -174,6 +175,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: a9ebfd5e44959c446b6a3cec687dc7ad, type: 3}
   - {fileID: 8300000, guid: d96c345113dca904b9ea1780ba82ed5c, type: 3}
   - {fileID: 8300000, guid: 9604f4dc2263ed444adf1df34239ab97, type: 3}
+  terrainSpeedModifier: 0
   flankingDamage: 1
   originalEffectiveRange: 1
   originalMidRange: 1
@@ -189,6 +191,7 @@ MonoBehaviour:
   fireDamageBonus: 0
   unitID: 0
   queueTime: 0
+  safeQueueTime: 0
   speed: 0
   sprintSpeed: 0
   queuedDamage: 0
@@ -203,6 +206,7 @@ MonoBehaviour:
   targetAdjacent: 0
   conflict: 0
   markForDeselect: 0
+  allowedToDie: 0
   startOfTurn: 1
   FinishedMoving: 1
   oneStepFinished: 0
@@ -212,6 +216,7 @@ MonoBehaviour:
   moveAndAttackEnabled: 0
   availableMoves: []
   queuedMoves: []
+  stashedMoves: []
   instantiatedMarkers: []
   markerVisuals: []
   flankDirections: 
@@ -225,6 +230,7 @@ MonoBehaviour:
   markerPrefab: {fileID: -3448499949545424200, guid: 8db87e2c4101ff649b604177e46799df, type: 3}
   targetToAttackPiece: {fileID: 0}
   tieBreakPiece: {fileID: 0}
+  facingDirection: 0
   flankedByHowMany: 0
   moving: 1
   sprinting: 0
@@ -276,10 +282,21 @@ MonoBehaviour:
   speed10: []
   arbitratedConflict: 0
   conflictTime: 0
+  bonusMoraleDamage: 0
+  armyLossesThreshold: 0
   markedDeaths: 0
+  inflictedDeaths: 0
   OnTerrainType: 
   currentFormation: rectangle
   queuedFormation: nothing
+  accuracy: 0
+  ordersGiven: 0
+  defensiveAttacking: 0
+  attackedThisTurn: 0
+  animationsOver: 0
+  alreadyCalculatedDamage: 0
+  alreadyAppliedDamage: 0
+  movementStopped: 0
 --- !u!114 &255507802608927540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -506,6 +523,7 @@ MonoBehaviour:
   hpType: model
   hpText: {fileID: 3286682917291554979}
   teamColor: {fileID: 9100232078835698690}
+  isFloat: 0
 --- !u!1 &920364682341164368
 GameObject:
   m_ObjectHideFlags: 0
@@ -1758,6 +1776,7 @@ MonoBehaviour:
   hpType: energy
   hpText: {fileID: 3626465969237127802}
   teamColor: {fileID: 0}
+  isFloat: 0
 --- !u!1 &6965623998859406458
 GameObject:
   m_ObjectHideFlags: 0
@@ -2046,6 +2065,7 @@ MonoBehaviour:
   hpType: morale
   hpText: {fileID: 2784626762662020175}
   teamColor: {fileID: 0}
+  isFloat: 0
 --- !u!1 &8803136895636682215
 GameObject:
   m_ObjectHideFlags: 0

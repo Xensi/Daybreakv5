@@ -230,6 +230,21 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             }
         }
 
+        if (piece.currentFormation == "braced")
+        {
+            effectsText.text += "\nBraced: Melee units in front deal half damage to this. Can't move.";
+        }
+        else if (piece.currentFormation == "staggered")
+        {
+
+            effectsText.text += "\nStaggered: This takes +1 damage from melee, half damage from ranged.";
+        } 
+        else if (piece.currentFormation == "circle")
+        {
+            effectsText.text += "\nCircle: Takes 3/4 damage from melee. Doesn't take extra damage or lose morale from being flanked. Can't move.";
+
+        }
+
         var portrait = GameObject.Find("UnitImage");
         var portraitSprite = portrait.GetComponent<Image>();
         portraitSprite.sprite = piece.unitPortrait;

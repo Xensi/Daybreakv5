@@ -59,6 +59,7 @@ MonoBehaviour:
   - RPC_OnPieceCommunicateTargetToAttackPiece
   - RPC_OnPieceMarkForDeath
   - RPC_OnPieceCommunicateAttackTile
+  - RPC_OnChangeFormation
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

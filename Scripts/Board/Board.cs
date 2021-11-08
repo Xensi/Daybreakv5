@@ -224,6 +224,16 @@ public abstract class Board : MonoBehaviour
         UnitList[id].queuedMoves.Add(coords);
         //piece.queuedMoves.Add(coords);
     }
+
+    public abstract void ChangeFormation(int id, string formation);
+
+    public void OnChangeFormation(int id, string formation)
+    {
+
+        UnitList[id].queuedFormation = formation;
+    }
+
+
     public abstract void ChangeStance(int id, string stance);
     public void OnChangeStance(int id, string stance) //this should not rely on selected piece, rather unit ID.
                                                       //using selectedpiece is preferable so you can control what parts of the function are multiplayer, like showing selection squares .. .unless, we can use unit id and check in the function if the
@@ -407,6 +417,13 @@ public abstract class Board : MonoBehaviour
         }
         Debug.Log("All steps finished");
         //if all steps finished
+        //check to see if we have any cavalry that still need to finish a second move step
+        /*foreach (var piece in AllPieces)
+        {
+            if (piece.unitType == "cavalry" && piece.queueTime <= piece.queuedMoves.Count)
+        }
+        */
+        
         for (int i = 0; i < AllPieces.Length; i++)
         {
             AllPieces[i].CheckIfEnemiesAdjacent();

@@ -87,4 +87,10 @@ public class SinglePlayerBoard : Board
     {
         OnPieceCommunicateAttackTile(id, x, y);
     }
+
+    public override void ChangeFormation(int id, string formation)
+    {
+        OnChangeFormation(id, formation);
+    }
+
 }

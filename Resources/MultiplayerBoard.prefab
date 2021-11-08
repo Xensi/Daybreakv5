@@ -220,6 +220,7 @@ MonoBehaviour:
   whiteReady: 0
   blackReady: 0
   BOARD_SIZE: 100
+  secondsPassed: 0
   defendant: {fileID: 0}
   prosecutor: {fileID: 0}
   UnitList: []
@@ -227,6 +228,7 @@ MonoBehaviour:
   gameInit: {fileID: 0}
   selectingAction: 0
   selectionIndicatorPrefab: {fileID: 6420406295384315722, guid: 013619a26bdd0d247a70bf15e9395615, type: 3}
+  piecesReadyToAttack: []
   random: 0
 --- !u!114 &1507589456114201193
 MonoBehaviour:

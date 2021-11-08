@@ -322,7 +322,7 @@ public class GameInitializer : MonoBehaviour
         }
         else if (val == 2)
         {
-            formation = "braced";
+            formation = "staggered"; 
         }
         else if (val == 3)
         {
@@ -330,14 +330,19 @@ public class GameInitializer : MonoBehaviour
         }
         else if (val == 4)
         {
-            formation = "staggered";
+            formation = "braced";
         }
         //board.selectedPiece.ChangeFormation(formation);
-        board.selectedPiece.queuedFormation = formation;
+        //board.selectedPiece.queuedFormation = formation;
 
         if (val != 0)
         {
+            board.ChangeFormation(board.selectedPiece.unitID, formation);
             board.selectedPiece.DisplayFormation(formation);
+
+
+
+            //board.selectedPiece.DisplayFormation(formation);
             board.selectingAction = false;
             formationDropDownParent.SetActive(false);
             board.DeselectPiece();
@@ -370,8 +375,29 @@ public class GameInitializer : MonoBehaviour
         }
         else if (action == "switchFormation")
         {
+
+            List<string> dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered", "Circle", "Braced" };
+            if (board.selectedPiece.unitName == "Conscript")
+            {
+                dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered", "Circle", };
+            }
+            else if (board.selectedPiece.unitName == "Longbowman")
+            {
+                dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered", "Circle", };
+            }
+            else if (board.selectedPiece.unitName == "Ritter")
+            {
+                dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered"};
+            }
+
+
+            formationDropDown.ClearOptions();
+            formationDropDown.AddOptions(dropOptions);
+
             formationDropDown.value = 0;
             formationDropDownParent.SetActive(true);
+
+
             if (board.selectedPiece != null)
             {
                 board.selectedPiece.ClearQueuedMoves();
