@@ -4522,67 +4522,35 @@ public abstract class Piece : MonoBehaviour
         //int scaledDamage = Mathf.RoundToInt(damage / downscale);
         int scaledDamage = Mathf.RoundToInt(damage);
 
-        for (int i = 0; i < scaledDamage; i++)
+        if (attackerPiece.attackType == "melee") //still need to make this based on direction
         {
-            markedSoldiers.Add(soldierObjects[i]);
-            soldierObjects.RemoveAt(0); //remove it right away so it can't be marked twice
-            Debug.Log("marked " + i);
-        }
-        //TODO need to make this start depending on direction . . .
-        /*int num = 0;
-        foreach (var color in gameInit.teamColorDefinitions)
-        {
-            num++;
-            if (team == color)
+
+            for (int i = 0; i < scaledDamage; i++)//linear marking
             {
-                if (num == 1)
+                var rowRandom = Random.Range(0, rowSize - 1); //random from front row
+                if (rowSize > soldierObjects.Count)
                 {
-                    soldierID = soldierObjects.Count - 1;
-                    for (int i = 0; i < scaledDamage; i++)
-                    {
-                        markedSoldiers.Add(soldierObjects[soldierID]);
-                        soldierID--;
-                        //Debug.Log(soldierObjects[soldierID]);
-                        //Destroy(soldierObjects[soldierID]);
-                        //soldierObjects.RemoveAt(i);
-                    }
+                    rowRandom = Random.Range(0, soldierObjects.Count - 1);
                 }
-                else if (num == 2)
-                {
-                    for (int i = 0; i < scaledDamage; i++)
-                    {
-                        markedSoldiers.Add(soldierObjects[soldierID]);
-                        soldierID++;
-                        //Debug.Log(soldierObjects[soldierID]);
-                        //Destroy(soldierObjects[soldierID]);
-                        //soldierObjects.RemoveAt(i);
-                    }
-                }
-                else if (num == 3)
-                {
-                    soldierID = soldierObjects.Count - 1;
-                    for (int i = 0; i < scaledDamage; i++)
-                    {
-                        markedSoldiers.Add(soldierObjects[soldierID]);
-                        soldierID--;
-                        //Debug.Log(soldierObjects[soldierID]);
-                        //Destroy(soldierObjects[soldierID]);
-                        //soldierObjects.RemoveAt(i);
-                    }
-                }
-                else if (num == 4)
-                {
-                    for (int i = 0; i < scaledDamage; i++)
-                    {
-                        markedSoldiers.Add(soldierObjects[soldierID]);
-                        soldierID++;
-                        //Debug.Log(soldierObjects[soldierID]);
-                        //Destroy(soldierObjects[soldierID]);
-                        //soldierObjects.RemoveAt(i);
-                    }
-                }
+                markedSoldiers.Add(soldierObjects[rowRandom]);
+                soldierObjects.RemoveAt(rowRandom); //remove it right away so it can't be marked twice
+                Debug.Log("marked " + i);
             }
-        }*/
+        }
+        else
+        {
+
+            for (int i = 0; i < scaledDamage; i++)//linear marking
+            {
+                var random = Random.Range(0, soldierObjects.Count - 1);
+                markedSoldiers.Add(soldierObjects[random]);
+                soldierObjects.RemoveAt(random); //remove it right away so it can't be marked twice
+                Debug.Log("marked " + i);
+            }
+        }
+
+        //TODO need to make this start depending on direction . . .
+
         waitingForFirstAttack = true;
         markedSoldiersCount = markedSoldiers.Count;
         StartCoroutine(KillOff());
@@ -4599,7 +4567,7 @@ public abstract class Piece : MonoBehaviour
                 waitingForFirstAttack = false;
                 //attackerPiece.soldierAttacked = false; //set it to false to be ready for the next one
             }
-            yield return new WaitForSeconds(Random.Range(0.1f, 7.5f / markedSoldiersCount)); //this should make soldiers die in a more timely fashion. soldiers die faster the more there are to kill
+            yield return new WaitForSeconds(Random.Range(0.1f, 5/markedSoldiersCount)); //this should make soldiers die in a more timely fashion. soldiers die faster the more there are to kill
 
 
             //initiate kill function
