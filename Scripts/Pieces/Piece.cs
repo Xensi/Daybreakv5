@@ -2798,9 +2798,8 @@ public abstract class Piece : MonoBehaviour
     }
 
     public void QueueMove(Vector2Int coords)
-    {
-
-        turnTime++; //turn time needs to be 1 for reasons   
+    { 
+        turnTime++; //turn time needs to be 1 for reasons   (this means first queued move has turn time of 1, so trying to get last queued move should be queuedMove[turnTime-1]
         if (attacking)
         {
             holdingPosition = true;
@@ -2978,20 +2977,10 @@ public abstract class Piece : MonoBehaviour
         targetToAttackPiece = null; //reset and then set if attacking
         if (attacking)
         {
-            CommunicateTargetToAttackPiece(coords); //tell mp
-
-
-
+            CommunicateTargetToAttackPiece(coords); //tell mp 
             //sound effect logic
             int random = Random.Range(0, attackOrderSoundEffects.Length);
             PlayClip(attackOrderSoundEffects[random]);
-        }
-        if (moving)
-        {
-
-            //sound effect logic
-            int random = Random.Range(0, moveOrderSoundEffects.Length);
-            PlayClip(moveOrderSoundEffects[random]);
         }
 
         stashedMoves.Clear();
@@ -2999,12 +2988,56 @@ public abstract class Piece : MonoBehaviour
         {
             stashedMoves.Add(queuedMoves[i]);
         }
+
+        CheckIfTerrainShouldStopUsFromQueuingMoreMoves();
+
+
+        if (moving || sprinting)
+        {
+            if (remainingMovement <= 0)
+            { 
+                //sound effect logic
+                int random = Random.Range(0, moveOrderSoundEffects.Length);
+                PlayClip(moveOrderSoundEffects[random]);
+            }
+        }
         //trying to update available movement
+
         //board.squareSelector.ClearSelection();
-        //board.ShowSelectionSquares(SelectAvailableSquares(queuedPosition), this);
+        board.ShowSelectionSquares(SelectAvailableSquares(queuedMoves[queuedMoves.Count-1]), this); //select based on last queued move position
 
     }
-     
+
+    private void CheckIfTerrainShouldStopUsFromQueuingMoreMoves()
+    {
+        var lastQueuedMoveNum = queuedMoves.Count - 1;
+        //if queued move is on hill
+        var terrainTypeAtQueuedPos = board.terrainGrid[queuedMoves[lastQueuedMoveNum].x, queuedMoves[lastQueuedMoveNum].y];
+
+        var penultimateQueuedMoveNum = queuedMoves.Count - 2;
+
+        var terrainTypeAtPenultimateQueuedPos = "grass";
+        if (penultimateQueuedMoveNum < 0)
+        {
+            terrainTypeAtPenultimateQueuedPos = board.terrainGrid[occupiedSquare.x, occupiedSquare.y];
+            //Debug.LogError("terrain last" + terrainTypeAtQueuedPos + "terrain penult" + terrainTypeAtPenultimateQueuedPos);
+            //Debug.LogError("terrain last" + queuedMoves[lastQueuedMoveNum] + "terrain penult" + occupiedSquare);
+        }
+        else
+        {
+            terrainTypeAtPenultimateQueuedPos = board.terrainGrid[queuedMoves[penultimateQueuedMoveNum].x, queuedMoves[penultimateQueuedMoveNum].y];
+            //Debug.LogError("terrain last" + terrainTypeAtQueuedPos + "terrain penult" + terrainTypeAtPenultimateQueuedPos);
+            //Debug.LogError("terrain last" + queuedMoves[lastQueuedMoveNum] + "terrain penult" + queuedMoves[penultimateQueuedMoveNum]);
+        }
+
+        if (terrainTypeAtQueuedPos == "hill" && terrainTypeAtPenultimateQueuedPos != "hill") //if we queue a move onto a hill from non hill
+        {
+            Debug.LogError("Setting movement to 0");
+            remainingMovement = 0;
+        }
+
+    }
+
 
     public void OnCommunicateAttackTile(int x, int y)
     {
@@ -3191,7 +3224,7 @@ public abstract class Piece : MonoBehaviour
             {
                 continue;
             }
-            if (piece != null && !piece.IsFromSameTeam(this))// && !piece.disengaging
+            if (piece != null && !piece.IsFromSameTeam(this) && !piece.disengaging)// && !piece.disengaging
             {
                 return true; //if detect enemy, don't start movement at all;
             }
@@ -3555,7 +3588,7 @@ public abstract class Piece : MonoBehaviour
         return false;
     }
 
-    public void QueueRout() //this will only be called if the thing is actually routing, check board
+    /*public void QueueRout() //this will only be called if the thing is actually routing, check board
     {
         var xdifference = 0;
         var ydifference = 0;
@@ -3643,7 +3676,7 @@ public abstract class Piece : MonoBehaviour
         }
         PlaceMarker(coords, occupiedSquare); //first destination, second original pos
 
-    }
+    }*/
 
     public Vector2Int ConvertDirectionToCoords(string direction)
     {
@@ -3821,7 +3854,7 @@ public abstract class Piece : MonoBehaviour
                 FinishedMoving = true;
                 yield break;
             }
-            if (queuedMoves.Count > 0) //if we have moves to carry out
+            if (queueTime <= queuedMoves.Count && queuedMoves.Count > 0) //if our queuetime has not exceeded queuedMoves total, and we have moves at all
             {
                 //Debug.Log("there are queued moves");
                 FinishedMoving = false;

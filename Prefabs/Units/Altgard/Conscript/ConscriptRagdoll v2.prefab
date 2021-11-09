@@ -583,7 +583,7 @@ MonoBehaviour:
   id: 0
   targetID: 0
   ableToAttack: 0
-  maxNumberOfAttacks: 10
+  maxNumberOfAttacks: 5
   numberOfAttacks: 0
   idleSet: 0
   moveSet: 0

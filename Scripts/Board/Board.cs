@@ -332,7 +332,7 @@ public abstract class Board : MonoBehaviour
             Piece[] AllPieces = FindObjectsOfType<Piece>();
 
             Preturn(AllPieces); //turn set up
-             
+
             for (int i = 0; i < AllPieces.Length; i++) //go through each piece
             {
                 Debug.LogError("allpieces" + AllPieces[i] + AllPieces[i].queuedMoves.Count);
@@ -423,7 +423,7 @@ public abstract class Board : MonoBehaviour
         {
             if (piece.unitType == "cavalry" && piece.queueTime % 2 == 1 && piece.queueTime < piece.queuedMoves.Count)  //if we have any cavalry that's only on its first/third move and has more moves left to go
             {
-                //Debug.LogError("Knight queue time remainder" + piece.queueTime % 2);
+                Debug.LogError("Knight queue time " + piece.queueTime + "queuedmovescount" + piece.queuedMoves.Count);
                 cavalry.Add(piece); //add it to the list
             }
         }
@@ -478,14 +478,14 @@ public abstract class Board : MonoBehaviour
             for (int i = 0; i < AllPieces.Length; i++)
             {
                 if (AllPieces[i].attacking && AllPieces[i].attackType == "melee")
-                { 
+                {
                     AllPieces[i].CheckIfEnemyInRelativeStashedMove(); //call after moving to see if we can acquire new target
                 }
             }
             for (int i = 0; i < AllPieces.Length; i++)
             {
                 if (AllPieces[i].attacking && AllPieces[i].attackType == "melee")
-                { 
+                {
                     AllPieces[i].CheckIfEnemyNearUs(); //last chance to see if we can acquire new target
                 }
             }
@@ -638,9 +638,9 @@ public abstract class Board : MonoBehaviour
 
         for (int i = 0; i < AllPieces.Length; i++)
         {
-            Debug.Log("old" + AllPieces[i].oldModels + "new" + AllPieces[i].models );
+            Debug.Log("old" + AllPieces[i].oldModels + "new" + AllPieces[i].models);
             AllPieces[i].oldModels = AllPieces[i].models;
-            Debug.Log("NEWold" + AllPieces[i].oldModels + "new" + AllPieces[i].models );
+            Debug.Log("NEWold" + AllPieces[i].oldModels + "new" + AllPieces[i].models);
         }
 
         for (int i = 0; i < pieces.Count; i++)
@@ -730,7 +730,7 @@ public abstract class Board : MonoBehaviour
         StartCoroutine(WaitForAnimationsToBeOver(pieces));
 
     }
-    
+
     public IEnumerator WaitForAnimationsToBeOver(List<Piece> pieces)
     {
 
@@ -750,7 +750,7 @@ public abstract class Board : MonoBehaviour
             AllowExecution();
         }
         else
-        { 
+        {
             yield return new WaitForSeconds(1);
             secondsPassed++;
             StartCoroutine(WaitForAnimationsToBeOver(pieces));
@@ -759,7 +759,7 @@ public abstract class Board : MonoBehaviour
 
 
     }
-     
+
     public void AllowExecution()
     {
 
@@ -1128,6 +1128,35 @@ public abstract class Board : MonoBehaviour
             DeselectPiece();
         }
 
+        /*
+                var lastQueuedMoveNum = selectedPiece.queuedMoves.Count - 1;
+                //if queued move is on hill
+                var terrainTypeAtQueuedPos = terrainGrid[selectedPiece.queuedMoves[lastQueuedMoveNum].x, selectedPiece.queuedMoves[lastQueuedMoveNum].y];
+
+                var penultimateQueuedMoveNum = selectedPiece.queuedMoves.Count - 2;
+
+                var terrainTypeAtPenultimateQueuedPos = "grass";
+                if (penultimateQueuedMoveNum < 0)
+                {
+                    terrainTypeAtPenultimateQueuedPos = selectedPiece.board.terrainGrid[selectedPiece.occupiedSquare.x, selectedPiece.occupiedSquare.y];
+                    Debug.LogError("terrain last" + terrainTypeAtQueuedPos + "terrain penult" + terrainTypeAtPenultimateQueuedPos);
+                    Debug.LogError("terrain last" + selectedPiece.queuedMoves[lastQueuedMoveNum] + "terrain penult" + selectedPiece.occupiedSquare);
+                }
+                else
+                {
+                    terrainTypeAtPenultimateQueuedPos = terrainGrid[selectedPiece.queuedMoves[penultimateQueuedMoveNum].x, selectedPiece.queuedMoves[penultimateQueuedMoveNum].y];
+                    Debug.LogError("terrain last" + terrainTypeAtQueuedPos + "terrain penult" + terrainTypeAtPenultimateQueuedPos);
+                    Debug.LogError("terrain last" + selectedPiece.queuedMoves[lastQueuedMoveNum] + "terrain penult" + selectedPiece.queuedMoves[penultimateQueuedMoveNum]);
+                }
+
+                if (terrainTypeAtQueuedPos == "hill" && terrainTypeAtQueuedPos != "hill") //if we queue a move onto a hill from non hill
+                {
+
+                }*/
+
+
+
+
 
         //TryToTakeOppositePiece(coords);
         //UpdateBoardOnPieceMove(coords, selectedPiece.occupiedSquare, selectedPiece, null);
@@ -1206,25 +1235,31 @@ public abstract class Board : MonoBehaviour
         chessController.EndTurn();
     }
 
-    public void UpdateBoardOnPieceMove(Vector2Int newCoords, Vector2Int oldCoords, Piece newPiece, Piece oldPiece)
+    public void UpdateBoardOnPieceMove(Vector2Int newCoords, Vector2Int oldCoords, Piece newPiece, Piece oldPiece) //normal move means old piece is null
     {
         if (newCoords.x < 0 || newCoords.x > BOARD_SIZE || newCoords.y < 0 || newCoords.y > BOARD_SIZE)
         {
             return;
         }
-        if (newPiece.routing)
+        /*if (newPiece.routing)
         {
             routingGrid[oldCoords.x, oldCoords.y] = oldPiece;
             routingGrid[newCoords.x, newCoords.y] = newPiece;
-        }
-        else
-        {
+        }*/
+        //else
+        //{
 
-            //Debug.Log("Update");
+        //Debug.Log("Update");
+        //we should take care not to overwrite pieces:
+        if (grid[oldCoords.x, oldCoords.y] == newPiece) //if old piece was us (this prevents erasing units)
+        {
             grid[oldCoords.x, oldCoords.y] = oldPiece;
-            //Debug.Log(oldCoords + " " + newCoords);
-            grid[newCoords.x, newCoords.y] = newPiece;
         }
+
+
+        //Debug.Log(oldCoords + " " + newCoords);
+        grid[newCoords.x, newCoords.y] = newPiece;
+        //}
     }
 
 

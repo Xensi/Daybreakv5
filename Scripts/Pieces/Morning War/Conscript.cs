@@ -7,10 +7,10 @@ public class Conscript : Piece
 
     public override List<Vector2Int> SelectAvailableSquares(Vector2Int startingSquare)
     {
-        //Debug.Log("Selecting available squares");
+        Debug.Log("Selecting available squares" + startingSquare);
         availableMoves.Clear();
         Vector2Int[] movement = new Vector2Int[] { };
-
+        var speed = remainingMovement; //we don't actually want to be using speed
         if (speed == 1)
         {
             movement = adjacentTiles;
@@ -77,11 +77,18 @@ public class Conscript : Piece
                 //Debug.Log("detected a marker");
                 continue;
             }*/
-            if (piece == null || !piece.IsFromSameTeam(this))
+
+            if (piece != null && piece.IsFromSameTeam(this)) //if piece exists and is from same team
             {
-                //Debug.Log("adding move");
-                TryToAddMove(nextCoords);
+                continue;
             }
+
+            if (piece != null && piece == this) //if piece exists and is this (this doesn't work lmao)
+            {
+                continue;
+            }
+
+            TryToAddMove(nextCoords); 
 
 
 
