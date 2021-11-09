@@ -58,6 +58,7 @@ public abstract class Board : MonoBehaviour
     private bool waitingToFinishTurn = false;
 
     public List<Piece> piecesReadyToAttack = new List<Piece>();
+    public List<Piece> secondPassMoveWave = new List<Piece>();
 
 
     protected virtual void Awake()
@@ -348,12 +349,36 @@ public abstract class Board : MonoBehaviour
 
             AttackPhaseSetup(piecesReadyToAttack, 0); //allows for immediate attacks by pieces that are ready to attack already //attack phase setup is adding all pieces to the list for some reason . . .
 
+
+            secondPassMoveWave.Clear();
             //start of movement phase
             for (int i = 0; i < AllPieces.Length; i++) //Actually start moving
             {
+                AllPieces[i].markForRemovalFromSecondWave = false;
                 //Debug.Log(AllPieces[i]);
-                AllPieces[i].StartMoveCoroutines();
+                AllPieces[i].StartMoveCoroutines(0); //this will start moves but the order is not something we can choose ourselves
+                                                     //move coroutines will add to second pass
+
             }
+            var num = secondPassMoveWave.Count;
+
+            while (num > 0) //while there are still pieces to check
+            {
+                foreach (var piece in secondPassMoveWave) //for each piece in the list
+                {
+                    if (!piece.markForRemovalFromSecondWave) //if mark for removal = false
+                    {
+                        piece.StartMoveCoroutines(0); //try to move
+                    }
+                    else //if marked for removal, "remove" it
+                    {
+                        num--;
+                    }
+                }
+
+            }
+
+
         }
 
     }
@@ -437,7 +462,7 @@ public abstract class Board : MonoBehaviour
             }
             for (int i = 0; i < cavalry.Count; i++)
             {
-                cavalry[i].StartMoveCoroutines();
+                cavalry[i].StartMoveCoroutines(1);
             }
         }
         else
@@ -449,7 +474,7 @@ public abstract class Board : MonoBehaviour
             }
             for (int i = 0; i < AllPieces.Length; i++)
             {
-                AllPieces[i].StartMoveCoroutines();
+                AllPieces[i].StartMoveCoroutines(1);
             }
         }
     }

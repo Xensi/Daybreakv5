@@ -253,6 +253,7 @@ public abstract class Piece : MonoBehaviour
     public bool alreadyCalculatedDamage = false;
     public bool alreadyAppliedDamage = false;
     public bool movementStopped = true;
+    public bool markForRemovalFromSecondWave = false;
     public abstract List<Vector2Int> SelectAvailableSquares(Vector2Int startingSquare);
 
     public void CheckIfNoOrdersGiven() //just check
@@ -2673,11 +2674,11 @@ public abstract class Piece : MonoBehaviour
 
     }
 
-    public void StartMoveCoroutines()
+    public void StartMoveCoroutines(int waveNum)
     {
         startOfTurn = false;
 
-        StartCoroutine(MovePiece()); //coroutine so that we can pause it for a bit and then come back
+        StartCoroutine(MovePiece(waveNum)); //coroutine so that we can pause it for a bit and then come back
     }
     public void SetRotation(int direction)
     {
@@ -3584,6 +3585,14 @@ public abstract class Piece : MonoBehaviour
             Debug.Log("Halting because enemy next to us");
             return true;
         }
+
+        var checkCoords = queuedMoves[queueTime - 1];
+        if (board.grid[checkCoords.x, checkCoords.y] != null) //if the position we're trying to move into is full
+        {
+            Debug.Log("Halting because the position is full");
+            return true;
+        }
+
         Debug.Log("Found no reason to stop");
         return false;
     }
@@ -3718,7 +3727,7 @@ public abstract class Piece : MonoBehaviour
         }
     }
 
-    public IEnumerator MovePiece() //moves piece once according to queued movement
+    public IEnumerator MovePiece(int waveNum) //moves piece once according to queued movement
     {
         /*if (routing)
         {
@@ -3825,7 +3834,7 @@ public abstract class Piece : MonoBehaviour
                 yield break;
             }
         }*/
-        if (queuedFormation != "nothing")
+        if (queuedFormation != "nothing") //switch formation if queued formation is something other than default
         {
             currentFormation = queuedFormation;
             ChangeFormation(queuedFormation);
@@ -3843,6 +3852,28 @@ public abstract class Piece : MonoBehaviour
         }
         else //normal movement
         {
+            //checking to see if we should pause this units' movement  (this doesn't work with sprinting)
+            if (queueTime == 0 && queuedMoves.Count > 0) //if first wave ; actually wave num not important anymore waveNum == 0 && 
+            {
+                Debug.LogError(queueTime + "queue Time");
+                var checkCoords = queuedMoves[queueTime];
+                Debug.LogError("checkcoords" + checkCoords);
+                if (board.grid[checkCoords.x, checkCoords.y] != null) //if the position we're trying to move into is full
+                {
+                    Debug.Log("Halting because the position is full");
+                    if (!board.secondPassMoveWave.Contains(this))
+                    {
+
+                        board.secondPassMoveWave.Add(this);
+                    }
+                    yield break;
+                }
+                else //if it opens up, remove us from list
+                {
+                    markForRemovalFromSecondWave = true;
+                }
+            }
+             
             //agent.destination = navPoint.transform.position;
             queueTime++;
             safeQueueTime++;
@@ -3941,6 +3972,7 @@ public abstract class Piece : MonoBehaviour
 
 
     }
+     
     private void UnfreezeSoldiers()
     {
 
