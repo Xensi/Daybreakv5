@@ -2999,8 +2999,13 @@ public abstract class Piece : MonoBehaviour
         {
             stashedMoves.Add(queuedMoves[i]);
         }
+        //trying to update available movement
+        //board.squareSelector.ClearSelection();
+        //board.ShowSelectionSquares(SelectAvailableSquares(queuedPosition), this);
 
     }
+     
+
     public void OnCommunicateAttackTile(int x, int y)
     {
         attackTile = new Vector2Int(x, y);

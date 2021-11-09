@@ -25,3 +25,7 @@ MonoBehaviour:
     pieceType: 3
     teamColor: 0
     direction: 4
+  - position: {x: 5, y: 3}
+    pieceType: 2
+    teamColor: 1
+    direction: 0

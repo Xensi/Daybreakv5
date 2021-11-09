@@ -126,7 +126,7 @@ MonoBehaviour:
   health: 15
   damage: 4
   morale: 30
-  energy: 15
+  energy: 40
   damageLevel: 2
   armorLevel: 3
   attackType: melee
@@ -161,20 +161,20 @@ MonoBehaviour:
   armorPiercing: 0
   arcingAttack: 0
   attackOrderSoundEffects:
-  - {fileID: 8300000, guid: bd3d3d63d47a76e4897b67a09f3ae0e6, type: 3}
-  - {fileID: 8300000, guid: aa3a81f5b8de1874d981a121b1c43273, type: 3}
-  - {fileID: 8300000, guid: 4f61cedc3a9ae9647b06640eca18d151, type: 3}
-  - {fileID: 8300000, guid: 58ae02b9f5f322d4f876a1369912b26e, type: 3}
+  - {fileID: 8300000, guid: 028e44e1998858c4dbf79b796da689c4, type: 3}
+  - {fileID: 8300000, guid: a2260aadc40378940a91ffed56907ca9, type: 3}
+  - {fileID: 8300000, guid: 6bf11a09bd131a24d929eaf5f750a035, type: 3}
+  - {fileID: 8300000, guid: c6b4dc1358ab966439834b5dbca9216c, type: 3}
   moveOrderSoundEffects:
-  - {fileID: 8300000, guid: dfa8e1739b66b3a48acac48f6296d83f, type: 3}
-  - {fileID: 8300000, guid: 147e8816cd75aa44892233add4513a45, type: 3}
-  - {fileID: 8300000, guid: f24efaa2f17e62f4fbb2e34ca0051a01, type: 3}
-  - {fileID: 8300000, guid: 59d3981c64d9b2d40adb5280cab6fdbe, type: 3}
+  - {fileID: 8300000, guid: 838929d24524b994bbf5cd4b87156560, type: 3}
+  - {fileID: 8300000, guid: c5af4be4c188a9248a36770a66c5025a, type: 3}
+  - {fileID: 8300000, guid: 85f7b2c05da22684d942c62abcb0443e, type: 3}
+  - {fileID: 8300000, guid: da0637f1dcb4f9d45ba928e709d597a5, type: 3}
   selectOrderSoundEffects:
-  - {fileID: 8300000, guid: 607feb16ca1ebbe4c85b7b7452fc6af1, type: 3}
-  - {fileID: 8300000, guid: a9ebfd5e44959c446b6a3cec687dc7ad, type: 3}
-  - {fileID: 8300000, guid: d96c345113dca904b9ea1780ba82ed5c, type: 3}
-  - {fileID: 8300000, guid: 9604f4dc2263ed444adf1df34239ab97, type: 3}
+  - {fileID: 8300000, guid: 86104742cc7914f48a293f027ffba09a, type: 3}
+  - {fileID: 8300000, guid: 49efee6d18328974cb376fe28763e32e, type: 3}
+  - {fileID: 8300000, guid: c2249341c71979746accffd5b15783cf, type: 3}
+  - {fileID: 8300000, guid: d9db8d91a3a4acf499899e43f13102fa, type: 3}
   terrainSpeedModifier: 0
   flankingDamage: 1
   originalEffectiveRange: 1
@@ -200,7 +200,7 @@ MonoBehaviour:
   remainingMovement: 0
   defenseModifier: 0
   tempDamage: 0
-  tweenSpeed: 0.75
+  tweenSpeed: 1.5
   occupiedSquare: {x: 0, y: 0}
   enemyAdjacent: 0
   targetAdjacent: 0

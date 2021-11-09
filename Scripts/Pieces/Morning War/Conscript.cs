@@ -54,9 +54,9 @@ public class Conscript : Piece
 
         Debug.Log("speed" + speed);
 
-        for (int i = 0; i < movement.Length; i++)
+        for (int i = 0; i < movement.Length; i++) //go through each tile in array
         {
-            Vector2Int nextCoords = startingSquare + movement[i];
+            Vector2Int nextCoords = startingSquare + movement[i]; //coords to check are equal to the given tile + the added tile
             Piece piece = board.GetPieceOnSquare(nextCoords);
             if (!board.CheckIfCoordinatedAreOnBoard(nextCoords))
             {

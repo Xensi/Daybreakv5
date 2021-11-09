@@ -44,6 +44,8 @@ public class UpdateAgentDestination : MonoBehaviour
     public Collider[] AllColliders;
     public Rigidbody[] AllRigidbodies;
 
+    public Collider nonRagdollCollider;
+
     public GameObject projectilePrefab;
     public float spread = 0;
     public float angle = 10;
@@ -76,6 +78,9 @@ public class UpdateAgentDestination : MonoBehaviour
             rigid.isKinematic = true;
             rigid.useGravity = false;
         }
+
+        nonRagdollCollider.enabled = true;
+
         _audioSource = GetComponent<AudioSource>();
     }
 
@@ -279,6 +284,7 @@ public class UpdateAgentDestination : MonoBehaviour
         {
             collider.enabled = true;
         }
+        nonRagdollCollider.enabled = false;
         navAgent.enabled = false;
 
     }

@@ -418,19 +418,39 @@ public abstract class Board : MonoBehaviour
         Debug.Log("All steps finished");
         //if all steps finished
         //check to see if we have any cavalry that still need to finish a second move step
-        /*foreach (var piece in AllPieces)
+        List<Piece> cavalry = new List<Piece>();
+        foreach (var piece in AllPieces)
         {
-            if (piece.unitType == "cavalry" && piece.queueTime <= piece.queuedMoves.Count)
+            if (piece.unitType == "cavalry" && piece.queueTime % 2 == 1 && piece.queueTime < piece.queuedMoves.Count)  //if we have any cavalry that's only on its first/third move and has more moves left to go
+            {
+                //Debug.LogError("Knight queue time remainder" + piece.queueTime % 2);
+                cavalry.Add(piece); //add it to the list
+            }
         }
-        */
-        
-        for (int i = 0; i < AllPieces.Length; i++)
+
+        if (cavalry.Count > 0) //if we have any cavalry that still needs to move
         {
-            AllPieces[i].CheckIfEnemiesAdjacent();
+
+            for (int i = 0; i < cavalry.Count; i++)
+            {
+                cavalry[i].CheckIfEnemiesAdjacent();
+            }
+            for (int i = 0; i < cavalry.Count; i++)
+            {
+                cavalry[i].StartMoveCoroutines();
+            }
         }
-        for (int i = 0; i < AllPieces.Length; i++)
+        else
         {
-            AllPieces[i].StartMoveCoroutines();
+
+            for (int i = 0; i < AllPieces.Length; i++)
+            {
+                AllPieces[i].CheckIfEnemiesAdjacent();
+            }
+            for (int i = 0; i < AllPieces.Length; i++)
+            {
+                AllPieces[i].StartMoveCoroutines();
+            }
         }
     }
     public void CheckIfAllMovesFinished() //this will be responsible for ending the movement phase
@@ -798,7 +818,8 @@ public abstract class Board : MonoBehaviour
     public void OnTriggerSlowUpdate() //finished communicating with mp
     {
         Debug.LogError("triggered slow update");
-        StartCoroutine(SlowUpdate(1f));
+        //StartCoroutine(SlowUpdate(1f));
+        StartCoroutine(SlowUpdate(.5f));
     }
 
 
@@ -852,8 +873,8 @@ public abstract class Board : MonoBehaviour
                     SelectPieceMoved(coords);
 
                 }
-                else if (selectedPiece != null && selectedPiece.attacking && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece == selectedPiece) //if you click on the same tile twice
-                {// l  &&  
+                else if (selectedPiece != null && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece == selectedPiece) //if you click on the same tile twice
+                {// l  &&  && selectedPiece.attacking 
                     Debug.Log("clicked on a position where we already have a marker for movement and we're attacking"); //next check if marker belongs to us
                     if (selectedPiece.attacking)
                     {
@@ -993,7 +1014,7 @@ public abstract class Board : MonoBehaviour
 
         //var random = friendly.randomInitiative;
         //Debug.Log("Random value" + random);
-        if (enemy.speed > friendly.speed) //start trying to break the tie
+        if (enemy.speed > friendly.speed) //start trying to break the tie, starting with speed
         {
             friendly.wonTieBreak = false;
             enemy.wonTieBreak = true;
@@ -1003,12 +1024,22 @@ public abstract class Board : MonoBehaviour
             friendly.wonTieBreak = true;
             enemy.wonTieBreak = false;
         }
-        else if (enemy.models > friendly.models)
+        if (enemy.attackType == "melee" && friendly.attackType == "ranged") //start trying to break the tie, starting with speed
         {
             friendly.wonTieBreak = false;
             enemy.wonTieBreak = true;
         }
-        else if (enemy.models < friendly.models)
+        else if (enemy.attackType == "ranged" && friendly.attackType == "melee")
+        {
+            friendly.wonTieBreak = true;
+            enemy.wonTieBreak = false;
+        }
+        else if (enemy.energy > friendly.energy)
+        {
+            friendly.wonTieBreak = false;
+            enemy.wonTieBreak = true;
+        }
+        else if (enemy.energy < friendly.energy)
         {
             friendly.wonTieBreak = true;
             enemy.wonTieBreak = false;
@@ -1019,6 +1050,16 @@ public abstract class Board : MonoBehaviour
             enemy.wonTieBreak = true;
         }
         else if (enemy.morale < friendly.morale)
+        {
+            friendly.wonTieBreak = true;
+            enemy.wonTieBreak = false;
+        }
+        else if (enemy.models > friendly.models)
+        {
+            friendly.wonTieBreak = false;
+            enemy.wonTieBreak = true;
+        }
+        else if (enemy.models < friendly.models)
         {
             friendly.wonTieBreak = true;
             enemy.wonTieBreak = false;
@@ -1232,7 +1273,7 @@ public abstract class Board : MonoBehaviour
             squareSelector.ShowSelection(squaresData); //then show squares based on data
             squareSelector.UpdateSelection(squaresData);
         }
-        else if (chessController.localPlayer.team == piece.team)
+        else if (chessController.localPlayer.team == piece.team) //for multiplayer
         {
             Dictionary<Vector3, bool> squaresData = new Dictionary<Vector3, bool>();
             for (int i = 0; i < selection.Count; i++)
