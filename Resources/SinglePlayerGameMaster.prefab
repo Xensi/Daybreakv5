@@ -66,5 +66,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0955ec6db863564489f6e707411756e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingBoardLayout: {fileID: 11400000, guid: 7020eebaba729e64f9cff0240f385230, type: 2}
+  startingBoardLayout: {fileID: 11400000, guid: c8e7103b3530a8b4bb52bcaf0d913f9e, type: 2}
   AllowInput: 1

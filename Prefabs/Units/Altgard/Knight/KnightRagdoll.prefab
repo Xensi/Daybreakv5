@@ -4392,7 +4392,7 @@ MonoBehaviour:
   animationSpeed: 1
   queuedDamage: 0
   freeze: 0
-  navOffset: 0.5
+  navOffset: 0.4
   navOffsetAdd: 0
   navOffsetAddClamp: 1
   attackerRadius: 0.1

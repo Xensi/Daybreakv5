@@ -361,8 +361,8 @@ public abstract class Board : MonoBehaviour
 
             }
             var num = secondPassMoveWave.Count;
-
-            while (num > 0) //while there are still pieces to check
+            var overflow = 25;
+            while (num > 0 || overflow <= 0) //while there are still pieces to check
             {
                 foreach (var piece in secondPassMoveWave) //for each piece in the list
                 {
@@ -375,6 +375,7 @@ public abstract class Board : MonoBehaviour
                         num--;
                     }
                 }
+                overflow--;
 
             }
 
@@ -769,7 +770,7 @@ public abstract class Board : MonoBehaviour
             }
         }
         Debug.LogError("number done" + num);
-        if (num >= pieces.Count || secondsPassed >= 10) //if all are done
+        if (num >= pieces.Count || secondsPassed >= 5) //if all are done
         {
             secondsPassed = 0;
             AllowExecution();

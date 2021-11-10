@@ -362,7 +362,14 @@ public class UpdateAgentDestination : MonoBehaviour
                 soldier.GetComponent<UpdateAgentDestination>().navOffsetAdd = Mathf.Clamp(soldier.GetComponent<UpdateAgentDestination>().navOffsetAdd, 0, navOffsetAddClamp);
             }
         }
-        yield return new WaitForSeconds(Random.Range(1f, 2f));
+        if (parentPiece.unitType == "infantry")
+        { 
+            yield return new WaitForSeconds(Random.Range(1f, 2f));
+        }
+        else
+        { 
+            yield return new WaitForSeconds(Random.Range(.1f, 1f));
+        }
         if (numberOfAttacks < maxNumberOfAttacks) //if not met max attacks
         {
             StartCoroutine(AttackInterval()); //do another attempt

@@ -10,26 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ac7b73bd14775044bd29db02b7ea857, type: 3}
-  m_Name: Test 1
+  m_Name: Test 2
   m_EditorClassIdentifier: 
   boardSquares:
-  - position: {x: 8, y: 3}
+  - position: {x: 3, y: 3}
     pieceType: 0
     teamColor: 1
     direction: 0
-  - position: {x: 9, y: 3}
-    pieceType: 0
-    teamColor: 1
+  - position: {x: 4, y: 5}
+    pieceType: 3
+    teamColor: 0
     direction: 0
-  - position: {x: 7, y: 3}
-    pieceType: 0
-    teamColor: 1
-    direction: 0
-  - position: {x: 6, y: 3}
-    pieceType: 0
-    teamColor: 1
-    direction: 0
+  - position: {x: 5, y: 5}
+    pieceType: 3
+    teamColor: 0
+    direction: 4
   - position: {x: 5, y: 3}
-    pieceType: 0
+    pieceType: 2
     teamColor: 1
     direction: 0
