@@ -8,7 +8,7 @@ public class SinglePlayerBoard : Board
     {
         Vector2Int intCoords = new Vector2Int(Mathf.RoundToInt(coords.x), Mathf.RoundToInt(coords.y)); //determine coords of selected area
         OnSelectedPieceMoved(intCoords);
-    
+
     }
 
     public override void SetSelectedPiece(Vector2 coords)
@@ -22,6 +22,15 @@ public class SinglePlayerBoard : Board
         whiteReady = true;
         blackReady = true;
         OnExecuteMoveForAllPieces("");
+    }
+    public override void Unready()
+    {
+        if (!whiteReady || !blackReady)
+        { 
+            whiteReady = false;
+            blackReady = false;
+            OnUnready("");
+        }
     }
 
     public override void ChangeStance(int id, string stance)

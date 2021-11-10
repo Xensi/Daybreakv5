@@ -282,7 +282,42 @@ public abstract class Board : MonoBehaviour
             UnitList[id].ResetStance();
         }
     }
+    public abstract void Unready();
+    public void OnUnready(string team)
+    {
+        if (!whiteReady || !blackReady) //if at least one player is not ready yet
+        {
+            turnBeingExecuted = false; //tell slow update to start checking if we're done moving or not
 
+            for (int i = 0; i < gameInit.teamColorDefinitions.Length; i++) //set values to be true based on team color
+            {
+                if (team == gameInit.teamColorDefinitions[i].ToString())
+                {
+                    if (i == 0)
+                    {
+
+                        whiteReady = false;
+                    }
+                    else if (i == 1)
+                    {
+
+                        blackReady = false;
+                    }
+                    else if (i == 2)
+                    {
+
+                        whiteReady = false;
+                    }
+                    else if (i == 3)
+                    {
+
+                        blackReady = false;
+                    }
+                }
+            }
+        }
+        
+    }
     public void OnExecuteMoveForAllPieces(string team) //execute moves for all pieces!
     {
         //DeselectPiece();

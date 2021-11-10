@@ -93,6 +93,19 @@ public class MultiplayerBoard : Board
     {
         OnExecuteMoveForAllPieces(team);
     }
+
+    public override void Unready()
+    {
+        chessController.AllowInput = true; //set locally, hopefully
+        executeButton.interactable = true;
+        string team = chessController.localPlayer.team.ToString();
+        photonView.RPC(nameof(RPC_OnUnready), RpcTarget.AllBuffered, new object[] { team });
+    }
+    [PunRPC]
+    private void RPC_OnUnready(string team)
+    {
+        OnUnready(team);
+    }
     public override void ChangeStance(int id, string stance)
     {
         photonView.RPC(nameof(RPC_OnChangeStance), RpcTarget.AllBuffered, new object[] { id, stance });

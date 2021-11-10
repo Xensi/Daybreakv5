@@ -23,6 +23,8 @@ public class GameInitializer : MonoBehaviour
     [SerializeField] public GameObject dropDownParent;
     [SerializeField] public TMP_Dropdown actionDropdown;
     [SerializeField] public GameObject executeButtonParent;
+    [SerializeField] public GameObject unreadyButtonParent;
+    [SerializeField] public GameObject deselectButtonParent;
     [SerializeField] public GameObject formationDropDownParent;
     [SerializeField] public TMP_Dropdown formationDropDown;
     Camera cam;
@@ -54,6 +56,7 @@ public class GameInitializer : MonoBehaviour
     public void CreateMultiplayerBoard()
     {
         executeButtonParent.SetActive(true);
+        unreadyButtonParent.SetActive(true);
         if (!networkManager.IsRoomFull())
         {
             //only first player instantiates the board
@@ -88,6 +91,7 @@ public class GameInitializer : MonoBehaviour
     public void CreateSinglePlayerBoard()
     { 
         executeButtonParent.SetActive(true);
+        unreadyButtonParent.SetActive(true);
         Instantiate(singleplayerBoardPrefab, boardAnchor);
         levelGen.FindBoard();
         levelGen.GenerateLevel();
@@ -156,7 +160,10 @@ public class GameInitializer : MonoBehaviour
 
         chessController = controller;
     }
-
+    public void DeselectPiece()
+    {
+        board.DeselectPiece();
+    }
     public void SubmitExecute() //prevent further inputs from the one that clicked this
     {
         //then check if both players have clicked button
@@ -173,6 +180,12 @@ public class GameInitializer : MonoBehaviour
         board.selectedPiece = null; //so that you can't queue movement erroneously
         board.ExecuteMoveForAllPieces();
     }
+
+    public void Unexecute()
+    {
+        board.Unready();
+    }
+
 
     public void PieceSprint()
     {
@@ -220,6 +233,7 @@ public class GameInitializer : MonoBehaviour
     }
     public void ShowDropDown()
     {
+        deselectButtonParent.SetActive(true);
         dropDownParent.SetActive(true);
         actionDropdown.value = 0;
         board.selectedPiece.DisplayFormation(board.selectedPiece.queuedFormation);
@@ -240,6 +254,7 @@ public class GameInitializer : MonoBehaviour
     }
     public void HideDropDown()
     {
+        deselectButtonParent.SetActive(false);
         dropDownParent.SetActive(false);
         formationDropDownParent.SetActive(false);
 
