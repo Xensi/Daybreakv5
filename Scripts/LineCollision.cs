@@ -12,6 +12,7 @@ public class LineCollision : MonoBehaviour
     public GameObject prefab;
     public GameObject aestheticPrefab;
     public GameObject redPrefab;
+    public GameObject yellowPrefab;
     public int segments = 10;
     public int originalSegments = 10;
     public GameInitializer gameInit;
@@ -109,6 +110,10 @@ public class LineCollision : MonoBehaviour
                 if (parentPiece.attacking)
                 {
                     thing = redPrefab;
+                }
+                else if (parentPiece.disengaging)
+                {
+                    thing = yellowPrefab;
                 }
                 else
                 {

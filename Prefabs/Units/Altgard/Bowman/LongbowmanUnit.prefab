@@ -123,6 +123,7 @@ MonoBehaviour:
   unitName: Longbowman
   originalSpeed: 1
   models: 42
+  oldModels: 0
   health: 10
   damage: 1
   morale: 15
@@ -145,6 +146,7 @@ MonoBehaviour:
   circleRadius2: 0.5
   circleRadius3: 0.35
   markerVisualPrefab: {fileID: 6420406295384315722, guid: 8e848dce9130cfa4c98ced6d70da7b60, type: 3}
+  arrowMarkerVisualPrefab: {fileID: 6420406295384315722, guid: d7a397369c51e7a4b9ff2366dc34fd00, type: 3}
   soldierPrefab: {fileID: 7326990469578088066, guid: a54208850284fe542b2a3bbb631f1a70, type: 3}
   navPrefab: {fileID: 4300984820108782723, guid: 82cad32952c8bc64391306edffd1644a, type: 3}
   navPrefab2: {fileID: 4300984820108782723, guid: 58cd2a0df9cc99840aaa7617f9b70d24, type: 3}
@@ -190,6 +192,7 @@ MonoBehaviour:
   fireDamageBonus: 0
   unitID: 0
   queueTime: 0
+  safeQueueTime: 0
   speed: 0
   sprintSpeed: 0
   queuedDamage: 0
@@ -204,6 +207,7 @@ MonoBehaviour:
   targetAdjacent: 0
   conflict: 0
   markForDeselect: 0
+  allowedToDie: 0
   startOfTurn: 1
   FinishedMoving: 1
   oneStepFinished: 0
@@ -213,6 +217,7 @@ MonoBehaviour:
   moveAndAttackEnabled: 0
   availableMoves: []
   queuedMoves: []
+  stashedMoves: []
   instantiatedMarkers: []
   markerVisuals: []
   flankDirections: 
@@ -285,8 +290,15 @@ MonoBehaviour:
   OnTerrainType: 
   currentFormation: rectangle
   queuedFormation: nothing
+  accuracy: 0
   ordersGiven: 0
   defensiveAttacking: 0
+  attackedThisTurn: 0
+  animationsOver: 0
+  alreadyCalculatedDamage: 0
+  alreadyAppliedDamage: 0
+  movementStopped: 1
+  markForRemovalFromSecondWave: 0
 --- !u!114 &255507802608927540
 MonoBehaviour:
   m_ObjectHideFlags: 0

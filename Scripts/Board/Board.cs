@@ -934,7 +934,7 @@ public abstract class Board : MonoBehaviour
                     SelectPieceMoved(coords);
 
                 }
-                else if (selectedPiece != null && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece == selectedPiece) //if you click on the same tile twice
+                else if (selectedPiece != null && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece == selectedPiece && selectedPiece.attackType == "melee") //if you click on the same tile twice
                 {// l  &&  && selectedPiece.attacking 
                     Debug.Log("clicked on a position where we already have a marker for movement and we're attacking"); //next check if marker belongs to us
                     if (selectedPiece.attacking)
@@ -1157,17 +1157,8 @@ public abstract class Board : MonoBehaviour
             selectedPiece.QueueMove(coords);//tell piece to remember these coords and place a marker there //got error
         }
 
-        if (selectedPiece.attacking && selectedPiece.attackType == "ranged" && selectedPiece.moveAndAttackEnabled && selectedPiece.turnTime >= 2) //if ranged attacking piece is move and attacking, and turn time is >= 2
-        { //deselect because we're done moving
-            selectedPiece.markForDeselect = false;
-            DeselectPiece();
-        }
-        else if (selectedPiece.attacking && selectedPiece.attackType == "ranged" && !selectedPiece.moveAndAttackEnabled)
-        { //deselect after the first move is queued (steady attack)
-            selectedPiece.markForDeselect = false;
-            DeselectPiece();
-        }
-        else if (selectedPiece.attacking && selectedPiece.attackType == "ranged" && selectedPiece.moveAndAttackEnabled && selectedPiece.turnTime == 1)
+        Debug.LogError("remainingmovement" + selectedPiece.remainingMovement + "turn time" + selectedPiece.turnTime);
+        if (selectedPiece.attacking && selectedPiece.attackType == "ranged" && selectedPiece.moveAndAttackEnabled && selectedPiece.remainingMovement == 0) //&& selectedPiece.turnTime >= 1
         {//if move and attack enabled, disable after first movement queued
             //selectedPiece.moveAndAttackEnabled = false;
             selectedPiece.speed = selectedPiece.longRange; //increase speed so we can queue a second move
@@ -1183,6 +1174,17 @@ public abstract class Board : MonoBehaviour
             //show selection squares from queued position
             ShowSelectionSquares(selectedPiece.SelectAvailableSquares(queuedPosition), selectedPiece);
         }
+        else if (selectedPiece.attacking && selectedPiece.attackType == "ranged" && selectedPiece.moveAndAttackEnabled && selectedPiece.turnTime >= 2) //if ranged attacking piece is move and attacking, and turn time is >= 2
+        { //deselect because we're done moving
+            selectedPiece.markForDeselect = false;
+            DeselectPiece();
+        }
+        else if (selectedPiece.attacking && selectedPiece.attackType == "ranged" && !selectedPiece.moveAndAttackEnabled)
+        { //deselect after the first move is queued (steady attack)
+            selectedPiece.markForDeselect = false;
+            DeselectPiece();
+        }
+        
         else if (selectedPiece.remainingMovement <= 0 || selectedPiece.markForDeselect)
         {
             selectedPiece.markForDeselect = false;

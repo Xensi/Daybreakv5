@@ -2925,13 +2925,13 @@ public abstract class Piece : MonoBehaviour
                         return;
                     }
                 }
-                else if (moveAndAttackEnabled && attackType == "ranged" && attacking && turnTime <= 0)
+                else if (moveAndAttackEnabled && attackType == "ranged" && attacking && turnTime <= 1)
                 {
                     Debug.LogError("Cancelling movement 2");
                     turnTime--; //every time we cancel a move, we need to reset the turn time
                     return;
                 }
-                else if (moveAndAttackEnabled && attackType == "ranged" && attacking && turnTime >= 1)
+                else if (moveAndAttackEnabled && attackType == "ranged" && attacking && turnTime >= 2)
                 {
                     if (absDistance > remainingMovement) //basically, we don't care if how much distance there is but we still need to respect range
                     {
@@ -3092,7 +3092,7 @@ public abstract class Piece : MonoBehaviour
 
         GameObject markerVisual;
         Debug.LogError("remaining movement" + remainingMovement);
-        if (attacking && remainingMovement <= 0) //if attacking and last queued move set arrow instead of circle (not working when clicking on enemy unit twice?
+        if (attacking && remainingMovement <= 0 && attackType == "melee") //if attacking and last queued move set arrow instead of circle (not working when clicking on enemy unit twice?
         {
             markerVisual = Instantiate(arrowMarkerVisualPrefab, targetPosition, Quaternion.identity);
 
@@ -3139,6 +3139,16 @@ public abstract class Piece : MonoBehaviour
             if (attacking && remainingMovement > 0)
             {
                 matSetter.SetSingleMaterial(gameInit.red);
+
+            }
+            else if (attacking && attackType == "ranged")
+            {
+                matSetter.SetSingleMaterial(gameInit.red);
+
+            }
+            else if (disengaging)
+            {
+                matSetter.SetSingleMaterial(gameInit.yellow);
 
             }
             /*if (disengaging)
@@ -4028,7 +4038,7 @@ public abstract class Piece : MonoBehaviour
         UpdateTerrainType(occupiedSquare.x, occupiedSquare.y); //update what terrain we're on
         DefineFlanks();
         DefineFront(); //update direction facing when finishing a movement step
-        if (moveAndAttackEnabled && attackType == "ranged" && attacking && queueTime >= originalSpeed - 1) //if move attacking as ranged unit and moved once
+        if (moveAndAttackEnabled && attackType == "ranged" && attacking && queueTime >= queuedMoves.Count - 1) //if move attacking as ranged unit and moved up to penult
         {
             oneStepFinished = true;
             FinishedMoving = true;

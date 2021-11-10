@@ -43,6 +43,7 @@ public class GameInitializer : MonoBehaviour
     public Material orangeMaterial;
     public Material defaultMaterial;
     public Material red;
+    public Material yellow;
 
     public string action = "move";
     public string formation = "rectangle";

@@ -571,6 +571,7 @@ MonoBehaviour:
   orangeMaterial: {fileID: 2100000, guid: daf51192828174a4f96271e66e03238f, type: 2}
   defaultMaterial: {fileID: 2100000, guid: 4e53d0e3f9cb9bd41a8d3777899f37db, type: 2}
   red: {fileID: 2100000, guid: f987b088935beeb44be80ac7c44b4993, type: 2}
+  yellow: {fileID: 2100000, guid: 99e7e0092677b1843a5c9c745ba304f9, type: 2}
   action: move
   formation: rectangle
   board: {fileID: 0}

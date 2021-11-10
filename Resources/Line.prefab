@@ -147,7 +147,9 @@ MonoBehaviour:
   prefab: {fileID: 5448380479077832603, guid: c8d7f67218e69674faceb02ba4435ceb, type: 3}
   aestheticPrefab: {fileID: 5448380479077832603, guid: 31dafef03376f4f41bca52537afd82e0, type: 3}
   redPrefab: {fileID: 5448380479077832603, guid: 0868545b4bd1764488cc08b2675d5e62, type: 3}
+  yellowPrefab: {fileID: 5448380479077832603, guid: 9d4c96e1d76694b42b1715c5364fd154, type: 3}
   segments: 10
+  originalSegments: 10
   gameInit: {fileID: 0}
   yellow: {fileID: 2100000, guid: 6c3ae85fdeaa9c440b24f49c084da1d8, type: 2}
   red: {fileID: 2100000, guid: f987b088935beeb44be80ac7c44b4993, type: 2}
