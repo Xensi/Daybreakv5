@@ -2799,7 +2799,7 @@ public abstract class Piece : MonoBehaviour
     }
 
     public void QueueMove(Vector2Int coords)
-    { 
+    {
         turnTime++; //turn time needs to be 1 for reasons   (this means first queued move has turn time of 1, so trying to get last queued move should be queuedMove[turnTime-1]
         if (attacking)
         {
@@ -2996,7 +2996,7 @@ public abstract class Piece : MonoBehaviour
         if (moving || sprinting)
         {
             if (remainingMovement <= 0)
-            { 
+            {
                 //sound effect logic
                 int random = Random.Range(0, moveOrderSoundEffects.Length);
                 PlayClip(moveOrderSoundEffects[random]);
@@ -3005,7 +3005,7 @@ public abstract class Piece : MonoBehaviour
         //trying to update available movement
 
         //board.squareSelector.ClearSelection();
-        board.ShowSelectionSquares(SelectAvailableSquares(queuedMoves[queuedMoves.Count-1]), this); //select based on last queued move position
+        board.ShowSelectionSquares(SelectAvailableSquares(queuedMoves[queuedMoves.Count - 1]), this); //select based on last queued move position
 
     }
 
@@ -3035,6 +3035,21 @@ public abstract class Piece : MonoBehaviour
         {
             Debug.LogError("Setting movement to 0");
             remainingMovement = 0;
+        }
+        else if (terrainTypeAtQueuedPos != "road" && terrainTypeAtPenultimateQueuedPos == "road") //if we queue a move onto a non road from a road
+        {
+            if (sprinting)
+            {
+
+                speed = sprintSpeed;
+                remainingMovement = speed - queuedMoves.Count;
+            }
+            else
+            {//in the case of the knight, our remaining movement on road would be 3, and speed off road would be 2
+                //if we queue a move off of road, remaining movement is now 2 because we have spent 1 movement. since we are off road we can only spend one more movement
+                speed = originalSpeed;
+                remainingMovement = speed - queuedMoves.Count;
+            }
         }
 
     }
@@ -3852,28 +3867,37 @@ public abstract class Piece : MonoBehaviour
         }
         else //normal movement
         {
-            //checking to see if we should pause this units' movement  (this doesn't work with sprinting)
+            //checking to see if we should pause this units' movement  (this doesn't work with sprinting) (also breaks attacking?)
             if (queueTime == 0 && queuedMoves.Count > 0) //if first wave ; actually wave num not important anymore waveNum == 0 && 
             {
-                Debug.LogError(queueTime + "queue Time");
-                var checkCoords = queuedMoves[queueTime];
-                Debug.LogError("checkcoords" + checkCoords);
-                if (board.grid[checkCoords.x, checkCoords.y] != null) //if the position we're trying to move into is full
+                var dist = occupiedSquare - queuedMoves[0];
+                Debug.LogError("Dist" + dist);
+                if (Mathf.Abs(dist.x) <= 1 || Mathf.Abs(dist.y) <= 1) //if an adjacent move
                 {
-                    Debug.Log("Halting because the position is full");
-                    if (!board.secondPassMoveWave.Contains(this))
-                    {
 
-                        board.secondPassMoveWave.Add(this);
+                    Debug.LogError(queueTime + "queue Time");
+                    var checkCoords = queuedMoves[queueTime];
+                    Debug.LogError("checkcoords" + checkCoords);
+                    if (board.grid[checkCoords.x, checkCoords.y] != null && board.grid[checkCoords.x, checkCoords.y].IsFromSameTeam(this)) //if the position we're trying to move into is full and is occupied by a teammate
+                    {
+                        Debug.Log("Halting because the position is full");
+                        if (!board.secondPassMoveWave.Contains(this))
+                        {
+
+                            board.secondPassMoveWave.Add(this);
+                        }
+                        yield break;
                     }
-                    yield break;
+                    else //if it opens up, remove us from list
+                    {
+                        markForRemovalFromSecondWave = true;
+                    }
                 }
-                else //if it opens up, remove us from list
-                {
-                    markForRemovalFromSecondWave = true;
-                }
+
+
+
             }
-             
+
             //agent.destination = navPoint.transform.position;
             queueTime++;
             safeQueueTime++;
@@ -3972,7 +3996,7 @@ public abstract class Piece : MonoBehaviour
 
 
     }
-     
+
     private void UnfreezeSoldiers()
     {
 
@@ -4084,9 +4108,9 @@ public abstract class Piece : MonoBehaviour
 
             Piece piece = board.GetPieceOnSquare(stashedMoves[0]); //if we've moved and then had to stop we adjust this by the number of moves we've done so far
             if (piece != null && !piece.IsFromSameTeam(this))
-            { 
+            {
                 targetToAttackPiece = piece; //set new target
-                 
+
                 attackTile = stashedMoves[0];
 
 
@@ -4101,7 +4125,7 @@ public abstract class Piece : MonoBehaviour
             //Debug.LogError("we have no moves" + this);
             return;
         }
-          
+
         Debug.LogError("queuetime" + queueTime);
         var normalizedQueueTime = queueTime - 1; //not sure why this is needed, but here we are
         if (normalizedQueueTime < 0)
@@ -4115,7 +4139,7 @@ public abstract class Piece : MonoBehaviour
 
         Piece piece = board.GetPieceOnSquare(stashedMoves[normalizedQueueTime]); //if we've moved and then had to stop we adjust this by the number of moves we've done so far
         if (piece != null && !piece.IsFromSameTeam(this))
-        {  
+        {
             targetToAttackPiece = piece; //set new target 
             attackTile = stashedMoves[normalizedQueueTime];
             Debug.LogError(targetToAttackPiece + "target");
@@ -4158,7 +4182,7 @@ public abstract class Piece : MonoBehaviour
         if (targetToAttackPiece != null)
         {
             return;
-        } 
+        }
 
         for (int i = 0; i < adjacentTiles.Length; i++) //for each adjacent tile 
         {
@@ -4176,7 +4200,7 @@ public abstract class Piece : MonoBehaviour
                 break; //we can stop because we know the target is next to us and we can fight it
             }
         }
-        
+
 
     }
 
@@ -4637,7 +4661,7 @@ public abstract class Piece : MonoBehaviour
                 waitingForFirstAttack = false;
                 //attackerPiece.soldierAttacked = false; //set it to false to be ready for the next one
             }
-            yield return new WaitForSeconds(Random.Range(0.1f, 5/markedSoldiersCount)); //this should make soldiers die in a more timely fashion. soldiers die faster the more there are to kill
+            yield return new WaitForSeconds(Random.Range(0.1f, 5 / markedSoldiersCount)); //this should make soldiers die in a more timely fashion. soldiers die faster the more there are to kill
 
 
             //initiate kill function

@@ -89,7 +89,7 @@ MonoBehaviour:
     pieceType: 2
     teamColor: 1
     direction: 0
-  - position: {x: 8, y: 5}
+  - position: {x: 13, y: 5}
     pieceType: 2
     teamColor: 1
     direction: 0

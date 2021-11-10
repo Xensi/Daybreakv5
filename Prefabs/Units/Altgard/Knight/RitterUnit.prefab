@@ -135,7 +135,7 @@ MonoBehaviour:
   effectiveRange: 1
   soldierScale: 0.765
   rowSize: 7
-  hexOffset: 1
+  hexOffset: 0.6
   hexOffsetY: 0
   hexOffsetZ: 0.25
   numberOfDudesInCircle: 20
