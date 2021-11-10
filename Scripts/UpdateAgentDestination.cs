@@ -115,7 +115,7 @@ public class UpdateAgentDestination : MonoBehaviour
 
         }
         if (attacking && parentPiece.attackType == "melee" && navAgent.enabled)
-        {
+        { 
             if (!moveSet) //play looping animation once
             {
                 animator.Play("BaseMove");
@@ -311,6 +311,9 @@ public class UpdateAgentDestination : MonoBehaviour
             {
                 navAgent.destination = tMin.transform.position;
                 targetedSoldierDebug = tMin;
+
+
+
             }
             //basically, find the closest soldier and make that our move target
         }

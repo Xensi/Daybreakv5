@@ -934,10 +934,10 @@ public abstract class Board : MonoBehaviour
                     SelectPieceMoved(coords);
 
                 }
-                else if (selectedPiece != null && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece == selectedPiece && selectedPiece.attackType == "melee") //if you click on the same tile twice
+                else if (selectedPiece != null && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece == selectedPiece ) //if you click on the same tile twice
                 {// l  &&  && selectedPiece.attacking 
                     Debug.Log("clicked on a position where we already have a marker for movement and we're attacking"); //next check if marker belongs to us
-                    if (selectedPiece.attacking)
+                    if (selectedPiece.attacking && selectedPiece.attackType == "melee")
                     {
                         var lastMarkerVisual = selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1];
 
