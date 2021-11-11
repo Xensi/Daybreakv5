@@ -18,9 +18,9 @@ MonoBehaviour:
     teamColor: 1
     direction: 0
   - position: {x: 4, y: 5}
-    pieceType: 3
+    pieceType: 0
     teamColor: 0
-    direction: 0
+    direction: 4
   - position: {x: 5, y: 5}
     pieceType: 3
     teamColor: 0
@@ -29,3 +29,11 @@ MonoBehaviour:
     pieceType: 2
     teamColor: 1
     direction: 0
+  - position: {x: 6, y: 3}
+    pieceType: 1
+    teamColor: 1
+    direction: 0
+  - position: {x: 6, y: 5}
+    pieceType: 6
+    teamColor: 0
+    direction: 4

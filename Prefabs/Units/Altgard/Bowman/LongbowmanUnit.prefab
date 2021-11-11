@@ -124,7 +124,7 @@ MonoBehaviour:
   originalSpeed: 1
   models: 42
   oldModels: 0
-  health: 10
+  health: 9
   damage: 1
   morale: 15
   energy: 25
@@ -132,7 +132,6 @@ MonoBehaviour:
   armorLevel: 1
   attackType: ranged
   unitType: infantry
-  attackIgnoresArmor: 0
   effectiveRange: 4
   soldierScale: 1
   rowSize: 7
@@ -1323,7 +1322,7 @@ GameObject:
   - component: {fileID: 7780253268061889822}
   - component: {fileID: 1257563688095491226}
   m_Layer: 12
-  m_Name: Image
+  m_Name: Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 255507802608927540}
   - component: {fileID: -579645896337733167}
   m_Layer: 12
-  m_Name: MusketeerUnit
+  m_Name: UnitCannoneers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

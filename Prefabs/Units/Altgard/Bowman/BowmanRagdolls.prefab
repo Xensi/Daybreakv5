@@ -928,7 +928,7 @@ MonoBehaviour:
   attackerRadius: 0.06
   movingRadius: 0.03
   effectSpawnTransform: {fileID: 3516075947785667838}
-  attackEffect: {fileID: 6682751750994293635, guid: c393d073fda55214389dcd434b8bd091, type: 3}
+  attackEffect: {fileID: 0}
   attackSoundEffect:
   - {fileID: 8300000, guid: 5e02ee2c0ac1cef4993fbca9a97a317b, type: 3}
   - {fileID: 8300000, guid: 8aa7f9b504e46b74981e91cca69a8e61, type: 3}

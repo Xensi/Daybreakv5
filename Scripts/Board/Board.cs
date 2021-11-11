@@ -58,8 +58,8 @@ public abstract class Board : MonoBehaviour
     private bool waitingToFinishTurn = false;
 
     public List<Piece> piecesReadyToAttack = new List<Piece>();
+    public List<Piece> piecesReadyToAttackAfterMovement = new List<Piece>();
     public List<Piece> secondPassMoveWave = new List<Piece>();
-
 
     protected virtual void Awake()
     {
@@ -173,7 +173,7 @@ public abstract class Board : MonoBehaviour
         Marker marker = Instantiate(UnitList[id].markerPrefab, targetPosition, Quaternion.identity); //then place a marker there
         UnitList[id].instantiatedMarkers.Add(marker); //add it to the list so we can delete if need be
         marker.turnTime = UnitList[id].speed - remainingMovement;//set marker turn time. we can tell what turn time we're on by the remaining movement. for example, 2 speed - 1 remaining move: 1st turn time
-        //Debug.LogError("Speed" + UnitList[id].speed + remainingMovement);
+        ////Debug.LogError("Speed" + UnitList[id].speed + remainingMovement);
         marker.parentPiece = UnitList[id];
         marker.coords = coords;
         int num = 0;
@@ -318,7 +318,7 @@ public abstract class Board : MonoBehaviour
         }
         
     }
-    public void OnExecuteMoveForAllPieces(string team) //execute moves for all pieces!
+    public void OnExecuteMoveForAllPieces(string team) //execute moves for all pieces! using mp
     {
         //DeselectPiece();
 
@@ -368,15 +368,16 @@ public abstract class Board : MonoBehaviour
             Piece[] AllPieces = FindObjectsOfType<Piece>();
 
             Preturn(AllPieces); //turn set up
-
+            piecesReadyToAttack.Clear();
+            piecesReadyToAttackAfterMovement.Clear();
             for (int i = 0; i < AllPieces.Length; i++) //go through each piece
             {
-                Debug.LogError("allpieces" + AllPieces[i] + AllPieces[i].queuedMoves.Count);
+                ////Debug.LogError("allpieces" + AllPieces[i] + AllPieces[i].queuedMoves.Count);
                 if (AllPieces[i].queuedMoves.Count == 1) //if exactly one moved queued and attacking, you are eligible to attack immediately  && AllPieces[i].attacking && AllPieces[i].attackedThisTurn == false
                 {
-                    //Debug.LogError("I HATE YOU");
+                    ////Debug.LogError("I HATE YOU");
                     piecesReadyToAttack.Add(AllPieces[i]);
-                    //Debug.LogError("added to pieces ready to immediate attack" + AllPieces[i]);
+                    ////Debug.LogError("added to pieces ready to immediate attack" + AllPieces[i]);
 
                 }
 
@@ -484,7 +485,7 @@ public abstract class Board : MonoBehaviour
         {
             if (piece.unitType == "cavalry" && piece.queueTime % 2 == 1 && piece.queueTime < piece.queuedMoves.Count)  //if we have any cavalry that's only on its first/third move and has more moves left to go
             {
-                Debug.LogError("Knight queue time " + piece.queueTime + "queuedmovescount" + piece.queuedMoves.Count);
+                ////Debug.LogError("Knight queue time " + piece.queueTime + "queuedmovescount" + piece.queuedMoves.Count);
                 cavalry.Add(piece); //add it to the list
             }
         }
@@ -551,7 +552,6 @@ public abstract class Board : MonoBehaviour
                 }
             }
 
-            List<Piece> piecesReadyToAttackAfterMovement = new List<Piece>(); //have to use list because size is adjustable >>
             for (int i = 0; i < AllPieces.Length; i++) //go through each piece
             {
                 Debug.Log(AllPieces[i].attackedThisTurn + "attacked this turn" + AllPieces[i]);
@@ -563,7 +563,7 @@ public abstract class Board : MonoBehaviour
 
             /*foreach (var item in piecesReadyToAttackAfterMovement)
             {
-                Debug.LogError("Pieces ready to attack after movement" + item);
+                //Debug.LogError("Pieces ready to attack after movement" + item);
             }*/
 
 
@@ -572,7 +572,10 @@ public abstract class Board : MonoBehaviour
     }
     public void AttackPhaseSetup(List<Piece> pieces, int phaseNum) //start processing attacks because movement is done (or not in the case of the immediate attacks)
     {
-
+        foreach (var item in pieces)
+        {
+            Debug.LogError(item + " " + phaseNum);
+        }
 
         if (phaseNum == 1)
         {
@@ -651,7 +654,7 @@ public abstract class Board : MonoBehaviour
 
     public void ExecuteAttacks(List<Piece> pieces, int phaseNum) //should be called even if no line of sight calculations occurred
     {
-        Debug.LogError("EXECUTING ATTACKS");
+        ////Debug.LogError("EXECUTING ATTACKS");
         //by this point, all physics calculations should be done.
 
         for (int i = 0; i < pieces.Count; i++)
@@ -709,6 +712,7 @@ public abstract class Board : MonoBehaviour
             if (pieces[i].attackedThisTurn == false)
             {
                 pieces[i].ApplyDamage(); //set models -= queued damage and triggers attacks for models //very important to only call this once
+                //PieceApplyDamage(pieces[i].unitID);
             }
         }
 
@@ -726,7 +730,7 @@ public abstract class Board : MonoBehaviour
         {
             if (pieces[i].attacking)
             {
-                Debug.LogError("phase" + phaseNum + pieces[i]);
+                ////Debug.LogError("phase" + phaseNum + pieces[i]);
                 pieces[i].attackedThisTurn = true; //so we can mark it as such
             }
 
@@ -804,7 +808,7 @@ public abstract class Board : MonoBehaviour
                 num++; //if we find one that's done, add it to the count
             }
         }
-        Debug.LogError("number done" + num);
+        ////Debug.LogError("number done" + num);
         if (num >= pieces.Count || secondsPassed >= 5) //if all are done
         {
             secondsPassed = 0;
@@ -878,7 +882,7 @@ public abstract class Board : MonoBehaviour
 
     public void OnTriggerSlowUpdate() //finished communicating with mp
     {
-        Debug.LogError("triggered slow update");
+        ////Debug.LogError("triggered slow update");
         //StartCoroutine(SlowUpdate(1f));
         StartCoroutine(SlowUpdate(.5f));
     }
@@ -1071,7 +1075,7 @@ public abstract class Board : MonoBehaviour
             return;
         }
         //var random = Random.Range(1, 3);//friendly.randomInitiative;
-        //Debug.LogError("Arbitrating conflict" + random);
+        ////Debug.LogError("Arbitrating conflict" + random);
 
         //var random = friendly.randomInitiative;
         //Debug.Log("Random value" + random);
@@ -1142,7 +1146,7 @@ public abstract class Board : MonoBehaviour
             friendly.wonTieBreak = false;
             enemy.wonTieBreak = false;
         }
-        Debug.LogError("friendly " + friendly.wonTieBreak + "enemy " + enemy.wonTieBreak);
+        ////Debug.LogError("friendly " + friendly.wonTieBreak + "enemy " + enemy.wonTieBreak);
         friendly.arbitratedConflict = true;
         enemy.arbitratedConflict = true;
     }
@@ -1157,7 +1161,7 @@ public abstract class Board : MonoBehaviour
             selectedPiece.QueueMove(coords);//tell piece to remember these coords and place a marker there //got error
         }
 
-        Debug.LogError("remainingmovement" + selectedPiece.remainingMovement + "turn time" + selectedPiece.turnTime);
+        ////Debug.LogError("remainingmovement" + selectedPiece.remainingMovement + "turn time" + selectedPiece.turnTime);
         if (selectedPiece.attacking && selectedPiece.attackType == "ranged" && selectedPiece.moveAndAttackEnabled && selectedPiece.remainingMovement == 0) //&& selectedPiece.turnTime >= 1
         {//if move and attack enabled, disable after first movement queued
             //selectedPiece.moveAndAttackEnabled = false;
@@ -1202,14 +1206,14 @@ public abstract class Board : MonoBehaviour
                 if (penultimateQueuedMoveNum < 0)
                 {
                     terrainTypeAtPenultimateQueuedPos = selectedPiece.board.terrainGrid[selectedPiece.occupiedSquare.x, selectedPiece.occupiedSquare.y];
-                    Debug.LogError("terrain last" + terrainTypeAtQueuedPos + "terrain penult" + terrainTypeAtPenultimateQueuedPos);
-                    Debug.LogError("terrain last" + selectedPiece.queuedMoves[lastQueuedMoveNum] + "terrain penult" + selectedPiece.occupiedSquare);
+                    //Debug.LogError("terrain last" + terrainTypeAtQueuedPos + "terrain penult" + terrainTypeAtPenultimateQueuedPos);
+                    //Debug.LogError("terrain last" + selectedPiece.queuedMoves[lastQueuedMoveNum] + "terrain penult" + selectedPiece.occupiedSquare);
                 }
                 else
                 {
                     terrainTypeAtPenultimateQueuedPos = terrainGrid[selectedPiece.queuedMoves[penultimateQueuedMoveNum].x, selectedPiece.queuedMoves[penultimateQueuedMoveNum].y];
-                    Debug.LogError("terrain last" + terrainTypeAtQueuedPos + "terrain penult" + terrainTypeAtPenultimateQueuedPos);
-                    Debug.LogError("terrain last" + selectedPiece.queuedMoves[lastQueuedMoveNum] + "terrain penult" + selectedPiece.queuedMoves[penultimateQueuedMoveNum]);
+                    //Debug.LogError("terrain last" + terrainTypeAtQueuedPos + "terrain penult" + terrainTypeAtPenultimateQueuedPos);
+                    //Debug.LogError("terrain last" + selectedPiece.queuedMoves[lastQueuedMoveNum] + "terrain penult" + selectedPiece.queuedMoves[penultimateQueuedMoveNum]);
                 }
 
                 if (terrainTypeAtQueuedPos == "hill" && terrainTypeAtQueuedPos != "hill") //if we queue a move onto a hill from non hill

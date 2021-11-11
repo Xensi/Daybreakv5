@@ -132,7 +132,6 @@ MonoBehaviour:
   armorLevel: 1
   attackType: melee
   unitType: infantry
-  attackIgnoresArmor: 0
   effectiveRange: 1
   soldierScale: 0.765
   rowSize: 7
@@ -298,6 +297,7 @@ MonoBehaviour:
   alreadyCalculatedDamage: 0
   alreadyAppliedDamage: 0
   movementStopped: 0
+  markForRemovalFromSecondWave: 0
 --- !u!114 &255507802608927540
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1984,7 +1984,7 @@ GameObject:
   - component: {fileID: 4264641444646268578}
   - component: {fileID: 6188456567047754470}
   m_Layer: 12
-  m_Name: Image
+  m_Name: Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

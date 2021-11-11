@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6682751750994522017}
   - component: {fileID: 6682751751009725153}
   - component: {fileID: 6682751751009620801}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Dot Sparkles Big
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4755,7 +4755,7 @@ GameObject:
   - component: {fileID: 6682751751009725155}
   - component: {fileID: 6682751751009620803}
   - component: {fileID: 6682751751001343591}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: WFX_Explosion 1 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9560,7 +9560,7 @@ GameObject:
   - component: {fileID: 6682751750994522021}
   - component: {fileID: 6682751751009725157}
   - component: {fileID: 6682751751009620805}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Dot Sparkles Mult
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14299,7 +14299,7 @@ GameObject:
   - component: {fileID: 6682751750994522025}
   - component: {fileID: 6682751751009725161}
   - component: {fileID: 6682751751009620809}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Dot Sparkles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19105,7 +19105,7 @@ GameObject:
   - component: {fileID: 6682751750994522027}
   - component: {fileID: 6682751751009725163}
   - component: {fileID: 6682751751009620811}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Explosion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23970,7 +23970,7 @@ GameObject:
   - component: {fileID: 6682751750994522029}
   - component: {fileID: 6682751751009725165}
   - component: {fileID: 6682751751009620813}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Glow sparkles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28745,7 +28745,7 @@ GameObject:
   - component: {fileID: 6682751750994522031}
   - component: {fileID: 6682751751009725167}
   - component: {fileID: 6682751751009620815}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33587,7 +33587,7 @@ GameObject:
   - component: {fileID: 6682751750994522037}
   - component: {fileID: 6682751751009725173}
   - component: {fileID: 6682751751009620821}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Glow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38452,7 +38452,7 @@ GameObject:
   - component: {fileID: 6682751750994522039}
   - component: {fileID: 6682751751009725175}
   - component: {fileID: 6682751751009620823}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Smoke BigQuick
   m_TagString: Untagged
   m_Icon: {fileID: 0}

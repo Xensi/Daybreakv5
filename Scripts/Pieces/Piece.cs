@@ -22,12 +22,9 @@ public abstract class Piece : MonoBehaviour
     public string unitName;
     public int originalSpeed = 1;
     public int models = 100; //the number of dudes in a squad/unit/battalion whatever
-    public int oldModels = 0;
-    public float health = 1; //the health of each model
-    //public float meleeDamage = 1; //per attack!
-    //public float rangedDamage = 0; //per attack!
-    public float damage = 1f;
-    //public float armor = 0; //reduces incoming damage
+    [HideInInspector] public int oldModels = 0;
+    public float health = 1; //the health of each model 
+    public float damage = 1f; 
     public float morale = 10;
     public float energy = 15; //overall energy
     private float startingEnergy; //starting energy, which is set by energy
@@ -37,7 +34,7 @@ public abstract class Piece : MonoBehaviour
 
     public string attackType = "melee"; //options: melee, ranged, mixed
     public string unitType = "infantry"; //options: infantry, cavalry, artillery, spellcaster
-    public bool attackIgnoresArmor = false;
+    //public bool attackIgnoresArmor = false;
     public int effectiveRange = 1; //melee = 1, for ranged this shows the furthest an enemy can be to deal full damage
     public float soldierScale = 1f;
     public int rowSize = 7;
@@ -71,8 +68,8 @@ public abstract class Piece : MonoBehaviour
     public AudioClip[] moveOrderSoundEffects;
     public AudioClip[] selectOrderSoundEffects;
 
-    [Header("Information that should not be modified")]
     private int soldierNum = 0;
+    [Header("Information that should not be modified")]
     public int terrainSpeedModifier;
     public float flankingDamage = 1; //multiplier now
     public int originalEffectiveRange = 1; //stores value of effectiveRange
@@ -160,7 +157,7 @@ public abstract class Piece : MonoBehaviour
 
     [HideInInspector] public bool moving = true;
     public bool sprinting = false;
-    [HideInInspector] public bool disengaging = false;
+    public bool disengaging = false;
     public bool attacking = false;
     [HideInInspector] public bool turning = false;
     [HideInInspector] public bool routing = false;
@@ -2644,7 +2641,7 @@ public abstract class Piece : MonoBehaviour
                 //speed++;
                 //remainingMovement++;
                 terrainSpeedModifier = 1;
-                //Debug.LogError("Updated speed to" + speed);
+                ////Debug.LogError("Updated speed to" + speed);
             }
         }
         else if (OnTerrainType == "shallow river")
@@ -2670,7 +2667,7 @@ public abstract class Piece : MonoBehaviour
         }
 
 
-        Debug.LogError("updated terrain type of unit " + unitID + " to " + OnTerrainType);
+        //Debug.LogError("updated terrain type of unit " + unitID + " to " + OnTerrainType);
 
     }
 
@@ -2920,14 +2917,14 @@ public abstract class Piece : MonoBehaviour
                 {
                     if (absDistance > remainingMovement) //basically, we don't care if how much distance there is but we still need to respect range
                     {
-                        Debug.LogError("Cancelling movement 1");
+                        ////Debug.LogError("Cancelling movement 1");
                         turnTime--;
                         return;
                     }
                 }
                 else if (moveAndAttackEnabled && attackType == "ranged" && attacking && turnTime <= 1)
                 {
-                    Debug.LogError("Cancelling movement 2");
+                    ////Debug.LogError("Cancelling movement 2");
                     turnTime--; //every time we cancel a move, we need to reset the turn time
                     return;
                 }
@@ -2935,20 +2932,20 @@ public abstract class Piece : MonoBehaviour
                 {
                     if (absDistance > remainingMovement) //basically, we don't care if how much distance there is but we still need to respect range
                     {
-                        Debug.LogError("Cancelling movement 3");
+                        ////Debug.LogError("Cancelling movement 3");
                         turnTime--;
                         return;
                     }
                 }
                 else if (attackType == "ranged" && !attacking)
                 {
-                    Debug.LogError("Cancelling movement 4");
+                    ////Debug.LogError("Cancelling movement 4");
                     turnTime--; //every time we cancel a move, we need to reset the turn time
                     return;
                 }
                 else if (attackType == "melee")
                 {
-                    Debug.LogError("Cancelling movement 5");
+                    ////Debug.LogError("Cancelling movement 5");
                     turnTime--; //every time we cancel a move, we need to reset the turn time
                     return;
                 }
@@ -2970,7 +2967,7 @@ public abstract class Piece : MonoBehaviour
         {
             speed = originalSpeed;
         }*/
-        Debug.LogError("Placing marker");
+        ////Debug.LogError("Placing marker");
         PlaceMarker(coords, queuedPosition); //just place a marker
 
 
@@ -3021,19 +3018,19 @@ public abstract class Piece : MonoBehaviour
         if (penultimateQueuedMoveNum < 0)
         {
             terrainTypeAtPenultimateQueuedPos = board.terrainGrid[occupiedSquare.x, occupiedSquare.y];
-            //Debug.LogError("terrain last" + terrainTypeAtQueuedPos + "terrain penult" + terrainTypeAtPenultimateQueuedPos);
-            //Debug.LogError("terrain last" + queuedMoves[lastQueuedMoveNum] + "terrain penult" + occupiedSquare);
+            ////Debug.LogError("terrain last" + terrainTypeAtQueuedPos + "terrain penult" + terrainTypeAtPenultimateQueuedPos);
+            ////Debug.LogError("terrain last" + queuedMoves[lastQueuedMoveNum] + "terrain penult" + occupiedSquare);
         }
         else
         {
             terrainTypeAtPenultimateQueuedPos = board.terrainGrid[queuedMoves[penultimateQueuedMoveNum].x, queuedMoves[penultimateQueuedMoveNum].y];
-            //Debug.LogError("terrain last" + terrainTypeAtQueuedPos + "terrain penult" + terrainTypeAtPenultimateQueuedPos);
-            //Debug.LogError("terrain last" + queuedMoves[lastQueuedMoveNum] + "terrain penult" + queuedMoves[penultimateQueuedMoveNum]);
+            ////Debug.LogError("terrain last" + terrainTypeAtQueuedPos + "terrain penult" + terrainTypeAtPenultimateQueuedPos);
+            ////Debug.LogError("terrain last" + queuedMoves[lastQueuedMoveNum] + "terrain penult" + queuedMoves[penultimateQueuedMoveNum]);
         }
 
         if (terrainTypeAtQueuedPos == "hill" && terrainTypeAtPenultimateQueuedPos != "hill") //if we queue a move onto a hill from non hill
         {
-            Debug.LogError("Setting movement to 0");
+            ////Debug.LogError("Setting movement to 0");
             remainingMovement = 0;
         }
         else if (terrainTypeAtQueuedPos != "road" && terrainTypeAtPenultimateQueuedPos == "road") //if we queue a move onto a non road from a road
@@ -3074,7 +3071,7 @@ public abstract class Piece : MonoBehaviour
 
     private void PlaceMarker(Vector2Int coords, Vector2Int queuedPosition)
     {
-        //Debug.LogError("Placed marker");
+        ////Debug.LogError("Placed marker");
         var x = coords.x;
         var y = coords.y;
         board.CommunicateQueuedMoves(unitID, x, y); //tell multiplayer where pieces will move and stuff and  . . .. also turn time and hold time
@@ -3091,7 +3088,7 @@ public abstract class Piece : MonoBehaviour
         board.CommunicateMarkers(unitID, x2, y2, z2, x, y, team.ToString(), intRemainMovement);
 
         GameObject markerVisual;
-        Debug.LogError("remaining movement" + remainingMovement);
+        //Debug.LogError("remaining movement" + remainingMovement);
         if (attacking && remainingMovement <= 0 && attackType == "melee") //if attacking and last queued move set arrow instead of circle (not working when clicking on enemy unit twice?
         {
             markerVisual = Instantiate(arrowMarkerVisualPrefab, targetPosition, Quaternion.identity);
@@ -3323,7 +3320,7 @@ public abstract class Piece : MonoBehaviour
                 }
                 if (enemyMarker != null)
                 {
-                    Debug.LogError("found an enemy marker overlapping one of our markers. searching for conflicts");
+                    ////Debug.LogError("found an enemy marker overlapping one of our markers. searching for conflicts");
                     SearchForConflict(friendlyMarker, enemyMarker);
                 }
             }
@@ -3359,7 +3356,7 @@ public abstract class Piece : MonoBehaviour
 
         tieBreakPiece = enemyMarker.parentPiece;
         var ourPiece = friendlyMarker.parentPiece;
-        Debug.LogError(enemyMarker.turnTime + "friendly" + friendlyMarker.turnTime);
+        ////Debug.LogError(enemyMarker.turnTime + "friendly" + friendlyMarker.turnTime);
         if (enemyMarker.turnTime == friendlyMarker.turnTime) //if we find an enemy marker on the same coords and they have the same turn time
         { //then we need to check if one is attacking or not. if so, check the hold time. if hold time 0, and turn time 1, obviously turn time 1 wins and no arbitration needed. 
             //we need to check if we're both attacking or not: if so check if 
@@ -3542,7 +3539,7 @@ public abstract class Piece : MonoBehaviour
         }*/
         Debug.Log("Calculated damage" + calculatedDamage);
 
-        float damageVersusArmor = targetToAttackPiece.armorLevel - damageLevel;
+        float damageVersusArmor = targetToAttackPiece.armorLevel - damageLevel; //if negative, logically we should get an attack buff?
         if (damageVersusArmor < 0) //can't be negative
         {
             damageVersusArmor = 0;
@@ -3576,7 +3573,7 @@ public abstract class Piece : MonoBehaviour
     public bool CheckIfStopMove()
     {
         //Debug.Log("trying to move");
-        //Debug.LogError("tie break win " + wonTieBreak);
+        ////Debug.LogError("tie break win " + wonTieBreak);
         //if there's no conflict or we wont the tiebreak
         //Debug.Log("conflict" + conflict + "wonTiebreak?" + wonTieBreak + "conflictTime" + conflictTime + "queueTime" + queueTime);
         if (attacking && queuedMoves.Count == 1) //when implementing things with higher attack, change this to a variable that tells you at what move to stop
@@ -3851,7 +3848,7 @@ public abstract class Piece : MonoBehaviour
             }
             else //if no moves, stop
             {
-                Debug.LogError("Setting queue time to 0");
+                //Debug.LogError("Setting queue time to 0");
                 queueTime = 0;
                 oneStepFinished = true;
                 FinishedMoving = true;
@@ -3881,13 +3878,13 @@ public abstract class Piece : MonoBehaviour
             if (queueTime == 0 && queuedMoves.Count > 0) //if first wave ; actually wave num not important anymore waveNum == 0 && 
             {
                 var dist = occupiedSquare - queuedMoves[0];
-                Debug.LogError("Dist" + dist);
+                ////Debug.LogError("Dist" + dist);
                 if (Mathf.Abs(dist.x) <= 1 || Mathf.Abs(dist.y) <= 1) //if an adjacent move
                 {
 
-                    Debug.LogError(queueTime + "queue Time");
+                    ////Debug.LogError(queueTime + "queue Time");
                     var checkCoords = queuedMoves[queueTime];
-                    Debug.LogError("checkcoords" + checkCoords);
+                    //////Debug.LogError("checkcoords" + checkCoords);
                     if (board.grid[checkCoords.x, checkCoords.y] != null && board.grid[checkCoords.x, checkCoords.y].IsFromSameTeam(this)) //if the position we're trying to move into is full and is occupied by a teammate
                     {
                         Debug.Log("Halting because the position is full");
@@ -4103,7 +4100,7 @@ public abstract class Piece : MonoBehaviour
     {
         if (stashedMoves.Count <= 0)
         {
-            //Debug.LogError("we have no moves" + this);
+            //////Debug.LogError("we have no moves" + this);
             return;
         }
 
@@ -4132,11 +4129,11 @@ public abstract class Piece : MonoBehaviour
     {
         if (stashedMoves.Count <= 0 || !attacking)
         {
-            //Debug.LogError("we have no moves" + this);
+            //////Debug.LogError("we have no moves" + this);
             return;
         }
 
-        Debug.LogError("queuetime" + queueTime);
+        ////Debug.LogError("queuetime" + queueTime);
         var normalizedQueueTime = queueTime - 1; //not sure why this is needed, but here we are
         if (normalizedQueueTime < 0)
         {
@@ -4152,7 +4149,7 @@ public abstract class Piece : MonoBehaviour
         {
             targetToAttackPiece = piece; //set new target 
             attackTile = stashedMoves[normalizedQueueTime];
-            Debug.LogError(targetToAttackPiece + "target");
+            ////Debug.LogError(targetToAttackPiece + "target");
         }
     }
 
@@ -4197,7 +4194,7 @@ public abstract class Piece : MonoBehaviour
         for (int i = 0; i < adjacentTiles.Length; i++) //for each adjacent tile 
         {
             Vector2Int nextCoords = occupiedSquare + adjacentTiles[i];
-            Debug.LogError(this + " checking" + nextCoords);
+            ////Debug.LogError(this + " checking" + nextCoords);
             Piece checkTarget = board.GetPieceOnSquare(nextCoords);
             if (!board.CheckIfCoordinatedAreOnBoard(nextCoords)) //if off board skip
             {
@@ -4218,7 +4215,7 @@ public abstract class Piece : MonoBehaviour
     {
         int frontNum = frontDirections[front]; //the very front
         Vector2Int frontCoords = occupiedSquare + adjacentTiles[frontNum];
-        Debug.LogError(this + " checking" + frontCoords);
+        ////Debug.LogError(this + " checking" + frontCoords);
         Piece piece = board.GetPieceOnSquare(frontCoords);
         if (board.CheckIfCoordinatedAreOnBoard(frontCoords) && piece != null && !piece.IsFromSameTeam(this)) //if we detect an enenmy on the front
         {//they can be our new target
@@ -4448,7 +4445,7 @@ public abstract class Piece : MonoBehaviour
             if (checkTarget != null && !checkTarget.IsFromSameTeam(this) && checkTarget.targetToAttackPiece == this) //if target tile has a piece and it's an enemy and it's attacking us
             {
                 //we will attack them back. this action does not turn the unit, so flanking damage is still applied. but unit can turn on a normal attack
-                Debug.LogError("im under attack and i've got no orders");
+                ////Debug.LogError("im under attack and i've got no orders");
                 targetToAttackPiece = checkTarget; //set our target to be our attacker
                 attacking = true;
                 targetAdjacent = true; //we just proved they're next to us;
@@ -4490,29 +4487,34 @@ public abstract class Piece : MonoBehaviour
 
     public void OnApplyDamage() //after communicating with mp
     {
+        CheckIfEnemiesAdjacent();
+
         if (alreadyAppliedDamage)
         {
+            Debug.LogError("already applied damage so returning" + "unit id" + unitID);
             return;
         }
 
         if (targetToAttackPiece == null || !attacking || queuedDamage < 0) //if target nonexistent, or not attacking, or queued damage is less than 0. 0 damage is still valid
         {
-            Debug.LogError("Returning1");
+            Debug.LogError("Returning1" + "unit id" + unitID);
             return;
         }
 
         if (!targetToAttackPiece.disengaging && !targetAdjacent && attackType == "melee") //if target is not disengaging and target is not adjacent and attack type is melee
         {
-            Debug.LogError("Returning2");
+            Debug.LogError("Returning2" + "unit id" + unitID + "target adjacent" + targetAdjacent + "enemy adjacent" + enemyAdjacent);
             return;
         }
+        
         //Debug.Log(targetAdjacent + "" + targetToAttackPiece + "" + attacking + queuedDamage);
         targetToAttackPiece.attackerPiece = this;
 
-        Debug.Log("attempting to apply damage" + queuedDamage + "target adjacent" + targetAdjacent + "attacking" + attacking);
+        Debug.Log("attempting to apply damage" + queuedDamage + "target" + targetToAttackPiece + "attacking" + attacking + "unit id" + unitID);
 
         targetToAttackPiece.models -= queuedDamage;
         targetToAttackPiece.modelBar.SetHealth(targetToAttackPiece.models);
+        Debug.Log("target models " + targetToAttackPiece.models);
         if (targetToAttackPiece.models < 0) //make sure models can't go below zero
             targetToAttackPiece.models = 0;
 
@@ -4560,7 +4562,8 @@ public abstract class Piece : MonoBehaviour
         }
 
         SubtractEnergy();
-        board.PieceTriggerAttacksForSoldiers(unitID); //this works in mp! so why not define flanks?
+        //board.PieceTriggerAttacksForSoldiers(unitID); //this works in mp! so why not define flanks?
+        OnTriggerAttacksForSoldiers();
         ClearQueuedMoves();
         alreadyAppliedDamage = true;
 
@@ -4588,7 +4591,7 @@ public abstract class Piece : MonoBehaviour
                 {
                     updater.rangedAndNeedsToTurnToFaceEnemy = true;
                     updater.rotationGoal = rotationGoal;
-                    Debug.LogError("old rotation does not equal rotation goal" + oldRotation + rotationGoal);
+                    //Debug.LogError("old rotation does not equal rotation goal" + oldRotation + rotationGoal);
                 }
                 else if (attackType == "ranged")
                 {
@@ -4621,24 +4624,28 @@ public abstract class Piece : MonoBehaviour
         {
             return;
         }
+        //something is wrong in mp regarding model count and actual soldier count
+        //modelBar.SetHealth(models);
 
         Debug.Log("Marking for death " + damage);
         //int scaledDamage = Mathf.RoundToInt(damage / downscale);
         int scaledDamage = Mathf.RoundToInt(damage);
 
-        if (attackerPiece.attackType == "melee") //still need to make this based on direction
+        if (attackerPiece != null) //still need to make this based on direction
         {
-
-            for (int i = 0; i < scaledDamage; i++)//linear marking
-            {
-                var rowRandom = Random.Range(0, rowSize - 1); //random from front row
-                if (rowSize > soldierObjects.Count)
+            if (attackerPiece.attackType == "melee")
+            { 
+                for (int i = 0; i < scaledDamage; i++)//linear marking
                 {
-                    rowRandom = Random.Range(0, soldierObjects.Count - 1);
+                    var rowRandom = Random.Range(0, rowSize - 1); //random from front row
+                    if (rowSize > soldierObjects.Count)
+                    {
+                        rowRandom = Random.Range(0, soldierObjects.Count - 1);
+                    }
+                    markedSoldiers.Add(soldierObjects[rowRandom]);
+                    soldierObjects.RemoveAt(rowRandom); //remove it right away so it can't be marked twice
+                    Debug.Log("marked " + i);
                 }
-                markedSoldiers.Add(soldierObjects[rowRandom]);
-                soldierObjects.RemoveAt(rowRandom); //remove it right away so it can't be marked twice
-                Debug.Log("marked " + i);
             }
         }
         else
@@ -4859,8 +4866,9 @@ public abstract class Piece : MonoBehaviour
             {
                 continue;
             }
-            if (checkTarget != null && !checkTarget.IsFromSameTeam(this) && checkTarget == target)
+            if (checkTarget != null && !checkTarget.IsFromSameTeam(this) && checkTarget == target) //if check target exists, is enemy, and equals target 
             {
+                Debug.LogError("found target" + checkTarget.unitID);
                 return true; //if detect enemy, don't start movement at all;
             }
         }
@@ -4953,7 +4961,7 @@ public abstract class Piece : MonoBehaviour
         holdingPosition = false;
         markedDeaths = false;
         arbitratedConflict = false;
-        //Debug.LogError("Setting queue time to 0");
+        ////Debug.LogError("Setting queue time to 0");
         queueTime = 0;
         safeQueueTime = 0;
         queuedDamage = 0;
@@ -5005,7 +5013,7 @@ public abstract class Piece : MonoBehaviour
         board.UpdateUIManager();
         board.ShowSelectionSquares(SelectAvailableSquares(occupiedSquare), this);
         //}
-        //Debug.LogError("Setting stance to move, resetting speed to original speed");
+        ////Debug.LogError("Setting stance to move, resetting speed to original speed");
     }
     public void SetStanceDisengage()
     {

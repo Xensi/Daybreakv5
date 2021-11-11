@@ -304,7 +304,7 @@ public class UpdateAgentDestination : MonoBehaviour
                 {
                     tMin = targetPiece.soldierObjects[i];
                     minDist = dist;
-                    //Debug.LogError("min dist " + minDist);
+                    ////Debug.LogError("min dist " + minDist);
                 }
             }
             if (tMin != null && navAgent.isActiveAndEnabled)
@@ -351,7 +351,7 @@ public class UpdateAgentDestination : MonoBehaviour
             if (!parentPiece.markedDeaths) //only update health bar once
             {
                 parentPiece.markedDeaths = true;
-                Debug.LogError("Attacking and updating enemy hp to" + targetPiece.models);
+                //Debug.LogError("Attacking and updating enemy hp to" + targetPiece.models);
                 targetPiece.modelBar.SetHealth(targetPiece.models); //update enemy's hp bar to actual value when attacking
                 //targetPiece.MarkForDeath(queuedDamage);
                 //Debug.Log("models" + targetPiece.models);
@@ -406,7 +406,7 @@ public class UpdateAgentDestination : MonoBehaviour
 
         }
         //yield return new WaitForSeconds(3);
-        Debug.LogError("ANIMATIONS OVER.");
+        ////Debug.LogError("ANIMATIONS OVER.");
         parentPiece.soldierAttacked = true; //set this after freeze just in case
         parentPiece.animationsOver = true;
         //parentPiece.board.AllowExecution();
@@ -441,7 +441,7 @@ public class UpdateAgentDestination : MonoBehaviour
         }
         if (projectilePrefab != null && effectSpawnTransform != null)
         {
-            Debug.LogError("Spawning projectile");
+            //Debug.LogError("Spawning projectile");
             CreateProjectile();
         }
 

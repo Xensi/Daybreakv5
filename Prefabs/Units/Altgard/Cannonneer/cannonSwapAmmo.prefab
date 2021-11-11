@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6944165770095014994}
   - component: {fileID: 9094392987966598531}
   m_Layer: 0
-  m_Name: heavy_infantry_upgrade_unlock
+  m_Name: cannonSwapAmmo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
