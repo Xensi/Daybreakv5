@@ -65,6 +65,14 @@ public class SinglePlayerBoard : Board
     {
         OnPieceApplyDamage(id);
     }
+    public override void PieceCalculateDamage(int id) //for moving soldiers
+    {
+        OnPieceCalculateDamage(id);
+    }
+    public override void PieceCheckFlankingDamage(int id) //for moving soldiers
+    {
+        OnPieceCheckFlankingDamage(id);
+    }
 
     public override void TriggerSlowUpdate()
     {

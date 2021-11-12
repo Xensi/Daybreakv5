@@ -3037,15 +3037,12 @@ public abstract class Piece : MonoBehaviour
         {
             if (sprinting)
             {
-
-                speed = sprintSpeed;
-                remainingMovement = speed - queuedMoves.Count;
+                remainingMovement = sprintSpeed - queuedMoves.Count; //normally remaining movement would be sprint speed + 1 - queued moves
             }
             else
             {//in the case of the knight, our remaining movement on road would be 3, and speed off road would be 2
-                //if we queue a move off of road, remaining movement is now 2 because we have spent 1 movement. since we are off road we can only spend one more movement
-                speed = originalSpeed;
-                remainingMovement = speed - queuedMoves.Count;
+                //if we queue a move off of road, remaining movement is now 2 because we have spent 1 movement. since we are off road we can only spend one more movement 
+                remainingMovement = originalSpeed - queuedMoves.Count;
             }
         }
 
@@ -3411,6 +3408,10 @@ public abstract class Piece : MonoBehaviour
     }
     public void CalculateDamage()
     {
+        board.PieceCalculateDamage(unitID);
+    }
+    public void OnCalculateDamage()
+    {
         if (alreadyCalculatedDamage)
         {
             return;
@@ -3419,7 +3420,7 @@ public abstract class Piece : MonoBehaviour
         {
             return;
         }
-        Debug.Log("Set queued damage");
+        Debug.Log("Calculating damage" + unitID);
         //Attacking unit model count *attack damage - armor / defender health = number of dead defenders after attack
         //Debug.Log(models);
         //Debug.Log(meleeDamage);
@@ -3568,8 +3569,8 @@ public abstract class Piece : MonoBehaviour
         //targetToAttackPiece.models -= Mathf.RoundToInt(defendersKilled);
         //Debug.Log("killed" + defendersKilled);
         alreadyCalculatedDamage = true;
-
     }
+
     public bool CheckIfStopMove()
     {
         //Debug.Log("trying to move");
@@ -4474,10 +4475,10 @@ public abstract class Piece : MonoBehaviour
         {
             accuracy = .25f;
         }
-        else if (tileNumber >= beyondTargetableRange) //beyond targetable, so no damage
+        /*else if (tileNumber >= beyondTargetableRange) //beyond targetable, so no damage
         {
             accuracy = 0f;
-        }
+        }*/
         Debug.Log("accuracy" + accuracy + "temp damage" + tempDamage);
     }
     public void ApplyDamage() //physical and morale damage
@@ -4647,16 +4648,16 @@ public abstract class Piece : MonoBehaviour
                     Debug.Log("marked " + i);
                 }
             }
-        }
-        else
-        {
-
-            for (int i = 0; i < scaledDamage; i++)//linear marking
+            else
             {
-                var random = Random.Range(0, soldierObjects.Count - 1);
-                markedSoldiers.Add(soldierObjects[random]);
-                soldierObjects.RemoveAt(random); //remove it right away so it can't be marked twice
-                Debug.Log("marked " + i);
+
+                for (int i = 0; i < scaledDamage; i++)//linear marking
+                {
+                    var random = Random.Range(0, soldierObjects.Count - 1);
+                    markedSoldiers.Add(soldierObjects[random]);
+                    soldierObjects.RemoveAt(random); //remove it right away so it can't be marked twice
+                    Debug.Log("marked " + i);
+                }
             }
         }
 
@@ -4664,6 +4665,7 @@ public abstract class Piece : MonoBehaviour
 
         waitingForFirstAttack = true;
         markedSoldiersCount = markedSoldiers.Count;
+        Debug.LogError("marked Soldiers" + markedSoldiersCount);
         StartCoroutine(KillOff());
     }
 
@@ -4672,7 +4674,7 @@ public abstract class Piece : MonoBehaviour
     {
         if (markedSoldiers.Count > 0) //if there are still soldiers to kill
         {
-            if (waitingForFirstAttack)
+            if (waitingForFirstAttack && attackerPiece != null)
             {
                 yield return new WaitUntil(() => attackerPiece.soldierAttacked == true); //wait until the attacker has attacked with at least one unit
                 waitingForFirstAttack = false;
@@ -4680,21 +4682,24 @@ public abstract class Piece : MonoBehaviour
             }
             yield return new WaitForSeconds(Random.Range(0.1f, 5 / markedSoldiersCount)); //this should make soldiers die in a more timely fashion. soldiers die faster the more there are to kill
 
+            if (markedSoldiers[0] != null)
+            {
+                //initiate kill function
+                var soldierScript = markedSoldiers[0].GetComponent<UpdateAgentDestination>();
+                soldierScript.KillThis(markedSoldiers[0]);
 
-            //initiate kill function
-            var soldierScript = markedSoldiers[0].GetComponent<UpdateAgentDestination>();
-            soldierScript.KillThis(markedSoldiers[0]);
-
-            markedSoldiers.RemoveAt(0); //remove listing
+                markedSoldiers.RemoveAt(0); //remove listing
 
 
-            //yield return new WaitForSeconds(Random.Range(.1f, .5f)); //wait for some interval
+                //yield return new WaitForSeconds(Random.Range(.1f, .5f)); //wait for some interval
+
+                /*if (markedSoldiers.Count <= 0) //if no more soldiers
+                {
+                    allowedToDie = true;
+                }*/
+            }
             StartCoroutine(KillOff()); //prepare for next one
 
-            /*if (markedSoldiers.Count <= 0) //if no more soldiers
-            {
-                allowedToDie = true;
-            }*/
         }
         else //if there are no more soldiers to kill
         {
@@ -4702,6 +4707,11 @@ public abstract class Piece : MonoBehaviour
         }
     }
     public void CheckFlankingDamage() //before attacks happen
+    {
+        board.PieceCheckFlankingDamage(unitID);
+    }
+
+    public void OnCheckFlankingDamage()
     {
         if (attacking) //this will turn us if we are attacking
         {

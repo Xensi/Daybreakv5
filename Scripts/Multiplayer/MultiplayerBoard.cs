@@ -179,6 +179,29 @@ public class MultiplayerBoard : Board
 
     }
 
+    public override void PieceCheckFlankingDamage(int id) //for moving soldiers
+    {
+        photonView.RPC(nameof(RPC_OnPieceCheckFlankingDamage), RpcTarget.AllBuffered, new object[] { id });
+    }
+
+    [PunRPC]
+    private void RPC_OnPieceCheckFlankingDamage(int id)
+    {
+        OnPieceCheckFlankingDamage(id);
+
+    }
+
+    public override void PieceCalculateDamage(int id) //for moving soldiers
+    {
+        photonView.RPC(nameof(RPC_OnPieceCalculateDamage), RpcTarget.AllBuffered, new object[] { id });
+    }
+
+    [PunRPC]
+    private void RPC_OnPieceCalculateDamage(int id)
+    {
+        OnPieceCalculateDamage(id);
+
+    }
     public override void TriggerSlowUpdate() //for determining if soldiers should keep going or not
     {
         photonView.RPC(nameof(RPC_OnTriggerSlowUpdate), RpcTarget.AllBuffered, new object[] { });

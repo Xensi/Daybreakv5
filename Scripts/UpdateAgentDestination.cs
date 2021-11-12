@@ -406,9 +406,9 @@ public class UpdateAgentDestination : MonoBehaviour
 
         }
         //yield return new WaitForSeconds(3);
-        ////Debug.LogError("ANIMATIONS OVER.");
         parentPiece.soldierAttacked = true; //set this after freeze just in case
         parentPiece.animationsOver = true;
+        //Debug.LogError("ANIMATIONS OVER." + parentPiece.animationsOver);
         //parentPiece.board.AllowExecution();
     }
 

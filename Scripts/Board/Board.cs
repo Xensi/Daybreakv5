@@ -60,6 +60,7 @@ public abstract class Board : MonoBehaviour
     public List<Piece> piecesReadyToAttack = new List<Piece>();
     public List<Piece> piecesReadyToAttackAfterMovement = new List<Piece>();
     public List<Piece> secondPassMoveWave = new List<Piece>();
+    public List<Piece> allPieces = new List<Piece>();
 
     protected virtual void Awake()
     {
@@ -94,6 +95,21 @@ public abstract class Board : MonoBehaviour
     public abstract void ClearMoves(int id);
 
     public abstract void PieceApplyDamage(int id);
+    public void OnPieceApplyDamage(int id)
+    {
+        UnitList[id].OnApplyDamage();
+    }
+    public abstract void PieceCalculateDamage(int id);
+    public void OnPieceCalculateDamage(int id)
+    {
+        UnitList[id].OnCalculateDamage();
+    }
+
+    public abstract void PieceCheckFlankingDamage(int id);
+    public void OnPieceCheckFlankingDamage(int id)
+    {
+        UnitList[id].OnCheckFlankingDamage();
+    }
 
     public abstract void PieceUpdateTerrainType(int id, int x, int y);
     public abstract void PieceTriggerAttacksForSoldiers(int id);
@@ -122,10 +138,6 @@ public abstract class Board : MonoBehaviour
         UnitList[id].OnUpdateTerrainType(x, y);
     }
 
-    public void OnPieceApplyDamage(int id)
-    {
-        UnitList[id].OnApplyDamage();
-    }
 
     public void OnClearMoves(int id)
     {
@@ -450,6 +462,7 @@ public abstract class Board : MonoBehaviour
                 AllPieces[i].CheckIfEnemyInFirstQueuedMove(); //important to call before moving to see if we can immediate attack
             }
         }
+        
     }
 
     private IEnumerator SlowUpdate(float speed) //calls the function responsible for checking if movement phase should be over or not
@@ -696,7 +709,7 @@ public abstract class Board : MonoBehaviour
             if (pieces[i].attackedThisTurn == false)
             {
 
-                pieces[i].CalculateDamage(); //calculate attack damage //there isn't a reason to call this more than once
+                pieces[i].CalculateDamage(); //calculate attack damage //there isn't a reason to call this more than once 
             }
         }
 
@@ -711,8 +724,7 @@ public abstract class Board : MonoBehaviour
         {
             if (pieces[i].attackedThisTurn == false)
             {
-                pieces[i].ApplyDamage(); //set models -= queued damage and triggers attacks for models //very important to only call this once
-                //PieceApplyDamage(pieces[i].unitID);
+                pieces[i].ApplyDamage(); //set models -= queued damage and triggers attacks for models //very important to only call this once 
             }
         }
 
@@ -722,7 +734,9 @@ public abstract class Board : MonoBehaviour
             if (totalDamage > 0)
             {
                 Debug.Log("old" + AllPieces[i].oldModels + "new" + AllPieces[i].models + "total damage" + totalDamage);
-                AllPieces[i].MarkForDeath(totalDamage);
+                //AllPieces[i].MarkForDeath(totalDamage);
+                AllPieces[i].OnMarkForDeath(totalDamage);
+                //PieceMarkForDeath(AllPieces[i].unitID, totalDamage); //mp
             }
         }
 
@@ -803,6 +817,7 @@ public abstract class Board : MonoBehaviour
 
         foreach (var piece in pieces)
         {
+            Debug.LogError(piece + "piece animations over" + piece.animationsOver);
             if (piece.animationsOver)
             {
                 num++; //if we find one that's done, add it to the count
