@@ -110,4 +110,12 @@ public class SinglePlayerBoard : Board
         OnChangeFormation(id, formation);
     }
 
+    public override void PieceCalculateLineOfSight(int id)
+    {
+        OnPieceCalculateLineOfSight(id);
+    }
+    public override void PieceRunThroughCylinders(int id)
+    {
+        OnPieceRunThroughCylinders(id);
+    }
 }

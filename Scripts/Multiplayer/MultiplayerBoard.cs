@@ -294,4 +294,29 @@ public class MultiplayerBoard : Board
 
     }
 
+    public override void PieceCalculateLineOfSight(int id)
+    {
+        photonView.RPC(nameof(RPC_OnPieceCalculateLineOfSight), RpcTarget.AllBuffered, new object[] { id });
+    }
+
+    [PunRPC]
+    private void RPC_OnPieceCalculateLineOfSight(int id)
+    {
+        OnPieceCalculateLineOfSight(id);
+
+    }
+
+    public override void PieceRunThroughCylinders(int id )
+    {
+        photonView.RPC(nameof(RPC_OnPieceRunThroughCylinders), RpcTarget.AllBuffered, new object[] { id });
+    }
+
+    [PunRPC]
+    private void RPC_OnPieceRunThroughCylinders(int id )
+    {
+        OnPieceRunThroughCylinders(id);
+
+    }
+
+
 }

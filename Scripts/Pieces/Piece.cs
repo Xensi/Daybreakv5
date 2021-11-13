@@ -4227,6 +4227,11 @@ public abstract class Piece : MonoBehaviour
 
     public void CalculateLineOfSight() //for attacking, ranged units
     {//TODO ADD ABILITY TO TARGET EMPTY AND DO OVERWATCH, ESSENTIALLY
+        board.PieceCalculateLineOfSight(unitID);
+    }
+    public void OnCalculateLineOfSight()
+    {
+
         Debug.Log("create new line");
         //create a new line because surely the old one got deleted
         targetedSquare = targetToAttackPiece.occupiedSquare;
@@ -4258,6 +4263,10 @@ public abstract class Piece : MonoBehaviour
     }
 
     public void RunThroughCylinders() //check to see if LOS is blocked
+    {
+        board.PieceRunThroughCylinders(unitID);
+    }
+    public void OnRunThroughCylinders()
     {
         var tileNumber = 0;
 
@@ -4430,7 +4439,6 @@ public abstract class Piece : MonoBehaviour
 
         ApplyAccuracy(tileNumber);
     }
-
     public void CheckIfAttacked() //
     {
         defensiveAttacking = false;
@@ -4475,10 +4483,17 @@ public abstract class Piece : MonoBehaviour
         {
             accuracy = .25f;
         }
-        /*else if (tileNumber >= beyondTargetableRange) //beyond targetable, so no damage
+        else if (tileNumber >= beyondTargetableRange) //beyond targetable, so no damage
         {
             accuracy = 0f;
+            //accuracy = .25f;
+        }
+        /*else
+        {
+            accuracy = .25f;
         }*/
+        //
+        Debug.LogError("Tile number" + tileNumber + "beyond range" + beyondTargetableRange);
         Debug.Log("accuracy" + accuracy + "temp damage" + tempDamage);
     }
     public void ApplyDamage() //physical and morale damage

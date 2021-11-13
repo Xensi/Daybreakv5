@@ -11,7 +11,6 @@ using Random = UnityEngine.Random;
 
 public abstract class Board : MonoBehaviour
 {
-
     [SerializeField] private Transform bottomLeftSquareTransform;
     [SerializeField] private float squareSize;
 
@@ -26,8 +25,7 @@ public abstract class Board : MonoBehaviour
     public SquareSelectorCreator squareSelector;
 
     public TeamColor[] teamColors;
-
-
+    
     [SerializeField] private Material testMat;
     [SerializeField] private Material whiteMat;
     [SerializeField] private Material blackMat;
@@ -35,7 +33,6 @@ public abstract class Board : MonoBehaviour
     private bool turnBeingExecuted = false;
     public bool whiteReady = false;
     public bool blackReady = false;
-    //private bool damagePhaseCalled = false;
     private bool allMovesFinishedCalled;
     public int BOARD_SIZE = 100;
     public int secondsPassed = 0;
@@ -52,11 +49,9 @@ public abstract class Board : MonoBehaviour
 
     public bool selectingAction = false;
     public GameObject selectionIndicatorPrefab;
-
-    private List<GameObject> instantiatedSelectors = new List<GameObject>();
-
     private bool waitingToFinishTurn = false;
 
+    private List<GameObject> instantiatedSelectors = new List<GameObject>();
     public List<Piece> piecesReadyToAttack = new List<Piece>();
     public List<Piece> piecesReadyToAttackAfterMovement = new List<Piece>();
     public List<Piece> secondPassMoveWave = new List<Piece>();
@@ -77,106 +72,13 @@ public abstract class Board : MonoBehaviour
     public abstract void ArbitrateConflict();
 
     public abstract void CommunicateQueuedMoves(int id, int x, int y);
-    public abstract void PieceCommunicateAttackTile(int id, int x, int y);
-    public void OnPieceCommunicateAttackTile(int id, int x, int y)
+    
+    public void OnCommunicateQueuedMoves(int id, int x, int y)
     {
-        UnitList[id].OnCommunicateAttackTile(x, y);
+        var coords = new Vector2Int(x, y);
+        UnitList[id].queuedMoves.Add(coords);
+        //piece.queuedMoves.Add(coords);
     }
-    public abstract void CommunicateMarkers(int id, float x2, float y2, float z2, int x, int y, string team, int remainingMovement);
-
-    public abstract void CommunicateTurnHoldTime(int id, int turnTime, int holdTime);
-
-    public void OnCommunicateTurnHoldTime(int id, int turnTime, int holdTime)
-    {
-        UnitList[id].turnTime = turnTime;
-        UnitList[id].holdTime = holdTime;
-    }
-
-    public abstract void ClearMoves(int id);
-
-    public abstract void PieceApplyDamage(int id);
-    public void OnPieceApplyDamage(int id)
-    {
-        UnitList[id].OnApplyDamage();
-    }
-    public abstract void PieceCalculateDamage(int id);
-    public void OnPieceCalculateDamage(int id)
-    {
-        UnitList[id].OnCalculateDamage();
-    }
-
-    public abstract void PieceCheckFlankingDamage(int id);
-    public void OnPieceCheckFlankingDamage(int id)
-    {
-        UnitList[id].OnCheckFlankingDamage();
-    }
-
-    public abstract void PieceUpdateTerrainType(int id, int x, int y);
-    public abstract void PieceTriggerAttacksForSoldiers(int id);
-
-    public abstract void PieceCommunicateTargetToAttackPiece(int id, int x, int y);
-
-
-    public abstract void PieceMarkForDeath(int id, int damage);
-    public void OnPieceMarkForDeath(int id, int damage)
-    {
-        UnitList[id].OnMarkForDeath(damage);
-    }
-
-    public void OnPieceCommunicateTargetToAttackPiece(int id, int x, int y)
-    {
-        UnitList[id].OnCommunicateTargetToAttackPiece(x, y);
-    }
-
-    public void OnPieceTriggerAttacksForSoldiers(int id)
-    {
-        UnitList[id].OnTriggerAttacksForSoldiers();
-    }
-
-    public void OnPieceUpdateTerrainType(int id, int x, int y)
-    {
-        UnitList[id].OnUpdateTerrainType(x, y);
-    }
-
-
-    public void OnClearMoves(int id)
-    {
-        foreach (var i in UnitList[id].instantiatedMarkers)
-        {
-            Destroy(i.gameObject);
-        }
-        foreach (var i in UnitList[id].markerVisuals)
-        {
-            Destroy(i.gameObject);
-        }
-        /*if(UnitList[id].attackType == "ranged") //todo come back to delete 
-        {
-
-            Debug.Log("not clearing lines" + id);
-        }*/
-        //else
-        //{
-        //Debug.Log("clearing lines" + id);
-        //visually clear line prefabs and aesthetic cylinders
-        foreach (var i in UnitList[id].instantiatedLines)
-        {
-            Destroy(i.gameObject);
-        }
-        UnitList[id].instantiatedLines.Clear();
-        foreach (var i in UnitList[id].aestheticCylinders)
-        {
-            Destroy(i.gameObject);
-        }
-        UnitList[id].aestheticCylinders.Clear();
-        //}
-
-        UnitList[id].instantiatedMarkers.Clear();
-        UnitList[id].markerVisuals.Clear();
-        UnitList[id].queuedMoves.Clear();
-        UnitList[id].remainingMovement = UnitList[id].speed; //if we clear moves, we need to reset to allow full movement again
-        UnitList[id].turnTime = 0;
-    }
-
     public void OnCommunicateMarkers(int id, float x2, float y2, float z2, int x, int y, string team, int remainingMovement) //used in mp
     {
         //Debug.Log(team);
@@ -231,13 +133,102 @@ public abstract class Board : MonoBehaviour
 
         //Debug.Log(marker.team);
     }
-    public void OnCommunicateQueuedMoves(int id, int x, int y)
+    public abstract void PieceCommunicateAttackTile(int id, int x, int y);
+    public void OnPieceCommunicateAttackTile(int id, int x, int y)
     {
-        var coords = new Vector2Int(x, y);
-        UnitList[id].queuedMoves.Add(coords);
-        //piece.queuedMoves.Add(coords);
+        UnitList[id].OnCommunicateAttackTile(x, y);
+    }
+    public abstract void CommunicateMarkers(int id, float x2, float y2, float z2, int x, int y, string team, int remainingMovement);
+
+    public abstract void CommunicateTurnHoldTime(int id, int turnTime, int holdTime);
+
+    public void OnCommunicateTurnHoldTime(int id, int turnTime, int holdTime)
+    {
+        UnitList[id].turnTime = turnTime;
+        UnitList[id].holdTime = holdTime;
     }
 
+    public abstract void ClearMoves(int id);
+    public void OnClearMoves(int id)
+    {
+        foreach (var i in UnitList[id].instantiatedMarkers)
+        {
+            Destroy(i.gameObject);
+        }
+        foreach (var i in UnitList[id].markerVisuals)
+        {
+            Destroy(i.gameObject);
+        }
+        /*if(UnitList[id].attackType == "ranged") //todo come back to delete 
+        {
+
+            Debug.Log("not clearing lines" + id);
+        }*/
+        //else
+        //{
+        //Debug.Log("clearing lines" + id);
+        //visually clear line prefabs and aesthetic cylinders
+        foreach (var i in UnitList[id].instantiatedLines)
+        {
+            Destroy(i.gameObject);
+        }
+        UnitList[id].instantiatedLines.Clear();
+        foreach (var i in UnitList[id].aestheticCylinders)
+        {
+            Destroy(i.gameObject);
+        }
+        UnitList[id].aestheticCylinders.Clear();
+        //}
+
+        UnitList[id].instantiatedMarkers.Clear();
+        UnitList[id].markerVisuals.Clear();
+        UnitList[id].queuedMoves.Clear();
+        UnitList[id].remainingMovement = UnitList[id].speed; //if we clear moves, we need to reset to allow full movement again
+        UnitList[id].turnTime = 0;
+    }
+    public abstract void PieceApplyDamage(int id);
+    public void OnPieceApplyDamage(int id)
+    {
+        UnitList[id].OnApplyDamage();
+    }
+    public abstract void PieceCalculateDamage(int id);
+    public void OnPieceCalculateDamage(int id)
+    {
+        UnitList[id].OnCalculateDamage();
+    }
+
+    public abstract void PieceCheckFlankingDamage(int id);
+    public void OnPieceCheckFlankingDamage(int id)
+    {
+        UnitList[id].OnCheckFlankingDamage();
+    }
+
+    public abstract void PieceUpdateTerrainType(int id, int x, int y);
+    public abstract void PieceTriggerAttacksForSoldiers(int id);
+
+    public abstract void PieceCommunicateTargetToAttackPiece(int id, int x, int y);
+
+
+    public abstract void PieceMarkForDeath(int id, int damage);
+    public void OnPieceMarkForDeath(int id, int damage)
+    {
+        UnitList[id].OnMarkForDeath(damage);
+    }
+
+    public void OnPieceCommunicateTargetToAttackPiece(int id, int x, int y)
+    {
+        UnitList[id].OnCommunicateTargetToAttackPiece(x, y);
+    }
+
+    public void OnPieceTriggerAttacksForSoldiers(int id)
+    {
+        UnitList[id].OnTriggerAttacksForSoldiers();
+    }
+
+    public void OnPieceUpdateTerrainType(int id, int x, int y)
+    {
+        UnitList[id].OnUpdateTerrainType(x, y);
+    }  
     public abstract void ChangeFormation(int id, string formation);
 
     public void OnChangeFormation(int id, string formation)
@@ -248,10 +239,9 @@ public abstract class Board : MonoBehaviour
 
 
     public abstract void ChangeStance(int id, string stance);
-    public void OnChangeStance(int id, string stance) //this should not rely on selected piece, rather unit ID.
-                                                      //using selectedpiece is preferable so you can control what parts of the function are multiplayer, like showing selection squares .. .unless, we can use unit id and check in the function if the
-                                                      //unit is on the same team. if they're not we can prevent showing the squares while still updating the variables
-    {
+    public void OnChangeStance(int id, string stance) //this should not rely on selected piece, rather unit ID. 
+    {//using selectedpiece is preferable so you can control what parts of the function are multiplayer, like showing selection squares .. .unless, we can use unit id and check in the function if the
+     //unit is on the same team. if they're not we can prevent showing the squares while still updating the variables
         if (stance == "sprint")
         {
             //selectedPiece.SetStanceSprint();
@@ -294,6 +284,17 @@ public abstract class Board : MonoBehaviour
             UnitList[id].ResetStance();
         }
     }
+    public abstract void PieceCalculateLineOfSight(int id);
+    public void OnPieceCalculateLineOfSight(int id)
+    {
+        UnitList[id].OnCalculateLineOfSight();
+    }
+    public abstract void PieceRunThroughCylinders(int id);
+    public void OnPieceRunThroughCylinders(int id)
+    {
+        UnitList[id].OnRunThroughCylinders();
+    }
+    
     public abstract void Unready();
     public void OnUnready(string team)
     {
@@ -328,7 +329,7 @@ public abstract class Board : MonoBehaviour
                 }
             }
         }
-        
+
     }
     public void OnExecuteMoveForAllPieces(string team) //execute moves for all pieces! using mp
     {
@@ -365,7 +366,7 @@ public abstract class Board : MonoBehaviour
         //if singleplayer, both are set to true by singleplayerboard;
 
         //Debug.Log(whiteReady + "" + blackReady);
-        if (whiteReady && blackReady) //if both players are ready
+        if (whiteReady && blackReady) //if both players are ready   
         {
             waitingToFinishTurn = false;
             whiteReady = false;
@@ -386,18 +387,14 @@ public abstract class Board : MonoBehaviour
             {
                 ////Debug.LogError("allpieces" + AllPieces[i] + AllPieces[i].queuedMoves.Count);
                 if (AllPieces[i].queuedMoves.Count == 1) //if exactly one moved queued and attacking, you are eligible to attack immediately  && AllPieces[i].attacking && AllPieces[i].attackedThisTurn == false
-                {
-                    ////Debug.LogError("I HATE YOU");
+                { 
                     piecesReadyToAttack.Add(AllPieces[i]);
                     ////Debug.LogError("added to pieces ready to immediate attack" + AllPieces[i]);
 
-                }
-
-            }
-
+                } 
+            } 
             AttackPhaseSetup(piecesReadyToAttack, 0); //allows for immediate attacks by pieces that are ready to attack already //attack phase setup is adding all pieces to the list for some reason . . .
-
-
+             
             secondPassMoveWave.Clear();
             //start of movement phase
             for (int i = 0; i < AllPieces.Length; i++) //Actually start moving
@@ -410,7 +407,7 @@ public abstract class Board : MonoBehaviour
             }
             var num = secondPassMoveWave.Count;
             var overflow = 0;
-            while (num > 0  && overflow < 50) //while there are still pieces to check
+            while (num > 0 && overflow < 50) //while there are still pieces to check
             {
                 foreach (var piece in secondPassMoveWave) //for each piece in the list
                 {
@@ -425,11 +422,8 @@ public abstract class Board : MonoBehaviour
                 }
                 overflow++;
                 Debug.Log("overflow" + overflow);
-            }
-
-
-        }
-
+            } 
+        } 
     }
 
     private void Preturn(Piece[] AllPieces)
@@ -462,7 +456,7 @@ public abstract class Board : MonoBehaviour
                 AllPieces[i].CheckIfEnemyInFirstQueuedMove(); //important to call before moving to see if we can immediate attack
             }
         }
-        
+
     }
 
     private IEnumerator SlowUpdate(float speed) //calls the function responsible for checking if movement phase should be over or not
@@ -621,7 +615,7 @@ public abstract class Board : MonoBehaviour
             if (pieces[i].attacking && pieces[i].attackType == "ranged" && pieces[i].targetToAttackPiece != null && pieces[i].attackedThisTurn == false) // if attacking, ranged and has a target
             {
                 numRangedUnits++;
-                pieces[i].CalculateLineOfSight(); //create cylinders
+                pieces[i].CalculateLineOfSight(); //mp, create cylinders
             }
         }
         if (numRangedUnits <= 0) //if no ranged units
@@ -674,7 +668,7 @@ public abstract class Board : MonoBehaviour
         {
             if (pieces[i].attacking && pieces[i].attackType == "ranged" && pieces[i].targetToAttackPiece != null && pieces[i].attackedThisTurn == false)
             {
-                pieces[i].RunThroughCylinders(); //sets new target to attack or cancels attack if blocked by friendly
+                pieces[i].RunThroughCylinders(); //mp, sets new target to attack or cancels attack if blocked by friendly
             }
         }
         // check if being attacked
@@ -953,7 +947,7 @@ public abstract class Board : MonoBehaviour
                     SelectPieceMoved(coords);
 
                 }
-                else if (selectedPiece != null && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece == selectedPiece ) //if you click on the same tile twice
+                else if (selectedPiece != null && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece == selectedPiece) //if you click on the same tile twice
                 {// l  &&  && selectedPiece.attacking 
                     Debug.Log("clicked on a position where we already have a marker for movement and we're attacking"); //next check if marker belongs to us
                     if (selectedPiece.attacking && selectedPiece.attackType == "melee")
@@ -1203,7 +1197,7 @@ public abstract class Board : MonoBehaviour
             selectedPiece.markForDeselect = false;
             DeselectPiece();
         }
-        
+
         else if (selectedPiece.remainingMovement <= 0 || selectedPiece.markForDeselect)
         {
             selectedPiece.markForDeselect = false;
