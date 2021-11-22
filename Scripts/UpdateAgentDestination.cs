@@ -477,6 +477,7 @@ public class UpdateAgentDestination : MonoBehaviour
     public void CreateProjectile()
     {
         var projectile = Instantiate(projectilePrefab, effectSpawnTransform.position, Quaternion.Euler(90, transform.forward.y, 0));
+        Destroy(projectile, 60);
         // think of it as top-down view of vectors: 
         //   we don't care about the y-component(height) of the initial and target position.
         Vector3 projectileXZPos = new Vector3(transform.position.x, 0.0f, transform.position.z);

@@ -8,6 +8,7 @@ using Photon.Realtime;
 using TMPro;
 using System.Linq;
 using Random = UnityEngine.Random;
+using DG.Tweening;
 
 public abstract class Board : MonoBehaviour
 {
@@ -56,6 +57,9 @@ public abstract class Board : MonoBehaviour
     public List<Piece> piecesReadyToAttackAfterMovement = new List<Piece>();
     public List<Piece> secondPassMoveWave = new List<Piece>();
     public List<Piece> allPieces = new List<Piece>();
+
+
+    public GameObject eventPrefab;
 
     protected virtual void Awake()
     {
@@ -743,7 +747,6 @@ public abstract class Board : MonoBehaviour
             }
 
         }
-
         List<Piece> AllPiecesList = AllPieces.ToList(); //this necessarily has to be checked by all units
         if (phaseNum == 1) //if second attack phase then we will call cleanup
         {
@@ -754,6 +757,66 @@ public abstract class Board : MonoBehaviour
     private void CleanUpPhase(List<Piece> pieces)
     {
 
+        for (int i = 0; i < pieces.Count; i++) //should call this after all attacks are done
+        {
+            pieces[i].ApplyMorale(); //only applies model losses morale loss once per unit
+        }
+        foreach (var piece in pieces)
+        {
+            if (piece.flankedByHowMany > 0)
+            {
+                var eventTextPrefab = Instantiate(eventPrefab, piece.transform.position, Quaternion.Euler(90, transform.forward.y, 0));
+                eventTextPrefab.transform.position = piece.transform.position + new Vector3(0, 1.5f, 0);
+                var text = eventTextPrefab.GetComponentInChildren<TMP_Text>();
+                text.text = "Flanked!";
+                var targetPosition = eventTextPrefab.transform.position + new Vector3(0, .25f, 0);
+                Tween tween = eventTextPrefab.transform.DOMove(targetPosition, 5).SetEase(Ease.Linear);
+                Tween tweenTransparency = text.DOFade(0, 5);
+                Destroy(eventTextPrefab, 5);
+
+            }
+            else if (piece.attackerPiece != null && piece.attackerPiece.attacking) //if this piece is under attack
+            {
+                if (piece.attackerPiece.attackType == "melee")
+                {
+                    var eventTextPrefab = Instantiate(eventPrefab, piece.transform.position, Quaternion.Euler(90, transform.forward.y, 0));
+                    eventTextPrefab.transform.position = piece.transform.position + new Vector3(0, 1.5f, 0);
+                    var text = eventTextPrefab.GetComponentInChildren<TMP_Text>();
+                    text.text = "Engaged";
+                    var targetPosition = eventTextPrefab.transform.position + new Vector3(0, .25f, 0);
+                    Tween tween = eventTextPrefab.transform.DOMove(targetPosition, 5).SetEase(Ease.Linear);
+                    Tween tweenTransparency = text.DOFade(0, 5);
+                    Destroy(eventTextPrefab, 5);
+                }
+                else if (piece.attackerPiece.attackType == "ranged")
+                {
+                    var eventTextPrefab = Instantiate(eventPrefab, piece.transform.position, Quaternion.Euler(90, transform.forward.y, 0));
+                    eventTextPrefab.transform.position = piece.transform.position + new Vector3(0, 1.5f, 0);
+                    var text = eventTextPrefab.GetComponentInChildren<TMP_Text>();
+                    text.text = "Under fire";
+                    var targetPosition = eventTextPrefab.transform.position + new Vector3(0, .25f, 0);
+                    Tween tween = eventTextPrefab.transform.DOMove(targetPosition, 5).SetEase(Ease.Linear);
+                    Tween tweenTransparency = text.DOFade(0, 5);
+                    Destroy(eventTextPrefab, 5);
+                }
+            }
+            else if (piece.targetToAttackPiece != null && piece.attacking) //if we have a piece that is attacking
+            {
+                if (piece.attackType == "ranged")
+                {
+
+                    var eventTextPrefab = Instantiate(eventPrefab, piece.transform.position, Quaternion.Euler(90, transform.forward.y, 0));
+                    eventTextPrefab.transform.position = piece.transform.position + new Vector3(0, 1.5f, 0);
+                    var text = eventTextPrefab.GetComponentInChildren<TMP_Text>();
+                    text.text = "Firing";
+                    var targetPosition = eventTextPrefab.transform.position + new Vector3(0, .25f, 0);
+                    Tween tween = eventTextPrefab.transform.DOMove(targetPosition, 5).SetEase(Ease.Linear);
+                    Tween tweenTransparency = text.DOFade(0, 5);
+                    Destroy(eventTextPrefab, 5);
+                }
+            }
+
+        }
         for (int i = 0; i < pieces.Count; i++) //check if any markers overlap between friendly and enemy
         {
             if (pieces[i].attacking)
@@ -765,10 +828,6 @@ public abstract class Board : MonoBehaviour
 
                 pieces[i].animationsOver = true;
             }
-        }
-        for (int i = 0; i < pieces.Count; i++) //should call this after all attacks are done
-        {
-            pieces[i].ApplyMorale(); //only applies model losses morale loss once per unit
         }
         for (int i = 0; i < pieces.Count; i++)
         {
@@ -950,45 +1009,62 @@ public abstract class Board : MonoBehaviour
                 else if (selectedPiece != null && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece == selectedPiece) //if you click on the same tile twice
                 {// l  &&  && selectedPiece.attacking 
                     Debug.Log("clicked on a position where we already have a marker for movement and we're attacking"); //next check if marker belongs to us
-                    if (selectedPiece.attacking && selectedPiece.attackType == "melee")
+                    //triggers when move attacking, but we need to not deselect in that case.
+                    if (selectedPiece.moveAndAttackEnabled && selectedPiece.attackType == "ranged") //if move and attacking ranged unit (and we're clicking on a point we've already queued onto
                     {
-                        var lastMarkerVisual = selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1];
+                        selectedPiece.speed = selectedPiece.longRange; //increase speed so we can queue a second move
+                        selectedPiece.remainingMovement = selectedPiece.speed;
 
-                        GameObject markerVisual = Instantiate(selectedPiece.arrowMarkerVisualPrefab, lastMarkerVisual.transform.position, Quaternion.identity);
-
-                        Vector2Int directionVector = Vector2Int.zero;
-
-                        if (selectedPiece.queuedMoves.Count == 1)
+                        //lets find that queued position
+                        Vector2Int queuedPosition = selectedPiece.occupiedSquare; //so this will let us determine the position after moves are applied
+                        for (int i = 0; i < selectedPiece.queuedMoves.Count; i++)
                         {
-                            directionVector = coords - selectedPiece.occupiedSquare;
+                            Vector2Int distance2 = queuedPosition - selectedPiece.queuedMoves[i]; //first find distance between current position and new position
+                            queuedPosition -= distance2; //then subtract this distance to get the new position again
                         }
-                        else if (selectedPiece.queuedMoves.Count > 1)
-                        {
-                            directionVector = coords - selectedPiece.queuedMoves[selectedPiece.queuedMoves.Count - 2];
-                        }
-
-                        var facingDirection = 0;
-                        for (int t = 0; t < selectedPiece.adjacentTiles.Length; t++) //check cardinal directions to see if they match up
-                        {
-                            if (selectedPiece.adjacentTiles[t] == directionVector)
-                            {
-                                facingDirection = t;
-                            }
-                        }
-
-                        Vector3 rotationGoal = new Vector3(0, 45 * facingDirection, 0); //set rotation goal
-
-                        markerVisual.transform.Rotate(rotationGoal);
-
-                        Destroy(selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1]); //delete the last marker visual so we can replace it 
-
-                        selectedPiece.markerVisuals.Add(markerVisual);
+                        //show selection squares from queued position
+                        ShowSelectionSquares(selectedPiece.SelectAvailableSquares(queuedPosition), selectedPiece);
                     }
-                    selectedPiece.holdingPosition = true;
-                    //selectedPiece.holdTime = selectedPiece.turnTime;
-                    DeselectPiece(); //deselect it and hide movement paths (deselected because we are ending our movement early)
+                    else
+                    {
+                        if (selectedPiece.attacking && selectedPiece.attackType == "melee")
+                        {
+                            var lastMarkerVisual = selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1];
 
+                            GameObject markerVisual = Instantiate(selectedPiece.arrowMarkerVisualPrefab, lastMarkerVisual.transform.position, Quaternion.identity);
 
+                            Vector2Int directionVector = Vector2Int.zero;
+
+                            if (selectedPiece.queuedMoves.Count == 1)
+                            {
+                                directionVector = coords - selectedPiece.occupiedSquare;
+                            }
+                            else if (selectedPiece.queuedMoves.Count > 1)
+                            {
+                                directionVector = coords - selectedPiece.queuedMoves[selectedPiece.queuedMoves.Count - 2];
+                            }
+
+                            var facingDirection = 0;
+                            for (int t = 0; t < selectedPiece.adjacentTiles.Length; t++) //check cardinal directions to see if they match up
+                            {
+                                if (selectedPiece.adjacentTiles[t] == directionVector)
+                                {
+                                    facingDirection = t;
+                                }
+                            }
+
+                            Vector3 rotationGoal = new Vector3(0, 45 * facingDirection, 0); //set rotation goal
+
+                            markerVisual.transform.Rotate(rotationGoal);
+
+                            Destroy(selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1]); //delete the last marker visual so we can replace it 
+
+                            selectedPiece.markerVisuals.Add(markerVisual);
+                        }
+                        selectedPiece.holdingPosition = true;
+                        //selectedPiece.holdTime = selectedPiece.turnTime;
+                        DeselectPiece(); //deselect it and hide movement paths (deselected because we are ending our movement early)
+                    } 
 
                 }
                 else if (piece != null && selectedPiece != piece && !piece.IsFromSameTeam(selectedPiece)) //if we click on a different piece and it's an enemy and our selectedPiece is attacking
@@ -1171,6 +1247,7 @@ public abstract class Board : MonoBehaviour
         }
 
         ////Debug.LogError("remainingmovement" + selectedPiece.remainingMovement + "turn time" + selectedPiece.turnTime);
+        //if selected piece is attacking, ranged, move attacking, and out of remaining movement:
         if (selectedPiece.attacking && selectedPiece.attackType == "ranged" && selectedPiece.moveAndAttackEnabled && selectedPiece.remainingMovement == 0) //&& selectedPiece.turnTime >= 1
         {//if move and attack enabled, disable after first movement queued
             //selectedPiece.moveAndAttackEnabled = false;
@@ -1202,43 +1279,7 @@ public abstract class Board : MonoBehaviour
         {
             selectedPiece.markForDeselect = false;
             DeselectPiece();
-        }
-
-        /*
-                var lastQueuedMoveNum = selectedPiece.queuedMoves.Count - 1;
-                //if queued move is on hill
-                var terrainTypeAtQueuedPos = terrainGrid[selectedPiece.queuedMoves[lastQueuedMoveNum].x, selectedPiece.queuedMoves[lastQueuedMoveNum].y];
-
-                var penultimateQueuedMoveNum = selectedPiece.queuedMoves.Count - 2;
-
-                var terrainTypeAtPenultimateQueuedPos = "grass";
-                if (penultimateQueuedMoveNum < 0)
-                {
-                    terrainTypeAtPenultimateQueuedPos = selectedPiece.board.terrainGrid[selectedPiece.occupiedSquare.x, selectedPiece.occupiedSquare.y];
-                    //Debug.LogError("terrain last" + terrainTypeAtQueuedPos + "terrain penult" + terrainTypeAtPenultimateQueuedPos);
-                    //Debug.LogError("terrain last" + selectedPiece.queuedMoves[lastQueuedMoveNum] + "terrain penult" + selectedPiece.occupiedSquare);
-                }
-                else
-                {
-                    terrainTypeAtPenultimateQueuedPos = terrainGrid[selectedPiece.queuedMoves[penultimateQueuedMoveNum].x, selectedPiece.queuedMoves[penultimateQueuedMoveNum].y];
-                    //Debug.LogError("terrain last" + terrainTypeAtQueuedPos + "terrain penult" + terrainTypeAtPenultimateQueuedPos);
-                    //Debug.LogError("terrain last" + selectedPiece.queuedMoves[lastQueuedMoveNum] + "terrain penult" + selectedPiece.queuedMoves[penultimateQueuedMoveNum]);
-                }
-
-                if (terrainTypeAtQueuedPos == "hill" && terrainTypeAtQueuedPos != "hill") //if we queue a move onto a hill from non hill
-                {
-
-                }*/
-
-
-
-
-
-        //TryToTakeOppositePiece(coords);
-        //UpdateBoardOnPieceMove(coords, selectedPiece.occupiedSquare, selectedPiece, null);
-        //selectedPiece.MovePiece(coords);
-        //DeselectPiece();
-        //EndTurn();
+        } 
     }
 
     public void OnSetSelectedPiece(Vector2Int coords) //this shows up in multiplayer
