@@ -474,6 +474,48 @@ public abstract class Board : MonoBehaviour
         StartCoroutine(SlowUpdate(speed)); //start it again  
     }
 
+    private IEnumerator EventUpdate(float speed) //calls the function responsible for checking if movement phase should be over or not
+    {
+        Piece[] AllPieces = FindObjectsOfType<Piece>();
+        foreach (var piece in AllPieces)
+        {
+            if (piece.strList.Count > 0)
+            {
+                Vector3 num = Vector3.zero;
+                if (piece.lastEventEndPos != Vector3.zero)
+                {
+                    num = piece.lastEventEndPos;
+                    Debug.Log("num" + num);
+                }
+                else
+                {
+                    num = piece.transform.position + new Vector3(0, 1.75f, 0);
+                }
+
+                GameObject eventTextPrefab = Instantiate(eventPrefab, num, Quaternion.Euler(90, transform.forward.y, 0));
+                //eventTextPrefab.transform.position = num + new Vector3(0, 1.75f, 0);
+                var text = eventTextPrefab.GetComponentInChildren<TMP_Text>();
+                text.text = piece.strList[0];
+                text.color = piece.colorList[0];
+                var targetPosition = eventTextPrefab.transform.position + new Vector3(0, .4f, 0);
+                Tween tween = eventTextPrefab.transform.DOMove(targetPosition, piece.floatList[0]).SetEase(Ease.OutExpo);
+                Tween tweenTransparency = text.DOFade(0, piece.floatList[0]).SetEase(Ease.InExpo);
+                Destroy(eventTextPrefab, piece.floatList[0]);
+
+                piece.lastEventEndPos = targetPosition;
+                piece.strList.RemoveAt(0);
+                piece.colorList.RemoveAt(0);
+                piece.floatList.RemoveAt(0);
+            }
+            else
+            {
+                piece.lastEventEndPos = Vector3.zero;
+            }
+        }
+        yield return new WaitForSeconds(speed);
+        StartCoroutine(EventUpdate(speed)); //start it again  
+    }
+
 
     public void OneStepFinished() //checks to see if one step has been finished. if so, start move coroutines again
     {
@@ -765,39 +807,18 @@ public abstract class Board : MonoBehaviour
         {
             if (piece.flankedByHowMany > 0)
             {
-                var eventTextPrefab = Instantiate(eventPrefab, piece.transform.position, Quaternion.Euler(90, transform.forward.y, 0));
-                eventTextPrefab.transform.position = piece.transform.position + new Vector3(0, 1.5f, 0);
-                var text = eventTextPrefab.GetComponentInChildren<TMP_Text>();
-                text.text = "Flanked!";
-                var targetPosition = eventTextPrefab.transform.position + new Vector3(0, .25f, 0);
-                Tween tween = eventTextPrefab.transform.DOMove(targetPosition, 5).SetEase(Ease.Linear);
-                Tween tweenTransparency = text.DOFade(0, 5);
-                Destroy(eventTextPrefab, 5);
+                piece.SpawnEvent("Flanked!", Color.red, 5f);
 
             }
             else if (piece.attackerPiece != null && piece.attackerPiece.attacking) //if this piece is under attack
             {
                 if (piece.attackerPiece.attackType == "melee")
                 {
-                    var eventTextPrefab = Instantiate(eventPrefab, piece.transform.position, Quaternion.Euler(90, transform.forward.y, 0));
-                    eventTextPrefab.transform.position = piece.transform.position + new Vector3(0, 1.5f, 0);
-                    var text = eventTextPrefab.GetComponentInChildren<TMP_Text>();
-                    text.text = "Engaged";
-                    var targetPosition = eventTextPrefab.transform.position + new Vector3(0, .25f, 0);
-                    Tween tween = eventTextPrefab.transform.DOMove(targetPosition, 5).SetEase(Ease.Linear);
-                    Tween tweenTransparency = text.DOFade(0, 5);
-                    Destroy(eventTextPrefab, 5);
+                    piece.SpawnEvent("Engaged", Color.gray, 2.5f);
                 }
-                else if (piece.attackerPiece.attackType == "ranged")
+                if (piece.attackerPiece.attackType == "ranged")
                 {
-                    var eventTextPrefab = Instantiate(eventPrefab, piece.transform.position, Quaternion.Euler(90, transform.forward.y, 0));
-                    eventTextPrefab.transform.position = piece.transform.position + new Vector3(0, 1.5f, 0);
-                    var text = eventTextPrefab.GetComponentInChildren<TMP_Text>();
-                    text.text = "Under fire";
-                    var targetPosition = eventTextPrefab.transform.position + new Vector3(0, .25f, 0);
-                    Tween tween = eventTextPrefab.transform.DOMove(targetPosition, 5).SetEase(Ease.Linear);
-                    Tween tweenTransparency = text.DOFade(0, 5);
-                    Destroy(eventTextPrefab, 5);
+                    piece.SpawnEvent("Under fire", Color.yellow, 2.5f);
                 }
             }
             else if (piece.targetToAttackPiece != null && piece.attacking) //if we have a piece that is attacking
@@ -805,14 +826,7 @@ public abstract class Board : MonoBehaviour
                 if (piece.attackType == "ranged")
                 {
 
-                    var eventTextPrefab = Instantiate(eventPrefab, piece.transform.position, Quaternion.Euler(90, transform.forward.y, 0));
-                    eventTextPrefab.transform.position = piece.transform.position + new Vector3(0, 1.5f, 0);
-                    var text = eventTextPrefab.GetComponentInChildren<TMP_Text>();
-                    text.text = "Firing";
-                    var targetPosition = eventTextPrefab.transform.position + new Vector3(0, .25f, 0);
-                    Tween tween = eventTextPrefab.transform.DOMove(targetPosition, 5).SetEase(Ease.Linear);
-                    Tween tweenTransparency = text.DOFade(0, 5);
-                    Destroy(eventTextPrefab, 5);
+                    piece.SpawnEvent("Firing", Color.white, 2.5f);
                 }
             }
 
@@ -942,7 +956,7 @@ public abstract class Board : MonoBehaviour
         var gameInitObj = GameObject.Find("GameInitializer");
         gameInit = gameInitObj.GetComponent(typeof(GameInitializer)) as GameInitializer;
 
-        TriggerSlowUpdate();
+        TriggerSlowUpdate(); 
 
     }
 
@@ -953,9 +967,8 @@ public abstract class Board : MonoBehaviour
         ////Debug.LogError("triggered slow update");
         //StartCoroutine(SlowUpdate(1f));
         StartCoroutine(SlowUpdate(.5f));
-    }
-
-
+        StartCoroutine(EventUpdate(.5f));
+    } 
     public Vector3 CalculatePositionFromCoords(Vector2Int coords)
     {
         return bottomLeftSquareTransform.position + new Vector3(coords.x * squareSize, 0f, coords.y * squareSize);
@@ -1114,7 +1127,30 @@ public abstract class Board : MonoBehaviour
                 else if (selectedPiece.CanMoveTo(coords)) //if we click somewhere we can move, 
                 {
                     Debug.Log("clicked somewhere we can move");
-                    SelectPieceMoved(coords); //place some sort of marker indicating that this piece will move there
+                    var futureTerrain = terrainGrid[coords.x, coords.y];
+                    if (selectedPiece.OnTerrainType == "road" && futureTerrain != "road") //if we go off road
+                    {
+                        if (selectedPiece.sprinting)
+                        {
+                            selectedPiece.remainingMovement = selectedPiece.sprintSpeed - selectedPiece.queuedMoves.Count; //normally remaining movement would be sprint speed + 1 - queued moves
+
+                        }
+                        else
+                        {
+                            //lets say speed on road is 2 and we have speed 1 and we have one move queued, remaining movement is 0
+                            selectedPiece.remainingMovement = selectedPiece.originalSpeed - selectedPiece.queuedMoves.Count;
+
+                        }
+                    }
+
+                    if (selectedPiece.remainingMovement <= 0) //if remaining movement less than/equal to 0,
+                    {
+                        DeselectPiece(); //let's stop allowing moves
+                    }
+                    else
+                    {
+                        SelectPieceMoved(coords); //place some sort of marker indicating that this piece will move there\
+                    } 
 
                 }
             }

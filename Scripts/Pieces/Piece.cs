@@ -5,6 +5,7 @@ using System;
 using DG.Tweening;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
+using TMPro;
 
 //[RequireComponent(typeof(IObjectTweener))]
 //[RequireComponent(typeof(MaterialSetter))]
@@ -24,10 +25,11 @@ public abstract class Piece : MonoBehaviour
     public int models = 100; //the number of dudes in a squad/unit/battalion whatever
     [HideInInspector] public int oldModels = 0;
     public float health = 1; //the health of each model 
-    public float damage = 1f; 
+    public float damage = 1f;
     public float morale = 10;
     public float energy = 15; //overall energy
     private float startingEnergy; //starting energy, which is set by energy
+    public float startingMorale;
 
     public int damageLevel = 0;
     public int armorLevel = 0;
@@ -251,6 +253,14 @@ public abstract class Piece : MonoBehaviour
     public bool alreadyAppliedDamage = false;
     public bool movementStopped = true;
     public bool markForRemovalFromSecondWave = false;
+    private bool waveringEventTriggered;
+
+    public List<string> strList = new List<string>(); // 
+    public List<Color> colorList = new List<Color>(); // 
+    public List<float> floatList = new List<float>(); // 
+
+    public Vector3 lastEventEndPos = Vector3.zero;
+
     public abstract List<Vector2Int> SelectAvailableSquares(Vector2Int startingSquare);
 
     public void CheckIfNoOrdersGiven() //just check
@@ -265,8 +275,10 @@ public abstract class Piece : MonoBehaviour
         }
     }
 
-    private void Awake()
+    private void OnEnable()
     {
+        startingMorale = morale;
+
         flankingDamage = 1; //set this to 1 bc its all zero right now >>
 
         _audioSource = GetComponent<AudioSource>();
@@ -3220,11 +3232,77 @@ public abstract class Piece : MonoBehaviour
             Destroy(item);
         }
         instantiatedCylinders.Clear();
-        lineCollisionScript.ApproximateCollision();
+        lineCollisionScript.ApproximateCollision(); //places actual cylindersx 
         //place aesthetic cylinders
         lineCollisionScript.PlaceAestheticCylinders();
+        if (attackType == "ranged")
+        {
+            StartCoroutine(WaitForPhysics());
+        }
 
 
+    }
+
+    public IEnumerator WaitForPhysics() //this exists so that we don't have to do all the processing in one frame
+    {
+        Debug.Log("Checking");
+        var numNotFinished = 0;
+
+        foreach (var item in instantiatedCylinders) //go through each of their cylinders
+        {
+            var script = item.GetComponent(typeof(LineCollidePrefabScript)) as LineCollidePrefabScript;
+            if (script.finishedProcessing == false) //basically if not finished processing
+            {
+                numNotFinished++;
+            }
+        }
+
+
+        if (numNotFinished == 0) //if all of them are finished
+        {
+            if (arcingAttack == false) //if musketeer: check if obstructed. if bowman: don't!
+            {
+                for (int i = 0; i < instantiatedCylinders.Count; i++) //start at 5th cylinder
+                {
+                    var cylinder = instantiatedCylinders[i];
+                    var script = cylinder.GetComponent(typeof(LineCollidePrefabScript)) as LineCollidePrefabScript;
+                    Piece unit = script.unitOnTile; //fetch the unit associated with this cylinder
+                    if (unit == this || unit == null || i < 4)  //skip the first 4
+                    {
+                        continue; //skip any cylinders that are this unit
+                    }
+                    else if (OnTerrainType == "hill" && unit.OnTerrainType != "hill") //if we're on a hill, and they're not, we can shoot over them
+                    {
+                        continue;
+                    }
+                    else if (unit.IsFromSameTeam(this)) //if that unit is from the same team, cancel the attack
+                    {
+                        SpawnEvent("Shot blocked by friendly!", Color.red, 2.5f);
+                        break;
+                    }
+                    /*else if (!unit.IsFromSameTeam(this)) //if that unit is from the same team, cancel the attack
+                    {
+                        SpawnEvent("Shot blocked by enemy", Color.white, 2.5f);
+                        break;
+                    }*/
+                }
+            }
+
+            yield return null;
+        }
+        else
+        {
+            yield return new WaitForSeconds(.1f);
+            StartCoroutine(WaitForPhysics());
+        }
+
+    }
+
+    public void SpawnEvent(string str, Color color, float time)
+    {
+        strList.Add(str);
+        colorList.Add(color);
+        floatList.Add(time);
     }
 
     public void PlaySelection()
@@ -4522,7 +4600,7 @@ public abstract class Piece : MonoBehaviour
             Debug.LogError("Returning2" + "unit id" + unitID + "target adjacent" + targetAdjacent + "enemy adjacent" + enemyAdjacent);
             return;
         }
-        
+
         //Debug.Log(targetAdjacent + "" + targetToAttackPiece + "" + attacking + queuedDamage);
         targetToAttackPiece.attackerPiece = this;
 
@@ -4627,6 +4705,7 @@ public abstract class Piece : MonoBehaviour
         {
             Destroy(soldierObjects[i]);
         }
+
         Destroy(gameObject);
     }
     public void MarkForDeath(int damage)
@@ -4650,7 +4729,7 @@ public abstract class Piece : MonoBehaviour
         if (attackerPiece != null) //still need to make this based on direction
         {
             if (attackerPiece.attackType == "melee")
-            { 
+            {
                 for (int i = 0; i < scaledDamage; i++)//linear marking
                 {
                     var rowRandom = Random.Range(0, rowSize - 1); //random from front row
@@ -4779,7 +4858,17 @@ public abstract class Piece : MonoBehaviour
         {
             morale -= 5;
             armyLossesApplied = true;
+
+            SpawnEvent("Heavy losses!", Color.black, 5f);
         }
+
+        if (morale <= startingMorale / 2 && !waveringEventTriggered)
+        {
+            waveringEventTriggered = true;
+
+            SpawnEvent("Wavering!", Color.blue, 5f);
+        }
+
         if (currentFormation != "circle")
         {
 
