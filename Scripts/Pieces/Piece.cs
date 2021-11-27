@@ -260,6 +260,7 @@ public abstract class Piece : MonoBehaviour
     public List<float> floatList = new List<float>(); // 
 
     public Vector3 lastEventEndPos = Vector3.zero;
+    public Piece lastTarget = null;
 
     public abstract List<Vector2Int> SelectAvailableSquares(Vector2Int startingSquare);
 
@@ -4504,7 +4505,10 @@ public abstract class Piece : MonoBehaviour
                 {
                     //not sure exactly how to cancel the attack
                     queuedDamage = 0;
+                    tempDamage = 0;
                     attacking = false;
+                    targetToAttackPiece = null;
+                    SpawnEvent("Shot blocked by friendly!", Color.red, 2.5f);
                     break;
                 }
                 else if (!unit.IsFromSameTeam(this)) //if an enemy unit, set them as the new target

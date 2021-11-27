@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class LineCollidePrefabScript : MonoBehaviour //this script is attached to a cylinder
 {
@@ -59,6 +60,15 @@ public class LineCollidePrefabScript : MonoBehaviour //this script is attached t
         {
             Vector2Int vector = new Vector2Int(tileData.x, tileData.y);
             unitOnTile = board.GetPieceOnSquare(vector);
+            /*if (unitOnTile != null)
+            { 
+                GameObject eventTextPrefab = Instantiate(board.eventPrefab1, transform.position, Quaternion.Euler(90, transform.forward.y, 0));
+                //eventTextPrefab.transform.position = num + new Vector3(0, 1.75f, 0);
+                var text = eventTextPrefab.GetComponentInChildren<TMP_Text>();
+                text.text = unitOnTile.ToString();
+                var targetPosition = eventTextPrefab.transform.position + new Vector3(0, .4f, 0);
+            }*/
+
         }
 
         if (tileData != null && finishedProcessing == false)

@@ -60,6 +60,7 @@ public abstract class Board : MonoBehaviour
 
 
     public GameObject eventPrefab;
+    public GameObject eventPrefab1;
 
     protected virtual void Awake()
     {
@@ -917,6 +918,7 @@ public abstract class Board : MonoBehaviour
         Piece[] AllPieces = FindObjectsOfType<Piece>(); //this necessarily has to be checked by all units
         for (int i = 0; i < AllPieces.Length; i++) //needs to be set after we're done animation wise
         {
+            AllPieces[i].lastTarget = AllPieces[i].targetToAttackPiece;
             AllPieces[i].targetToAttackPiece = null; // 
             //AllPieces[i].queuedMoves.Clear();
         }

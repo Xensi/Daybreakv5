@@ -233,6 +233,7 @@ MonoBehaviour:
   secondPassMoveWave: []
   allPieces: []
   eventPrefab: {fileID: 7121591579381296487, guid: f736c375f12ba2e4f93ff14f5eb7382c, type: 3}
+  eventPrefab1: {fileID: 7121591579381296487, guid: 910acd6ea9f4ce64c97f6c319f716dc7, type: 3}
   random: 0
 --- !u!114 &1507589456114201193
 MonoBehaviour:
