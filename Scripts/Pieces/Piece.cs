@@ -28,7 +28,7 @@ public abstract class Piece : MonoBehaviour
     public float damage = 1f;
     public float morale = 10;
     public float energy = 15; //overall energy
-    private float startingEnergy; //starting energy, which is set by energy
+    public float startingEnergy; //starting energy, which is set by energy
     public float startingMorale;
 
     public int damageLevel = 0;
@@ -3682,10 +3682,18 @@ public abstract class Piece : MonoBehaviour
             Debug.Log("Halting because target next to us");
             return true;
         }
-        if (enemyAdjacent && !disengaging && !isCampaignToken) //if enemy has engaged us and we're not disengaging
+        /*if (enemyAdjacent && !disengaging) //if enemy has engaged us and we're not disengaging and we're not cavalry (since cavalry can move without disengaging)
         {
             Debug.Log("Halting because enemy next to us");
             return true;
+        }*/
+        if (attackerPiece != null) //if we are being attacked . . . by a melee piece
+        { 
+            if (attackerPiece.attackType == "melee" && !disengaging)
+            { 
+                Debug.Log("Halting because pinned");
+                return true;
+            }
         }
 
         var checkCoords = queuedMoves[queueTime - 1];

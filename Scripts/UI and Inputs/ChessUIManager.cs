@@ -178,7 +178,10 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         var effects = GameObject.Find("EffectsText");
         var effectsText = effects.GetComponent<TMP_Text>();
         effectsText.text = "Effects: ";
-
+        if (piece.unitType == "cavalry") //if steady attacking
+        {
+            effectsText.text += "\nDifficult to pin: Cavalry can disengage.";
+        }
         if (!piece.moveAndAttackEnabled && piece.attacking && piece.attackType == "ranged") //if steady attacking
         {
             effectsText.text += "\nSteady attacking: + 1 range";
@@ -244,7 +247,17 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             effectsText.text += "\nCircle: Takes 3/4 damage from melee. Doesn't take extra damage or lose morale from being flanked. Can't move.";
 
         }
+        if (piece.energy < piece.startingEnergy * .5f && piece.energy > 0)
+        {
+            effectsText.text += "\nTired: -25% damage.";
 
+        }
+
+        if (piece.energy <= 0)
+        {
+            effectsText.text += "\nExhausted: -50% damage and can't sprint.";
+
+        }
         var portrait = GameObject.Find("UnitImage");
         var portraitSprite = portrait.GetComponent<Image>();
         portraitSprite.sprite = piece.unitPortrait;

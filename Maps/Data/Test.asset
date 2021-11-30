@@ -13,14 +13,6 @@ MonoBehaviour:
   m_Name: Test
   m_EditorClassIdentifier: 
   boardSquares:
-  - position: {x: 3, y: 3}
-    pieceType: 0
-    teamColor: 1
-    direction: 0
-  - position: {x: 4, y: 5}
-    pieceType: 0
-    teamColor: 0
-    direction: 4
   - position: {x: 5, y: 5}
     pieceType: 3
     teamColor: 0
@@ -29,11 +21,15 @@ MonoBehaviour:
     pieceType: 2
     teamColor: 1
     direction: 0
-  - position: {x: 6, y: 3}
-    pieceType: 1
+  - position: {x: 7, y: 3}
+    pieceType: 2
     teamColor: 1
     direction: 0
-  - position: {x: 6, y: 5}
-    pieceType: 6
+  - position: {x: 7, y: 5}
+    pieceType: 3
+    teamColor: 0
+    direction: 4
+  - position: {x: 9, y: 9}
+    pieceType: 0
     teamColor: 0
     direction: 4

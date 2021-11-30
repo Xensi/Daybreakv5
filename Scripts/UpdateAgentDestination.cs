@@ -123,7 +123,7 @@ public class UpdateAgentDestination : MonoBehaviour
             }
             navAgent.stoppingDistance = navOffset + navOffsetAdd;
             navAgent.radius = attackerRadius;
-            if (targetedSoldierDebug != null && navAgent.isActiveAndEnabled) //if we have a move target, then update our nav target to its position
+            if (targetedSoldierDebug != null && navAgent.isActiveAndEnabled && !parentPiece.targetToAttackPiece.disengaging) //if we have a move target, then update our nav target to its position
             {
                 navAgent.destination = targetedSoldierDebug.transform.position;
 
@@ -307,7 +307,7 @@ public class UpdateAgentDestination : MonoBehaviour
                     ////Debug.LogError("min dist " + minDist);
                 }
             }
-            if (tMin != null && navAgent.isActiveAndEnabled)
+            if (tMin != null && navAgent.isActiveAndEnabled && !parentPiece.targetToAttackPiece.disengaging)
             {
                 navAgent.destination = tMin.transform.position;
                 targetedSoldierDebug = tMin;

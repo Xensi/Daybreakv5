@@ -436,7 +436,7 @@ public abstract class Board : MonoBehaviour
         for (int i = 0; i < AllPieces.Length; i++) //check if enemies adjacent. if so, can't move
         {
             //Debug.Log(AllPieces[i]);
-
+            AllPieces[i].attackerPiece = null;
             AllPieces[i].attackedThisTurn = false; //remind everyone that they have not attacked yet
             AllPieces[i].markedDeaths = false; //remind everyone that they have not attacked yet
             AllPieces[i].alreadyCalculatedDamage = false;
@@ -806,7 +806,7 @@ public abstract class Board : MonoBehaviour
         }
         foreach (var piece in pieces)
         {
-            if (piece.flankedByHowMany > 0)
+            if (piece.flankedByHowMany > 0 && piece.attackerPiece != null)
             {
                 piece.SpawnEvent("Flanked!", Color.red, 5f);
 

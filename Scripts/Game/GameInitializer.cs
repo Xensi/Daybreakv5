@@ -242,11 +242,15 @@ public class GameInitializer : MonoBehaviour
         List<string> dropOptions = new List<string> { "Move", "Attack", "Switch Formation", "Sprint", "Disengage" };
         if (board.selectedPiece.attackType == "ranged")
         {
-            dropOptions = new List<string> { "Move", "Steady Attack", "Move and Attack", "Switch Formation", "Sprint", "Disengage" };
+            dropOptions = new List<string> { "Move", "Steady Attack", "Move and Attack", "Switch Formation", "Sprint" };
+        }
+        else if (board.selectedPiece.attackType == "melee" && board.selectedPiece.unitType == "cavalry")
+        {
+            dropOptions = new List<string> { "Move", "Attack", "Switch Formation", "Sprint", "Disengage" };
         }
         else if(board.selectedPiece.attackType == "melee")
         {
-            dropOptions = new List<string> { "Move", "Attack", "Switch Formation", "Sprint", "Disengage" };
+            dropOptions = new List<string> { "Move", "Attack", "Switch Formation", "Sprint"};
         }
 
         actionDropdown.ClearOptions();
