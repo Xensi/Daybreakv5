@@ -293,6 +293,18 @@ public class MultiplayerBoard : Board
         OnChangeFormation(id, formation);
 
     }
+    public override void ChangeAttitude(int id, bool aggressive)
+    {
+        photonView.RPC(nameof(RPC_OnChangeAttitude), RpcTarget.AllBuffered, new object[] { id, aggressive });
+    }
+
+    [PunRPC]
+    private void RPC_OnChangeAttitude(int id, bool aggressive)
+    {
+        OnChangeAttitude(id, aggressive);
+
+    }
+
 
     public override void PieceCalculateLineOfSight(int id)
     {

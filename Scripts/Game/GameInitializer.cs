@@ -27,6 +27,8 @@ public class GameInitializer : MonoBehaviour
     [SerializeField] public GameObject deselectButtonParent;
     [SerializeField] public GameObject formationDropDownParent;
     [SerializeField] public TMP_Dropdown formationDropDown;
+    [SerializeField] public TMP_Dropdown attitudeDropDown;
+    [SerializeField] public GameObject attitudeDropDownParent;
     Camera cam;
     private ChessGameController chessController;
 
@@ -90,7 +92,7 @@ public class GameInitializer : MonoBehaviour
     }
 
     public void CreateSinglePlayerBoard()
-    { 
+    {
         executeButtonParent.SetActive(true);
         unreadyButtonParent.SetActive(true);
         Instantiate(singleplayerBoardPrefab, boardAnchor);
@@ -248,9 +250,9 @@ public class GameInitializer : MonoBehaviour
         {
             dropOptions = new List<string> { "Move", "Attack", "Switch Formation", "Sprint", "Disengage" };
         }
-        else if(board.selectedPiece.attackType == "melee")
+        else if (board.selectedPiece.attackType == "melee")
         {
-            dropOptions = new List<string> { "Move", "Attack", "Switch Formation", "Sprint"};
+            dropOptions = new List<string> { "Move", "Attack", "Switch Formation", "Sprint" };
         }
 
         actionDropdown.ClearOptions();
@@ -262,6 +264,7 @@ public class GameInitializer : MonoBehaviour
         deselectButtonParent.SetActive(false);
         dropDownParent.SetActive(false);
         formationDropDownParent.SetActive(false);
+        attitudeDropDownParent.SetActive(false);
 
     }
     public void ChooseAction()
@@ -321,7 +324,7 @@ public class GameInitializer : MonoBehaviour
                 action = "disengage";
             }
         }
-        
+
         //Debug.Log(action);
         ProcessAction(action);
     }
@@ -342,7 +345,7 @@ public class GameInitializer : MonoBehaviour
         }
         else if (val == 2)
         {
-            formation = "staggered"; 
+            formation = "staggered";
         }
         else if (val == 3)
         {
@@ -370,6 +373,28 @@ public class GameInitializer : MonoBehaviour
         }
 
     }
+
+    public void ChooseAttitude()
+    {
+        if (board.selectedPiece == null)
+        {
+            return;
+        }
+        int val = attitudeDropDown.value;
+        bool aggressive = true;
+        if (val == 0)
+        {
+            aggressive = true;
+        }
+        else if (val == 1)
+        {
+            aggressive = false;
+        }
+        board.ChangeAttitude(board.selectedPiece.unitID, aggressive);
+
+    }
+
+
     private void ProcessAction(string action)
     {
         if (action == null || action == "move")
@@ -378,6 +403,7 @@ public class GameInitializer : MonoBehaviour
             board.selectingAction = false;
             formationDropDownParent.SetActive(false);
             board.selectedPiece.queuedFormation = "nothing";
+            attitudeDropDownParent.SetActive(false);
         }
         else if (action == "attack")
         {
@@ -385,6 +411,12 @@ public class GameInitializer : MonoBehaviour
             board.selectingAction = false;
             formationDropDownParent.SetActive(false);
             board.selectedPiece.queuedFormation = "nothing";
+            if (board.selectedPiece.attackType == "melee")
+            {
+
+                attitudeDropDownParent.SetActive(true);
+
+            }
         }
         else if (action == "rangedMoveAndAttack")
         {
@@ -392,6 +424,7 @@ public class GameInitializer : MonoBehaviour
             board.selectingAction = false;
             formationDropDownParent.SetActive(false);
             board.selectedPiece.queuedFormation = "nothing";
+            attitudeDropDownParent.SetActive(false);
         }
         else if (action == "switchFormation")
         {
@@ -403,11 +436,11 @@ public class GameInitializer : MonoBehaviour
             }
             else if (board.selectedPiece.unitName == "Longbowman")
             {
-                dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered", "Circle", };
+                dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered" };
             }
             else if (board.selectedPiece.unitName == "Ritter")
             {
-                dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered"};
+                dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered" };
             }
 
 
@@ -416,6 +449,7 @@ public class GameInitializer : MonoBehaviour
 
             formationDropDown.value = 0;
             formationDropDownParent.SetActive(true);
+            attitudeDropDownParent.SetActive(false);
 
 
             if (board.selectedPiece != null)
@@ -432,6 +466,7 @@ public class GameInitializer : MonoBehaviour
             formationDropDownParent.SetActive(false);
             board.selectedPiece.queuedFormation = "nothing";
             PieceSprint();
+            attitudeDropDownParent.SetActive(false);
         }
         else if (action == "disengage")
         {
@@ -439,6 +474,7 @@ public class GameInitializer : MonoBehaviour
             formationDropDownParent.SetActive(false);
             board.selectedPiece.queuedFormation = "nothing";
             PieceDisengage();
+            attitudeDropDownParent.SetActive(false);
         }
     }
 }

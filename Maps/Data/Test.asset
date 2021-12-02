@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boardSquares:
   - position: {x: 5, y: 5}
-    pieceType: 3
+    pieceType: 0
     teamColor: 0
     direction: 4
   - position: {x: 5, y: 3}

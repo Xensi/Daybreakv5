@@ -109,6 +109,10 @@ public class SinglePlayerBoard : Board
     {
         OnChangeFormation(id, formation);
     }
+    public override void ChangeAttitude(int id, bool aggressive)
+    {
+        OnChangeAttitude(id, aggressive);
+    }
 
     public override void PieceCalculateLineOfSight(int id)
     {

@@ -242,6 +242,13 @@ public abstract class Board : MonoBehaviour
         UnitList[id].queuedFormation = formation;
     }
 
+    public abstract void ChangeAttitude(int id, bool aggressive);
+
+    public void OnChangeAttitude(int id, bool aggressive)
+    {
+
+        UnitList[id].aggressiveAttitude = aggressive;
+    }
 
     public abstract void ChangeStance(int id, string stance);
     public void OnChangeStance(int id, string stance) //this should not rely on selected piece, rather unit ID. 
@@ -533,12 +540,75 @@ public abstract class Board : MonoBehaviour
         }
         Debug.Log("All steps finished");
         //if all steps finished
+
+
+        //but first we should allow attacks from those that can and want to, namely units that have reached their hold position
+        //if queue time == hold time, they are ready to attack
+        piecesReadyToAttack.Clear();
+        for (int i = 0; i < AllPieces.Length; i++) //go through each piece
+        {
+            ////Debug.LogError("allpieces" + AllPieces[i] + AllPieces[i].queuedMoves.Count);
+            if (AllPieces[i].queueTime == AllPieces[i].holdTime) //if queue time = hold time
+            {
+                piecesReadyToAttack.Add(AllPieces[i]);
+                ////Debug.LogError("added to pieces ready to immediate attack" + AllPieces[i]);
+
+            }
+        }
+
+        for (int i = 0; i < AllPieces.Length; i++)
+        {
+            if (AllPieces[i].attacking && AllPieces[i].attackType == "melee")
+            {
+                AllPieces[i].CheckIfEnemyInRelativeStashedMove(); //if there is an enemy in our move, we can target them
+            }
+        }
+        for (int i = 0; i < AllPieces.Length; i++)
+        {
+            if (AllPieces[i].attacking && AllPieces[i].attackType == "melee" && AllPieces[i].aggressiveAttitude == true) //if disciplined then we won't try to acquire a target this way
+            {
+                AllPieces[i].CheckIfEnemyNearUs(); //last chance to see if we can acquire new target
+            }
+        }
+
+        AttackPhaseSetup(piecesReadyToAttack, 0); //allows for attacks by those that are in position
+
+
+        foreach (var piece in AllPieces) //need to make it so that these only trigger per piece once per turn
+        {
+            if (piece.flankedByHowMany > 0 && piece.attackerPiece != null)
+            {
+                piece.SpawnEvent("Flanked!", Color.red, 5f);
+
+            }
+            if (piece.attackerPiece != null) //if this piece is under attack
+            {
+                if (piece.attackerPiece.attackType == "melee")
+                {
+                    piece.SpawnEvent("Engaged", Color.gray, 2.5f);
+                }
+                if (piece.attackerPiece.attackType == "ranged")
+                {
+                    piece.SpawnEvent("Under fire", Color.yellow, 2.5f);
+                }
+            }
+            if (piece.targetToAttackPiece != null && piece.attacking) //if we have a piece that is attacking
+            {
+                if (piece.attackType == "ranged")
+                {
+
+                    piece.SpawnEvent("Firing", Color.white, 2.5f);
+                }
+            }
+
+        }
+
         //check to see if we have any cavalry that still need to finish a second move step
         List<Piece> cavalry = new List<Piece>();
         foreach (var piece in AllPieces)
         {
-            if (piece.unitType == "cavalry" && piece.queueTime % 2 == 1 && piece.queueTime < piece.queuedMoves.Count)  //if we have any cavalry that's only on its first/third move and has more moves left to go
-            {
+            if (piece.unitType == "cavalry" && piece.queueTime % 2 == 1 && piece.queueTime < piece.queuedMoves.Count && piece.queueTime < piece.holdTime)  //if we have any cavalry that's only on its first/third move and has more moves left to go
+            {//and has not met hold time (if == hold time then we should not move
                 ////Debug.LogError("Knight queue time " + piece.queueTime + "queuedmovescount" + piece.queuedMoves.Count);
                 cavalry.Add(piece); //add it to the list
             }
@@ -556,9 +626,8 @@ public abstract class Board : MonoBehaviour
                 cavalry[i].StartMoveCoroutines(1);
             }
         }
-        else
-        {
-
+        else //if all units (+ cavalry) are done moving, then we should start the movement process for all units again
+        { 
             for (int i = 0; i < AllPieces.Length; i++)
             {
                 AllPieces[i].CheckIfEnemiesAdjacent();
@@ -803,34 +872,6 @@ public abstract class Board : MonoBehaviour
         for (int i = 0; i < pieces.Count; i++) //should call this after all attacks are done
         {
             pieces[i].ApplyMorale(); //only applies model losses morale loss once per unit
-        }
-        foreach (var piece in pieces)
-        {
-            if (piece.flankedByHowMany > 0 && piece.attackerPiece != null)
-            {
-                piece.SpawnEvent("Flanked!", Color.red, 5f);
-
-            }
-            else if (piece.attackerPiece != null && piece.attackerPiece.attacking) //if this piece is under attack
-            {
-                if (piece.attackerPiece.attackType == "melee")
-                {
-                    piece.SpawnEvent("Engaged", Color.gray, 2.5f);
-                }
-                if (piece.attackerPiece.attackType == "ranged")
-                {
-                    piece.SpawnEvent("Under fire", Color.yellow, 2.5f);
-                }
-            }
-            else if (piece.targetToAttackPiece != null && piece.attacking) //if we have a piece that is attacking
-            {
-                if (piece.attackType == "ranged")
-                {
-
-                    piece.SpawnEvent("Firing", Color.white, 2.5f);
-                }
-            }
-
         }
         for (int i = 0; i < pieces.Count; i++) //check if any markers overlap between friendly and enemy
         {
@@ -1132,13 +1173,21 @@ public abstract class Board : MonoBehaviour
                     var futureTerrain = terrainGrid[coords.x, coords.y];
                     if (selectedPiece.OnTerrainType == "road" && futureTerrain != "road") //if we go off road
                     {
-                        if (selectedPiece.sprinting)
+                        if (selectedPiece.attacking)
                         {
+                            Debug.Log("piece attacking");
+                            selectedPiece.remainingMovement = selectedPiece.originalSpeed + 1 - selectedPiece.queuedMoves.Count; //normally remaining movement would be sprint speed + 1 - queued moves
+                             
+                        }
+                        else if(selectedPiece.sprinting)
+                        {
+                            Debug.Log("piece sprinting");
                             selectedPiece.remainingMovement = selectedPiece.sprintSpeed - selectedPiece.queuedMoves.Count; //normally remaining movement would be sprint speed + 1 - queued moves
 
                         }
                         else
                         {
+                            Debug.Log("piece null");
                             //lets say speed on road is 2 and we have speed 1 and we have one move queued, remaining movement is 0
                             selectedPiece.remainingMovement = selectedPiece.originalSpeed - selectedPiece.queuedMoves.Count;
 

@@ -262,6 +262,8 @@ public abstract class Piece : MonoBehaviour
     public Vector3 lastEventEndPos = Vector3.zero;
     public Piece lastTarget = null;
 
+    public bool aggressiveAttitude = true;
+
     public abstract List<Vector2Int> SelectAvailableSquares(Vector2Int startingSquare);
 
     public void CheckIfNoOrdersGiven() //just check
@@ -278,6 +280,10 @@ public abstract class Piece : MonoBehaviour
 
     private void OnEnable()
     {
+        if (attackType == "ranged")
+        {
+            aggressiveAttitude = false;
+        }
         startingMorale = morale;
 
         flankingDamage = 1; //set this to 1 bc its all zero right now >>
@@ -3000,7 +3006,7 @@ public abstract class Piece : MonoBehaviour
             stashedMoves.Add(queuedMoves[i]);
         }
 
-        CheckIfTerrainShouldStopUsFromQueuingMoreMoves();
+        //CheckIfTerrainShouldStopUsFromQueuingMoreMoves();
 
 
         if (moving || sprinting)
@@ -3051,6 +3057,10 @@ public abstract class Piece : MonoBehaviour
             if (sprinting)
             {
                 remainingMovement = sprintSpeed - queuedMoves.Count; //normally remaining movement would be sprint speed + 1 - queued moves
+            }
+            else if (attacking)
+            {
+                remainingMovement = originalSpeed + 1 - queuedMoves.Count; //normally remaining movement would be sprint speed + 1 - queued moves
             }
             else
             {//in the case of the knight, our remaining movement on road would be 3, and speed off road would be 2
@@ -3677,16 +3687,11 @@ public abstract class Piece : MonoBehaviour
             Debug.Log("Halting because out of speed and attacking" + queueTime + speed);
             return true;
         }
-        if (attacking && targetAdjacent && targetToAttackPiece != null) //if attacking and target is right next to us, stop moving
+        if (attacking && targetAdjacent && targetToAttackPiece != null && attackType == "melee" && aggressiveAttitude == true) //if attacking and target is right next to us and we're melee, stop moving
         {
-            Debug.Log("Halting because target next to us");
+            Debug.Log("Halting because target next to us and we're aggressive");
             return true;
-        }
-        /*if (enemyAdjacent && !disengaging) //if enemy has engaged us and we're not disengaging and we're not cavalry (since cavalry can move without disengaging)
-        {
-            Debug.Log("Halting because enemy next to us");
-            return true;
-        }*/
+        } //ranged units  will prioritize finishing their move before attacking, whereas melee units will try to attack as soon as possible 
         if (attackerPiece != null) //if we are being attacked . . . by a melee piece
         { 
             if (attackerPiece.attackType == "melee" && !disengaging)
@@ -4237,7 +4242,7 @@ public abstract class Piece : MonoBehaviour
         {
             targetToAttackPiece = piece; //set new target 
             attackTile = stashedMoves[normalizedQueueTime];
-            ////Debug.LogError(targetToAttackPiece + "target");
+            Debug.LogError(targetToAttackPiece + "target");
         }
     }
 
