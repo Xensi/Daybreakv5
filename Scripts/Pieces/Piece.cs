@@ -3694,9 +3694,10 @@ public abstract class Piece : MonoBehaviour
         } //ranged units  will prioritize finishing their move before attacking, whereas melee units will try to attack as soon as possible 
         if (attackerPiece != null) //if we are being attacked . . . by a melee piece
         { 
-            if (attackerPiece.attackType == "melee" && !disengaging)
+            if (attackerPiece.attackType == "melee" && !disengaging && TargetAdjacent(attackerPiece))
             { 
                 Debug.Log("Halting because pinned");
+                SpawnEvent("Pinned!", Color.red, 5f);
                 return true;
             }
         }

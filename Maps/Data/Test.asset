@@ -23,7 +23,7 @@ MonoBehaviour:
     direction: 0
   - position: {x: 7, y: 3}
     pieceType: 2
-    teamColor: 1
+    teamColor: 0
     direction: 0
   - position: {x: 7, y: 5}
     pieceType: 3

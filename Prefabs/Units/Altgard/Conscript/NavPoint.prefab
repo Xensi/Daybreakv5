@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6596152542752557417}
   - component: {fileID: 1284583118793620807}
   - component: {fileID: 7657870773450338757}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: NavPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 3469788787587497171}
   - component: {fileID: 8379400517731985104}
   - component: {fileID: 8347914606428964118}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}

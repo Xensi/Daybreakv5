@@ -127,6 +127,8 @@ MonoBehaviour:
   damage: 4
   morale: 30
   energy: 40
+  startingEnergy: 0
+  startingMorale: 0
   damageLevel: 2
   armorLevel: 3
   attackType: melee
@@ -146,9 +148,9 @@ MonoBehaviour:
   markerVisualPrefab: {fileID: 6420406295384315722, guid: 8e848dce9130cfa4c98ced6d70da7b60, type: 3}
   arrowMarkerVisualPrefab: {fileID: 6420406295384315722, guid: d7a397369c51e7a4b9ff2366dc34fd00, type: 3}
   soldierPrefab: {fileID: 4881819047479752600, guid: d6bca5ea81440f2448019b63ff1890ff, type: 3}
-  navPrefab: {fileID: 4300984820108782723, guid: 82cad32952c8bc64391306edffd1644a, type: 3}
+  navPrefab: {fileID: 4300984820108782723, guid: 58cd2a0df9cc99840aaa7617f9b70d24, type: 3}
   navPrefab2: {fileID: 4300984820108782723, guid: 58cd2a0df9cc99840aaa7617f9b70d24, type: 3}
-  navPrefab3: {fileID: 0}
+  navPrefab3: {fileID: 4300984820108782723, guid: 58cd2a0df9cc99840aaa7617f9b70d24, type: 3}
   linePrefab: {fileID: 7316131188448014793, guid: 1f9b3dd522284ee47a70c9641782af99, type: 3}
   modelBar: {fileID: 3403948256221438010}
   moraleBar: {fileID: 1932048589951558808}
@@ -297,6 +299,12 @@ MonoBehaviour:
   alreadyAppliedDamage: 0
   movementStopped: 0
   markForRemovalFromSecondWave: 0
+  strList: []
+  colorList: []
+  floatList: []
+  lastEventEndPos: {x: 0, y: 0, z: 0}
+  lastTarget: {fileID: 0}
+  aggressiveAttitude: 1
 --- !u!114 &255507802608927540
 MonoBehaviour:
   m_ObjectHideFlags: 0

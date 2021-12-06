@@ -50,6 +50,9 @@ public class GameInitializer : MonoBehaviour
     public string action = "move";
     public string formation = "rectangle";
     public Board board;
+
+    public Sprite[] icons;
+
     private void Start()
     {
         var camObj = GameObject.Find("Main Camera");
@@ -241,22 +244,53 @@ public class GameInitializer : MonoBehaviour
         actionDropdown.value = 0;
         board.selectedPiece.DisplayFormation(board.selectedPiece.queuedFormation);
 
-        List<string> dropOptions = new List<string> { "Move", "Attack", "Switch Formation", "Sprint", "Disengage" };
+        List<TMP_Dropdown.OptionData> dropData = new List<TMP_Dropdown.OptionData>();
+
+
+        //List<string> dropOptions = new List<string> { "Move", "Attack", "Switch Formation", "Sprint", "Disengage" };
         if (board.selectedPiece.attackType == "ranged")
         {
-            dropOptions = new List<string> { "Move", "Steady Attack", "Move and Attack", "Switch Formation", "Sprint" };
+            //dropOptions = new List<string> { "Move", "Steady Attack", "Move and Attack", "Switch Formation", "Sprint" }; 
+            var option1 = new TMP_Dropdown.OptionData("Move", icons[0]);
+            dropData.Add(option1);
+            var option2 = new TMP_Dropdown.OptionData("Steady Attack", icons[5]);
+            dropData.Add(option2);
+            var option6 = new TMP_Dropdown.OptionData("Move and Attack", icons[6]);
+            dropData.Add(option6);
+            var option4 = new TMP_Dropdown.OptionData("Switch Formation", icons[3]);
+            dropData.Add(option4);
+            var option3 = new TMP_Dropdown.OptionData("Sprint", icons[2]);
+            dropData.Add(option3);
         }
         else if (board.selectedPiece.attackType == "melee" && board.selectedPiece.unitType == "cavalry")
         {
-            dropOptions = new List<string> { "Move", "Attack", "Switch Formation", "Sprint", "Disengage" };
+            //dropOptions = new List<string> { "Move", "Attack", "Switch Formation", "Sprint", "Disengage" };
+            var option1 = new TMP_Dropdown.OptionData("Move", icons[0]);
+            dropData.Add(option1);
+            var option2 = new TMP_Dropdown.OptionData("Attack", icons[1]);
+            dropData.Add(option2);
+            var option4 = new TMP_Dropdown.OptionData("Switch Formation", icons[3]);
+            dropData.Add(option4);
+            var option3 = new TMP_Dropdown.OptionData("Sprint", icons[2]);
+            dropData.Add(option3);
+            var option5 = new TMP_Dropdown.OptionData("Disengage", icons[4]);
+            dropData.Add(option5);
         }
         else if (board.selectedPiece.attackType == "melee")
         {
-            dropOptions = new List<string> { "Move", "Attack", "Switch Formation", "Sprint" };
+            //dropOptions = new List<string> { "Move", "Attack", "Switch Formation", "Sprint" };
+            var option1 = new TMP_Dropdown.OptionData("Move", icons[0]);
+            dropData.Add(option1);
+            var option2 = new TMP_Dropdown.OptionData("Attack", icons[1]);
+            dropData.Add(option2);
+            var option4 = new TMP_Dropdown.OptionData("Switch Formation", icons[3]);
+            dropData.Add(option4);
+            var option3 = new TMP_Dropdown.OptionData("Sprint", icons[2]);
+            dropData.Add(option3);
         }
 
         actionDropdown.ClearOptions();
-        actionDropdown.AddOptions(dropOptions);
+        actionDropdown.AddOptions(dropData);
 
     }
     public void HideDropDown()
@@ -428,7 +462,7 @@ public class GameInitializer : MonoBehaviour
         }
         else if (action == "switchFormation")
         {
-
+/*
             List<string> dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered", "Circle", "Braced" };
             if (board.selectedPiece.unitName == "Conscript")
             {
@@ -441,11 +475,42 @@ public class GameInitializer : MonoBehaviour
             else if (board.selectedPiece.unitName == "Ritter")
             {
                 dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered" };
+            }*/
+
+
+            List<TMP_Dropdown.OptionData> dropData = new List<TMP_Dropdown.OptionData>();
+            if (board.selectedPiece.unitType == "infantry" && board.selectedPiece.attackType == "melee") //not including brace yet
+            { 
+                var option1 = new TMP_Dropdown.OptionData("Select a formation", icons[10]);
+                dropData.Add(option1);
+                var option2 = new TMP_Dropdown.OptionData("Rectangle", icons[7]);
+                dropData.Add(option2);
+                var option6 = new TMP_Dropdown.OptionData("Staggered", icons[8]);
+                dropData.Add(option6);
+                var option4 = new TMP_Dropdown.OptionData("Circle", icons[9]);
+                dropData.Add(option4); 
+            }
+            else if (board.selectedPiece.unitType == "infantry" && board.selectedPiece.attackType == "ranged")
+            {
+                var option1 = new TMP_Dropdown.OptionData("Select a formation", icons[10]);
+                dropData.Add(option1);
+                var option2 = new TMP_Dropdown.OptionData("Rectangle", icons[7]);
+                dropData.Add(option2);
+                var option6 = new TMP_Dropdown.OptionData("Staggered", icons[8]);
+                dropData.Add(option6);
+            }
+            else if (board.selectedPiece.unitType == "cavalry")
+            {
+                var option1 = new TMP_Dropdown.OptionData("Select a formation", icons[10]);
+                dropData.Add(option1);
+                var option2 = new TMP_Dropdown.OptionData("Rectangle", icons[7]);
+                dropData.Add(option2);
+                var option6 = new TMP_Dropdown.OptionData("Staggered", icons[8]);
+                dropData.Add(option6);
             }
 
-
             formationDropDown.ClearOptions();
-            formationDropDown.AddOptions(dropOptions);
+            formationDropDown.AddOptions(dropData);
 
             formationDropDown.value = 0;
             formationDropDownParent.SetActive(true);
