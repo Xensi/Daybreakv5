@@ -62,6 +62,8 @@ public abstract class Board : MonoBehaviour
     public GameObject eventPrefab;
     public GameObject eventPrefab1;
 
+    public bool placingPieces = false;
+
     protected virtual void Awake()
     {
         UnitList = new List<Piece>();
@@ -1019,218 +1021,228 @@ public abstract class Board : MonoBehaviour
 
     public void OnSquareSelected(Vector3 inputPosition, int mouse) //called when player clicks on a board square
     {
-
-        if (chessController == null)
+        if (placingPieces)
         {
-            return;
-        }
-
-        if (!chessController.AllowInput)
-        {
-            return;
-        }
-        Vector2Int coords = CalculateCoordsFromPosition(inputPosition); //coords calculated from position
-        Piece piece = GetPieceOnSquare(coords); //specific piece nabbed using new coords
-
-        if (mouse == 0) //display unit info and select
-        {
-            Debug.Log("mouse 0");
-            if (selectedPiece) //if selected piece exists
+            if (mouse == 0)
             {
-                if (piece != null && selectedPiece == piece) //if we click on the same piece twice
+                Debug.Log("attempting to place a piece");
+            }
+        }
+        else
+        {
+            if (chessController == null)
+            {
+                return;
+            }
+
+            if (!chessController.AllowInput)
+            {
+                return;
+            }
+            Vector2Int coords = CalculateCoordsFromPosition(inputPosition); //coords calculated from position
+            Piece piece = GetPieceOnSquare(coords); //specific piece nabbed using new coords
+
+            if (mouse == 0) //display unit info and select
+            {
+                Debug.Log("mouse 0");
+                if (selectedPiece) //if selected piece exists
                 {
-                    Debug.Log("same piece clicked");
-                    var gridMarker = selectedPiece.thisMarkerGrid[coords.x, coords.y]; //fetch marker, if it's there
-                    if (gridMarker != null) // if marker here
+                    if (piece != null && selectedPiece == piece) //if we click on the same piece twice
                     {
-                        gridMarker.parentPiece.ClearQueuedMoves(); //clear the moves of that parent;
+                        Debug.Log("same piece clicked");
+                        var gridMarker = selectedPiece.thisMarkerGrid[coords.x, coords.y]; //fetch marker, if it's there
+                        if (gridMarker != null) // if marker here
+                        {
+                            gridMarker.parentPiece.ClearQueuedMoves(); //clear the moves of that parent;
+                        }
+
+                        selectedPiece.ClearQueuedMoves(); //needs to come before because it will be deselected afterwards
+                        DeselectPiece(); //deselect it and hide movement paths (deselected because we clicked it twice
+                        return;
                     }
 
-                    selectedPiece.ClearQueuedMoves(); //needs to come before because it will be deselected afterwards
-                    DeselectPiece(); //deselect it and hide movement paths (deselected because we clicked it twice
-                    return;
-                }
-
-                if (selectedPiece != null && selectingAction == true && !selectedPiece.moving) //if selected piece exists, and selecting action, and this piece is not moving. if we're still picking an action and we're not on default action MOVE
-                {
-                    return;
-                }
-                else if (selectedPiece != null && selectedPiece.attacking && selectedPiece.holdingPosition && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece != selectedPiece)
-                {
-                    Debug.Log("different marker found"); //if we click on a space with a marker not belonging to us
-
-                    SelectPieceMoved(coords);
-
-                }
-                else if (selectedPiece != null && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece == selectedPiece) //if you click on the same tile twice
-                {// l  &&  && selectedPiece.attacking 
-                    Debug.Log("clicked on a position where we already have a marker for movement and we're attacking"); //next check if marker belongs to us
-                    //triggers when move attacking, but we need to not deselect in that case.
-                    if (selectedPiece.moveAndAttackEnabled && selectedPiece.attackType == "ranged") //if move and attacking ranged unit (and we're clicking on a point we've already queued onto
+                    if (selectedPiece != null && selectingAction == true && !selectedPiece.moving) //if selected piece exists, and selecting action, and this piece is not moving. if we're still picking an action and we're not on default action MOVE
                     {
-                        selectedPiece.speed = selectedPiece.longRange; //increase speed so we can queue a second move
-                        selectedPiece.remainingMovement = selectedPiece.speed;
-
-                        //lets find that queued position
-                        Vector2Int queuedPosition = selectedPiece.occupiedSquare; //so this will let us determine the position after moves are applied
-                        for (int i = 0; i < selectedPiece.queuedMoves.Count; i++)
-                        {
-                            Vector2Int distance2 = queuedPosition - selectedPiece.queuedMoves[i]; //first find distance between current position and new position
-                            queuedPosition -= distance2; //then subtract this distance to get the new position again
-                        }
-                        //show selection squares from queued position
-                        ShowSelectionSquares(selectedPiece.SelectAvailableSquares(queuedPosition), selectedPiece);
+                        return;
                     }
-                    else
+                    else if (selectedPiece != null && selectedPiece.attacking && selectedPiece.holdingPosition && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece != selectedPiece)
                     {
-                        if (selectedPiece.attacking && selectedPiece.attackType == "melee")
-                        {
-                            var lastMarkerVisual = selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1];
+                        Debug.Log("different marker found"); //if we click on a space with a marker not belonging to us
 
-                            GameObject markerVisual = Instantiate(selectedPiece.arrowMarkerVisualPrefab, lastMarkerVisual.transform.position, Quaternion.identity);
-
-                            Vector2Int directionVector = Vector2Int.zero;
-
-                            if (selectedPiece.queuedMoves.Count == 1)
-                            {
-                                directionVector = coords - selectedPiece.occupiedSquare;
-                            }
-                            else if (selectedPiece.queuedMoves.Count > 1)
-                            {
-                                directionVector = coords - selectedPiece.queuedMoves[selectedPiece.queuedMoves.Count - 2];
-                            }
-
-                            var facingDirection = 0;
-                            for (int t = 0; t < selectedPiece.adjacentTiles.Length; t++) //check cardinal directions to see if they match up
-                            {
-                                if (selectedPiece.adjacentTiles[t] == directionVector)
-                                {
-                                    facingDirection = t;
-                                }
-                            }
-
-                            Vector3 rotationGoal = new Vector3(0, 45 * facingDirection, 0); //set rotation goal
-
-                            markerVisual.transform.Rotate(rotationGoal);
-
-                            Destroy(selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1]); //delete the last marker visual so we can replace it 
-
-                            selectedPiece.markerVisuals.Add(markerVisual);
-                        }
-                        selectedPiece.holdingPosition = true;
-                        //selectedPiece.holdTime = selectedPiece.turnTime;
-                        DeselectPiece(); //deselect it and hide movement paths (deselected because we are ending our movement early)
-                    } 
-
-                }
-                else if (piece != null && selectedPiece != piece && !piece.IsFromSameTeam(selectedPiece)) //if we click on a different piece and it's an enemy and our selectedPiece is attacking
-                {
-                    if (selectedPiece.attacking || selectedPiece.speed == selectedPiece.sprintSpeed)
-                    {
-                        Debug.Log("Queueing move onto a position we know has an enemy"); //use selectPieceMoved instead of queuing directly
                         SelectPieceMoved(coords);
-                        //selectedPiece.QueueMove(coords); //queue a move (but really an attack)
-                        //DeselectPiece(); //deselect because attack should basically just stop
 
                     }
-
-                }
-                else if (piece != null && selectedPiece != piece && selectedPiece.turning)//if we're turning and there's a unit there, still queue
-                {
-                    Debug.Log("turning override");
-                    SelectPieceMoved(coords);
-                }
-                else if (piece != null && selectedPiece != piece && piece.turnTime == 0) //if we click on a different piece, select that one and show movement paths
-                {
-                    if (isChessControllerMP) //if we're using a MP controller
-                    {
-                        if (chessController.localPlayer.team == piece.team) //, we need to check if this is on our team or not
+                    else if (selectedPiece != null && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece == selectedPiece) //if you click on the same tile twice
+                    {// l  &&  && selectedPiece.attacking 
+                        Debug.Log("clicked on a position where we already have a marker for movement and we're attacking"); //next check if marker belongs to us
+                                                                                                                            //triggers when move attacking, but we need to not deselect in that case.
+                        if (selectedPiece.moveAndAttackEnabled && selectedPiece.attackType == "ranged") //if move and attacking ranged unit (and we're clicking on a point we've already queued onto
                         {
-                            SelectPiece(coords);
-                            ChangeStance(piece.unitID, "move");
-                        }
-                    }
-                    else //singleplayer
-                    { //make it so you can only select the units on your team
-                        SelectPiece(coords);
-                        ChangeStance(piece.unitID, "move");
-                    }
+                            selectedPiece.speed = selectedPiece.longRange; //increase speed so we can queue a second move
+                            selectedPiece.remainingMovement = selectedPiece.speed;
 
-                }
-                else if (piece != null && selectedPiece != piece && piece.turnTime > 0)//if we click on another piece with a higher turn time
-                { //&& chessController.IsTeamTurnActive(piece.team) 
-                  //allow us to queue a move to this position then
-                    SelectPieceMoved(coords);
-                    /*selectedPiece.QueueMove(coords);
-                    if (selectedPiece.remainingMovement <= 0)
-                    {
-                        DeselectPiece();
-                    }*/
-                }
-                else if (selectedPiece.CanMoveTo(coords)) //if we click somewhere we can move, 
-                {
-                    Debug.Log("clicked somewhere we can move");
-                    var futureTerrain = terrainGrid[coords.x, coords.y];
-                    if (selectedPiece.OnTerrainType == "road" && futureTerrain != "road") //if we go off road
-                    {
-                        if (selectedPiece.attacking)
-                        {
-                            Debug.Log("piece attacking");
-                            selectedPiece.remainingMovement = selectedPiece.originalSpeed + 1 - selectedPiece.queuedMoves.Count; //normally remaining movement would be sprint speed + 1 - queued moves
-                             
-                        }
-                        else if(selectedPiece.sprinting)
-                        {
-                            Debug.Log("piece sprinting");
-                            selectedPiece.remainingMovement = selectedPiece.sprintSpeed - selectedPiece.queuedMoves.Count; //normally remaining movement would be sprint speed + 1 - queued moves
-
+                            //lets find that queued position
+                            Vector2Int queuedPosition = selectedPiece.occupiedSquare; //so this will let us determine the position after moves are applied
+                            for (int i = 0; i < selectedPiece.queuedMoves.Count; i++)
+                            {
+                                Vector2Int distance2 = queuedPosition - selectedPiece.queuedMoves[i]; //first find distance between current position and new position
+                                queuedPosition -= distance2; //then subtract this distance to get the new position again
+                            }
+                            //show selection squares from queued position
+                            ShowSelectionSquares(selectedPiece.SelectAvailableSquares(queuedPosition), selectedPiece);
                         }
                         else
                         {
-                            Debug.Log("piece null");
-                            //lets say speed on road is 2 and we have speed 1 and we have one move queued, remaining movement is 0
-                            selectedPiece.remainingMovement = selectedPiece.originalSpeed - selectedPiece.queuedMoves.Count;
+                            if (selectedPiece.attacking && selectedPiece.attackType == "melee")
+                            {
+                                var lastMarkerVisual = selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1];
+
+                                GameObject markerVisual = Instantiate(selectedPiece.arrowMarkerVisualPrefab, lastMarkerVisual.transform.position, Quaternion.identity);
+
+                                Vector2Int directionVector = Vector2Int.zero;
+
+                                if (selectedPiece.queuedMoves.Count == 1)
+                                {
+                                    directionVector = coords - selectedPiece.occupiedSquare;
+                                }
+                                else if (selectedPiece.queuedMoves.Count > 1)
+                                {
+                                    directionVector = coords - selectedPiece.queuedMoves[selectedPiece.queuedMoves.Count - 2];
+                                }
+
+                                var facingDirection = 0;
+                                for (int t = 0; t < selectedPiece.adjacentTiles.Length; t++) //check cardinal directions to see if they match up
+                                {
+                                    if (selectedPiece.adjacentTiles[t] == directionVector)
+                                    {
+                                        facingDirection = t;
+                                    }
+                                }
+
+                                Vector3 rotationGoal = new Vector3(0, 45 * facingDirection, 0); //set rotation goal
+
+                                markerVisual.transform.Rotate(rotationGoal);
+
+                                Destroy(selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1]); //delete the last marker visual so we can replace it 
+
+                                selectedPiece.markerVisuals.Add(markerVisual);
+                            }
+                            selectedPiece.holdingPosition = true;
+                            //selectedPiece.holdTime = selectedPiece.turnTime;
+                            DeselectPiece(); //deselect it and hide movement paths (deselected because we are ending our movement early)
+                        }
+
+                    }
+                    else if (piece != null && selectedPiece != piece && !piece.IsFromSameTeam(selectedPiece)) //if we click on a different piece and it's an enemy and our selectedPiece is attacking
+                    {
+                        if (selectedPiece.attacking || selectedPiece.speed == selectedPiece.sprintSpeed)
+                        {
+                            Debug.Log("Queueing move onto a position we know has an enemy"); //use selectPieceMoved instead of queuing directly
+                            SelectPieceMoved(coords);
+                            //selectedPiece.QueueMove(coords); //queue a move (but really an attack)
+                            //DeselectPiece(); //deselect because attack should basically just stop
 
                         }
-                    }
 
-                    if (selectedPiece.remainingMovement <= 0) //if remaining movement less than/equal to 0,
-                    {
-                        DeselectPiece(); //let's stop allowing moves
                     }
-                    else
+                    else if (piece != null && selectedPiece != piece && selectedPiece.turning)//if we're turning and there's a unit there, still queue
                     {
-                        SelectPieceMoved(coords); //place some sort of marker indicating that this piece will move there\
-                    } 
+                        Debug.Log("turning override");
+                        SelectPieceMoved(coords);
+                    }
+                    else if (piece != null && selectedPiece != piece && piece.turnTime == 0) //if we click on a different piece, select that one and show movement paths
+                    {
+                        if (isChessControllerMP) //if we're using a MP controller
+                        {
+                            if (chessController.localPlayer.team == piece.team) //, we need to check if this is on our team or not
+                            {
+                                SelectPiece(coords);
+                                ChangeStance(piece.unitID, "move");
+                            }
+                        }
+                        else //singleplayer
+                        { //make it so you can only select the units on your team
+                            SelectPiece(coords);
+                            ChangeStance(piece.unitID, "move");
+                        }
 
+                    }
+                    else if (piece != null && selectedPiece != piece && piece.turnTime > 0)//if we click on another piece with a higher turn time
+                    { //&& chessController.IsTeamTurnActive(piece.team) 
+                      //allow us to queue a move to this position then
+                        SelectPieceMoved(coords);
+                        /*selectedPiece.QueueMove(coords);
+                        if (selectedPiece.remainingMovement <= 0)
+                        {
+                            DeselectPiece();
+                        }*/
+                    }
+                    else if (selectedPiece.CanMoveTo(coords)) //if we click somewhere we can move, 
+                    {
+                        Debug.Log("clicked somewhere we can move");
+                        var futureTerrain = terrainGrid[coords.x, coords.y];
+                        if (selectedPiece.OnTerrainType == "road" && futureTerrain != "road") //if we go off road
+                        {
+                            if (selectedPiece.attacking)
+                            {
+                                Debug.Log("piece attacking");
+                                selectedPiece.remainingMovement = selectedPiece.originalSpeed + 1 - selectedPiece.queuedMoves.Count; //normally remaining movement would be sprint speed + 1 - queued moves
+
+                            }
+                            else if (selectedPiece.sprinting)
+                            {
+                                Debug.Log("piece sprinting");
+                                selectedPiece.remainingMovement = selectedPiece.sprintSpeed - selectedPiece.queuedMoves.Count; //normally remaining movement would be sprint speed + 1 - queued moves
+
+                            }
+                            else
+                            {
+                                Debug.Log("piece null");
+                                //lets say speed on road is 2 and we have speed 1 and we have one move queued, remaining movement is 0
+                                selectedPiece.remainingMovement = selectedPiece.originalSpeed - selectedPiece.queuedMoves.Count;
+
+                            }
+                        }
+
+                        if (selectedPiece.remainingMovement <= 0) //if remaining movement less than/equal to 0,
+                        {
+                            DeselectPiece(); //let's stop allowing moves
+                        }
+                        else
+                        {
+                            SelectPieceMoved(coords); //place some sort of marker indicating that this piece will move there\
+                        }
+
+                    }
                 }
-            }
-            else
-            {
-                if (piece != null) //for clicking on a piece normally from empty. ie left click on piece with no piece already selected
+                else
                 {
-                    if (isChessControllerMP) //if we're using a MP controller
+                    if (piece != null) //for clicking on a piece normally from empty. ie left click on piece with no piece already selected
                     {
-                        if (chessController.localPlayer.team == piece.team) //, we need to check if this is on our team or not
+                        if (isChessControllerMP) //if we're using a MP controller
+                        {
+                            if (chessController.localPlayer.team == piece.team) //, we need to check if this is on our team or not
+                            {
+                                selectingAction = true;
+                                SelectPiece(coords);
+                                ChangeStance(piece.unitID, "move");
+                            }
+                        }
+                        else //singleplayer
                         {
                             selectingAction = true;
                             SelectPiece(coords);
                             ChangeStance(piece.unitID, "move");
                         }
                     }
-                    else //singleplayer
-                    {
-                        selectingAction = true;
-                        SelectPiece(coords);
-                        ChangeStance(piece.unitID, "move");
-                    }
                 }
             }
+            else if (mouse == 1) //display dropdown and change actions
+            {
+                Debug.Log("mouse 1");
+            }
         }
-        else if (mouse == 1) //display dropdown and change actions
-        {
-            Debug.Log("mouse 1");
-        }
+        
 
 
 
