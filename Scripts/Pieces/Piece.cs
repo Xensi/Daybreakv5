@@ -2353,6 +2353,7 @@ public abstract class Piece : MonoBehaviour
             num++;
         }
         teamSetter.SetTeamMaterial(teamColor); //set team color material
+        newSoldier.transform.parent = gameInit.modelsParent.transform;
     }
 
     private void Start()

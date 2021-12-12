@@ -38,43 +38,61 @@ public class CameraMover : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == 12) //units layer
+        if (other.tag == "Unit") //units layer
         {
 
             //Debug.Log("Other" + other);
             var piece = other.GetComponent<Piece>();
             foreach (var item in piece.soldierObjects)
             {
-                var updater = item.GetComponent<UpdateAgentDestination>();
-                updater.animationsEnabled = true;
+                if (item != null)
+                {
+                    var updater = item.GetComponent<UpdateAgentDestination>();
+                    if (updater != null)
+                    {
+                        updater.animationsEnabled = true;
+                    }
+                }
             }
         }
     }
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.layer == 12) //units layer
+        if (other.tag == "Unit") //units layer
         {
 
             //Debug.Log("Other" + other);
             var piece = other.GetComponent<Piece>();
             foreach (var item in piece.soldierObjects)
             {
-                var updater = item.GetComponent<UpdateAgentDestination>();
-                updater.animationsEnabled = true;
+                if (item != null)
+                {
+                    var updater = item.GetComponent<UpdateAgentDestination>();
+                    if (updater != null)
+                    {
+                        updater.animationsEnabled = true;
+                    }
+                }
             }
         }
     }
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == 12) //units layer
+        if (other.tag == "Unit") //units layer
         {
 
             //Debug.Log("Other" + other);
             var piece = other.GetComponent<Piece>();
             foreach (var item in piece.soldierObjects)
             {
-                var updater = item.GetComponent<UpdateAgentDestination>();
-                updater.animationsEnabled = false;
+                if (item != null)
+                {
+                    var updater = item.GetComponent<UpdateAgentDestination>();
+                    if (updater != null)
+                    {
+                        updater.animationsEnabled = false;
+                    }
+                }
             }
         }
     }

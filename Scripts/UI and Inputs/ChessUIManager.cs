@@ -29,6 +29,7 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     [SerializeField] private GameObject teamSelectionScreen;
     [SerializeField] private GameObject gameModeSelectionScreen;
     [SerializeField] private GameObject unitInfoScreen;
+    public GameObject placingUnitScreen;
 
     [Header("Other UI")]
     [SerializeField] private TMP_Dropdown gameLevelSelection;
@@ -85,11 +86,13 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     {
         DisableAllScreens();
         gameModeSelectionScreen.SetActive(true);
+        Debug.Log("disabling");
     }
 
     public void OnSingleplayerModeSelected()
     {
         DisableAllScreens();
+        Debug.Log("disabling2");
     }
 
     public void OnMultiplayerModeSelected()
@@ -97,6 +100,7 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         connectionStatusText.gameObject.SetActive(true);
         DisableAllScreens();
         connectScreen.SetActive(true);
+        Debug.Log("disabling3");
     }
     private void DisableAllScreens()
     {
@@ -106,6 +110,7 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         teamSelectionScreen.SetActive(false);
         gameModeSelectionScreen.SetActive(false);
         unitInfoScreen.SetActive(false);
+        placingUnitScreen.SetActive(false);
     }
     public void ShowUnitInfoScreen(Piece piece)
     {
@@ -272,6 +277,8 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     {
         DisableAllScreens();
         connectionStatusText.gameObject.SetActive(false);
+        Debug.Log("disabling4");
+        placingUnitScreen.SetActive(true);
     }
 
     public void OnConnect()

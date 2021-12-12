@@ -53,6 +53,13 @@ public class GameInitializer : MonoBehaviour
 
     public Sprite[] icons;
 
+    public GameObject modelsParent;
+
+    public SaveInfo saveInfoObject;
+    public UIButton unitButtonTemplate;
+
+    public GameObject unitOptionsParent;
+
     private void Start()
     {
         var camObj = GameObject.Find("Main Camera");
@@ -98,6 +105,8 @@ public class GameInitializer : MonoBehaviour
     {
         executeButtonParent.SetActive(true);
         unreadyButtonParent.SetActive(true);
+
+
         Instantiate(singleplayerBoardPrefab, boardAnchor);
         levelGen.FindBoard();
         levelGen.GenerateLevel();

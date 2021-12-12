@@ -62,7 +62,8 @@ public abstract class Board : MonoBehaviour
     public GameObject eventPrefab;
     public GameObject eventPrefab1;
 
-    public bool placingPieces = false;
+
+    public bool placingPieces = true;
 
     protected virtual void Awake()
     {
@@ -72,7 +73,11 @@ public abstract class Board : MonoBehaviour
         executeButton = GameObject.FindGameObjectWithTag("ExecuteButton").GetComponent<Button>();
         var uiObj = GameObject.Find("UI");
         ui = uiObj.GetComponent<ChessUIManager>();
+        Debug.Log("Awake");
+
+
     }
+     
     public abstract void SelectPieceMoved(Vector2 coords);
     public abstract void SetSelectedPiece(Vector2 coords);
     public abstract void ExecuteMoveForAllPieces();
@@ -992,6 +997,7 @@ public abstract class Board : MonoBehaviour
         {
             LinkGridsCallForward(AllPieces[i]);
         }*/
+
     }
 
     private void OnEnable()
@@ -1001,8 +1007,26 @@ public abstract class Board : MonoBehaviour
         var gameInitObj = GameObject.Find("GameInitializer");
         gameInit = gameInitObj.GetComponent(typeof(GameInitializer)) as GameInitializer;
 
-        TriggerSlowUpdate(); 
+        TriggerSlowUpdate();
 
+        var i = 0;
+        foreach (var unit in gameInit.saveInfoObject.listOfSavedUnits)
+        {
+            var newButton = Instantiate(gameInit.unitButtonTemplate);
+
+
+            newButton.onClick.AddListener(delegate { SelectSpecificUnit(unit.name, unit.models, unit.morale, unit.energy); });
+
+            newButton.transform.parent = gameInit.unitOptionsParent.transform;
+            newButton.transform.position += new Vector3(1200, 800 - i * 100, 0);
+            i++;
+        }
+
+    }
+
+    public void SelectSpecificUnit(string name, int models, float morale, float energy)
+    {
+        Debug.Log("selected " + name + " " + models + " " + morale + " " + energy);
     }
 
     public abstract void TriggerSlowUpdate();
