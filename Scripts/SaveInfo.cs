@@ -30,7 +30,7 @@ public class SaveInfo : MonoBehaviour
 
     private void GenerateModifiableScripObjsAsChildren()
     {
-
+        var i = 0;
         foreach (var item in list)
         {
             var newItem = Instantiate(unitPrefab);
@@ -40,7 +40,13 @@ public class SaveInfo : MonoBehaviour
             newItem.morale = item.morale;
             newItem.energy = item.energy;
 
+            newItem.maxModels = item.models;
+            newItem.maxMorale = item.morale;
+            newItem.maxEnergy = item.energy;
+            newItem.placementID = i;
+
             listOfSavedUnits.Add(newItem);
+            i++;
         }
     }
 

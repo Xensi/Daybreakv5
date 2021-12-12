@@ -264,6 +264,8 @@ public abstract class Piece : MonoBehaviour
 
     public bool aggressiveAttitude = true;
 
+    public int placementID = 0;
+
     public abstract List<Vector2Int> SelectAvailableSquares(Vector2Int startingSquare);
 
     public void CheckIfNoOrdersGiven() //just check
@@ -2494,6 +2496,9 @@ public abstract class Piece : MonoBehaviour
         UpdateTerrainType(occupiedSquare.x, occupiedSquare.y);
         //CheckIfEnemyInFront();
         //ChangeFormation("circle");
+        modelBar.ImmediateSetHealth(models);
+        moraleBar.ImmediateSetHealth(morale);
+        energyBar.ImmediateSetHealth(energy);
     }
 
     public void DisplayFormation(string formationType)
@@ -4727,6 +4732,16 @@ public abstract class Piece : MonoBehaviour
 
         Destroy(gameObject);
     }
+
+    public void ImmediateRemoval()
+    {
+        foreach (var item in soldierObjects)
+        {
+            Destroy(item);
+        }
+        Destroy(gameObject);
+    }
+
     public void MarkForDeath(int damage)
     {
         board.PieceMarkForDeath(unitID, damage);

@@ -62,8 +62,19 @@ public abstract class Board : MonoBehaviour
     public GameObject eventPrefab;
     public GameObject eventPrefab1;
 
+    public bool readyToPlaceUnit = false;
+    public string tempName;
+    public int tempModels;
+    public float tempMorale;
+    public float tempEnergy;
+    public int tempPlacementID = 0;
+
+
 
     public bool placingPieces = true;
+
+
+    public List<UIButton> unitButtonsList = new List<UIButton>();
 
     protected virtual void Awake()
     {
@@ -71,13 +82,74 @@ public abstract class Board : MonoBehaviour
         squareSelector = GetComponent<SquareSelectorCreator>();
         CreateGrid();
         executeButton = GameObject.FindGameObjectWithTag("ExecuteButton").GetComponent<Button>();
+        executeButton.gameObject.SetActive(false);
         var uiObj = GameObject.Find("UI");
         ui = uiObj.GetComponent<ChessUIManager>();
         Debug.Log("Awake");
 
 
     }
-     
+    private void OnEnable()
+    {
+        //Debug.Log("Board enabled (used instead of start because networked");
+
+        var gameInitObj = GameObject.Find("GameInitializer");
+        gameInit = gameInitObj.GetComponent(typeof(GameInitializer)) as GameInitializer;
+
+        TriggerSlowUpdate();
+
+        var i = 0;
+        foreach (var unit in gameInit.saveInfoObject.listOfSavedUnits)
+        {
+            /*if (unit.alreadyPlaced)
+            {
+                continue; //don't make a button for those that have already been placed.
+            }*/
+            var newButton = Instantiate(gameInit.unitButtonTemplate);
+
+            var text = newButton.GetComponentInChildren<TMP_Text>();
+            text.text = unit.name + " (Models " + unit.models + "/" + unit.maxModels + ", Morale " + unit.morale + "/" + unit.maxMorale + ", Energy " + unit.energy + "/" + unit.maxEnergy + ")";
+            
+            newButton.onClick.AddListener(delegate { SelectSpecificUnit(unit.name, unit.models, unit.morale, unit.energy, unit.placementID); });
+
+            newButton.transform.parent = gameInit.unitOptionsParent.transform;
+            newButton.transform.position += new Vector3(1200, 800 - i * 100, 0);
+
+            unitButtonsList.Add(newButton);
+
+            i++;
+        }
+
+    }
+
+    public void SelectSpecificUnit(string name, int models, float morale, float energy, int placementID)
+    {
+        //hide all the buttons
+        foreach (var button in unitButtonsList)
+        {
+            button.gameObject.SetActive(false);
+        }
+        Debug.Log("selected " + name + " " + models + " " + morale + " " + energy);
+        readyToPlaceUnit = true;
+        tempName = name;
+        tempModels = models;
+        tempMorale = morale;
+        tempEnergy = energy;
+        tempPlacementID = placementID;
+        //show cancellation button
+        gameInit.cancelPlaceUnitButton.gameObject.SetActive(true);
+    }
+
+    public abstract void TriggerSlowUpdate();
+
+    public void OnTriggerSlowUpdate() //finished communicating with mp
+    {
+        ////Debug.LogError("triggered slow update");
+        //StartCoroutine(SlowUpdate(1f));
+        StartCoroutine(SlowUpdate(.5f));
+        StartCoroutine(EventUpdate(.5f));
+    }
+
     public abstract void SelectPieceMoved(Vector2 coords);
     public abstract void SetSelectedPiece(Vector2 coords);
     public abstract void ExecuteMoveForAllPieces();
@@ -1000,44 +1072,6 @@ public abstract class Board : MonoBehaviour
 
     }
 
-    private void OnEnable()
-    {
-        //Debug.Log("Board enabled (used instead of start because networked");
-
-        var gameInitObj = GameObject.Find("GameInitializer");
-        gameInit = gameInitObj.GetComponent(typeof(GameInitializer)) as GameInitializer;
-
-        TriggerSlowUpdate();
-
-        var i = 0;
-        foreach (var unit in gameInit.saveInfoObject.listOfSavedUnits)
-        {
-            var newButton = Instantiate(gameInit.unitButtonTemplate);
-
-
-            newButton.onClick.AddListener(delegate { SelectSpecificUnit(unit.name, unit.models, unit.morale, unit.energy); });
-
-            newButton.transform.parent = gameInit.unitOptionsParent.transform;
-            newButton.transform.position += new Vector3(1200, 800 - i * 100, 0);
-            i++;
-        }
-
-    }
-
-    public void SelectSpecificUnit(string name, int models, float morale, float energy)
-    {
-        Debug.Log("selected " + name + " " + models + " " + morale + " " + energy);
-    }
-
-    public abstract void TriggerSlowUpdate();
-
-    public void OnTriggerSlowUpdate() //finished communicating with mp
-    {
-        ////Debug.LogError("triggered slow update");
-        //StartCoroutine(SlowUpdate(1f));
-        StartCoroutine(SlowUpdate(.5f));
-        StartCoroutine(EventUpdate(.5f));
-    } 
     public Vector3 CalculatePositionFromCoords(Vector2Int coords)
     {
         return bottomLeftSquareTransform.position + new Vector3(coords.x * squareSize, 0f, coords.y * squareSize);
@@ -1049,7 +1083,31 @@ public abstract class Board : MonoBehaviour
         {
             if (mouse == 0)
             {
-                Debug.Log("attempting to place a piece");
+                Vector2Int coords = CalculateCoordsFromPosition(inputPosition); //coords calculated from position
+                Piece piece = GetPieceOnSquare(coords); //specific piece nabbed using new coords
+                if (readyToPlaceUnit && piece == null) //there must be no unit already there to place.
+                {
+
+                    Debug.Log("attempting to place a piece");
+                    Piece placedPiece = chessController.CreatePieceAndInitialize(coords, TeamColor.Black, tempName, 0);
+
+                    //after placing, we return
+                    readyToPlaceUnit = false;
+                    gameInit.cancelPlaceUnitButton.gameObject.SetActive(false);
+                    foreach (var button in unitButtonsList)
+                    {
+                        button.gameObject.SetActive(true);
+                    }
+                    //say that it's been placed.
+                    gameInit.saveInfoObject.listOfSavedUnits[tempPlacementID].alreadyPlaced = true;
+                    unitButtonsList[tempPlacementID].interactable = false;
+                }
+                else if (!readyToPlaceUnit && piece != null) //if we are not trying to place a unit and the location we have selected has a piece on it
+                {
+                    unitButtonsList[piece.placementID].interactable = true;
+                    gameInit.saveInfoObject.listOfSavedUnits[piece.placementID].alreadyPlaced = false;
+                    piece.ImmediateRemoval();
+                }
             }
         }
         else

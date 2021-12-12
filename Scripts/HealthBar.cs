@@ -85,6 +85,12 @@ public class HealthBar : MonoBehaviour
         }
 
     }
+
+    public void ImmediateSetHealth(float health)
+    {
+        slider.value = health;
+    }
+
     private IEnumerator TweenHP(float health)
     {
         var tween = DOTween.To(() => slider.value, x => slider.value = x, health, 6);

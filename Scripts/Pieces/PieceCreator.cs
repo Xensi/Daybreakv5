@@ -16,7 +16,7 @@ public class PieceCreator : MonoBehaviour
         foreach(var piece in piecesPrefabs)
         {
             //nameToPieceDict.Add(piece.GetComponent<Piece>().GetType().ToString(), piece);
-            nameToPieceDict.Add(piece.GetComponent<Piece>().unitName, piece);
+            nameToPieceDict.Add(piece.GetComponent<Piece>().unitName, piece); //translation
         }
         /*foreach (var item in nameToPieceDict)
         {
@@ -24,12 +24,17 @@ public class PieceCreator : MonoBehaviour
         }*/
     }
 
-    public GameObject CreatePiece(string typeName)
+    public GameObject CreatePiece(string typeName, int models, float morale, float energy, int placementID)
     {
         GameObject prefab = nameToPieceDict[typeName];
         if (prefab)
         {
             GameObject newPiece = Instantiate(prefab);
+            Conscript pieceComp = newPiece.GetComponent<Conscript>();
+            pieceComp.models = models;
+            pieceComp.morale = morale;
+            pieceComp.energy = energy;
+            pieceComp.placementID = placementID;
             //GameObject newPiece = PhotonNetwork.Instantiate(prefab.name, Vector3.zero, Quaternion.identity);
             //Debug.Log("Photon network instantiate");
             return newPiece;

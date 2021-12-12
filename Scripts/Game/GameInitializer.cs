@@ -59,6 +59,18 @@ public class GameInitializer : MonoBehaviour
     public UIButton unitButtonTemplate;
 
     public GameObject unitOptionsParent;
+    public UIButton cancelPlaceUnitButton;
+
+    public void CancelPlacement()
+    {
+        board.readyToPlaceUnit = false;
+        cancelPlaceUnitButton.gameObject.SetActive(false);
+        foreach (var button in board.unitButtonsList)
+        {
+            button.gameObject.SetActive(true);
+        }
+
+    }
 
     private void Start()
     {
@@ -104,7 +116,7 @@ public class GameInitializer : MonoBehaviour
     public void CreateSinglePlayerBoard()
     {
         executeButtonParent.SetActive(true);
-        unreadyButtonParent.SetActive(true);
+        //unreadyButtonParent.SetActive(true);
 
 
         Instantiate(singleplayerBoardPrefab, boardAnchor);

@@ -99,9 +99,9 @@ public abstract class ChessGameController : MonoBehaviour
         return activePlayer.team == team;
     }
 
-    private void CreatePieceAndInitialize(Vector2Int squareCoords, TeamColor team, string typeName, int direction)
+    public Piece CreatePieceAndInitialize(Vector2Int squareCoords, TeamColor team, string typeName, int direction)
     {
-        Piece newPiece = pieceCreator.CreatePiece(typeName).GetComponent<Piece>();
+        Piece newPiece = pieceCreator.CreatePiece(typeName, board.tempModels, board.tempMorale, board.tempEnergy, board.tempPlacementID).GetComponent<Piece>();
         newPiece.SetData(squareCoords, team, board, direction);
 
         Material teamMaterial = pieceCreator.GetTeamMaterial(team);
@@ -111,6 +111,7 @@ public abstract class ChessGameController : MonoBehaviour
 
         ChessPlayer currentPlayer = team == TeamColor.White ? whitePlayer : blackPlayer;
         currentPlayer.AddPiece(newPiece);
+        return newPiece;
     }
 
     public void EndTurn()
