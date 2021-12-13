@@ -138,6 +138,9 @@ public abstract class Board : MonoBehaviour
         tempPlacementID = placementID;
         //show cancellation button
         gameInit.cancelPlaceUnitButton.gameObject.SetActive(true);
+
+        var text = gameInit.placingUnitsAlertText.GetComponentInChildren<TMP_Text>();
+        text.text = "Click within placement area.";
     }
 
     public abstract void TriggerSlowUpdate();
@@ -1069,7 +1072,6 @@ public abstract class Board : MonoBehaviour
         {
             LinkGridsCallForward(AllPieces[i]);
         }*/
-
     }
 
     public Vector3 CalculatePositionFromCoords(Vector2Int coords)
@@ -1101,12 +1103,38 @@ public abstract class Board : MonoBehaviour
                     //say that it's been placed.
                     gameInit.saveInfoObject.listOfSavedUnits[tempPlacementID].alreadyPlaced = true;
                     unitButtonsList[tempPlacementID].interactable = false;
+
+                    var text = gameInit.placingUnitsAlertText.GetComponentInChildren<TMP_Text>();
+                    var j = 0;
+                    foreach (var unit in gameInit.saveInfoObject.listOfSavedUnits) //go through all saved units
+                    {
+                        if (!unit.alreadyPlaced) //if we find a unit that hasn't been placed
+                        {
+                            j++;
+                        }
+                    }
+                    if (j == 0) //if all units have been placed
+                    { //show the new text "all units placed"  
+                        text.text = "All units placed.";
+                        gameInit.confirmButton.gameObject.SetActive(true);
+                    }
+                    else
+                    { 
+                        text.text = "Select a unit to place on the field.";
+                    }
+
                 }
                 else if (!readyToPlaceUnit && piece != null) //if we are not trying to place a unit and the location we have selected has a piece on it
                 {
                     unitButtonsList[piece.placementID].interactable = true;
                     gameInit.saveInfoObject.listOfSavedUnits[piece.placementID].alreadyPlaced = false;
                     piece.ImmediateRemoval();
+
+                     
+                    var text = gameInit.placingUnitsAlertText.GetComponentInChildren<TMP_Text>();
+                    text.text = "Select a unit to place on the field.";
+                    gameInit.confirmButton.gameObject.SetActive(false);
+
                 }
             }
         }

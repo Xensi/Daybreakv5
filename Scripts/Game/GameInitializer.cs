@@ -61,6 +61,11 @@ public class GameInitializer : MonoBehaviour
     public GameObject unitOptionsParent;
     public UIButton cancelPlaceUnitButton;
 
+    public GameObject placingUnitsAlertText;
+    public UIButton confirmButton;
+    public GameObject image;
+
+
     public void CancelPlacement()
     {
         board.readyToPlaceUnit = false;
@@ -70,6 +75,20 @@ public class GameInitializer : MonoBehaviour
             button.gameObject.SetActive(true);
         }
 
+    }
+
+    public void ConfirmPlacement()
+    {
+        placingUnitsAlertText.SetActive(false);
+        confirmButton.gameObject.SetActive(false);
+        image.SetActive(false);
+        foreach (var item in board.unitButtonsList)
+        {
+            item.gameObject.SetActive(false);
+        }
+        executeButtonParent.SetActive(true);
+        unreadyButtonParent.SetActive(true);
+        board.placingPieces = false;
     }
 
     private void Start()
