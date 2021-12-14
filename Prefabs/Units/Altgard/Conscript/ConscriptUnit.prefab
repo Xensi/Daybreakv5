@@ -128,6 +128,8 @@ MonoBehaviour:
   damage: 1
   morale: 10
   energy: 20
+  startingEnergy: 0
+  startingMorale: 0
   damageLevel: 1
   armorLevel: 1
   attackType: melee
@@ -298,6 +300,13 @@ MonoBehaviour:
   alreadyAppliedDamage: 0
   movementStopped: 0
   markForRemovalFromSecondWave: 0
+  strList: []
+  colorList: []
+  floatList: []
+  lastEventEndPos: {x: 0, y: 0, z: 0}
+  lastTarget: {fileID: 0}
+  aggressiveAttitude: 1
+  placementID: 0
 --- !u!114 &255507802608927540
 MonoBehaviour:
   m_ObjectHideFlags: 0

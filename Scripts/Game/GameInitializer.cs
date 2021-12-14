@@ -65,7 +65,20 @@ public class GameInitializer : MonoBehaviour
     public UIButton confirmButton;
     public GameObject image;
 
-
+    public GameObject dirButtonParent;
+    public BoardLayout[] levels;
+    public BoardLayout boardLevel;
+    public void SelectLevel(string strLevel)
+    {
+        foreach (var level in levels)
+        {
+            Debug.Log(level.ToString());
+            if (level.ToString() == strLevel + " (BoardLayout)")
+            {
+                boardLevel = level;
+            }
+        }
+    }
     public void CancelPlacement()
     {
         board.readyToPlaceUnit = false;
@@ -74,7 +87,7 @@ public class GameInitializer : MonoBehaviour
         {
             button.gameObject.SetActive(true);
         }
-
+        dirButtonParent.SetActive(false);
     }
 
     public void ConfirmPlacement()
@@ -89,7 +102,18 @@ public class GameInitializer : MonoBehaviour
         executeButtonParent.SetActive(true);
         unreadyButtonParent.SetActive(true);
         board.placingPieces = false;
+        dirButtonParent.SetActive(false);
+        foreach (var item in levelGen.placementTilesList)
+        {
+            item.SetActive(false);
+        }
     }
+
+    public void ChangeOrientation(int dir)
+    {
+        board.tempDir = dir;
+    }
+
 
     private void Start()
     {
@@ -199,6 +223,7 @@ public class GameInitializer : MonoBehaviour
     public void InitializeSinglePlayerController()
     {
         SingleplayerChessGameController controller = Instantiate(singleplayerChessGameControllerPrefab);
+        controller.startingBoardLayout = boardLevel;
         controller.SetDependencies(uiManager, board, cameraSetup);
         controller.CreatePlayers();
         board.SetDependencies(controller, false);
@@ -502,25 +527,25 @@ public class GameInitializer : MonoBehaviour
         }
         else if (action == "switchFormation")
         {
-/*
-            List<string> dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered", "Circle", "Braced" };
-            if (board.selectedPiece.unitName == "Conscript")
-            {
-                dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered", "Circle", };
-            }
-            else if (board.selectedPiece.unitName == "Longbowman")
-            {
-                dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered" };
-            }
-            else if (board.selectedPiece.unitName == "Ritter")
-            {
-                dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered" };
-            }*/
+            /*
+                        List<string> dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered", "Circle", "Braced" };
+                        if (board.selectedPiece.unitName == "Conscript")
+                        {
+                            dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered", "Circle", };
+                        }
+                        else if (board.selectedPiece.unitName == "Longbowman")
+                        {
+                            dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered" };
+                        }
+                        else if (board.selectedPiece.unitName == "Ritter")
+                        {
+                            dropOptions = new List<string> { "Select a formation", "Rectangle", "Staggered" };
+                        }*/
 
 
             List<TMP_Dropdown.OptionData> dropData = new List<TMP_Dropdown.OptionData>();
             if (board.selectedPiece.unitType == "infantry" && board.selectedPiece.attackType == "melee") //not including brace yet
-            { 
+            {
                 var option1 = new TMP_Dropdown.OptionData("Select a formation", icons[10]);
                 dropData.Add(option1);
                 var option2 = new TMP_Dropdown.OptionData("Rectangle", icons[7]);
@@ -528,7 +553,7 @@ public class GameInitializer : MonoBehaviour
                 var option6 = new TMP_Dropdown.OptionData("Staggered", icons[8]);
                 dropData.Add(option6);
                 var option4 = new TMP_Dropdown.OptionData("Circle", icons[9]);
-                dropData.Add(option4); 
+                dropData.Add(option4);
             }
             else if (board.selectedPiece.unitType == "infantry" && board.selectedPiece.attackType == "ranged")
             {

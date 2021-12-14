@@ -2310,7 +2310,6 @@ public abstract class Piece : MonoBehaviour
             _audioSource.PlayOneShot(clip);
         }
     }
-
     private void CreateSoldier(Vector3 position)
     {
         var navPoint = Instantiate(navPrefab, position, Quaternion.Euler(0, 45 * facingDirection, 0));
@@ -2360,6 +2359,8 @@ public abstract class Piece : MonoBehaviour
 
     private void Start()
     {
+
+        SetRotation(facingDirection);
         if (isCampaignToken) //if commander find menu controller so you can load scenes
         {
             var menuObj = GameObject.Find("Menu Controller");
@@ -2491,7 +2492,15 @@ public abstract class Piece : MonoBehaviour
                 navPoint.transform.localScale = new Vector3(.1f, .1f, .1f);
             }
         }
+        rectangleNavParent.transform.Rotate(new Vector3(0, 45 * facingDirection, 0));
+        circleNavParent.transform.Rotate(new Vector3(0, 45 * facingDirection, 0));
+        staggeredNavParent.transform.Rotate(new Vector3(0, 45 * facingDirection, 0));
 
+        foreach (var soldier in soldierObjects) //teleports soldiers to where they need to be
+        {
+            var updater = soldier.GetComponent<UpdateAgentDestination>();
+            soldier.transform.position = updater.thisNavPoint.transform.position;
+        }
 
         UpdateTerrainType(occupiedSquare.x, occupiedSquare.y);
         //CheckIfEnemyInFront();
@@ -2704,8 +2713,9 @@ public abstract class Piece : MonoBehaviour
     }
     public void SetRotation(int direction)
     {
-        transform.Rotate(0f, 45 * direction, 0.0f, Space.World);
+        //transform.Rotate(0f, 45 * direction, 0.0f, Space.Self);
         DefineFlanks();
+        DefineFront();
     }
 
     public bool IsFromSameTeam(Piece piece)
@@ -5037,7 +5047,7 @@ public abstract class Piece : MonoBehaviour
         occupiedSquare = coords;
         this.board = board;
         transform.position = board.CalculatePositionFromCoords(coords);
-        SetRotation(facingDirection);
+        
     }
 
     public bool IsAttackingPieceOfType<T>() where T : Piece

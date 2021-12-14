@@ -5,9 +5,14 @@ using UnityEngine;
 public class LevelGenerator : MonoBehaviour
 {
     public Texture2D map;
+    public Texture2D placementAllowanceMap;
     public ColorToPrefab[] colorMappings;
     public Transform Bottomleftsquare;
     public Board board;
+    public GameObject placementPrefab;
+    public Color placementColor;
+    public List<GameObject> placementTilesList;
+    //public Color ignoreColor;
 
     // Start is called before the first frame update
     void Start()
@@ -32,6 +37,7 @@ public class LevelGenerator : MonoBehaviour
             for (int y = 0; y < map.height; y++)
             {
                 GenerateTile(x, y);
+                CheckPlacement(x, y);
             }
         }
         transform.localScale = new Vector3(1.5f, 1, 1.5f);
@@ -40,7 +46,33 @@ public class LevelGenerator : MonoBehaviour
         Vector3 temp = new Vector3 (0, .22f, 0);
         transform.position += temp;
     }
+    void CheckPlacement(int x, int y)
+    {
+        Color pixelColor = placementAllowanceMap.GetPixel(x, y);
 
+        if (pixelColor.a == 0) //ignore fully transparent pixels
+        {
+            if (board != null)
+            {
+                board.placementAllowedGrid[x, y] = 0;
+            }
+        }
+        else //pixels that are colored are allowed placement
+        {
+
+            if (placementColor.Equals(pixelColor))
+            {
+
+                if (board != null)
+                {
+                    board.placementAllowedGrid[x, y] = 1;
+                }
+                Vector3 position = new Vector3(x, 0, y);
+                var obj = Instantiate(placementPrefab, position, Quaternion.identity, transform);
+                placementTilesList.Add(obj);
+            }
+        }
+    }
     void GenerateTile(int x, int y)
     {
         Color pixelColor = map.GetPixel(x, y);

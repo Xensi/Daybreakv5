@@ -20,6 +20,7 @@ public abstract class Board : MonoBehaviour
     public Marker[,] markerGrid; //white
     public Marker[,] markerGrid2; //black
     public String[,] terrainGrid;
+    public int[,] placementAllowedGrid;
     public Piece selectedPiece;
     public ChessGameController chessController;
     private bool isChessControllerMP = false;
@@ -68,6 +69,7 @@ public abstract class Board : MonoBehaviour
     public float tempMorale;
     public float tempEnergy;
     public int tempPlacementID = 0;
+    public int tempDir = 0;
 
 
 
@@ -141,6 +143,7 @@ public abstract class Board : MonoBehaviour
 
         var text = gameInit.placingUnitsAlertText.GetComponentInChildren<TMP_Text>();
         text.text = "Click within placement area.";
+        gameInit.dirButtonParent.SetActive(true);
     }
 
     public abstract void TriggerSlowUpdate();
@@ -1063,6 +1066,7 @@ public abstract class Board : MonoBehaviour
         markerGrid = new Marker[BOARD_SIZE, BOARD_SIZE];
         markerGrid2 = new Marker[BOARD_SIZE, BOARD_SIZE];
         terrainGrid = new String[BOARD_SIZE, BOARD_SIZE];
+        placementAllowedGrid = new int[BOARD_SIZE, BOARD_SIZE];
     }
 
     private void Start()
@@ -1087,11 +1091,11 @@ public abstract class Board : MonoBehaviour
             {
                 Vector2Int coords = CalculateCoordsFromPosition(inputPosition); //coords calculated from position
                 Piece piece = GetPieceOnSquare(coords); //specific piece nabbed using new coords
-                if (readyToPlaceUnit && piece == null) //there must be no unit already there to place.
+                if (readyToPlaceUnit && piece == null && placementAllowedGrid[coords.x, coords.y] == 1) //there must be no unit already there to place.
                 {
 
                     Debug.Log("attempting to place a piece");
-                    Piece placedPiece = chessController.CreatePieceAndInitialize(coords, TeamColor.Black, tempName, 0);
+                    Piece placedPiece = chessController.CreatePieceAndInitialize(coords, TeamColor.Black, tempName, tempDir);
 
                     //after placing, we return
                     readyToPlaceUnit = false;
@@ -1122,6 +1126,7 @@ public abstract class Board : MonoBehaviour
                     { 
                         text.text = "Select a unit to place on the field.";
                     }
+                    gameInit.dirButtonParent.SetActive(false);
 
                 }
                 else if (!readyToPlaceUnit && piece != null) //if we are not trying to place a unit and the location we have selected has a piece on it

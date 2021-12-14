@@ -24,12 +24,25 @@ public class PieceCreator : MonoBehaviour
         }*/
     }
 
-    public GameObject CreatePiece(string typeName, int models, float morale, float energy, int placementID)
+    public GameObject CreateDefaultPiece(string typeName, int direction)
     {
         GameObject prefab = nameToPieceDict[typeName];
         if (prefab)
         {
-            GameObject newPiece = Instantiate(prefab);
+            GameObject newPiece = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.Euler(new Vector3(0, 45 * direction, 0)));
+            Conscript pieceComp = newPiece.GetComponent<Conscript>();
+            //GameObject newPiece = PhotonNetwork.Instantiate(prefab.name, Vector3.zero, Quaternion.identity);
+            //Debug.Log("Photon network instantiate");
+            return newPiece;
+        }
+        return null;
+    }
+    public GameObject CreatePiece(string typeName, int models, float morale, float energy, int placementID, int direction)
+    {
+        GameObject prefab = nameToPieceDict[typeName];
+        if (prefab)
+        {
+            GameObject newPiece = Instantiate(prefab, new Vector3(0, 0, 0), Quaternion.Euler(new Vector3(0, 45 * direction, 0)));
             Conscript pieceComp = newPiece.GetComponent<Conscript>();
             pieceComp.models = models;
             pieceComp.morale = morale;

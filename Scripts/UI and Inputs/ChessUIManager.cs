@@ -45,8 +45,27 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public bool matchStarted = false;
 
+    public GameObject menuOptionsParent;
+    public GameObject levelOptionsParent;
+    public Image BG;
 
+    public void ShowLevelSelect()
+    {
+        menuOptionsParent.SetActive(false);
+        levelOptionsParent.SetActive(true);
 
+    }
+    public void RetreatFromLevelSelect()
+    {
+        levelOptionsParent.SetActive(false);
+        menuOptionsParent.SetActive(true);
+    }
+
+    public void HideLevelSelectAndBG()
+    {
+        levelOptionsParent.SetActive(false);
+        BG.gameObject.SetActive(false);
+    }
     public void OnPointerEnter(PointerEventData eventData)
     {
         UIHover = true;

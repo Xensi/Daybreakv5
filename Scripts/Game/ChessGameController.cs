@@ -13,7 +13,7 @@ public abstract class ChessGameController : MonoBehaviour
     protected const byte SET_GAME_STATE_EVENT_CODE = 1;
     public enum GameState { Init, Play, Finished}
 
-    [SerializeField] private BoardLayout startingBoardLayout;
+    public BoardLayout startingBoardLayout;
     private Board board;
     private ChessUIManager uiManager;
     private CameraSetup cameraSetup;
@@ -90,7 +90,7 @@ public abstract class ChessGameController : MonoBehaviour
             int direction = layout.GetDirectionAtIndex(i);
 
             //Type type = Type.GetType(typeName);
-            CreatePieceAndInitialize(squareCoords, team, typeName, direction);
+            LayoutCreatePieces(squareCoords, team, typeName, direction);
         }
     }
 
@@ -99,9 +99,23 @@ public abstract class ChessGameController : MonoBehaviour
         return activePlayer.team == team;
     }
 
+    public Piece LayoutCreatePieces(Vector2Int squareCoords, TeamColor team, string typeName, int direction)
+    {
+        Piece newPiece = pieceCreator.CreateDefaultPiece(typeName, direction).GetComponent<Piece>();
+        newPiece.SetData(squareCoords, team, board, direction);
+
+        Material teamMaterial = pieceCreator.GetTeamMaterial(team);
+        //newPiece.SetMaterial(teamMaterial);
+
+        board.SetPieceOnBoard(squareCoords, newPiece);
+
+        ChessPlayer currentPlayer = team == TeamColor.White ? whitePlayer : blackPlayer;
+        currentPlayer.AddPiece(newPiece);
+        return newPiece;
+    }
     public Piece CreatePieceAndInitialize(Vector2Int squareCoords, TeamColor team, string typeName, int direction)
     {
-        Piece newPiece = pieceCreator.CreatePiece(typeName, board.tempModels, board.tempMorale, board.tempEnergy, board.tempPlacementID).GetComponent<Piece>();
+        Piece newPiece = pieceCreator.CreatePiece(typeName, board.tempModels, board.tempMorale, board.tempEnergy, board.tempPlacementID, direction).GetComponent<Piece>();
         newPiece.SetData(squareCoords, team, board, direction);
 
         Material teamMaterial = pieceCreator.GetTeamMaterial(team);
