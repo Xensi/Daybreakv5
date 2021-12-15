@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: Ying
+  m_EditorClassIdentifier: 
+  speaker: Li Ying
+  speakerImage: {fileID: 21300000, guid: c2b10a84e4304c54f9cf5fb940e6c166, type: 3}
+  speakerSpeed: 0.05
+  sentences:
+  - Let us plan our strategy.
+  - Without Yanhu, the fate of this battle hangs in the balance.
+  - We will need to secure her support if we are to win a decisive victory.
+  sentenceAudio:
+  - {fileID: 8300000, guid: 169850ccdde32a94ca29a193c3002f13, type: 3}
+  - {fileID: 8300000, guid: 8fa7b3a2ac9a2fa42a02cb2d162944d4, type: 3}
+  - {fileID: 8300000, guid: c164f4b00d86ae645a0f259f4373c9cb, type: 3}
+  nextDialogue: {fileID: 11400000, guid: 6a78e58a4c101534f964d934fe4365aa, type: 2}
