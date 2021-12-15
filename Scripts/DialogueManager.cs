@@ -25,20 +25,39 @@ public class DialogueManager : MonoBehaviour
     public float startingYPos;
     public GameObject targetPosObj;
     public DialogueScriptableObject[] conversationStarters;
+    public bool autoStart = false;
+    public GameObject choicesParent;
+    public List<TMP_Text> choiceList;
+    public Image speakerBGImage;
+    public Image speakerFancyBorder;
 
     void Start()
     {
+
+
         startingYPos = dialogueParent.transform.position.y;
         audioSource = GetComponent<AudioSource>();
         sentences = new Queue<string>(); //first in last out?
-        
-        //StartCoroutine(LateStart(1));
+
+        if (autoStart)
+        {
+            StartCoroutine(LateStart(1));
+
+        }
     }
 
     IEnumerator LateStart(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
-        StartDialogue();
+        if (loadedDialogue.isChoices)
+        {
+            PresentChoices();
+        }
+        else
+        {
+
+            StartDialogue();
+        }
     }
 
     public void SelectDialogue(string dialogue)
@@ -50,13 +69,24 @@ public class DialogueManager : MonoBehaviour
             if (convo.ToString() == dialogue + " (DialogueScriptableObject)")
             {
                 loadedDialogue = convo;
-                StartDialogue();
+
+                if (loadedDialogue.isChoices)
+                {
+                    PresentChoices();
+
+                }
+                else
+                {
+                    StartDialogue();
+                }
                 break;
             }
         }
     }
     public void StartDialogue()
     {
+        speakerBGImage.color = loadedDialogue.speakerColorBorder;
+        speakerFancyBorder.color = loadedDialogue.speakerFancyBorder;
         textspeed = loadedDialogue.speakerSpeed;
         dialogueText.text = "";
         speakerText.text = loadedDialogue.speaker;
@@ -66,7 +96,7 @@ public class DialogueManager : MonoBehaviour
 
     }
     public void StartDialogue2()
-    { 
+    {
 
         //Debug.Log("Starting conversation");
         sentences.Clear();
@@ -81,23 +111,36 @@ public class DialogueManager : MonoBehaviour
     public void StartNextDialogue()
     {
         loadedDialogue = loadedDialogue.nextDialogue;
-        textspeed = loadedDialogue.speakerSpeed;
-        speakerText.text = loadedDialogue.speaker;
-        speakerImage.sprite = loadedDialogue.speakerImage;
-        //Debug.Log("Starting conversation");
-        sentences.Clear();
 
-        foreach (string sentence in loadedDialogue.sentences)
+        if (loadedDialogue.isChoices)
         {
-            sentences.Enqueue(sentence);
+            PresentChoices();
         }
-        
+        else
+        {
+            choicesParent.SetActive(false);
+            textspeed = loadedDialogue.speakerSpeed;
+            speakerText.text = loadedDialogue.speaker;
+            speakerImage.sprite = loadedDialogue.speakerImage;
+            //Debug.Log("Starting conversation");
+            sentences.Clear();
 
-        DisplayNextSentence();
+            foreach (string sentence in loadedDialogue.sentences)
+            {
+                sentences.Enqueue(sentence);
+            }
+
+
+            DisplayNextSentence();
+        }
     }
 
     public void DisplayNextSentence()
     {
+        if (loadedDialogue.isChoices)
+        {
+            return;
+        }
         audioSource.Stop();
         runningText = true;
         if (sentences.Count == 0) //end of queue
@@ -108,7 +151,7 @@ public class DialogueManager : MonoBehaviour
             return;
         }
         if (loadedDialogue.sentenceAudio.Length > sentenceCount) //length 3, count 2
-        { 
+        {
             currentAudio = loadedDialogue.sentenceAudio[sentenceCount];
         }
         else
@@ -152,7 +195,7 @@ public class DialogueManager : MonoBehaviour
             DisplayNextSentence();
         }
         else
-        { 
+        {
             runningText = false;
         }
 
@@ -172,5 +215,55 @@ public class DialogueManager : MonoBehaviour
             StartNextDialogue();
         }
     }
+
+
+    public void PresentChoices()
+    {
+        Debug.Log("presenting choices");
+        Tween tween = dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
+        dialogueText.text = "";
+        speakerBGImage.color = loadedDialogue.speakerColorBorder;
+        speakerFancyBorder.color = loadedDialogue.speakerFancyBorder;
+        speakerText.text = loadedDialogue.speaker;
+        speakerImage.sprite = loadedDialogue.speakerImage;
+        choicesParent.SetActive(true);
+
+        var i = 0;
+        foreach (var item in choiceList)
+        {
+            Debug.Log(loadedDialogue.sentences[i]);
+            item.text = loadedDialogue.sentences[i];
+            i++;
+        }
+    }
+
+    public void ChooseChoice(int num)
+    {
+        loadedDialogue = loadedDialogue.choicePaths[num];
+
+        if (loadedDialogue.isChoices)
+        {
+            PresentChoices();
+        }
+        else
+        {
+            choicesParent.SetActive(false);
+            textspeed = loadedDialogue.speakerSpeed;
+            speakerText.text = loadedDialogue.speaker;
+            speakerImage.sprite = loadedDialogue.speakerImage;
+            //Debug.Log("Starting conversation");
+            sentences.Clear();
+
+            foreach (string sentence in loadedDialogue.sentences)
+            {
+                sentences.Enqueue(sentence);
+            }
+
+
+            DisplayNextSentence();
+        }
+
+    }
+
 
 }

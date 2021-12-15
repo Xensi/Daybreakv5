@@ -12,4 +12,8 @@ public class DialogueScriptableObject : ScriptableObject
     public string[] sentences;
     public AudioClip[] sentenceAudio;
     public DialogueScriptableObject nextDialogue;
+    public bool isChoices = false;
+    public Color speakerColorBorder;
+    public Color speakerFancyBorder;
+    public DialogueScriptableObject[] choicePaths;
 }
