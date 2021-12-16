@@ -298,7 +298,7 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         DisableAllScreens();
         connectionStatusText.gameObject.SetActive(false);
         Debug.Log("disabling4");
-        placingUnitScreen.SetActive(true);
+        //placingUnitScreen.SetActive(true);
     }
 
     public void OnConnect()

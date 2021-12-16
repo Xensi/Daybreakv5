@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abf428716af4f8f438cb34c5c761450b, type: 3}
+  m_Name: morphConscript
+  m_EditorClassIdentifier: 
+  data:
+    code: morphConscript
+    enabled: 1
+    displayType: 1
+    icon: {fileID: 21300000, guid: fc1692c1f1684324e8aba0e5e800a8f1, type: 3}
+    panelCategory: 0
+    forceSlot: 1
+    slotIndex: 0
+    tooltipEnabled: 1
+    description: Equip conscript with shield for increased survivability.
+    hideTooltipOnClick: 0
+    reloadTime: 30
+    cursor:
+      icon: {fileID: 0}
+      hotspot: {x: 0, y: 0}

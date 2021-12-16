@@ -30,6 +30,7 @@ public class DialogueManager : MonoBehaviour
     public List<TMP_Text> choiceList;
     public Image speakerBGImage;
     public Image speakerFancyBorder;
+    public npcAnimController npcAnimController;
 
     void Start()
     {
@@ -107,9 +108,11 @@ public class DialogueManager : MonoBehaviour
         }
 
         DisplayNextSentence();
+        ProcessCommand();
     }
     public void StartNextDialogue()
     {
+
         loadedDialogue = loadedDialogue.nextDialogue;
 
         if (loadedDialogue.isChoices)
@@ -132,6 +135,20 @@ public class DialogueManager : MonoBehaviour
 
 
             DisplayNextSentence();
+        }
+        ProcessCommand();
+    }
+
+    void ProcessCommand()
+    {
+        Debug.LogError("Processing commands");
+        if (loadedDialogue.commandToExecute == "nod")
+        {
+            npcAnimController.AnimNod();
+        }
+        if (loadedDialogue.commandToExecute == "confused")
+        {
+            npcAnimController.AnimConfused();
         }
     }
 
@@ -231,10 +248,19 @@ public class DialogueManager : MonoBehaviour
         var i = 0;
         foreach (var item in choiceList)
         {
-            Debug.Log(loadedDialogue.sentences[i]);
-            item.text = loadedDialogue.sentences[i];
-            i++;
+            if (i < loadedDialogue.sentences.Length) //say i = 2 and tere are 2 choices
+            {
+                item.transform.parent.gameObject.SetActive(true);
+                Debug.Log(loadedDialogue.sentences[i]);
+                item.text = loadedDialogue.sentences[i];
+                i++;
+            }
+            else
+            {
+                item.transform.parent.gameObject.SetActive(false);
+            }
         }
+        ProcessCommand();
     }
 
     public void ChooseChoice(int num)
@@ -262,8 +288,11 @@ public class DialogueManager : MonoBehaviour
 
             DisplayNextSentence();
         }
+        ProcessCommand();
 
     }
+
+
 
 
 }

@@ -78,8 +78,11 @@ public class UpdateAgentDestination : MonoBehaviour
             rigid.isKinematic = true;
             rigid.useGravity = false;
         }
+        if (nonRagdollCollider != null)
+        {
 
-        nonRagdollCollider.enabled = true;
+            nonRagdollCollider.enabled = true;
+        }
 
         _audioSource = GetComponent<AudioSource>();
     }
@@ -284,7 +287,11 @@ public class UpdateAgentDestination : MonoBehaviour
         {
             collider.enabled = true;
         }
-        nonRagdollCollider.enabled = false;
+        if (nonRagdollCollider != null)
+        {
+
+            nonRagdollCollider.enabled = false;
+        }
         navAgent.enabled = false;
 
     }

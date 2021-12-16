@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 [CreateAssetMenu(fileName = "newDialogue", menuName = "Dialogue")]
 public class DialogueScriptableObject : ScriptableObject
 {
@@ -16,4 +17,5 @@ public class DialogueScriptableObject : ScriptableObject
     public Color speakerColorBorder;
     public Color speakerFancyBorder;
     public DialogueScriptableObject[] choicePaths;
+    public string commandToExecute;
 }

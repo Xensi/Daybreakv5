@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abf428716af4f8f438cb34c5c761450b, type: 3}
+  m_Name: createGryphonRider
+  m_EditorClassIdentifier: 
+  data:
+    code: gryphonRiderUI
+    enabled: 1
+    displayType: 0
+    icon: {fileID: 21300000, guid: b2fc1d34e3d8b6343ae8f9323c6f1b7a, type: 3}
+    panelCategory: 2
+    forceSlot: 1
+    slotIndex: 2
+    tooltipEnabled: 1
+    description: Gryphon Rider
+    hideTooltipOnClick: 1
+    reloadTime: 19
+    cursor:
+      icon: {fileID: 21300000, guid: b2fc1d34e3d8b6343ae8f9323c6f1b7a, type: 3}
+      hotspot: {x: 0, y: 0}
