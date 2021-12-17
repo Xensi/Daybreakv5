@@ -65,6 +65,7 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     {
         levelOptionsParent.SetActive(false);
         BG.gameObject.SetActive(false);
+        menuOptionsParent.SetActive(false);
     }
     public void OnPointerEnter(PointerEventData eventData)
     {

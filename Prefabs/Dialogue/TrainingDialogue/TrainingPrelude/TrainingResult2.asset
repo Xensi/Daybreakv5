@@ -24,4 +24,5 @@ MonoBehaviour:
   speakerColorBorder: {r: 0, g: 0, b: 0, a: 1}
   speakerFancyBorder: {r: 0, g: 0, b: 0, a: 1}
   choicePaths: []
-  commandToExecute: nod
+  commandToExecuteStart: nod
+  commandToExecuteEnd: startTutorial

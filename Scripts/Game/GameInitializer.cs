@@ -68,6 +68,10 @@ public class GameInitializer : MonoBehaviour
     public GameObject dirButtonParent;
     public BoardLayout[] levels;
     public BoardLayout boardLevel;
+
+    public GameObject strafeCam;
+    public GameObject cinematicCam;
+
     public void SelectLevel(string strLevel)
     {
         foreach (var level in levels)

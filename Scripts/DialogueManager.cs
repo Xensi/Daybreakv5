@@ -31,7 +31,7 @@ public class DialogueManager : MonoBehaviour
     public Image speakerBGImage;
     public Image speakerFancyBorder;
     public npcAnimController npcAnimController;
-
+    public GameInitializer gameInit;
     void Start()
     {
 
@@ -142,14 +142,16 @@ public class DialogueManager : MonoBehaviour
     void ProcessCommand()
     {
         Debug.LogError("Processing commands");
-        if (loadedDialogue.commandToExecute == "nod")
+        if (loadedDialogue.commandToExecuteStart == "nod")
         {
             npcAnimController.AnimNod();
         }
-        if (loadedDialogue.commandToExecute == "confused")
+        if (loadedDialogue.commandToExecuteStart == "confused")
         {
             npcAnimController.AnimConfused();
         }
+
+
     }
 
     public void DisplayNextSentence()
@@ -219,6 +221,7 @@ public class DialogueManager : MonoBehaviour
     }
     void EndDialogue()
     {
+        ProcessEndCommand();
         sentenceCount = 0;
         if (loadedDialogue.nextDialogue == null)
         {
@@ -233,7 +236,21 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-
+    public void ProcessEndCommand()
+    {
+        if (loadedDialogue.commandToExecuteEnd == "startTutorial")
+        {
+            Debug.Log("Starting training course");
+            gameInit.strafeCam.SetActive(true);
+            gameInit.cinematicCam.SetActive(false);
+        }
+        if (loadedDialogue.commandToExecuteEnd == "startDayOfGlory")
+        {
+            Debug.Log("Starting day of glory");
+            gameInit.strafeCam.SetActive(true);
+            gameInit.cinematicCam.SetActive(false);
+        }
+    }
     public void PresentChoices()
     {
         Debug.Log("presenting choices");

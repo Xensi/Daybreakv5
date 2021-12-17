@@ -17,5 +17,6 @@ public class DialogueScriptableObject : ScriptableObject
     public Color speakerColorBorder;
     public Color speakerFancyBorder;
     public DialogueScriptableObject[] choicePaths;
-    public string commandToExecute;
+    public string commandToExecuteStart;
+    public string commandToExecuteEnd;
 }

@@ -1119,7 +1119,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -210.70001, y: -20.4}
+  m_AnchoredPosition: {x: -210.70001, y: 21.68}
   m_SizeDelta: {x: 111.1, y: 33.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &103261299
@@ -1712,6 +1712,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d4b8c5f7b70475648933e623c66314b0, type: 2}
   - {fileID: 11400000, guid: 2c6b9fccc00c0d14bbb2926450d991fa, type: 2}
   boardLevel: {fileID: 0}
+  strafeCam: {fileID: 670936814}
+  cinematicCam: {fileID: 1825104376}
 --- !u!1 &135499349
 GameObject:
   m_ObjectHideFlags: 0
@@ -3810,8 +3812,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -106.5}
-  m_SizeDelta: {x: 533.3, y: 14.7}
+  m_AnchoredPosition: {x: 0, y: -110.9}
+  m_SizeDelta: {x: 533.3, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &308595593
 MonoBehaviour:
@@ -8122,7 +8124,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -674.43}
+  m_AnchoredPosition: {x: 0, y: -678.8}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &545982631
@@ -8734,6 +8736,7 @@ MonoBehaviour:
   speakerBGImage: {fileID: 1145831976}
   speakerFancyBorder: {fileID: 87670947}
   npcAnimController: {fileID: 155852307}
+  gameInit: {fileID: 131939066}
 --- !u!4 &595530490
 Transform:
   m_ObjectHideFlags: 0
@@ -15238,7 +15241,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1103413864
 Transform:
   m_ObjectHideFlags: 0
@@ -18122,8 +18125,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -135.6}
-  m_SizeDelta: {x: 533.3, y: 14.7}
+  m_AnchoredPosition: {x: 0, y: -146.5}
+  m_SizeDelta: {x: 533.3, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1327003881
 MonoBehaviour:
@@ -24193,7 +24196,7 @@ GameObject:
   - component: {fileID: 1825104379}
   - component: {fileID: 1825104378}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: CinematicCamera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24840,8 +24843,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -121.31}
-  m_SizeDelta: {x: 533.3, y: 14.7}
+  m_AnchoredPosition: {x: 0, y: -128.5}
+  m_SizeDelta: {x: 533.3, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1855264838
 MonoBehaviour:
