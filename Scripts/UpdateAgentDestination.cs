@@ -126,10 +126,14 @@ public class UpdateAgentDestination : MonoBehaviour
             }
             navAgent.stoppingDistance = navOffset + navOffsetAdd;
             navAgent.radius = attackerRadius;
-            if (targetedSoldierDebug != null && navAgent.isActiveAndEnabled && !parentPiece.targetToAttackPiece.disengaging) //if we have a move target, then update our nav target to its position
+            if (parentPiece.targetToAttackPiece != null)
             {
-                navAgent.destination = targetedSoldierDebug.transform.position;
 
+                if (targetedSoldierDebug != null && navAgent.isActiveAndEnabled && !parentPiece.targetToAttackPiece.disengaging) //if we have a move target, then update our nav target to its position
+                {
+                    navAgent.destination = targetedSoldierDebug.transform.position;
+
+                }
             }
 
 
@@ -314,15 +318,19 @@ public class UpdateAgentDestination : MonoBehaviour
                     ////Debug.LogError("min dist " + minDist);
                 }
             }
-            if (tMin != null && navAgent.isActiveAndEnabled && !parentPiece.targetToAttackPiece.disengaging)
+            if (parentPiece.targetToAttackPiece != null)
             {
-                navAgent.destination = tMin.transform.position;
-                targetedSoldierDebug = tMin;
+                if (tMin != null && navAgent.isActiveAndEnabled && !parentPiece.targetToAttackPiece.disengaging)
+                {
+                    navAgent.destination = tMin.transform.position;
+                    targetedSoldierDebug = tMin;
 
 
+
+                }
+                //basically, find the closest soldier and make that our move target
 
             }
-            //basically, find the closest soldier and make that our move target
         }
 
 

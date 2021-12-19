@@ -21,6 +21,7 @@ public abstract class Piece : MonoBehaviour
     public MenuController menuController;
     [Header("Unit attributes (modifiable)")]
     public string unitName;
+    public string displayName;
     public int originalSpeed = 1;
     public int models = 100; //the number of dudes in a squad/unit/battalion whatever
     [HideInInspector] public int oldModels = 0;
@@ -265,6 +266,8 @@ public abstract class Piece : MonoBehaviour
     public bool aggressiveAttitude = true;
 
     public int placementID = 0;
+
+    //public int finalDirectionToTurn = 8; //8 means maintain default turn
 
     public abstract List<Vector2Int> SelectAvailableSquares(Vector2Int startingSquare);
 
@@ -2354,6 +2357,7 @@ public abstract class Piece : MonoBehaviour
             num++;
         }
         teamSetter.SetTeamMaterial(teamColor); //set team color material
+        teamSetter.SetTeamMaterial(teamColor); //set team color material
         newSoldier.transform.parent = gameInit.modelsParent.transform;
     }
 
@@ -2615,7 +2619,7 @@ public abstract class Piece : MonoBehaviour
         if (OnTerrainType == "mud")
         {
 
-            if (unitType == "cavalry") //cavalry should go to 1 in mud
+            /*if (unitType == "cavalry") //cavalry should go to 1 in mud
             {
                 speed = 1;
             }
@@ -2631,7 +2635,9 @@ public abstract class Piece : MonoBehaviour
                 {
                     remainingMovement = 0;
                 }
-            }
+            }*/
+            speed = 1;
+            remainingMovement = 1;
             defenseModifier = -1;
         }
         else if (OnTerrainType == "hill")
@@ -2832,13 +2838,17 @@ public abstract class Piece : MonoBehaviour
 
     public void QueueMove(Vector2Int coords)
     {
+        Debug.Log("Queuing move");
         turnTime++; //turn time needs to be 1 for reasons   (this means first queued move has turn time of 1, so trying to get last queued move should be queuedMove[turnTime-1]
-        if (attacking)
+        /*if (attacking)
         {
             holdingPosition = true;
             holdTime = turnTime - 1; //for example, second move holdtime 1
             //Debug.Log("turn time" + turnTime);
-        }
+        }*/
+        holdingPosition = true;
+        holdTime = turnTime - 1; //for example, second move holdtime 1
+        
         Vector2Int queuedPosition = occupiedSquare; //so this will let us determine the position after moves are applied
         for (int i = 0; i < queuedMoves.Count; i++)
         {
@@ -3534,14 +3544,15 @@ public abstract class Piece : MonoBehaviour
         var attackBonus = 0;
         if (targetToAttackPiece.OnTerrainType != "hill" && OnTerrainType == "hill") //bonus from attacking downhill
         {
-            if (unitType == "cavalry") //cavalry should get +2 for attacking downhill
+            /*if (unitType == "cavalry") //cavalry should get +2 for attacking downhill
             {
                 attackBonus = 2;
             }
             else
             {
                 attackBonus = 1;
-            }
+            }*/
+            attackBonus = 1;
 
         }
         else if (OnTerrainType != "hill" && targetToAttackPiece.OnTerrainType == "hill") //debuff froom attacking uphill
@@ -3656,7 +3667,7 @@ public abstract class Piece : MonoBehaviour
             accuracy = 1f;
         }
         tempDamage = models * calculatedDamage * damageEffect * meleeMultiplier * rangedMultiplier * energyMultiplier * flankingDamage * accuracy;
-        Debug.Log("temp damage" + tempDamage + "models" + models + "calculated damage" + calculatedDamage + "Damage effect" + damageEffect + "melee multiplier" + meleeMultiplier + "ranged multiplier" + rangedMultiplier + "energy multiplier" + energyMultiplier + "flanking damage" + flankingDamage + "accuracy" + accuracy);
+        Debug.Log("Unit ID " + unitID + "temp damage" + tempDamage + "models" + models + "calculated damage" + calculatedDamage + "Damage effect" + damageEffect + "melee multiplier" + meleeMultiplier + "ranged multiplier" + rangedMultiplier + "energy multiplier" + energyMultiplier + "flanking damage" + flankingDamage + "accuracy" + accuracy);
 
         float deadDefenders = tempDamage / targetToAttackPiece.health;
         float defendersKilled;
@@ -3698,11 +3709,22 @@ public abstract class Piece : MonoBehaviour
 
         }
         Debug.Log(attacking + " " + queueTime + " " + speed);
+        //turning = false;
+
         if (attacking && queueTime == speed) //if attacking and we're up to original speed already, stop moving
-        {
+        { //this doesn't seem to ever be met?
             Debug.Log("Halting because out of speed and attacking" + queueTime + speed);
             return true;
         }
+        /*else if (queueTime == holdTime)
+        {
+            turning = true;
+            Debug.Log("Halting because we met holdtime (means we're turning)" + queueTime + holdTime);
+            return true;
+
+        }
+*/
+
         if (attacking && targetAdjacent && targetToAttackPiece != null && attackType == "melee" && aggressiveAttitude == true) //if attacking and target is right next to us and we're melee, stop moving
         {
             Debug.Log("Halting because target next to us and we're aggressive");
@@ -4034,7 +4056,7 @@ public abstract class Piece : MonoBehaviour
 
                 if (CheckIfStopMove()) //Check to see if we need to stop moving for the whole turn
                 {
-                    //Debug.Log("Found a reason to stop");
+                    Debug.Log("Found a reason to stop");
                     oneStepFinished = true; //we've finished moving one step
                     FinishedMoving = true; //and we're also done moving totally
                     HandleMovementStoppage(); //then we shall attempt to stop our movement
@@ -4563,8 +4585,10 @@ public abstract class Piece : MonoBehaviour
             {
                 continue;
             }
+            //Debug.LogError("checktarget" + checkTarget + );
             if (checkTarget != null && !checkTarget.IsFromSameTeam(this) && checkTarget.targetToAttackPiece == this) //if target tile has a piece and it's an enemy and it's attacking us
             {
+                
                 //we will attack them back. this action does not turn the unit, so flanking damage is still applied. but unit can turn on a normal attack
                 ////Debug.LogError("im under attack and i've got no orders");
                 targetToAttackPiece = checkTarget; //set our target to be our attacker
@@ -5159,10 +5183,10 @@ public abstract class Piece : MonoBehaviour
         //    wasSprinting = true;
         //}
         ClearQueuedMoves();
-        speed = originalSpeed;
+        speed = originalSpeed + 1; //extra speed for turning
         remainingMovement = speed;
         UpdateTerrainType(occupiedSquare.x, occupiedSquare.y);
-        speed = originalSpeed + terrainSpeedModifier;
+        speed = originalSpeed + terrainSpeedModifier + 1;
         remainingMovement = speed;
         //if (wasSprinting)
         //{
@@ -5280,7 +5304,7 @@ public abstract class Piece : MonoBehaviour
         }
         beyondTargetableRange = longRange + 1;
     }
-    public void SetStanceMoveAttack()
+    public void SetStanceMoveAttack() //ranged move and attack
     {
         ResetRanges();
 

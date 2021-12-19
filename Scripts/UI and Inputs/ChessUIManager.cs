@@ -138,7 +138,7 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         unitInfoScreen.SetActive(true);
         var name = GameObject.Find("NameText");
         var nameText = name.GetComponent<TMP_Text>();
-        nameText.text = piece.unitName;
+        nameText.text = piece.displayName;
         var attack = GameObject.Find("AttackText");
         var attackText = attack.GetComponent<TMP_Text>();
         attackText.text = "Attack: " + piece.damage;
@@ -214,8 +214,8 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
         if (piece.OnTerrainType != "hill") //if not on hill
         {
-            effectsText.text += "\nMoving uphill causes this to stop.";
-
+            effectsText.text += "\nMoving uphill causes this to stop. \n-1 damage attacking enemies on hills.";
+/*
             if (piece.unitType == "infantry")
             {
                 effectsText.text += "\n-1 damage attacking enemies on hills.";
@@ -223,23 +223,23 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             else if (piece.unitType == "cavalry")
             {
                 effectsText.text += "\n-2 damage attacking enemies on hills.";
-            }
+            }*/
         }
         else if (piece.OnTerrainType == "hill") //if on hill
         {
             effectsText.text += "\nHill: + 1 range";
 
-            if (piece.attackType == "melee" && piece.unitType == "infantry")
+            if (piece.attackType == "melee")
             {
                 effectsText.text += "\nHigh ground: +1 damage attacking enemies on non-hills.";
             }
-            else if (piece.attackType == "melee" && piece.unitType == "cavalry")
+            /*else if (piece.attackType == "melee" && piece.unitType == "cavalry" && piece.unitType == "infantry")
             {
                 effectsText.text += "\nHigh ground: +2 damage attacking enemies on non-hills.";
-            }
+            }*/
             if (!piece.arcingAttack && piece.attackType == "ranged")
             {
-                effectsText.text += "\nHigh ground: +1 damage attacking enemies on non-hills. Able to fire over units that aren't on hills";
+                effectsText.text += "\nHigh ground: +1 damage attacking enemies on non-hills. Able to fire over units that aren't on hills.";
             }
         }
         
@@ -249,14 +249,15 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
         else if (piece.OnTerrainType == "mud")
         {
-            if (piece.unitType == "infantry")
+            /*if (piece.unitType == "infantry")
             {
                 effectsText.text += "\nMud: -1 speed, -1 defense)";
             }
             if (piece.unitType == "cavalry")
             {
                 effectsText.text += "\nMud: speed reduced to 1, can't sprint)";
-            }
+            }*/
+            effectsText.text += "\nMud: Speed reduced to 1. Can't sprint. -1 Defense.";
         }
 
         if (piece.currentFormation == "braced")

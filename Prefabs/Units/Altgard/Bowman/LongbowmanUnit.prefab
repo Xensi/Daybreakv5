@@ -121,6 +121,7 @@ MonoBehaviour:
   missionToLoad: 
   menuController: {fileID: 0}
   unitName: Longbowman
+  displayName: Longbowmen
   originalSpeed: 1
   models: 42
   oldModels: 0
@@ -128,6 +129,8 @@ MonoBehaviour:
   damage: 1
   morale: 15
   energy: 25
+  startingEnergy: 0
+  startingMorale: 0
   damageLevel: 1
   armorLevel: 1
   attackType: ranged
@@ -298,6 +301,13 @@ MonoBehaviour:
   alreadyAppliedDamage: 0
   movementStopped: 1
   markForRemovalFromSecondWave: 0
+  strList: []
+  colorList: []
+  floatList: []
+  lastEventEndPos: {x: 0, y: 0, z: 0}
+  lastTarget: {fileID: 0}
+  aggressiveAttitude: 1
+  placementID: 0
 --- !u!114 &255507802608927540
 MonoBehaviour:
   m_ObjectHideFlags: 0

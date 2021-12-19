@@ -32,6 +32,15 @@ public class DialogueManager : MonoBehaviour
     public Image speakerFancyBorder;
     public npcAnimController npcAnimController;
     public GameInitializer gameInit;
+    public ChessUIManager chessUI;
+
+    public List<UnitListScriptableObject> levelUnitLists;
+
+    public Image fadeToBlack;
+
+    public Transform cameraPosTutorial;
+
+    //public List<UnitScriptableObject> tutorialUnitList;
     void Start()
     {
 
@@ -240,9 +249,7 @@ public class DialogueManager : MonoBehaviour
     {
         if (loadedDialogue.commandToExecuteEnd == "startTutorial")
         {
-            Debug.Log("Starting training course");
-            gameInit.strafeCam.SetActive(true);
-            gameInit.cinematicCam.SetActive(false);
+            StartTutorial();
         }
         if (loadedDialogue.commandToExecuteEnd == "startDayOfGlory")
         {
@@ -250,6 +257,83 @@ public class DialogueManager : MonoBehaviour
             gameInit.strafeCam.SetActive(true);
             gameInit.cinematicCam.SetActive(false);
         }
+        if (loadedDialogue.commandToExecuteEnd == "startTutorialPlacement")
+        {
+            StartTutorialPlacement();
+        }
+        if (loadedDialogue.commandToExecuteEnd == "enableChessControllerInput")
+        {
+            gameInit.chessController.AllowInput = true;
+        }
+        if (loadedDialogue.commandToExecuteEnd == "enableExecution")
+        {
+            gameInit.executeButtonParent.SetActive(true);
+        }
+    }
+
+    public void StartTutorial()
+    {
+        gameInit.inTutorial = true;
+        chessUI.menuOptionsParent.SetActive(false);
+        chessUI.BG.gameObject.SetActive(false);
+        Tween tween = fadeToBlack.DOFade(1, 1).SetEase(Ease.InOutQuad);//dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
+        tween.OnComplete(StartTutorial2);
+
+    }
+
+    void StartTutorial2()
+    {
+
+        //Debug.Log("Starting training course");
+        gameInit.strafeCam.transform.position = cameraPosTutorial.position;
+        gameInit.strafeCam.SetActive(true);
+        gameInit.cinematicCam.SetActive(false);
+
+        gameInit.SelectLevel("Tutorial"); //loads the correct board layout (pieces positioning)
+        gameInit.levelGen.SelectLevel("Tutorial"); //loads correct map, and placement map
+        gameInit.CreateSinglePlayerBoard(); //enables execute button, creates board, finds board for level gen, generates level, finds board
+        chessUI.OnSingleplayerModeSelected(); //simply disables some screens
+        gameInit.InitializeSinglePlayerController();
+        
+
+        //gameInit.saveInfoObject.list = tutorialUnitList;
+        foreach (var levelUnitList in levelUnitLists)
+        {
+            Debug.Log(levelUnitList.ToString());
+            if (levelUnitList.ToString() == "TutorialUnitList (UnitListScriptableObject)")
+            {
+                gameInit.saveInfoObject.list = levelUnitList.unitList;
+            }
+        }
+
+        gameInit.saveInfoObject.GenerateModifiableScripObjsAsChildren();
+        gameInit.board.GenerateButtonsFromSavedUnits();
+
+
+        gameInit.chessController.AllowInput = false;
+        Tween tween = fadeToBlack.DOFade(0, 1).SetEase(Ease.InOutQuad);//dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
+        tween.OnComplete(StartTutorial3);
+    }
+
+    void StartTutorial3()
+    {
+        SelectDialogue("Actual1");
+    }
+
+    void StartTutorialPlacement()
+    {
+
+        gameInit.placingUnitsScreen.SetActive(true);
+    }
+
+    public void ConfirmedUnitPlacementTutorial()
+    {
+        SelectDialogue("Actual3");
+    }
+
+    public void MovementMade()
+    {
+        SelectDialogue("Actual5");
     }
     public void PresentChoices()
     {

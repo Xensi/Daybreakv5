@@ -18,7 +18,7 @@ public class GameInitializer : MonoBehaviour
     [SerializeField] private ChessUIManager uiManager;
     [SerializeField] private Transform boardAnchor;
     [SerializeField] private CameraSetup cameraSetup;
-    [SerializeField] private LevelGenerator levelGen;
+    public LevelGenerator levelGen;
 
     [SerializeField] public GameObject dropDownParent;
     [SerializeField] public TMP_Dropdown actionDropdown;
@@ -30,7 +30,7 @@ public class GameInitializer : MonoBehaviour
     [SerializeField] public TMP_Dropdown attitudeDropDown;
     [SerializeField] public GameObject attitudeDropDownParent;
     Camera cam;
-    private ChessGameController chessController;
+    public ChessGameController chessController;
 
     //[Header("Team colors")]
     public Material[] teamColors;
@@ -62,6 +62,7 @@ public class GameInitializer : MonoBehaviour
     public UIButton cancelPlaceUnitButton;
 
     public GameObject placingUnitsAlertText;
+    public GameObject placingUnitsScreen;
     public UIButton confirmButton;
     public GameObject image;
 
@@ -71,6 +72,14 @@ public class GameInitializer : MonoBehaviour
 
     public GameObject strafeCam;
     public GameObject cinematicCam;
+
+    public bool inTutorial = false;
+    public bool selectionMade = false;
+    public bool movementMade = false;
+    public bool attackMeleeMade = false;
+    public DialogueManager dialogueManager;
+
+    
 
     public void SelectLevel(string strLevel)
     {
@@ -103,26 +112,40 @@ public class GameInitializer : MonoBehaviour
         {
             item.gameObject.SetActive(false);
         }
-        executeButtonParent.SetActive(true);
-        unreadyButtonParent.SetActive(true);
+        //executeButtonParent.SetActive(true);
+        //unreadyButtonParent.SetActive(true);
         board.placingPieces = false;
         dirButtonParent.SetActive(false);
         foreach (var item in levelGen.placementTilesList)
         {
             item.SetActive(false);
         }
+        if (inTutorial)
+        {
+            dialogueManager.ConfirmedUnitPlacementTutorial();
+        }
     }
 
     public void ChangeOrientation(int dir)
     {
-        board.tempDir = dir;
+        if (board.placingPieces) //when used to change dir on pieces
+        {
+            Debug.Log("Changing piece orientation");
+            board.tempDir = dir;
+        }
+        /*else
+        {
+            Debug.Log("will set piece orientation on move later");
+            board.selectedPiece.finalDirectionToTurn = dir;
+        }*/
+
     }
 
 
     private void Start()
     {
-        var camObj = GameObject.Find("Main Camera");
-        cam = camObj.GetComponent(typeof(Camera)) as Camera;
+        //var camObj = GameObject.Find("Main Camera");
+        //cam = camObj.GetComponent(typeof(Camera)) as Camera;
         StartCoroutine(SlowUpdate());
     }
     public void CreateMultiplayerBoard()
@@ -135,6 +158,7 @@ public class GameInitializer : MonoBehaviour
             PhotonNetwork.Instantiate(multiplayerBoardPrefab.name, boardAnchor.position, boardAnchor.rotation);
             levelGen.FindBoard();
             levelGen.GenerateLevel();
+            Debug.LogError("Generating level1");
         }
         //both players need to find this board, then do level generation stuff
         //FindBoard();
@@ -164,11 +188,10 @@ public class GameInitializer : MonoBehaviour
     {
         executeButtonParent.SetActive(true);
         //unreadyButtonParent.SetActive(true);
-
-
         Instantiate(singleplayerBoardPrefab, boardAnchor);
         levelGen.FindBoard();
         levelGen.GenerateLevel();
+        Debug.LogError("Generating level2");
         FindBoard();
     }
     public void InitializeMultiplayerController()
@@ -220,7 +243,8 @@ public class GameInitializer : MonoBehaviour
         else
         {
             levelGen.FindBoard();
-            levelGen.GenerateLevel();
+            //levelGen.GenerateLevel();
+            //Debug.LogError("Generating level3");
         }
     }
 
@@ -608,6 +632,14 @@ public class GameInitializer : MonoBehaviour
             formationDropDownParent.SetActive(false);
             board.selectedPiece.queuedFormation = "nothing";
             PieceDisengage();
+            attitudeDropDownParent.SetActive(false);
+        }
+        else if (action == "turn")
+        {
+            board.selectingAction = false;
+            formationDropDownParent.SetActive(false);
+            board.selectedPiece.queuedFormation = "nothing";
+            PieceTurn();
             attitudeDropDownParent.SetActive(false);
         }
     }

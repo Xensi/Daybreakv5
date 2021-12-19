@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: Actual5
+  m_EditorClassIdentifier: 
+  speaker: Kommandant
+  speakerImage: {fileID: 21300000, guid: be232d5dd83bfcd47bf736eab110deb9, type: 3}
+  speakerSpeed: 0.02
+  sentences:
+  - 'Watch them march. So obedient. '
+  - 'Now, order your conscripts to attack.
+
+'
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: ede7ee0dab7c9ae40a2873f51f92a5af, type: 2}
+  isChoices: 0
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 1}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 1}
+  choicePaths: []
+  commandToExecuteStart: 
+  commandToExecuteEnd: 

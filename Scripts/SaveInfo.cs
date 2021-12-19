@@ -23,12 +23,12 @@ public class SaveInfo : MonoBehaviour
             DontDestroyOnLoad(this.gameObject);
             created = true;
             Debug.Log("Awake: " + this.gameObject);
-            GenerateModifiableScripObjsAsChildren();
+            //GenerateModifiableScripObjsAsChildren();
         }
     }
 
 
-    private void GenerateModifiableScripObjsAsChildren()
+    public void GenerateModifiableScripObjsAsChildren()
     {
         var i = 0;
         foreach (var item in list)

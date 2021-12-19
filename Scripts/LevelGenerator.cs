@@ -12,6 +12,10 @@ public class LevelGenerator : MonoBehaviour
     public GameObject placementPrefab;
     public Color placementColor;
     public List<GameObject> placementTilesList;
+
+    public List<Texture2D> mapList;
+    public List<Texture2D> placementAllowanceMapList;
+    public List<Terrain> terrainList;
     //public Color ignoreColor;
 
     // Start is called before the first frame update
@@ -20,6 +24,37 @@ public class LevelGenerator : MonoBehaviour
         //GenerateLevel();
         
     }
+
+
+    public void SelectLevel(string strLevel)
+    {
+        foreach (var varmap in mapList)
+        {
+            Debug.Log(varmap.ToString());
+            if (varmap.ToString() == strLevel + " (UnityEngine.Texture2D)")
+            {
+                map = varmap;
+            }
+        }
+        foreach (var varplacementmap in placementAllowanceMapList)
+        {
+            Debug.Log(varplacementmap.ToString());
+            if (varplacementmap.ToString() == strLevel + "Placement (UnityEngine.Texture2D)")
+            {
+                placementAllowanceMap = varplacementmap;
+            }
+        }
+        foreach (var terrain in terrainList)
+        {
+            Debug.Log(terrain.ToString());
+            Debug.Log(strLevel + " (UnityEngine.Terrain)");
+            if (terrain.ToString() == strLevel + " (UnityEngine.Terrain)")
+            {
+                terrain.gameObject.SetActive(true);
+            }
+        }
+    }
+
 
     public void FindBoard()
     {
