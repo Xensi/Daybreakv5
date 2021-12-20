@@ -30,7 +30,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Flesh
-    second: {fileID: 2100000, guid: c68984c76cba7bb4caa7c9fd94e0237f, type: 2}
+    second: {fileID: 2100000, guid: 473013a7eac0cb14493bfee0edd2927f, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
