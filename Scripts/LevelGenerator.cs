@@ -17,6 +17,7 @@ public class LevelGenerator : MonoBehaviour
     public List<Texture2D> placementAllowanceMapList;
     public List<Terrain> terrainList;
     //public Color ignoreColor;
+    public List<GameObject> tileList;
 
     // Start is called before the first frame update
     void Start()
@@ -25,7 +26,17 @@ public class LevelGenerator : MonoBehaviour
         
     }
 
-
+    public void DestroyLevel()
+    {
+        foreach (var terrain in terrainList)
+        {
+            terrain.gameObject.SetActive(false);
+        }
+        foreach (var tile in tileList)
+        {
+            Destroy(tile);
+        }
+    }
     public void SelectLevel(string strLevel)
     {
         foreach (var varmap in mapList)
@@ -67,6 +78,9 @@ public class LevelGenerator : MonoBehaviour
 
     public void GenerateLevel() //later on we can make this take a variable to generate different maps
     {//i also need this to generate map data that can be read by units, and not just visuals
+
+        transform.localScale = new Vector3(1f, 1, 1f);
+        transform.position = Vector3.zero;
         for (int x = 0; x < map.width; x++)
         {
             for (int y = 0; y < map.height; y++)
@@ -104,6 +118,7 @@ public class LevelGenerator : MonoBehaviour
                 }
                 Vector3 position = new Vector3(x, 0, y);
                 var obj = Instantiate(placementPrefab, position, Quaternion.identity, transform);
+                tileList.Add(obj);
                 placementTilesList.Add(obj);
             }
         }
@@ -123,7 +138,7 @@ public class LevelGenerator : MonoBehaviour
             {
                 Vector3 position = new Vector3(x, 0, y);
                 var obj = Instantiate(colorMapping.prefab, position, Quaternion.identity, transform);
-
+                tileList.Add(obj);
                 if (board != null)
                 {
                     //Debug.Log(x + " " + y);

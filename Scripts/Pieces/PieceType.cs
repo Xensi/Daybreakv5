@@ -1,4 +1,4 @@
 public enum PieceType
 {
-    Conscript, Musketeer, Ritter, Longbowman, Commander, Objective, Söldner, Crossbowmen, Infantry
+    Conscript, Musketeer, Reiter, Longbowman, Commander, Objective, Söldner, Crossbowmen, Infantry
 }

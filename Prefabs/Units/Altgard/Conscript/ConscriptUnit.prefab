@@ -121,6 +121,7 @@ MonoBehaviour:
   missionToLoad: 
   menuController: {fileID: 0}
   unitName: Conscript
+  displayName: Conscripts
   originalSpeed: 1
   models: 42
   oldModels: 0
@@ -307,6 +308,7 @@ MonoBehaviour:
   lastTarget: {fileID: 0}
   aggressiveAttitude: 1
   placementID: 0
+  holdTimeDirection: 0
 --- !u!114 &255507802608927540
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -10,20 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
-  m_Name: Actual4.5
+  m_Name: Actual8
   m_EditorClassIdentifier: 
-  speaker: 
-  speakerImage: {fileID: 21300000, guid: d557fd46f8185634aab6f2341e7e9edb, type: 3}
+  speaker: Kommandant
+  speakerImage: {fileID: 21300000, guid: be232d5dd83bfcd47bf736eab110deb9, type: 3}
   speakerSpeed: 0.02
   sentences:
-  - Infantry can move one space and then turn to face a direction. Sprinting allows
-    them to move two spaces.
-  - Press the Execute button when you are finished plotting movements.
+  - 'At close range, your bowmen strike with greater accuracy. Conversely, striking
+    from afar is much more inaccurate. '
+  - 'Take care not to let the enemy close the distance. Your bowmen cannot hold their
+    own in melee. '
   sentenceAudio: []
-  nextDialogue: {fileID: 0}
+  nextDialogue: {fileID: 11400000, guid: aae83fc5680604c4cb9cfe0a9d731d65, type: 2}
   isChoices: 0
   speakerColorBorder: {r: 0, g: 0, b: 0, a: 1}
   speakerFancyBorder: {r: 0, g: 0, b: 0, a: 1}
   choicePaths: []
   commandToExecuteStart: 
-  commandToExecuteEnd: enableExecution
+  commandToExecuteEnd: 

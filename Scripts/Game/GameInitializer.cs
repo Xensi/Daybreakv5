@@ -77,7 +77,12 @@ public class GameInitializer : MonoBehaviour
     public bool selectionMade = false;
     public bool movementMade = false;
     public bool attackMeleeMade = false;
+    public bool attackMeleeExecuted = false;
+    public bool attackRangedMade = false;
+    public bool attackRangedExecuted = false;
+    
     public DialogueManager dialogueManager;
+
 
     
 
@@ -89,6 +94,7 @@ public class GameInitializer : MonoBehaviour
             if (level.ToString() == strLevel + " (BoardLayout)")
             {
                 boardLevel = level;
+                //chessController.startingBoardLayout = boardLevel;
             }
         }
     }
@@ -110,7 +116,11 @@ public class GameInitializer : MonoBehaviour
         image.SetActive(false);
         foreach (var item in board.unitButtonsList)
         {
-            item.gameObject.SetActive(false);
+            if (item != null)
+            {
+                item.gameObject.SetActive(false);
+
+            }
         }
         //executeButtonParent.SetActive(true);
         //unreadyButtonParent.SetActive(true);
@@ -118,7 +128,11 @@ public class GameInitializer : MonoBehaviour
         dirButtonParent.SetActive(false);
         foreach (var item in levelGen.placementTilesList)
         {
-            item.SetActive(false);
+            if (item != null)
+            {
+                item.SetActive(false);
+
+            }
         }
         if (inTutorial)
         {
@@ -170,7 +184,7 @@ public class GameInitializer : MonoBehaviour
         board = FindObjectOfType<SinglePlayerBoard>();
         if (board == null) //couldn't find a singleplayer board
         {
-            Debug.Log("SP board not found");
+            //Debug.Log("SP board not found");
             board = FindObjectOfType<MultiplayerBoard>();
         }
 

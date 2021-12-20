@@ -24,10 +24,12 @@ public abstract class Piece : MonoBehaviour
     public string displayName;
     public int originalSpeed = 1;
     public int models = 100; //the number of dudes in a squad/unit/battalion whatever
+    public int startingModels;
     [HideInInspector] public int oldModels = 0;
     public float health = 1; //the health of each model 
     public float damage = 1f;
     public float morale = 10;
+    public float maxMorale;
     public float energy = 15; //overall energy
     public float startingEnergy; //starting energy, which is set by energy
     public float startingMorale;
@@ -136,7 +138,8 @@ public abstract class Piece : MonoBehaviour
     public List<int> flankDirections = new List<int>();
     public List<int> frontDirections = new List<int>();
     public List<GameObject> soldierObjects;
-    [SerializeField] private List<GameObject> markedSoldiers;
+    public List<GameObject> markedSoldiers;
+    public List<GameObject> deadSoldiers;
     private List<GameObject> navObjects;
     private List<GameObject> navObjectsCircle;
     private List<GameObject> navObjectsStaggered;
@@ -267,7 +270,11 @@ public abstract class Piece : MonoBehaviour
 
     public int placementID = 0;
 
+    public int holdTimeDirection = 0;
     //public int finalDirectionToTurn = 8; //8 means maintain default turn
+    public List<GameObject> childProjectiles;
+
+    public bool placedByBoard = false;
 
     public abstract List<Vector2Int> SelectAvailableSquares(Vector2Int startingSquare);
 
@@ -289,7 +296,9 @@ public abstract class Piece : MonoBehaviour
         {
             aggressiveAttitude = false;
         }
+        startingModels = models; 
         startingMorale = morale;
+        startingEnergy = energy;
 
         flankingDamage = 1; //set this to 1 bc its all zero right now >>
 
@@ -322,7 +331,6 @@ public abstract class Piece : MonoBehaviour
 
 
 
-        startingEnergy = energy;
         startOfTurn = true;
         if (gameInit == null)
         {
@@ -2839,15 +2847,13 @@ public abstract class Piece : MonoBehaviour
     public void QueueMove(Vector2Int coords)
     {
         Debug.Log("Queuing move");
+
         turnTime++; //turn time needs to be 1 for reasons   (this means first queued move has turn time of 1, so trying to get last queued move should be queuedMove[turnTime-1]
-        /*if (attacking)
-        {
-            holdingPosition = true;
-            holdTime = turnTime - 1; //for example, second move holdtime 1
-            //Debug.Log("turn time" + turnTime);
-        }*/
         holdingPosition = true;
         holdTime = turnTime - 1; //for example, second move holdtime 1
+
+
+
         
         Vector2Int queuedPosition = occupiedSquare; //so this will let us determine the position after moves are applied
         for (int i = 0; i < queuedMoves.Count; i++)
@@ -2933,6 +2939,38 @@ public abstract class Piece : MonoBehaviour
             turnTime--; //but if we cancel the move then reset it.
             return;
         }
+        /*else if (attacking)
+        {//Debug.Log("turn time met speed");
+            var facingDirection = 0;
+            Vector2Int directionVector = coords - queuedPosition;
+            for (int t = 0; t < adjacentTiles.Length; t++) //check cardinal directions to see if they match up
+            {
+                if (adjacentTiles[t] == directionVector)
+                {
+                    facingDirection = t; //direction of the queued move (the attack direction)
+                }
+            }
+            bool inFrontArea = false;
+            foreach (var dir in frontDirections)
+            {
+                if (facingDirection == dir) //this is the desired case
+                {
+                    inFrontArea = true;
+                    break;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+            if (inFrontArea == false)
+            {
+                Debug.Log("clicked on area not in front when attacking");
+                turnTime--;
+                return;
+            }
+
+        }*/
         //end of checking to see if we should cancel move or not
 
         //Debug.Log(turnTime);
@@ -3135,7 +3173,7 @@ public abstract class Piece : MonoBehaviour
 
         GameObject markerVisual;
         //Debug.LogError("remaining movement" + remainingMovement);
-        if (attacking && remainingMovement <= 0 && attackType == "melee") //if attacking and last queued move set arrow instead of circle (not working when clicking on enemy unit twice?
+        if (remainingMovement <= 0) //if attacking and last queued move set arrow instead of circle (not working when clicking on enemy unit twice?attacking &&  && attackType == "melee"
         {
             markerVisual = Instantiate(arrowMarkerVisualPrefab, targetPosition, Quaternion.identity);
 
@@ -4071,7 +4109,23 @@ public abstract class Piece : MonoBehaviour
                     Vector2Int coords = queuedMoves[queueTime - 1]; //get coordinates of the move we are executing
                     Vector3 targetPosition = board.CalculatePositionFromCoords(coords); //find physical space based on coordinates
 
-                    if (!turning) //if we're not turning
+                    if (queueTime - 1 == holdTime && !attacking) //turning to a direction
+                    {
+                        Vector2Int directionVector = coords - occupiedSquare;
+                        for (int t = 0; t < adjacentTiles.Length; t++) //check cardinal directions to see if they match up
+                        {
+                            if (adjacentTiles[t] == directionVector)
+                            {
+                                facingDirection = t;
+                            }
+                        }
+                        Vector3 rotationGoal = new Vector3(0, 45 * facingDirection, 0);
+
+                        Tween rotateTween = transform.DORotate(rotationGoal, 0);
+                        //yield return rotateTween.WaitForCompletion();
+
+                    }
+                    else //normal movement
                     {
                         //sets new coords be our piece, and old coords to null
                         board.UpdateBoardOnPieceMove(coords, occupiedSquare, this, null); //must be called before occupied square is actually updated
@@ -4103,20 +4157,6 @@ public abstract class Piece : MonoBehaviour
                             yield return new WaitForSeconds(tween.Duration() + 1);
 
                         }
-                    }
-                    else //if we are turning
-                    {
-                        Vector2Int directionVector = coords - occupiedSquare;
-                        for (int t = 0; t < adjacentTiles.Length; t++) //check cardinal directions to see if they match up
-                        {
-                            if (adjacentTiles[t] == directionVector)
-                            {
-                                facingDirection = t;
-                            }
-                        }
-                        Vector3 rotationGoal = new Vector3(0, 45 * facingDirection, 0);
-                        Tween rotateTween = transform.DORotate(rotationGoal, 3);
-                        yield return rotateTween.WaitForCompletion();
                     }
                     //Debug.Log("Moved");
                     HandleMovementStoppage(); //if we finish moving or turning for this queued move, stop;
@@ -4806,6 +4846,7 @@ public abstract class Piece : MonoBehaviour
                         rowRandom = Random.Range(0, soldierObjects.Count - 1);
                     }
                     markedSoldiers.Add(soldierObjects[rowRandom]);
+                    deadSoldiers.Add(soldierObjects[rowRandom]);
                     soldierObjects.RemoveAt(rowRandom); //remove it right away so it can't be marked twice
                     Debug.Log("marked " + i);
                 }
@@ -4817,6 +4858,7 @@ public abstract class Piece : MonoBehaviour
                 {
                     var random = Random.Range(0, soldierObjects.Count - 1);
                     markedSoldiers.Add(soldierObjects[random]);
+                    deadSoldiers.Add(soldierObjects[random]);
                     soldierObjects.RemoveAt(random); //remove it right away so it can't be marked twice
                     Debug.Log("marked " + i);
                 }
@@ -5111,17 +5153,18 @@ public abstract class Piece : MonoBehaviour
         UpdateTerrainType(occupiedSquare.x, occupiedSquare.y);
         speed = originalSpeed + terrainSpeedModifier;
         speed *= 2; //double speed
+        speed++;
         remainingMovement = speed;
 
         if (OnTerrainType == "mud")
         {
-            speed = 1;
-            remainingMovement = 1;
+            speed = 2;
+            remainingMovement = 2;
         }
         CheckFormationForSpeed();
         if (energy <= 0) //if no energy, do normal movement
         {
-            speed = originalSpeed;
+            speed = originalSpeed + 1;
             remainingMovement = speed;
         }
         board.UpdateUIManager();

@@ -15,6 +15,7 @@ public class SaveInfo : MonoBehaviour
     public UnitInformationScript unitPrefab;
 
     public List<UnitInformationScript> listOfSavedUnits = new List<UnitInformationScript>();
+    public GameInitializer gameInit;
 
     void Awake()
     {
@@ -50,6 +51,43 @@ public class SaveInfo : MonoBehaviour
         }
     }
 
+    public void SaveExistingPieceInfoInScripObjs()
+    {
+        Piece[] AllPieces = FindObjectsOfType<Piece>();
+        List<Piece> listOfPiecesOnOurTeam = new List<Piece>();
+        foreach (var piece in AllPieces)
+        {
+            if (piece.team == gameInit.board.ourTeamColor)
+            {
+                listOfPiecesOnOurTeam.Add(piece);
+            }
+        }
+
+        var i = 0;
+        foreach (var savedUnit in listOfSavedUnits)
+        {
+            if (i < listOfPiecesOnOurTeam.Count) //imagine there are 3 saved, and 2 actual. i will go up to 2 (0, 1, 2) and the count of actual is 2. if there were 2 on both i need to be less than the actual count
+            {
+
+                Piece boardPiece = listOfPiecesOnOurTeam[i];
+                savedUnit.name = boardPiece.unitName;
+                savedUnit.models = boardPiece.models;
+                savedUnit.morale = boardPiece.morale;
+                savedUnit.energy = boardPiece.energy;
+                savedUnit.maxModels = boardPiece.startingModels;
+                savedUnit.maxMorale = boardPiece.startingMorale;
+                savedUnit.maxEnergy = boardPiece.startingEnergy;
+                savedUnit.alreadyPlaced = false;
+                savedUnit.placementID = i;
+            }
+            else
+            {
+                Destroy(savedUnit); //if exceed we should get rid of it. we're probably not going to have many situations where you are given new units . . . we'll cross that bridge.
+            }
+            i++;
+        }
+
+    }
 
     public void LoadScene()
     {

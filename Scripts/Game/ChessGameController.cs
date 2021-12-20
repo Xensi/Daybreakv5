@@ -27,7 +27,6 @@ public abstract class ChessGameController : MonoBehaviour
 
     public bool AllowInput = true;
 
-
     protected abstract void SetGameState(GameState state);
     public abstract void TryToStartCurrentGame();
     public abstract bool CanPerformMove();
@@ -80,7 +79,7 @@ public abstract class ChessGameController : MonoBehaviour
         return state == GameState.Play; 
     }
 
-    private void CreatePiecesFromLayout(BoardLayout layout)
+    public void CreatePiecesFromLayout(BoardLayout layout)
     {
         for (int i = 0; i < layout.GetPiecesCount(); i++)
         {
@@ -103,7 +102,7 @@ public abstract class ChessGameController : MonoBehaviour
     {
         Piece newPiece = pieceCreator.CreateDefaultPiece(typeName, direction).GetComponent<Piece>();
         newPiece.SetData(squareCoords, team, board, direction);
-
+        newPiece.placedByBoard = true; //placed by board layout. means it can't be removed by player
         Material teamMaterial = pieceCreator.GetTeamMaterial(team);
         //newPiece.SetMaterial(teamMaterial);
 
@@ -118,6 +117,7 @@ public abstract class ChessGameController : MonoBehaviour
         Piece newPiece = pieceCreator.CreatePiece(typeName, board.tempModels, board.tempMorale, board.tempEnergy, board.tempPlacementID, direction).GetComponent<Piece>();
         newPiece.SetData(squareCoords, team, board, direction);
 
+        newPiece.placedByBoard = false; //placed by player
         Material teamMaterial = pieceCreator.GetTeamMaterial(team);
         //newPiece.SetMaterial(teamMaterial);
 

@@ -79,6 +79,7 @@ public abstract class Board : MonoBehaviour
 
     public List<UIButton> unitButtonsList = new List<UIButton>();
 
+
     public abstract void TriggerSlowUpdate();
 
     public void OnTriggerSlowUpdate() //finished communicating with mp
@@ -111,11 +112,18 @@ public abstract class Board : MonoBehaviour
 
     public void OnSquareSelected(Vector3 inputPosition, int mouse) //called when player clicks on a board square
     {
+
+        Vector2Int coords = CalculateCoordsFromPosition(inputPosition); //coords calculated from position
+        if (terrainGrid[coords.x, coords.y] == "rout")
+        {
+            Debug.LogError("Can't place/queue onto rout!");
+            return;
+        }
         if (placingPieces)
         {
             if (mouse == 0)
             {
-                Vector2Int coords = CalculateCoordsFromPosition(inputPosition); //coords calculated from position
+                //Vector2Int coords = CalculateCoordsFromPosition(inputPosition); //coords calculated from position
                 Piece piece = GetPieceOnSquare(coords); //specific piece nabbed using new coords
                 if (readyToPlaceUnit && piece == null && placementAllowedGrid[coords.x, coords.y] == 1) //there must be no unit already there to place.
                 {
@@ -128,7 +136,10 @@ public abstract class Board : MonoBehaviour
                     gameInit.cancelPlaceUnitButton.gameObject.SetActive(false);
                     foreach (var button in unitButtonsList)
                     {
-                        button.gameObject.SetActive(true);
+                        if (button != null)
+                        { 
+                            button.gameObject.SetActive(true);
+                        }
                     }
                     //say that it's been placed.
                     gameInit.saveInfoObject.listOfSavedUnits[tempPlacementID].alreadyPlaced = true;
@@ -155,7 +166,7 @@ public abstract class Board : MonoBehaviour
                     gameInit.dirButtonParent.SetActive(false);
 
                 }
-                else if (!readyToPlaceUnit && piece != null) //if we are not trying to place a unit and the location we have selected has a piece on it
+                else if (!readyToPlaceUnit && piece != null && !piece.placedByBoard) //if we are not trying to place a unit and the location we have selected has a piece on it
                 {
 
                     Debug.LogError(piece.team);
@@ -186,7 +197,6 @@ public abstract class Board : MonoBehaviour
             {
                 return;
             }
-            Vector2Int coords = CalculateCoordsFromPosition(inputPosition); //coords calculated from position
             Piece piece = GetPieceOnSquare(coords); //specific piece nabbed using new coords
 
             if (mouse == 0) //display unit info and select
@@ -226,6 +236,7 @@ public abstract class Board : MonoBehaviour
                                                                                                                             //triggers when move attacking, but we need to not deselect in that case.
                         if (selectedPiece.moveAndAttackEnabled && selectedPiece.attackType == "ranged") //if move and attacking ranged unit (and we're clicking on a point we've already queued onto
                         {
+                            Debug.Log("move and attacking with ranged unit and clicking on tile twice");
                             selectedPiece.speed = selectedPiece.longRange; //increase speed so we can queue a second move
                             selectedPiece.remainingMovement = selectedPiece.speed;
 
@@ -241,40 +252,39 @@ public abstract class Board : MonoBehaviour
                         }
                         else
                         {
-                            if (selectedPiece.attacking && selectedPiece.attackType == "melee") //changes the marker visual to an arrow when melee attacking. happens on the final click
+                            Debug.Log("changing marker visual to an arrow");
+                            var lastMarkerVisual = selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1];
+
+                            GameObject markerVisual = Instantiate(selectedPiece.arrowMarkerVisualPrefab, lastMarkerVisual.transform.position, Quaternion.identity);
+
+                            Vector2Int directionVector = Vector2Int.zero;
+
+                            if (selectedPiece.queuedMoves.Count == 1)
                             {
-                                var lastMarkerVisual = selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1];
-
-                                GameObject markerVisual = Instantiate(selectedPiece.arrowMarkerVisualPrefab, lastMarkerVisual.transform.position, Quaternion.identity);
-
-                                Vector2Int directionVector = Vector2Int.zero;
-
-                                if (selectedPiece.queuedMoves.Count == 1)
-                                {
-                                    directionVector = coords - selectedPiece.occupiedSquare;
-                                }
-                                else if (selectedPiece.queuedMoves.Count > 1)
-                                {
-                                    directionVector = coords - selectedPiece.queuedMoves[selectedPiece.queuedMoves.Count - 2];
-                                }
-
-                                var facingDirection = 0;
-                                for (int t = 0; t < selectedPiece.adjacentTiles.Length; t++) //check cardinal directions to see if they match up
-                                {
-                                    if (selectedPiece.adjacentTiles[t] == directionVector)
-                                    {
-                                        facingDirection = t;
-                                    }
-                                }
-
-                                Vector3 rotationGoal = new Vector3(0, 45 * facingDirection, 0); //set rotation goal
-
-                                markerVisual.transform.Rotate(rotationGoal);
-
-                                Destroy(selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1]); //delete the last marker visual so we can replace it 
-
-                                selectedPiece.markerVisuals.Add(markerVisual);
+                                directionVector = coords - selectedPiece.occupiedSquare;
                             }
+                            else if (selectedPiece.queuedMoves.Count > 1)
+                            {
+                                directionVector = coords - selectedPiece.queuedMoves[selectedPiece.queuedMoves.Count - 2];
+                            }
+
+                            var facingDirection = 0;
+                            for (int t = 0; t < selectedPiece.adjacentTiles.Length; t++) //check cardinal directions to see if they match up
+                            {
+                                if (selectedPiece.adjacentTiles[t] == directionVector)
+                                {
+                                    facingDirection = t;
+                                }
+                            }
+
+                            Vector3 rotationGoal = new Vector3(0, 45 * facingDirection, 0); //set rotation goal
+
+                            markerVisual.transform.Rotate(rotationGoal);
+
+                            Destroy(selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1]); //delete the last marker visual so we can replace it 
+
+                            selectedPiece.markerVisuals.Add(markerVisual);
+
                             selectedPiece.holdingPosition = true;
                             //selectedPiece.holdTime = selectedPiece.turnTime;
                             DeselectPiece(); //deselect it and hide movement paths (deselected because we are ending our movement early)
@@ -283,20 +293,25 @@ public abstract class Board : MonoBehaviour
                     }
                     else if (piece != null && selectedPiece != piece && !piece.IsFromSameTeam(selectedPiece)) //if we click on a different piece and it's an enemy and our selectedPiece is attacking
                     {
-                        if (selectedPiece.attacking || selectedPiece.speed == selectedPiece.sprintSpeed)
+                        if (selectedPiece.attacking)//|| selectedPiece.speed == selectedPiece.sprintSpeed
                         {
                             if (gameInit.inTutorial && !gameInit.attackMeleeMade && selectedPiece.attackType == "melee")
                             {
                                 gameInit.attackMeleeMade = true;
                                 //gameInit.dialogueManager.SelectDialogue("Actual7");
                             }
-                            Debug.Log("Queueing move onto a position we know has an enemy"); //use selectPieceMoved instead of queuing directly
-                            SelectPieceMoved(coords);
-                            //selectedPiece.QueueMove(coords); //queue a move (but really an attack)
-                            //DeselectPiece(); //deselect because attack should basically just stop
-                            
+                            if (gameInit.inTutorial && !gameInit.attackRangedMade && selectedPiece.attackType == "ranged")
+                            {
+                                gameInit.attackRangedMade = true;
+                                //gameInit.dialogueManager.SelectDialogue("Actual7");
+                            }
+
 
                         }
+                        Debug.Log("Queueing move onto a position we know has an enemy"); //use selectPieceMoved instead of queuing directly
+                        SelectPieceMoved(coords);
+                        //selectedPiece.QueueMove(coords); //queue a move (but really an attack)
+                        //DeselectPiece(); //deselect because attack should basically just stop
 
                     }
                     else if (piece != null && selectedPiece != piece && selectedPiece.turning)//if we're turning and there's a unit there, still queue
@@ -373,6 +388,11 @@ public abstract class Board : MonoBehaviour
                 {
                     if (piece != null) //for clicking on a piece normally from empty. ie left click on piece with no piece already selected
                     {
+
+                        if (piece.team != ourTeamColor)
+                        {
+                            return;
+                        }
                         if (isChessControllerMP) //if we're using a MP controller
                         {
                             if (chessController.localPlayer.team == piece.team) //, we need to check if this is on our team or not
@@ -400,6 +420,12 @@ public abstract class Board : MonoBehaviour
             {
                 Debug.Log("mouse 1");
             }
+        }
+
+        if (selectedPiece == null)
+        {
+
+            Debug.Log("No piece found");
         }
     }
 
@@ -447,7 +473,11 @@ public abstract class Board : MonoBehaviour
         //hide all the buttons
         foreach (var button in unitButtonsList)
         {
-            button.gameObject.SetActive(false);
+            if (button != null)
+            {
+
+                button.gameObject.SetActive(false);
+            }
         }
         Debug.Log("selected " + name + " " + models + " " + morale + " " + energy);
         readyToPlaceUnit = true;
@@ -1358,6 +1388,7 @@ public abstract class Board : MonoBehaviour
     public void AllowExecution()
     {
 
+
         //Debug.Log("Allowed Input again");
         chessController.AllowInput = true; //since turn is over, input is okay again
         executeButton.interactable = true; //and we can execute again
@@ -1373,6 +1404,17 @@ public abstract class Board : MonoBehaviour
         {
             gameInit.movementMade = true;
             gameInit.dialogueManager.MovementMade();
+        }
+
+        if (gameInit.inTutorial && !gameInit.attackMeleeExecuted && gameInit.attackMeleeMade)
+        {
+            gameInit.attackMeleeExecuted = true;
+            gameInit.dialogueManager.SelectDialogue("Actual7");
+        }
+        if (gameInit.inTutorial && !gameInit.attackRangedExecuted && gameInit.attackRangedMade)
+        {
+            gameInit.attackRangedExecuted = true;
+            gameInit.dialogueManager.SelectDialogue("Actual8");
         }
     }
 

@@ -16,7 +16,12 @@ MonoBehaviour:
   speakerImage: {fileID: 21300000, guid: d557fd46f8185634aab6f2341e7e9edb, type: 3}
   speakerSpeed: 0.02
   sentences:
-  - 'Click one of your units to see their capabilities.
+  - 'The red bar is the model count, blue is morale, and green is energy.
+
+'
+  - "When morale reaches 0, a unit will rout and be unable to fight. As energy decreases,
+    a unit\u2019s strength will be reduced."
+  - 'Click one of your units to see their information.
 
 '
   sentenceAudio: []

@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: Actual10
+  m_EditorClassIdentifier: 
+  speaker: Kommandant
+  speakerImage: {fileID: 21300000, guid: be232d5dd83bfcd47bf736eab110deb9, type: 3}
+  speakerSpeed: 0.02
+  sentences:
+  - "Well then, enough is enough. You did . . . adequately. \r"
+  - "Remember the words spoken by your academy\u2019s provost, and undoubtedly spoken
+    by any practitioner of warfare in centuries long past."
+  - 'The object of any war is to strike swiftly, and bring about a conclusion in
+    the quickest and simplest means possible. I care not how you achieve this, only
+    that you do. '
+  - And speaking of swift victories, we cannot tarry long. The time of our surprise
+    attack fast approaches.
+  - An opportunity with which we can reverse the mistakes of the first wretched years
+    of this war.
+  - The Seventh Legion will seethe, undoubtedly. Victory will be ours, in much shorter
+    a time than our superiors could ever dream, mark my words.
+  sentenceAudio: []
+  nextDialogue: {fileID: 0}
+  isChoices: 0
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 1}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 1}
+  choicePaths: []
+  commandToExecuteStart: 
+  commandToExecuteEnd: endTutorial

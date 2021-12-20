@@ -830,7 +830,7 @@ GameObject:
   - component: {fileID: -2566123799106194095}
   - component: {fileID: 1163647887334416300}
   m_Layer: 9
-  m_Name: BowmanRagdolls
+  m_Name: LongbowmanRagdolls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

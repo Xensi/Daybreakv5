@@ -25,4 +25,4 @@ MonoBehaviour:
   speakerFancyBorder: {r: 0, g: 0, b: 0, a: 1}
   choicePaths: []
   commandToExecuteStart: confused
-  commandToExecuteEnd: startDayOfGlory
+  commandToExecuteEnd: ignoreTutorial

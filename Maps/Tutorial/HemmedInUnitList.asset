@@ -10,8 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8a5061760071ee841a6e468687c0510f, type: 3}
-  m_Name: TutorialUnitList
+  m_Name: HemmedInUnitList
   m_EditorClassIdentifier: 
   unitList:
   - {fileID: 11400000, guid: 798b40938ec03eb4fbf973d97f18815d, type: 2}
+  - {fileID: 11400000, guid: 5a0430c6824381548a15443d10ee9c3b, type: 2}
+  - {fileID: 11400000, guid: 5a0430c6824381548a15443d10ee9c3b, type: 2}
   - {fileID: 11400000, guid: 5a0430c6824381548a15443d10ee9c3b, type: 2}

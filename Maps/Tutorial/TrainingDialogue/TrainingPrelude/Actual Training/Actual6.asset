@@ -16,10 +16,9 @@ MonoBehaviour:
   speakerImage: {fileID: 21300000, guid: d557fd46f8185634aab6f2341e7e9edb, type: 3}
   speakerSpeed: 0.02
   sentences:
-  - You can move normally before attacking. To end an action early (for instance,
-    to attack an adjacent unit) click the tile again.
-  - "By default, units will attack as soon as they are able to. It\u2019s not necessary
-    to change this, but you can if you want to."
+  - 'Tips: You can move one space as part of an attack. To end an action early (for
+    instance, to attack an adjacent unit) click the tile again. To cancel a move,
+    click on the unit again. '
   sentenceAudio: []
   nextDialogue: {fileID: 0}
   isChoices: 0
