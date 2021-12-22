@@ -18,12 +18,18 @@ ModelImporter:
   - first:
       74: -4464311152635226496
     second: conscriptSpearWalk
+  - first:
+      74: 761935594621108216
+    second: conscriptReady
+  - first:
+      74: -7160178746597951340
+    second: conscriptReadyWalk
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Cloth
-    second: {fileID: 2100000, guid: 5a2aa5e7e11f42b4c93f83c6437d4358, type: 2}
+    second: {fileID: 2100000, guid: 72c273847ceb4d447ac482257520c33d, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -38,7 +44,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Gloves_Boots
-    second: {fileID: 2100000, guid: 52635111ffce9e541905c6d1512fddb9, type: 2}
+    second: {fileID: 2100000, guid: cf1ec83b2e1d5194da21beb4646f774b, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -223,6 +229,64 @@ ModelImporter:
       internalID: 0
       firstFrame: 70
       lastFrame: 86
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: conscriptReady
+      takeName: Scene
+      internalID: 0
+      firstFrame: 90
+      lastFrame: 115
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: conscriptReadyWalk
+      takeName: Scene
+      internalID: 0
+      firstFrame: 125
+      lastFrame: 141
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
