@@ -5335,7 +5335,7 @@ MonoBehaviour:
     m_Start: 4.9
     m_ClipIn: 0
     m_Asset: {fileID: -5134556448591032868}
-    m_Duration: 1.6666666666666643
+    m_Duration: 1.6999999999999993
     m_TimeScale: 1
     m_ParentTrack: {fileID: -133350137416363158}
     m_EaseInDuration: 0
@@ -5416,7 +5416,7 @@ MonoBehaviour:
     m_PreExtrapolationTime: 0
     m_DisplayName: CM vcam Blackscreen
   - m_Version: 1
-    m_Start: 6.566666666666666
+    m_Start: 6.6
     m_ClipIn: 0
     m_Asset: {fileID: -5004156827967586162}
     m_Duration: 12.600000000000012
