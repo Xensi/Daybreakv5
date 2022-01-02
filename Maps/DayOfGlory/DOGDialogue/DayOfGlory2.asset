@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: DayOfGlory2
+  m_EditorClassIdentifier: 
+  speaker: Kommandant Walderstein
+  speakerImage: {fileID: 21300000, guid: be232d5dd83bfcd47bf736eab110deb9, type: 3}
+  speakerSpeed: 0.01
+  sentences:
+  - 'Most excellent. No doubt the other kampfeinheiten will signal the attack. We
+    shall cut through their ranks before the battle even begins. '
+  - "The Second Legion\u2019s renown will rise, and along with it, that of glorious
+    House Walderstein."
+  - 'So long have we been looked down on by the great houses as mere insects, vassals.
+    Now, today, they will know that I, Kommandant Heinrich Walderstein, am worthy
+    of the highest accolades. '
+  - Come forth, my compatriot. Are the preparations in place?
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: 5b9e6a7710e88b943b961301b46a3c2f, type: 2}
+  isChoices: 0
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  choicePaths: []
+  commandToExecuteStart: 
+  commandToExecuteEnd: 

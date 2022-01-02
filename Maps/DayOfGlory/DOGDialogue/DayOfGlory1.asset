@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: DayOfGlory1
+  m_EditorClassIdentifier: 
+  speaker: Scout
+  speakerImage: {fileID: 21300000, guid: 180ab775dfb3f7c46b583c1420a75e97, type: 3}
+  speakerSpeed: 0.01
+  sentences:
+  - 'The fools. They know nothing of our host. The mists hid us well. '
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: 4522ffae99c07b344ad87eff80a355e5, type: 2}
+  isChoices: 0
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  choicePaths: []
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
