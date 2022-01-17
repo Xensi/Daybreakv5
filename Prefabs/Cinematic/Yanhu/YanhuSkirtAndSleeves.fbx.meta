@@ -10,6 +10,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Face neck
+    second: {fileID: 2100000, guid: b5eb8fb3993cfac47b36d7f488b80bbb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Material
     second: {fileID: 2100000, guid: 257ec0855b441894a945293831ee3c54, type: 2}
   - first:
@@ -25,6 +30,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: RedBodyYanhu
+    second: {fileID: 2100000, guid: c21b98814f2bd6d4fafc3ce774602a52, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: orangeMetal
     second: {fileID: 2100000, guid: 0824b22d26825c24d9b0e8d1deb15131, type: 2}
   - first:
@@ -37,6 +47,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: yanhuMaskEyes
     second: {fileID: 2100000, guid: 4206266b82590184eb070ad865cb7b6c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: yanhusleeves
+    second: {fileID: 2100000, guid: 633bb8cc3bb079e4893859e9e03d0a03, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
