@@ -65,7 +65,7 @@ public abstract class Board : MonoBehaviour
 
     public bool readyToPlaceUnit = false;
     public string tempName;
-    public int tempModels;
+    public float tempModels;
     public float tempMorale;
     public float tempEnergy;
     public int tempPlacementID = 0;
@@ -459,7 +459,7 @@ public abstract class Board : MonoBehaviour
             newButton.onClick.AddListener(delegate { SelectSpecificUnit(unit.name, unit.models, unit.morale, unit.energy, unit.placementID); });
 
             newButton.transform.parent = gameInit.unitOptionsParent.transform;
-            newButton.transform.position += new Vector3(1200, 800 - i * 100, 0);
+            newButton.transform.position += new Vector3(1200, 300 - i * 100, 0);
 
             unitButtonsList.Add(newButton);
 
@@ -468,7 +468,7 @@ public abstract class Board : MonoBehaviour
     }
 
 
-    public void SelectSpecificUnit(string name, int models, float morale, float energy, int placementID)
+    public void SelectSpecificUnit(string name, float models, float morale, float energy, int placementID)
     {
         //hide all the buttons
         foreach (var button in unitButtonsList)
@@ -631,8 +631,8 @@ public abstract class Board : MonoBehaviour
     public abstract void PieceCommunicateTargetToAttackPiece(int id, int x, int y);
 
 
-    public abstract void PieceMarkForDeath(int id, int damage);
-    public void OnPieceMarkForDeath(int id, int damage)
+    public abstract void PieceMarkForDeath(int id, float damage);
+    public void OnPieceMarkForDeath(int id, float damage)
     {
         UnitList[id].OnMarkForDeath(damage);
     }

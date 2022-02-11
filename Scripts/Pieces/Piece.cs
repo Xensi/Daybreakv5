@@ -23,9 +23,9 @@ public abstract class Piece : MonoBehaviour
     public string unitName;
     public string displayName;
     public int originalSpeed = 1;
-    public int models = 100; //the number of dudes in a squad/unit/battalion whatever
-    public int startingModels;
-    [HideInInspector] public int oldModels = 0;
+    public float models = 100; //the number of dudes in a squad/unit/battalion whatever
+    public float startingModels;
+    [HideInInspector] public float oldModels = 0;
     public float health = 1; //the health of each model 
     public float damage = 1f;
     public float morale = 10;
@@ -35,7 +35,7 @@ public abstract class Piece : MonoBehaviour
     public float startingMorale;
 
     public int damageLevel = 0;
-    public int armorLevel = 0;
+    public float armorLevel = 0;
 
     public string attackType = "melee"; //options: melee, ranged, mixed
     public string unitType = "infantry"; //options: infantry, cavalry, artillery, spellcaster
@@ -97,7 +97,7 @@ public abstract class Piece : MonoBehaviour
     public int safeQueueTime = 0;
     public int speed = 0;
     public int sprintSpeed;
-    public int queuedDamage = 0;
+    public float queuedDamage = 0;
     public int turnTime = 0;
     private int numberOfRows;
     private int smallModelCount;
@@ -3563,8 +3563,9 @@ public abstract class Piece : MonoBehaviour
     {
         board.PieceCalculateDamage(unitID);
     }
-    public void OnCalculateDamage()
+    public void OnCalculateDamage() //calculate damage
     {
+        //don't calculate damage if we already have or we have no attack target
         if (alreadyCalculatedDamage)
         {
             return;
@@ -3573,57 +3574,43 @@ public abstract class Piece : MonoBehaviour
         {
             return;
         }
-        Debug.Log("Calculating damage" + unitID);
-        //Attacking unit model count *attack damage - armor / defender health = number of dead defenders after attack
+        //Debug.Log("Calculating damage" + unitID);
+
         //Debug.Log(models);
         //Debug.Log(meleeDamage);
         //Debug.Log(targetToAttackPiece.armor);
         //Debug.Log(targetToAttackPiece.health);
+
+        //initialize temp variables
         var attackBonus = 0;
+        float meleeMultiplier = 1;
+        float rangedMultiplier = 1;
+        float energyMultiplier = 1f;
+
+        //Attacker damage - defender armor = total damage
+
         if (targetToAttackPiece.OnTerrainType != "hill" && OnTerrainType == "hill") //bonus from attacking downhill
         {
-            /*if (unitType == "cavalry") //cavalry should get +2 for attacking downhill
-            {
-                attackBonus = 2;
-            }
-            else
-            {
-                attackBonus = 1;
-            }*/
-            attackBonus = 1;
-
+            attackBonus = 1; //+1 damage attacking down hill
         }
         else if (OnTerrainType != "hill" && targetToAttackPiece.OnTerrainType == "hill") //debuff froom attacking uphill
         {
-            attackBonus = -1;
+            attackBonus = -1; //-1 damage attacking up hill
         }
-        else if (targetToAttackPiece.OnTerrainType == "foliage") //debuff from attacking unit in forest
-        {
-            if (unitType == "cavalry") //cavalry should get +2 for attacking downhill
-            {
-                attackBonus = -2;
-            }
-            else
-            {
-                attackBonus = -1;
-            }
-        }
-        float meleeMultiplier = 1;
-
-        float rangedMultiplier = 1;
-        //todo add system that checks for if melee attack or not
-        if (targetToAttackPiece.currentFormation == "braced")
+        
+        
+        if (targetToAttackPiece.currentFormation == "braced") //-50% to melee damage dealt to braced units facing us
         {
             if (targetToAttackPiece.CheckIfFacingEnemy(this)) //if target is facing this attacker
             {
                 if (attackType == "melee")
                 {
-                    Debug.Log("reducing damage of attacker by 50%");
+                    //Debug.Log("reducing damage of attacker by 50%");
                     meleeMultiplier = .5f;
                 }
             }
         }
-        else if (targetToAttackPiece.currentFormation == "staggered")
+        else if (targetToAttackPiece.currentFormation == "staggered") //+1 melee damage to staggered units, -50% ranged damage
         {
             if (attackType == "melee")
             {
@@ -3635,7 +3622,7 @@ public abstract class Piece : MonoBehaviour
             }
 
         }
-        else if (targetToAttackPiece.currentFormation == "circle")
+        else if (targetToAttackPiece.currentFormation == "circle") //-25% damage to circle formation units
         {
             if (attackType == "melee")
             {
@@ -3643,85 +3630,46 @@ public abstract class Piece : MonoBehaviour
             }
         }
 
-        float energyMultiplier = 1f;
         if (energy < startingEnergy && energy > startingEnergy * .5f)
         {
             //no penalty
         }
-        else if (energy < startingEnergy * .5f && energy > 0)
+        else if (energy < startingEnergy * .5f && energy > 0) //-25% damage
         {
             energyMultiplier = .75f;
         }
-        else if (energy <= 0)
+        else if (energy <= 0) //-50% damage
         {
             energyMultiplier = .5f;
         }
-        /*float damage = 0;
-        if (attackType == "ranged")
-        {
-            damage = rangedDamage;
-
-        }
-        else
-        {
-            damage = meleeDamage;
-        }*/
-        /*if (!moveAndAttackEnabled && attackType == "ranged") //steady attacking gives damage bonus
-        {
-            attackBonus++;
-        }*/
-        /*var armor = targetToAttackPiece.armor;
-        if (attackIgnoresArmor)
-        {
-            armor = 0;
-        }*/
-        //var calculatedDamage = damage + attackBonus - armor - targetToAttackPiece.defenseModifier;
-        Debug.Log("Damage" + damage + "Attack bonus" + attackBonus + "Target defense mod" + targetToAttackPiece.defenseModifier);
-        var calculatedDamage = damage + attackBonus - targetToAttackPiece.defenseModifier;
-
+        
+        var calculatedDamage = damage + attackBonus - armorLevel - targetToAttackPiece.defenseModifier; //base damage
+        
         if (calculatedDamage < 0) //make it so it's not negative
         {
             calculatedDamage = 0;
         }
+        //Debug.Log("Calculated damage" + calculatedDamage);
 
-        /*if (calculatedDamage <= 0 && damage >= 2) //if damage 2+ and calculated damage is 0 or less
+        float disengageMultiplier = 1;
+        if (targetToAttackPiece.disengaging && attackType == "melee")
         {
-            calculatedDamage = 1;
-        }*/
-        /*else if (calculatedDamage <= 0 && damage == 1) //if damage 2+ and calculated damage is 0 or less
-        {
-            calculatedDamage = .25f;
-        }*/
-        Debug.Log("Calculated damage" + calculatedDamage);
-
-        float damageVersusArmor = targetToAttackPiece.armorLevel - damageLevel; //if negative, logically we should get an attack buff?
-        if (damageVersusArmor < 0) //can't be negative
-        {
-            damageVersusArmor = 0;
+            disengageMultiplier = .5f;
         }
-        var damageEffect = Mathf.Pow(0.5f, damageVersusArmor);
+
         if (attackType == "melee") //ignores accuracy for melee units
         {
             accuracy = 1f;
         }
-        tempDamage = models * calculatedDamage * damageEffect * meleeMultiplier * rangedMultiplier * energyMultiplier * flankingDamage * accuracy;
-        Debug.Log("Unit ID " + unitID + "temp damage" + tempDamage + "models" + models + "calculated damage" + calculatedDamage + "Damage effect" + damageEffect + "melee multiplier" + meleeMultiplier + "ranged multiplier" + rangedMultiplier + "energy multiplier" + energyMultiplier + "flanking damage" + flankingDamage + "accuracy" + accuracy);
 
-        float deadDefenders = tempDamage / targetToAttackPiece.health;
-        float defendersKilled;
-        if (targetToAttackPiece.disengaging && attackType == "melee")
-            defendersKilled = deadDefenders / 2;
-        else
-            defendersKilled = deadDefenders;
-        queuedDamage = Mathf.RoundToInt(defendersKilled);
+        tempDamage = calculatedDamage * meleeMultiplier * rangedMultiplier * energyMultiplier * flankingDamage * accuracy * disengageMultiplier; //apply all possible multipliers
+
+        //Debug.Log("Unit ID " + unitID + "temp damage" + tempDamage + "models" + models + "calculated damage" + calculatedDamage + "Damage effect" + damageEffect + "melee multiplier" + meleeMultiplier + "ranged multiplier" + rangedMultiplier + "energy multiplier" + energyMultiplier + "flanking damage" + flankingDamage + "accuracy" + accuracy);
+
+        queuedDamage = tempDamage; //no longer defenders killed, just damage
         if (queuedDamage < 0)
             queuedDamage = 0; //just make sure damage can never be negative
 
-
-
-        Debug.Log("defenders killed " + queuedDamage);
-        //targetToAttackPiece.models -= Mathf.RoundToInt(defendersKilled);
-        //Debug.Log("killed" + defendersKilled);
         alreadyCalculatedDamage = true;
     }
 
@@ -4816,12 +4764,12 @@ public abstract class Piece : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void MarkForDeath(int damage)
+    public void MarkForDeath(float damage)
     {
         board.PieceMarkForDeath(unitID, damage);
     }
 
-    public void OnMarkForDeath(int damage) //after communicating with mp
+    public void OnMarkForDeath(float damage) //after communicating with mp
     {
         if (damage <= 0)
         {

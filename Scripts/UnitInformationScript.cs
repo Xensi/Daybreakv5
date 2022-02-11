@@ -6,8 +6,8 @@ public class UnitInformationScript : MonoBehaviour
 {
 
     public new string name;
-    public int models;
-    public int maxModels;
+    public float models;
+    public float maxModels;
     public float morale;
     public float maxMorale;
     public float energy;

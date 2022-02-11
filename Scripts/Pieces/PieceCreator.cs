@@ -37,7 +37,7 @@ public class PieceCreator : MonoBehaviour
         }
         return null;
     }
-    public GameObject CreatePiece(string typeName, int models, float morale, float energy, int placementID, int direction)
+    public GameObject CreatePiece(string typeName, float models, float morale, float energy, int placementID, int direction)
     {
         GameObject prefab = nameToPieceDict[typeName];
         if (prefab)

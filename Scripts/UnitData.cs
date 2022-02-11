@@ -24,7 +24,7 @@ public class UnitData //needs to be able to save multiple units
     }*/
 
     public string name;
-    public int models;
+    public float models;
     public float morale;
     public float energy;
 

@@ -96,7 +96,7 @@ public class SinglePlayerBoard : Board
     {
         OnPieceCommunicateTargetToAttackPiece(id, x, y);
     }
-    public override void PieceMarkForDeath(int id, int damage)
+    public override void PieceMarkForDeath(int id, float damage)
     {
         OnPieceMarkForDeath(id, damage);
     }
