@@ -459,7 +459,7 @@ public abstract class Board : MonoBehaviour
             newButton.onClick.AddListener(delegate { SelectSpecificUnit(unit.name, unit.models, unit.morale, unit.energy, unit.placementID); });
 
             newButton.transform.parent = gameInit.unitOptionsParent.transform;
-            newButton.transform.position += new Vector3(1200, 300 - i * 100, 0);
+            newButton.transform.position += new Vector3(1200, 400 - i * 100, 0);
 
             unitButtonsList.Add(newButton);
 
