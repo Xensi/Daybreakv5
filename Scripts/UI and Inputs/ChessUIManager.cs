@@ -143,7 +143,7 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         var attackText = attack.GetComponent<TMP_Text>();
         attackText.text = "Attack: " + piece.damage;
 
-        var damageLevel = GameObject.Find("DamageLevelText");
+        /*var damageLevel = GameObject.Find("DamageLevelText");
         var damageLevelText = damageLevel.GetComponent<TMP_Text>();
         string dmglvl = "Unarmored";
         if(piece.damageLevel == 1)
@@ -162,7 +162,7 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         {
             dmglvl = "Superheavy";
         }
-        damageLevelText.text = "Good against: " + dmglvl;
+        damageLevelText.text = "Good against: " + dmglvl;*/
 
         var armor = GameObject.Find("ArmorText");
         var armorText = armor.GetComponent<TMP_Text>();

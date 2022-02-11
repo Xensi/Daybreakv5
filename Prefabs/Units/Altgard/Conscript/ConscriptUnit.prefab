@@ -123,18 +123,18 @@ MonoBehaviour:
   unitName: Conscript
   displayName: Conscripts
   originalSpeed: 1
-  models: 42
+  models: 6
   startingModels: 0
   oldModels: 0
   health: 9
-  damage: 1
+  damage: 2
   morale: 10
   maxMorale: 0
   energy: 20
   startingEnergy: 0
   startingMorale: 0
-  damageLevel: 1
-  armorLevel: 1
+  damageLevel: 0
+  armorLevel: 0
   attackType: melee
   unitType: infantry
   effectiveRange: 1

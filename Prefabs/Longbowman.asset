@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Longbowman
   m_EditorClassIdentifier: 
   name: Longbowman
-  models: 42
+  models: 6
   morale: 15
   energy: 25

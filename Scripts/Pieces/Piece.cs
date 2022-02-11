@@ -15,15 +15,15 @@ public abstract class Piece : MonoBehaviour
     public Board board { get; set; }
 
     [Header("Campaign stuff")]
-    public bool isCampaignToken = false;
-    public bool isCampaignObjective = false;
-    public string missionToLoad; //mission that should be loaded when this is attacked, if it's campaign objective
+    //public bool isCampaignToken = false;
+    //public bool isCampaignObjective = false;
+    //public string missionToLoad; //mission that should be loaded when this is attacked, if it's campaign objective
     public MenuController menuController;
     [Header("Unit attributes (modifiable)")]
     public string unitName;
     public string displayName;
     public int originalSpeed = 1;
-    public float models = 100; //the number of dudes in a squad/unit/battalion whatever
+    public float models = 6; //the number of dudes in a squad/unit/battalion whatever. NOW HEALTH, and represents rows
     public float startingModels;
     [HideInInspector] public float oldModels = 0;
     public float health = 1; //the health of each model 
@@ -34,7 +34,7 @@ public abstract class Piece : MonoBehaviour
     public float startingEnergy; //starting energy, which is set by energy
     public float startingMorale;
 
-    public int damageLevel = 0;
+    //private int damageLevel = 0;
     public float armorLevel = 0;
 
     public string attackType = "melee"; //options: melee, ranged, mixed
@@ -43,6 +43,7 @@ public abstract class Piece : MonoBehaviour
     public int effectiveRange = 1; //melee = 1, for ranged this shows the furthest an enemy can be to deal full damage
     public float soldierScale = 1f;
     public int rowSize = 7;
+    
     public float hexOffset = .6f;
     public float hexOffsetY = 0f;
     public float hexOffsetZ = .25f;
@@ -276,6 +277,13 @@ public abstract class Piece : MonoBehaviour
 
     public bool placedByBoard = false;
 
+    private float attackBonus = 0;
+    private float meleeMultiplier = 1;
+    private float rangedMultiplier = 1;
+    private float energyMultiplier = 1;
+    private float disengageMultiplier = 1;
+
+
     public abstract List<Vector2Int> SelectAvailableSquares(Vector2Int startingSquare);
 
     public void CheckIfNoOrdersGiven() //just check
@@ -354,8 +362,8 @@ public abstract class Piece : MonoBehaviour
         sprintSpeed = originalSpeed * 2;
         speed = originalSpeed;
         //smallModelCount = Mathf.RoundToInt(models / downscale); // downsize by factor of 10, so 450 is 45
-        numberOfRows = Mathf.RoundToInt(models / rowSize); //for example: 45/7 = 6.4 round down to 6
-
+        //numberOfRows = Mathf.RoundToInt(models / rowSize); //for example: 45/7 = 6.4 round down to 6
+        numberOfRows = Mathf.RoundToInt(models);
         armyLossesThreshold = models * 0.5f; //prefers even numbers
 
         speed3 = new Vector2Int[]
@@ -2373,11 +2381,11 @@ public abstract class Piece : MonoBehaviour
     {
 
         SetRotation(facingDirection);
-        if (isCampaignToken) //if commander find menu controller so you can load scenes
+        /*if (isCampaignToken) //if commander find menu controller so you can load scenes
         {
             var menuObj = GameObject.Find("Menu Controller");
             menuController = menuObj.GetComponent(typeof(MenuController)) as MenuController;
-        }
+        }*/
 
 
 
@@ -3565,29 +3573,36 @@ public abstract class Piece : MonoBehaviour
     }
     public void OnCalculateDamage() //calculate damage
     {
-        //don't calculate damage if we already have or we have no attack target
-        if (alreadyCalculatedDamage)
-        {
-            return;
-        }
-        if (targetToAttackPiece == null)
-        {
-            return;
-        }
         //Debug.Log("Calculating damage" + unitID);
+        if (alreadyCalculatedDamage || targetToAttackPiece == null) //don't calculate damage if we already have or we have no attack target
+        {
+            return;
+        }
+        CalculateDamageModifiers();
+        
+        var calculatedDamage = damage + attackBonus - targetToAttackPiece.armorLevel - targetToAttackPiece.defenseModifier; //base damage
+        if (calculatedDamage < 0) //make it so it's not negative
+        {
+            calculatedDamage = 0;
+        }
+        //Debug.Log("Calculated damage" + calculatedDamage);
+        //Debug.Log("Unit ID " + unitID + "temp damage" + tempDamage + "models" + models + "calculated damage" + calculatedDamage + "Damage effect" + damageEffect + "melee multiplier" + meleeMultiplier + "ranged multiplier" + rangedMultiplier + "energy multiplier" + energyMultiplier + "flanking damage" + flankingDamage + "accuracy" + accuracy);
 
-        //Debug.Log(models);
-        //Debug.Log(meleeDamage);
-        //Debug.Log(targetToAttackPiece.armor);
-        //Debug.Log(targetToAttackPiece.health);
+        queuedDamage = calculatedDamage * meleeMultiplier * rangedMultiplier * energyMultiplier * flankingDamage * accuracy * disengageMultiplier; //apply all possible multiplier
+        if (queuedDamage < 0)
+            queuedDamage = 0; //just make sure damage can never be negative
 
-        //initialize temp variables
-        var attackBonus = 0;
-        float meleeMultiplier = 1;
-        float rangedMultiplier = 1;
-        float energyMultiplier = 1f;
+        alreadyCalculatedDamage = true;
+    }
 
-        //Attacker damage - defender armor = total damage
+    public void CalculateDamageModifiers()
+    {
+        //reset variables
+        attackBonus = 0;
+        meleeMultiplier = 1;
+        rangedMultiplier = 1;
+        energyMultiplier = 1;
+        disengageMultiplier = 1;
 
         if (targetToAttackPiece.OnTerrainType != "hill" && OnTerrainType == "hill") //bonus from attacking downhill
         {
@@ -3597,8 +3612,7 @@ public abstract class Piece : MonoBehaviour
         {
             attackBonus = -1; //-1 damage attacking up hill
         }
-        
-        
+
         if (targetToAttackPiece.currentFormation == "braced") //-50% to melee damage dealt to braced units facing us
         {
             if (targetToAttackPiece.CheckIfFacingEnemy(this)) //if target is facing this attacker
@@ -3642,16 +3656,6 @@ public abstract class Piece : MonoBehaviour
         {
             energyMultiplier = .5f;
         }
-        
-        var calculatedDamage = damage + attackBonus - armorLevel - targetToAttackPiece.defenseModifier; //base damage
-        
-        if (calculatedDamage < 0) //make it so it's not negative
-        {
-            calculatedDamage = 0;
-        }
-        //Debug.Log("Calculated damage" + calculatedDamage);
-
-        float disengageMultiplier = 1;
         if (targetToAttackPiece.disengaging && attackType == "melee")
         {
             disengageMultiplier = .5f;
@@ -3661,22 +3665,12 @@ public abstract class Piece : MonoBehaviour
         {
             accuracy = 1f;
         }
-
-        tempDamage = calculatedDamage * meleeMultiplier * rangedMultiplier * energyMultiplier * flankingDamage * accuracy * disengageMultiplier; //apply all possible multipliers
-
-        //Debug.Log("Unit ID " + unitID + "temp damage" + tempDamage + "models" + models + "calculated damage" + calculatedDamage + "Damage effect" + damageEffect + "melee multiplier" + meleeMultiplier + "ranged multiplier" + rangedMultiplier + "energy multiplier" + energyMultiplier + "flanking damage" + flankingDamage + "accuracy" + accuracy);
-
-        queuedDamage = tempDamage; //no longer defenders killed, just damage
-        if (queuedDamage < 0)
-            queuedDamage = 0; //just make sure damage can never be negative
-
-        alreadyCalculatedDamage = true;
     }
 
     public bool CheckIfStopMove()
     {
         //Debug.Log("trying to move");
-        ////Debug.LogError("tie break win " + wonTieBreak);
+        //Debug.LogError("tie break win " + wonTieBreak);
         //if there's no conflict or we wont the tiebreak
         //Debug.Log("conflict" + conflict + "wonTiebreak?" + wonTieBreak + "conflictTime" + conflictTime + "queueTime" + queueTime);
         if (attacking && queuedMoves.Count == 1) //when implementing things with higher attack, change this to a variable that tells you at what move to stop
@@ -4780,7 +4774,7 @@ public abstract class Piece : MonoBehaviour
 
         Debug.Log("Marking for death " + damage);
         //int scaledDamage = Mathf.RoundToInt(damage / downscale);
-        int scaledDamage = Mathf.RoundToInt(damage);
+        int scaledDamage = Mathf.RoundToInt(damage)*rowSize;
 
         if (attackerPiece != null) //still need to make this based on direction
         {

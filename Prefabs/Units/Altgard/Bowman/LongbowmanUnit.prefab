@@ -123,16 +123,18 @@ MonoBehaviour:
   unitName: Longbowman
   displayName: Longbowmen
   originalSpeed: 1
-  models: 42
+  models: 6
+  startingModels: 0
   oldModels: 0
   health: 9
-  damage: 1
+  damage: 2
   morale: 15
+  maxMorale: 0
   energy: 25
   startingEnergy: 0
   startingMorale: 0
   damageLevel: 1
-  armorLevel: 1
+  armorLevel: 0
   attackType: ranged
   unitType: infantry
   effectiveRange: 4
@@ -226,6 +228,7 @@ MonoBehaviour:
   frontDirections: 
   soldierObjects: []
   markedSoldiers: []
+  deadSoldiers: []
   instantiatedLines: []
   instantiatedCylinders: []
   aestheticCylinders: []
@@ -308,6 +311,9 @@ MonoBehaviour:
   lastTarget: {fileID: 0}
   aggressiveAttitude: 1
   placementID: 0
+  holdTimeDirection: 0
+  childProjectiles: []
+  placedByBoard: 0
 --- !u!114 &255507802608927540
 MonoBehaviour:
   m_ObjectHideFlags: 0
