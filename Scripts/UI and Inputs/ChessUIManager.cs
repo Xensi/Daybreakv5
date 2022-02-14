@@ -190,9 +190,9 @@ public class ChessUIManager : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         var speed = GameObject.Find("SpeedText");
         var speedText = speed.GetComponent<TMP_Text>();
         speedText.text = "Speed: " + piece.originalSpeed;
-        var hp = GameObject.Find("HPText");
+        /*var hp = GameObject.Find("HPText");
         var hpText = hp.GetComponent<TMP_Text>();
-        hpText.text = "HP/model: " + piece.health;
+        hpText.text = "HP/model: " + piece.health;*/
         var range = GameObject.Find("RangeText");
         var rangeText = range.GetComponent<TMP_Text>();
         rangeText.text = "Effective Range: " + piece.effectiveRange;

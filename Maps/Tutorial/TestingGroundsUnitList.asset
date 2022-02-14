@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5061760071ee841a6e468687c0510f, type: 3}
+  m_Name: TestingGroundsUnitList
+  m_EditorClassIdentifier: 
+  unitList:
+  - {fileID: 11400000, guid: 798b40938ec03eb4fbf973d97f18815d, type: 2}
+  - {fileID: 11400000, guid: 5a0430c6824381548a15443d10ee9c3b, type: 2}
+  - {fileID: 11400000, guid: 97560e29fec77b74693880330c3c613e, type: 2}

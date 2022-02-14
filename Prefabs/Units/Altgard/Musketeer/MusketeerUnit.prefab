@@ -115,23 +115,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6e53229e40008a4292c1ae673e45f8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCampaignToken: 0
-  isCampaignObjective: 0
-  missionToLoad: 
-  menuController: {fileID: 0}
   unitName: Musketeer
+  displayName: 
   originalSpeed: 1
   models: 42
+  startingModels: 0
   oldModels: 0
-  health: 9
   damage: 1.5
   morale: 15
   energy: 25
-  damageLevel: 3
+  startingEnergy: 0
+  startingMorale: 0
   armorLevel: 0
+  weightClass: light
+  isChaff: 0
+  arcingAttack: 0
   attackType: ranged
   unitType: infantry
   effectiveRange: 3
+  longRange: 0
   soldierScale: 1
   rowSize: 7
   hexOffset: 0.6
@@ -157,8 +159,6 @@ MonoBehaviour:
   circleNavParent: {fileID: 7885324316243032425}
   staggeredNavParent: {fileID: 1841803912138195433}
   unitPortrait: {fileID: 0}
-  armorPiercing: 0
-  arcingAttack: 0
   attackOrderSoundEffects:
   - {fileID: 8300000, guid: 8d2626088bb16084a91e7eb205a25bf5, type: 3}
   - {fileID: 8300000, guid: 431ccff67e245ef4993a1aa7f3abf2fb, type: 3}
@@ -175,17 +175,13 @@ MonoBehaviour:
   - {fileID: 8300000, guid: c9e377fece4185f4ea399bf91e1d721a, type: 3}
   - {fileID: 8300000, guid: 1d96176ae88042c4ab5a282c0a8df8c5, type: 3}
   terrainSpeedModifier: 0
-  flankingDamage: 1
-  originalEffectiveRange: 1
-  originalMidRange: 1
-  originalLongRange: 1
+  flankingDamage: 0
+  originalEffectiveRange: 3
+  originalLongRange: 5
   soldierAttacked: 0
   attackerPiece: {fileID: 0}
   rangeAttackDistance: 0
   targetedSquare: {x: 0, y: 0}
-  midRange: 0
-  longRange: 0
-  beyondTargetableRange: 0
   rangedDamageReduction: 0
   fireDamageBonus: 0
   unitID: 0
@@ -222,6 +218,7 @@ MonoBehaviour:
   frontDirections: 
   soldierObjects: []
   markedSoldiers: []
+  deadSoldiers: []
   instantiatedLines: []
   instantiatedCylinders: []
   aestheticCylinders: []
@@ -288,7 +285,7 @@ MonoBehaviour:
   OnTerrainType: 
   currentFormation: rectangle
   queuedFormation: nothing
-  accuracy: 0
+  accuracyModifier: 0
   ordersGiven: 0
   defensiveAttacking: 0
   attackedThisTurn: 0
@@ -297,6 +294,16 @@ MonoBehaviour:
   alreadyAppliedDamage: 0
   movementStopped: 1
   markForRemovalFromSecondWave: 0
+  strList: []
+  colorList: []
+  floatList: []
+  lastEventEndPos: {x: 0, y: 0, z: 0}
+  lastTarget: {fileID: 0}
+  aggressiveAttitude: 1
+  placementID: 0
+  holdTimeDirection: 0
+  childProjectiles: []
+  placedByBoard: 0
 --- !u!114 &255507802608927540
 MonoBehaviour:
   m_ObjectHideFlags: 0

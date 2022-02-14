@@ -378,7 +378,7 @@ public class DialogueManager : MonoBehaviour
         text.text = "Select a unit to place on the field.";
         gameInit.image.SetActive(true);
         gameInit.placingUnitsAlertText.SetActive(true);
-        var i = 0;
+        //var i = 0;
 
         List<UIButton> buttonsToDestroy = new List<UIButton>();
         foreach (var button in gameInit.board.unitButtonsList)
@@ -395,7 +395,7 @@ public class DialogueManager : MonoBehaviour
 
     }
 
-    public  void LoadLevelUnitList(string level) // will destroy saved units list. useful if a level doesn't require units from a previous level
+    public void LoadLevelUnitList(string level) // will destroy saved units list. useful if a level doesn't require units from a previous level
     {
         List<UnitInformationScript> toDestroyList = new List<UnitInformationScript>();
         foreach (var item in gameInit.saveInfoObject.listOfSavedUnits)
@@ -455,6 +455,29 @@ public class DialogueManager : MonoBehaviour
         tween.OnComplete(StartTutorial3);
     }
 
+    public void StartTestingGrounds()
+    {
+
+        gameInit.strafeCam.transform.position = cameraPosTutorial.position;
+        gameInit.strafeCam.SetActive(true);
+        gameInit.cinematicCam.SetActive(false);
+
+        cinematicParent.SetActive(false);
+
+        gameInit.SelectLevel("Tutorial"); //loads the correct board layout (pieces positioning)
+        gameInit.levelGen.SelectLevel("Tutorial"); //loads correct map, and placement map
+        gameInit.CreateSinglePlayerBoard(); //enables execute button, creates board, finds board for level gen, generates level, finds board
+        chessUI.OnSingleplayerModeSelected(); //simply disables some screens
+        gameInit.InitializeSinglePlayerController();
+        LoadLevelUnitList("Tutorial");
+        gameInit.board.GenerateButtonsFromSavedUnits();
+
+
+        gameInit.chessController.AllowInput = true;
+        gameInit.placingUnitsScreen.SetActive(true);
+        gameInit.executeButtonParent.SetActive(true);
+        gameInit.unreadyButtonParent.SetActive(true);
+    }
 
 
     void StartTutorial3()

@@ -115,26 +115,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6e53229e40008a4292c1ae673e45f8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCampaignToken: 0
-  isCampaignObjective: 0
-  missionToLoad: 
-  menuController: {fileID: 0}
   unitName: Reiter
   displayName: Reiter
   originalSpeed: 2
   models: 14
+  startingModels: 0
   oldModels: 0
-  health: 15
   damage: 4
   morale: 30
   energy: 40
   startingEnergy: 0
   startingMorale: 0
-  damageLevel: 2
   armorLevel: 3
+  weightClass: light
+  isChaff: 0
+  arcingAttack: 0
   attackType: melee
   unitType: cavalry
   effectiveRange: 1
+  longRange: 0
   soldierScale: 0.765
   rowSize: 7
   hexOffset: 0.6
@@ -160,8 +159,6 @@ MonoBehaviour:
   circleNavParent: {fileID: 7885324316243032425}
   staggeredNavParent: {fileID: 1841803912138195433}
   unitPortrait: {fileID: 21300000, guid: 0a46cbcb283674f43a501e9bbcf3a565, type: 3}
-  armorPiercing: 0
-  arcingAttack: 0
   attackOrderSoundEffects:
   - {fileID: 8300000, guid: 028e44e1998858c4dbf79b796da689c4, type: 3}
   - {fileID: 8300000, guid: a2260aadc40378940a91ffed56907ca9, type: 3}
@@ -178,17 +175,13 @@ MonoBehaviour:
   - {fileID: 8300000, guid: c2249341c71979746accffd5b15783cf, type: 3}
   - {fileID: 8300000, guid: d9db8d91a3a4acf499899e43f13102fa, type: 3}
   terrainSpeedModifier: 0
-  flankingDamage: 1
+  flankingDamage: 0
   originalEffectiveRange: 1
-  originalMidRange: 1
   originalLongRange: 1
   soldierAttacked: 0
   attackerPiece: {fileID: 0}
   rangeAttackDistance: 0
   targetedSquare: {x: 0, y: 0}
-  midRange: 0
-  longRange: 0
-  beyondTargetableRange: 0
   rangedDamageReduction: 0
   fireDamageBonus: 0
   unitID: 0
@@ -225,6 +218,7 @@ MonoBehaviour:
   frontDirections: 
   soldierObjects: []
   markedSoldiers: []
+  deadSoldiers: []
   instantiatedLines: []
   instantiatedCylinders: []
   aestheticCylinders: []
@@ -291,7 +285,7 @@ MonoBehaviour:
   OnTerrainType: 
   currentFormation: rectangle
   queuedFormation: nothing
-  accuracy: 0
+  accuracyModifier: 0
   ordersGiven: 0
   defensiveAttacking: 0
   attackedThisTurn: 0
@@ -308,6 +302,8 @@ MonoBehaviour:
   aggressiveAttitude: 1
   placementID: 0
   holdTimeDirection: 0
+  childProjectiles: []
+  placedByBoard: 0
 --- !u!114 &255507802608927540
 MonoBehaviour:
   m_ObjectHideFlags: 0

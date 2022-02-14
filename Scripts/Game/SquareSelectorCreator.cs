@@ -87,7 +87,7 @@ public class SquareSelectorCreator : MonoBehaviour
             var adjacent = SetRanges(1);
             var effectiveRange = SetRanges(selectedPiece.effectiveRange);
 
-            var midRange = SetRanges(selectedPiece.midRange);
+            //var midRange = SetRanges(selectedPiece.midRange);
             var longRange = SetRanges(selectedPiece.longRange);
 
 
@@ -107,9 +107,9 @@ public class SquareSelectorCreator : MonoBehaviour
 
             foreach (var selector in instantiatedSelectors) //cycle through each selector
             {
-                for (int i = 0; i < midRange.Length; i++) //cycle through adjacent tile or other tiles
+                for (int i = 0; i < longRange.Length; i++) //cycle through adjacent tile or other tiles
                 {
-                    Vector2Int nextCoords = piecePos + midRange[i]; //fetch a position relative to the selected piece
+                    Vector2Int nextCoords = piecePos + longRange[i]; //fetch a position relative to the selected piece
 
                     Vector3 position = board.CalculatePositionFromCoords(nextCoords); //convert to vector 3 world coords
 

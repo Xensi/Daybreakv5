@@ -116,28 +116,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6e53229e40008a4292c1ae673e45f8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCampaignToken: 0
-  isCampaignObjective: 0
-  missionToLoad: 
-  menuController: {fileID: 0}
   unitName: Longbowman
   displayName: Longbowmen
   originalSpeed: 1
   models: 6
   startingModels: 0
   oldModels: 0
-  health: 9
   damage: 2
   morale: 15
-  maxMorale: 0
   energy: 25
   startingEnergy: 0
   startingMorale: 0
-  damageLevel: 1
   armorLevel: 0
+  weightClass: light
+  isChaff: 0
+  arcingAttack: 1
   attackType: ranged
   unitType: infantry
   effectiveRange: 4
+  longRange: 6
   soldierScale: 1
   rowSize: 7
   hexOffset: 0.6
@@ -163,8 +160,6 @@ MonoBehaviour:
   circleNavParent: {fileID: 7885324316243032425}
   staggeredNavParent: {fileID: 1841803912138195433}
   unitPortrait: {fileID: 21300000, guid: 48f2842e0bddf7d4dbaf6e21cd15d0ed, type: 3}
-  armorPiercing: 0
-  arcingAttack: 1
   attackOrderSoundEffects:
   - {fileID: 8300000, guid: 9d5e3e5461c5ddc4da1528c3face8444, type: 3}
   - {fileID: 8300000, guid: c798bbe4e9969a9489e19ff98310a8cd, type: 3}
@@ -182,16 +177,13 @@ MonoBehaviour:
   - {fileID: 8300000, guid: fd4f4dc92bf45c34286651a4df6106c3, type: 3}
   terrainSpeedModifier: 0
   flankingDamage: 1
-  originalEffectiveRange: 1
+  originalEffectiveRange: 4
   originalMidRange: 1
-  originalLongRange: 1
+  originalLongRange: 6
   soldierAttacked: 0
   attackerPiece: {fileID: 0}
   rangeAttackDistance: 0
   targetedSquare: {x: 0, y: 0}
-  midRange: 0
-  longRange: 0
-  beyondTargetableRange: 0
   rangedDamageReduction: 0
   fireDamageBonus: 0
   unitID: 0
@@ -295,7 +287,7 @@ MonoBehaviour:
   OnTerrainType: 
   currentFormation: rectangle
   queuedFormation: nothing
-  accuracy: 0
+  accuracyModifier: 0
   ordersGiven: 0
   defensiveAttacking: 0
   attackedThisTurn: 0

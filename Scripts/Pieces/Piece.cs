@@ -14,34 +14,51 @@ public abstract class Piece : MonoBehaviour
 {
     public Board board { get; set; }
 
-    [Header("Campaign stuff")]
+    //[Header("Campaign stuff")]
     //public bool isCampaignToken = false;
     //public bool isCampaignObjective = false;
     //public string missionToLoad; //mission that should be loaded when this is attacked, if it's campaign objective
-    public MenuController menuController;
-    [Header("Unit attributes (modifiable)")]
+    //public MenuController menuController;
+
+
+    [Header("Unit characteristics")]
     public string unitName;
     public string displayName;
+
     public int originalSpeed = 1;
-    public float models = 6; //the number of dudes in a squad/unit/battalion whatever. NOW HEALTH, and represents rows
+    //public int health;
+    public float models = 6; //NOW HEALTH
+    private int numberOfRows = 6;
     public float startingModels;
     [HideInInspector] public float oldModels = 0;
-    public float health = 1; //the health of each model 
     public float damage = 1f;
     public float morale = 10;
-    public float maxMorale;
+   // public float maxMorale;
     public float energy = 15; //overall energy
     public float startingEnergy; //starting energy, which is set by energy
     public float startingMorale;
+    public float armorLevel = 0;
+
+    public string weightClass = "light"; //light, medium, heavy
+    public bool isChaff = false; //can't deal damage to heavy units, no flanking morale effect against heavy units
+    public bool arcingAttack = false; //fire over units if true
+    public bool hasPikes = false; //double damage to cavalry. can use brace
+
+    /* private bool armorPiercing = false;
+    private bool headHunter = false; //kills a leader embedded in unit. -3 morale to that unit
+    private bool canCharge = false;
+    private bool hasAntiMagicBombs = false;*/
+
+    [Header("Other unit attributes (modifiable)")]
 
     //private int damageLevel = 0;
-    public float armorLevel = 0;
 
     public string attackType = "melee"; //options: melee, ranged, mixed
     public string unitType = "infantry"; //options: infantry, cavalry, artillery, spellcaster
     //public bool attackIgnoresArmor = false;
-    public int effectiveRange = 1; //melee = 1, for ranged this shows the furthest an enemy can be to deal full damage
-    public float soldierScale = 1f;
+    [HideInInspector] public int effectiveRange; //melee = 1, for ranged this shows the furthest an enemy can be to deal full damage
+    [HideInInspector] public int longRange;
+    [HideInInspector] public float soldierScale = 1f;
     public int rowSize = 7;
     
     public float hexOffset = .6f;
@@ -67,20 +84,18 @@ public abstract class Piece : MonoBehaviour
     public GameObject circleNavParent;
     public GameObject staggeredNavParent;
     public Sprite unitPortrait;
-    public bool armorPiercing = false;
-    public bool arcingAttack = false;
-    private AudioSource _audioSource;
     public AudioClip[] attackOrderSoundEffects;
     public AudioClip[] moveOrderSoundEffects;
     public AudioClip[] selectOrderSoundEffects;
 
-    private int soldierNum = 0;
     [Header("Information that should not be modified")]
+    private int soldierNum = 0;
+    private AudioSource _audioSource;
     public int terrainSpeedModifier;
-    public float flankingDamage = 1; //multiplier now
+    public float flankingDamage = 0; //
     public int originalEffectiveRange = 1; //stores value of effectiveRange
-    public int originalMidRange = 1; //stores value of effectiveRange
-    public int originalLongRange = 1; //stores value of effectiveRange
+    //public int originalMidRange = 1; //stores value of effectiveRange
+    public int originalLongRange = 2; //stores value of effectiveRange
     public bool soldierAttacked = false;
     public Piece attackerPiece;
 
@@ -88,9 +103,8 @@ public abstract class Piece : MonoBehaviour
 
     public Vector2Int targetedSquare;
 
-    public int midRange;
-    public int longRange;
-    public int beyondTargetableRange;
+    //public int longRange;
+    //public int beyondTargetableRange;
     public int rangedDamageReduction = 0;
     public int fireDamageBonus = 0;
     public int unitID = 0;
@@ -100,10 +114,9 @@ public abstract class Piece : MonoBehaviour
     public int sprintSpeed;
     public float queuedDamage = 0;
     public int turnTime = 0;
-    private int numberOfRows;
-    private int smallModelCount;
-    private int downscale = 1;
-    private int soldierID = 0;
+    //private int smallModelCount;
+    //private int downscale = 1;
+    //private int soldierID = 0;
     public int holdTime = 0;
     public float remainingMovement;
     public float defenseModifier = 0;
@@ -114,6 +127,7 @@ public abstract class Piece : MonoBehaviour
     private Vector2Int moveDirection;
     public bool enemyAdjacent = false;
     public bool hasMoved { get; private set; }
+    public bool hasAttacked = false;
 
 
     public bool targetAdjacent = false;
@@ -221,7 +235,7 @@ public abstract class Piece : MonoBehaviour
     [HideInInspector] public Vector2Int[] speed10;
     [HideInInspector] public bool arbitratedConflict = false;
     public int conflictTime = 0;
-    public int bonusMoraleDamage;
+    public int bonusMoraleDamage = 0;
 
     private float actualOffset;
     public float armyLossesThreshold;
@@ -247,7 +261,7 @@ public abstract class Piece : MonoBehaviour
     public string queuedFormation = "nothing";
     private bool waitingForFirstAttack = false;
     private int markedSoldiersCount = 0;
-    public float accuracy;
+    public int accuracyModifier = 0; //
     private Vector3 oldRotation;
     private Vector3 rotationGoal;
     public bool ordersGiven = false; //usually true
@@ -277,11 +291,11 @@ public abstract class Piece : MonoBehaviour
 
     public bool placedByBoard = false;
 
-    private float attackBonus = 0;
-    private float meleeMultiplier = 1;
-    private float rangedMultiplier = 1;
-    private float energyMultiplier = 1;
-    private float disengageMultiplier = 1;
+    private float attackModifiers = 0;
+    //private float meleeMultiplier = 1;
+    //private float rangedMultiplier = 1;
+    private float energyModifier = 0;
+    //private float disengageMultiplier = 1;
 
 
     public abstract List<Vector2Int> SelectAvailableSquares(Vector2Int startingSquare);
@@ -300,6 +314,7 @@ public abstract class Piece : MonoBehaviour
 
     private void OnEnable()
     {
+
         if (attackType == "ranged")
         {
             aggressiveAttitude = false;
@@ -308,36 +323,9 @@ public abstract class Piece : MonoBehaviour
         startingMorale = morale;
         startingEnergy = energy;
 
-        flankingDamage = 1; //set this to 1 bc its all zero right now >>
+        flankingDamage = 0; 
 
         _audioSource = GetComponent<AudioSource>();
-
-        midRange = Mathf.RoundToInt(effectiveRange * 1.5f);
-
-        longRange = Mathf.RoundToInt(effectiveRange * 1.75f);
-
-        beyondTargetableRange = 0;
-
-        if (midRange == effectiveRange)
-        {
-            midRange++;
-        }
-        if (longRange < midRange)
-        {
-            longRange = midRange + 1;
-        }
-        else if (longRange == midRange)
-        {
-            longRange++;
-        }
-        beyondTargetableRange = longRange + 1;
-
-
-        originalEffectiveRange = effectiveRange;
-        originalMidRange = midRange;
-        originalLongRange = longRange;
-
-
 
         startOfTurn = true;
         if (gameInit == null)
@@ -363,7 +351,7 @@ public abstract class Piece : MonoBehaviour
         speed = originalSpeed;
         //smallModelCount = Mathf.RoundToInt(models / downscale); // downsize by factor of 10, so 450 is 45
         //numberOfRows = Mathf.RoundToInt(models / rowSize); //for example: 45/7 = 6.4 round down to 6
-        numberOfRows = Mathf.RoundToInt(models);
+        //numberOfRows = Mathf.RoundToInt(models);
         armyLossesThreshold = models * 0.5f; //prefers even numbers
 
         speed3 = new Vector2Int[]
@@ -3493,7 +3481,7 @@ public abstract class Piece : MonoBehaviour
         {// if so delete unit position from grid
 
             board.grid[occupiedSquare.x, occupiedSquare.y] = null;
-            Debug.Log("dead");
+            //Debug.Log("dead");
         }
     }
 
@@ -3579,18 +3567,44 @@ public abstract class Piece : MonoBehaviour
             return;
         }
         CalculateDamageModifiers();
-        
-        var calculatedDamage = damage + attackBonus - targetToAttackPiece.armorLevel - targetToAttackPiece.defenseModifier; //base damage
-        if (calculatedDamage < 0) //make it so it's not negative
+
+        if (attackType == "ranged")
+        {
+            flankingDamage = 0;
+        }
+
+        var calculatedDamage = damage + flankingDamage - targetToAttackPiece.armorLevel - targetToAttackPiece.defenseModifier; //base damage
+
+        if (!isChaff && calculatedDamage <= 0) //all nonchaff units will deal at least 1 damage.
+        {
+            calculatedDamage = 1;
+        }
+        else if (calculatedDamage <= 0) //chaff units can have damage reduced to 0 by armor
         {
             calculatedDamage = 0;
         }
-        //Debug.Log("Calculated damage" + calculatedDamage);
-        //Debug.Log("Unit ID " + unitID + "temp damage" + tempDamage + "models" + models + "calculated damage" + calculatedDamage + "Damage effect" + damageEffect + "melee multiplier" + meleeMultiplier + "ranged multiplier" + rangedMultiplier + "energy multiplier" + energyMultiplier + "flanking damage" + flankingDamage + "accuracy" + accuracy);
 
-        queuedDamage = calculatedDamage * meleeMultiplier * rangedMultiplier * energyMultiplier * flankingDamage * accuracy * disengageMultiplier; //apply all possible multiplier
+        var penaltyDamage = calculatedDamage + accuracyModifier + energyModifier + attackModifiers; //penalties can reduce damage to 0
+
+        if (penaltyDamage <= 0)
+        {
+            penaltyDamage = 0;
+        }
+
+        //* meleeMultiplier * rangedMultiplier *
+        Debug.LogError("Calculated damage" + penaltyDamage + "flanking" + flankingDamage + "accuracy" + accuracyModifier);
+
+
+        if (hasPikes)
+        {
+            penaltyDamage *= 2;
+        }
+
+        queuedDamage = penaltyDamage; //apply all possible multiplier
         if (queuedDamage < 0)
+        {
             queuedDamage = 0; //just make sure damage can never be negative
+        }
 
         alreadyCalculatedDamage = true;
     }
@@ -3598,19 +3612,19 @@ public abstract class Piece : MonoBehaviour
     public void CalculateDamageModifiers()
     {
         //reset variables
-        attackBonus = 0;
-        meleeMultiplier = 1;
-        rangedMultiplier = 1;
-        energyMultiplier = 1;
-        disengageMultiplier = 1;
+        attackModifiers = 0;
+        //meleeMultiplier = 1;
+        //rangedMultiplier = 1;
+        energyModifier = 0;
+        //disengageMultiplier = 1;
 
         if (targetToAttackPiece.OnTerrainType != "hill" && OnTerrainType == "hill") //bonus from attacking downhill
         {
-            attackBonus = 1; //+1 damage attacking down hill
+            attackModifiers += 1; //+1 damage attacking down hill
         }
         else if (OnTerrainType != "hill" && targetToAttackPiece.OnTerrainType == "hill") //debuff froom attacking uphill
         {
-            attackBonus = -1; //-1 damage attacking up hill
+            attackModifiers -= 1; //-1 damage attacking up hill
         }
 
         if (targetToAttackPiece.currentFormation == "braced") //-50% to melee damage dealt to braced units facing us
@@ -3620,7 +3634,8 @@ public abstract class Piece : MonoBehaviour
                 if (attackType == "melee")
                 {
                     //Debug.Log("reducing damage of attacker by 50%");
-                    meleeMultiplier = .5f;
+                    //meleeMultiplier = .5f;
+                    //Deal damage first
                 }
             }
         }
@@ -3628,11 +3643,11 @@ public abstract class Piece : MonoBehaviour
         {
             if (attackType == "melee")
             {
-                attackBonus += 1;
+                attackModifiers += 1;
             }
             else if (attackType == "ranged")
             {
-                rangedMultiplier = .5f;
+                attackModifiers -= 1;
             }
 
         }
@@ -3640,30 +3655,31 @@ public abstract class Piece : MonoBehaviour
         {
             if (attackType == "melee")
             {
-                meleeMultiplier = .75f;
+                attackModifiers -= 1;
             }
         }
 
         if (energy < startingEnergy && energy > startingEnergy * .5f)
         {
             //no penalty
+            energyModifier = 0;
         }
         else if (energy < startingEnergy * .5f && energy > 0) //-25% damage
         {
-            energyMultiplier = .75f;
+            energyModifier = -1;
         }
         else if (energy <= 0) //-50% damage
         {
-            energyMultiplier = .5f;
+            energyModifier = -2;
         }
-        if (targetToAttackPiece.disengaging && attackType == "melee")
+        /*if (targetToAttackPiece.disengaging && attackType == "melee")
         {
             disengageMultiplier = .5f;
-        }
+        }*/
 
         if (attackType == "melee") //ignores accuracy for melee units
         {
-            accuracy = 1f;
+            accuracyModifier = 0;
         }
     }
 
@@ -3710,9 +3726,10 @@ public abstract class Piece : MonoBehaviour
             Debug.Log("Halting because target next to us and we're aggressive");
             return true;
         } //ranged units  will prioritize finishing their move before attacking, whereas melee units will try to attack as soon as possible 
+        
         if (attackerPiece != null) //if we are being attacked . . . by a melee piece
         { 
-            if (attackerPiece.attackType == "melee" && !disengaging && TargetAdjacent(attackerPiece))
+            if (attackerPiece.attackType == "melee" && TargetAdjacent(attackerPiece) && unitType != "cavalry")
             { 
                 Debug.Log("Halting because pinned");
                 SpawnEvent("Pinned!", Color.red, 5f);
@@ -4135,7 +4152,7 @@ public abstract class Piece : MonoBehaviour
     {
         if (sprinting && OnTerrainType != "road") //if sprinting and not on road (thus if sprinting and on road, normal energy --)
         {
-            energy -= 1.25f;
+            energy -= 2;
         }
         else
         {
@@ -4584,69 +4601,56 @@ public abstract class Piece : MonoBehaviour
 
     public void ApplyAccuracy(int tileNumber)
     {
-        accuracy = 1f;
+        accuracyModifier = 0;
         if (tileNumber == 1) //point blank
         {
-            accuracy = .5f;
+            accuracyModifier = -1;
         }
         else if (tileNumber <= effectiveRange) // effective range
         {
-            accuracy = 1f;
+            accuracyModifier = 0;
         }
-        else if (tileNumber <= midRange) //midrange
+        else if (tileNumber <= longRange)
         {
-            accuracy = .5f;
+            accuracyModifier = -2;
         }
-        else if (tileNumber <= longRange) // longrange
-        {
-            accuracy = .25f;
-        }
-        else if (tileNumber >= beyondTargetableRange) //beyond targetable, so no damage
-        {
-            accuracy = 0f;
-            //accuracy = .25f;
-        }
-        /*else
-        {
-            accuracy = .25f;
-        }*/
-        //
-        Debug.LogError("Tile number" + tileNumber + "beyond range" + beyondTargetableRange);
-        Debug.Log("accuracy" + accuracy + "temp damage" + tempDamage);
+        //Debug.LogError("Tile number" + tileNumber + "beyond range" + beyondTargetableRange);
+        //Debug.Log("accuracy" + accuracy + "temp damage" + tempDamage);
     }
     public void ApplyDamage() //physical and morale damage
     {
         board.PieceApplyDamage(unitID); //tell mp
     }
 
-    public void OnApplyDamage() //after communicating with mp
+    public void OnApplyDamage() //after communicating with mp //DEAL DAMAGE
     {
         CheckIfEnemiesAdjacent();
-
+        //Don't go any further if we've already applied damage, or target doesn't exist, or not attacking, or queued damage < 0
         if (alreadyAppliedDamage)
         {
-            Debug.LogError("already applied damage so returning" + "unit id" + unitID);
+            //Debug.LogError("already applied damage so returning" + "unit id" + unitID);
             return;
         }
 
         if (targetToAttackPiece == null || !attacking || queuedDamage < 0) //if target nonexistent, or not attacking, or queued damage is less than 0. 0 damage is still valid
         {
-            Debug.LogError("Returning1" + "unit id" + unitID);
+            //Debug.LogError("Returning1" + "unit id" + unitID);
             return;
         }
 
         if (!targetToAttackPiece.disengaging && !targetAdjacent && attackType == "melee") //if target is not disengaging and target is not adjacent and attack type is melee
         {
-            Debug.LogError("Returning2" + "unit id" + unitID + "target adjacent" + targetAdjacent + "enemy adjacent" + enemyAdjacent);
+            //Debug.LogError("Returning2" + "unit id" + unitID + "target adjacent" + targetAdjacent + "enemy adjacent" + enemyAdjacent);
             return;
         }
 
         //Debug.Log(targetAdjacent + "" + targetToAttackPiece + "" + attacking + queuedDamage);
         targetToAttackPiece.attackerPiece = this;
 
-        Debug.Log("attempting to apply damage" + queuedDamage + "target" + targetToAttackPiece + "attacking" + attacking + "unit id" + unitID);
+        //Debug.Log("attempting to apply damage" + queuedDamage + "target" + targetToAttackPiece + "attacking" + attacking + "unit id" + unitID);
 
-        targetToAttackPiece.models -= queuedDamage;
+        targetToAttackPiece.models -= queuedDamage; //remember: models is now HEALTH
+
         targetToAttackPiece.modelBar.SetHealth(targetToAttackPiece.models);
         Debug.Log("target models " + targetToAttackPiece.models);
         if (targetToAttackPiece.models < 0) //make sure models can't go below zero
@@ -4700,7 +4704,19 @@ public abstract class Piece : MonoBehaviour
         OnTriggerAttacksForSoldiers();
         ClearQueuedMoves();
         alreadyAppliedDamage = true;
+        hasAttacked = true;
 
+    }
+
+    public void RestoreEnergy()
+    {
+        if (!hasAttacked && !hasMoved)
+        {
+            energy++;
+            energyBar.SetHealth(energy);
+            hasAttacked = false;
+            hasMoved = false;
+        }
     }
 
     public void OnTriggerAttacksForSoldiers() //finished communicating with mp
@@ -4816,7 +4832,7 @@ public abstract class Piece : MonoBehaviour
     }
 
 
-    public IEnumerator KillOff()
+    public IEnumerator KillOff() //execute soldiers
     {
         if (markedSoldiers.Count > 0) //if there are still soldiers to kill
         {
@@ -4826,7 +4842,7 @@ public abstract class Piece : MonoBehaviour
                 waitingForFirstAttack = false;
                 //attackerPiece.soldierAttacked = false; //set it to false to be ready for the next one
             }
-            yield return new WaitForSeconds(Random.Range(0.1f, 5 / markedSoldiersCount)); //this should make soldiers die in a more timely fashion. soldiers die faster the more there are to kill
+            yield return new WaitForSeconds(Random.Range(0.1f, 12 / markedSoldiersCount)); //this should make soldiers die in a more timely fashion. soldiers die faster the more there are to kill
 
             if (markedSoldiers[0] != null)
             {
@@ -4891,12 +4907,13 @@ public abstract class Piece : MonoBehaviour
                     if (i >= 1 && i <= 3) //rear tiles
                     {
                         //piece.flankingDamage = 3;
+                        
                         piece.flankingDamage = 2;
                     }
 
                     if (i == 0 || i == 4) //side tiles
                     {
-                        piece.flankingDamage = 1.5f;
+                        piece.flankingDamage = 1;
                     }
                 }
 
@@ -4908,7 +4925,7 @@ public abstract class Piece : MonoBehaviour
     {
         if (models <= armyLossesThreshold && !armyLossesApplied)
         {
-            morale -= 5;
+            morale -= Mathf.RoundToInt(startingMorale * .5f);
             armyLossesApplied = true;
 
             SpawnEvent("Heavy losses!", Color.black, 5f);
@@ -4969,7 +4986,7 @@ public abstract class Piece : MonoBehaviour
                 {
                     if (piece.attacking && piece.targetToAttackPiece == this) //bonus morale damage applied if attacking this in the rear
                     {
-                        bonusMoraleDamage += 2;
+                        bonusMoraleDamage += 3;
                     }
                 }
 
@@ -5116,7 +5133,6 @@ public abstract class Piece : MonoBehaviour
     public void ResetRanges()
     {
         effectiveRange = originalEffectiveRange;
-        midRange = originalMidRange;
         longRange = originalLongRange;
     }
 
@@ -5132,7 +5148,7 @@ public abstract class Piece : MonoBehaviour
         queueTime = 0;
         safeQueueTime = 0;
         queuedDamage = 0;
-        flankingDamage = 1;
+        flankingDamage = 0;
         conflict = false;
         moving = true;
         wonTieBreak = false;
@@ -5241,14 +5257,16 @@ public abstract class Piece : MonoBehaviour
         if (attackType == "ranged")
         {
 
-            effectiveRange = originalEffectiveRange + 1;
+            /*effectiveRange = originalEffectiveRange + 1;
             midRange = originalMidRange + 1;
             longRange = originalLongRange + 1;
-
+*/
+            effectiveRange = originalEffectiveRange;
+            longRange = originalLongRange;
             if (OnTerrainType == "hill")
             {
                 effectiveRange++;
-                midRange++;
+                //midRange++;
                 longRange++;
             }
 
@@ -5267,28 +5285,6 @@ public abstract class Piece : MonoBehaviour
         board.ShowSelectionSquares(SelectAvailableSquares(occupiedSquare), this);
     }
 
-    public void RecalculateAttackRanges()
-    {
-        midRange = Mathf.RoundToInt(effectiveRange * 1.5f);
-
-        longRange = Mathf.RoundToInt(effectiveRange * 1.75f);
-
-        beyondTargetableRange = 0;
-
-        if (midRange == effectiveRange)
-        {
-            midRange++;
-        }
-        if (longRange < midRange)
-        {
-            longRange = midRange + 1;
-        }
-        else if (longRange == midRange)
-        {
-            longRange++;
-        }
-        beyondTargetableRange = longRange + 1;
-    }
     public void SetStanceMoveAttack() //ranged move and attack
     {
         ResetRanges();
@@ -5311,7 +5307,7 @@ public abstract class Piece : MonoBehaviour
         if (OnTerrainType == "hill" && attackType == "ranged")
         {
             effectiveRange++;
-            midRange++;
+            //midRange++;
             longRange++;
         }
         speed = originalSpeed + terrainSpeedModifier;
