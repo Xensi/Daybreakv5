@@ -27,7 +27,7 @@ public abstract class Board : MonoBehaviour
     public SquareSelectorCreator squareSelector;
 
     public TeamColor[] teamColors;
-    
+
     [SerializeField] private Material testMat;
     [SerializeField] private Material whiteMat;
     [SerializeField] private Material blackMat;
@@ -51,7 +51,7 @@ public abstract class Board : MonoBehaviour
 
     public bool selectingAction = false;
     public GameObject selectionIndicatorPrefab;
-    private bool waitingToFinishTurn = false;
+    //private bool waitingToFinishTurn = false;
 
     private List<GameObject> instantiatedSelectors = new List<GameObject>();
     public List<Piece> piecesReadyToAttack = new List<Piece>();
@@ -65,7 +65,7 @@ public abstract class Board : MonoBehaviour
 
     public bool readyToPlaceUnit = false;
     public string tempName;
-    public int tempModels;
+    public float tempModels;
     public float tempMorale;
     public float tempEnergy;
     public int tempPlacementID = 0;
@@ -114,9 +114,14 @@ public abstract class Board : MonoBehaviour
     {
 
         Vector2Int coords = CalculateCoordsFromPosition(inputPosition); //coords calculated from position
+        if (coords.x < 0 || coords.y < 0  || coords.x > 100 || coords.y > 100)
+        {
+            return;
+        }
+        //print(coords.x + coords.y);
         if (terrainGrid[coords.x, coords.y] == "rout")
         {
-            Debug.LogError("Can't place/queue onto rout!");
+            //Debug.LogError("Can't place/queue onto rout!");
             return;
         }
         if (placingPieces)
@@ -458,8 +463,10 @@ public abstract class Board : MonoBehaviour
 
             newButton.onClick.AddListener(delegate { SelectSpecificUnit(unit.name, unit.models, unit.morale, unit.energy, unit.placementID); });
 
-            newButton.transform.parent = gameInit.unitOptionsParent.transform;
-            newButton.transform.position += new Vector3(1200, 400 - i * 100, 0);
+            //newButton.transform.parent = gameInit.unitOptionsParent.transform;
+            newButton.transform.SetParent(gameInit.unitOptionsParent.transform);
+            
+            newButton.transform.position += new Vector3(1200, 500-i*100, 0);
 
             unitButtonsList.Add(newButton);
 
@@ -468,7 +475,7 @@ public abstract class Board : MonoBehaviour
     }
 
 
-    public void SelectSpecificUnit(string name, int models, float morale, float energy, int placementID)
+    public void SelectSpecificUnit(string name, float models, float morale, float energy, int placementID)
     {
         //hide all the buttons
         foreach (var button in unitButtonsList)
@@ -631,8 +638,8 @@ public abstract class Board : MonoBehaviour
     public abstract void PieceCommunicateTargetToAttackPiece(int id, int x, int y);
 
 
-    public abstract void PieceMarkForDeath(int id, int damage);
-    public void OnPieceMarkForDeath(int id, int damage)
+    public abstract void PieceMarkForDeath(int id, float damage);
+    public void OnPieceMarkForDeath(int id, float damage)
     {
         UnitList[id].OnMarkForDeath(damage);
     }
@@ -797,7 +804,7 @@ public abstract class Board : MonoBehaviour
         //Debug.Log(whiteReady + "" + blackReady);
         if (whiteReady && blackReady) //if both players are ready   
         {
-            waitingToFinishTurn = false;
+            //waitingToFinishTurn = false;
             whiteReady = false;
             blackReady = false;
             allMovesFinishedCalled = false;
@@ -827,7 +834,7 @@ public abstract class Board : MonoBehaviour
                     piecesReadyToAttack.Add(AllPieces[i]); //this is now an attacker >:)
                     if (AllPieces[i].attackType == "ranged") // accuracy calculations are incompatible with this, so set it manually
                     {
-                        AllPieces[i].accuracy = .5f; //for point blank range
+                        AllPieces[i].accuracyModifier = -1; //for point blank range
                     }
                 }
             } 
@@ -986,7 +993,7 @@ public abstract class Board : MonoBehaviour
                 piecesReadyToAttack.Add(AllPieces[i]); //this is now an attacker >:)
                 if (AllPieces[i].attackType == "ranged") // accuracy calculations are incompatible with this, so set it manually
                 {
-                    AllPieces[i].accuracy = .5f; //for point blank range
+                    AllPieces[i].accuracyModifier = -1; //for point blank range
                 }
             }
         }
@@ -1235,7 +1242,7 @@ public abstract class Board : MonoBehaviour
                     pieces.Add(AllPieces[i]); //this is now an attacker >:)
                     if (AllPieces[i].attackType == "ranged") // accuracy calculations are incompatible with this, so set it manually
                     {
-                        AllPieces[i].accuracy = .5f; //for point blank range
+                        AllPieces[i].accuracyModifier = -1; //for point blank range
                     }
                 }
             }
@@ -1243,7 +1250,7 @@ public abstract class Board : MonoBehaviour
         }
         for (int i = 0; i < AllPieces.Length; i++)
         {
-            AllPieces[i].flankingDamage = 1;
+            AllPieces[i].flankingDamage = 0;
         }
         for (int i = 0; i < AllPieces.Length; i++) //should calculate for all?
         {
@@ -1342,6 +1349,12 @@ public abstract class Board : MonoBehaviour
                 AllPieces[i].QueueRout();
             }
         }*/
+        for (int i = 0; i < pieces.Count; i++)
+        {
+            pieces[i].RestoreEnergy(); //restore energy to units who haven't moved or attacked. also reset hasMoved and hasAttacked
+        }
+
+
         for (int i = 0; i < pieces.Count; i++) //reset pieces for movement next turn
         {
             pieces[i].FinishedMoving = false;

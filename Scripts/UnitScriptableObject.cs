@@ -6,7 +6,7 @@ using UnityEngine;
 public class UnitScriptableObject : ScriptableObject
 { //only includes critical data or data that should be carried over between battles
     public new string name; //needed to spawn in the correct prefab
-    public int models;
+    public float models;
     public float morale;
     public float energy;
     

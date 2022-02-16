@@ -6,7 +6,7 @@ using UnityEngine;
 public class UnitStats
 {
     public string name;
-    public int models;
+    public float models;
     public float morale;
     public float energy;
 

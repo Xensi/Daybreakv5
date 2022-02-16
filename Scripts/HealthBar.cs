@@ -79,10 +79,10 @@ public class HealthBar : MonoBehaviour
     public void SetHealth(float health)
     {
         //slider.value = health;
-        if (!piece.isCampaignToken && !piece.isCampaignObjective) //if it's a normal piece
-        {
-            StartCoroutine(TweenHP(health));
-        }
+        //if (!piece.isCampaignToken && !piece.isCampaignObjective) //if it's a normal piece
+        //{
+        StartCoroutine(TweenHP(health));
+        //}
 
     }
 

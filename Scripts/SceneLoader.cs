@@ -7,7 +7,7 @@ public class SceneLoader : MonoBehaviour
 {
     public string sceneToLoad;
     public AsyncOperation loadOperation;
-    private bool loadScene = false;
+    //private bool loadScene = false;
     private void Start()
     {
         // Load the next scene.

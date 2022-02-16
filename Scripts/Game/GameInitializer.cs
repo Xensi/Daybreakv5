@@ -205,7 +205,7 @@ public class GameInitializer : MonoBehaviour
         Instantiate(singleplayerBoardPrefab, boardAnchor);
         levelGen.FindBoard();
         levelGen.GenerateLevel();
-        Debug.LogError("Generating level2");
+        //Debug.LogError("Generating level2");
         FindBoard();
     }
     public void InitializeMultiplayerController()
@@ -586,7 +586,7 @@ public class GameInitializer : MonoBehaviour
 
 
             List<TMP_Dropdown.OptionData> dropData = new List<TMP_Dropdown.OptionData>();
-            if (board.selectedPiece.unitType == "infantry" && board.selectedPiece.attackType == "melee") //not including brace yet
+            if (board.selectedPiece.unitType == "infantry" && board.selectedPiece.attackType == "melee") 
             {
                 var option1 = new TMP_Dropdown.OptionData("Select a formation", icons[10]);
                 dropData.Add(option1);

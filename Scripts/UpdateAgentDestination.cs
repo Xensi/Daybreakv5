@@ -23,7 +23,7 @@ public class UpdateAgentDestination : MonoBehaviour
     public bool idleSet = false;
     public bool moveSet = false;
     public float animationSpeed = 1;
-    public int queuedDamage; //this is set by parent piece
+    public float queuedDamage; //this is set by parent piece
     public bool freeze = false;
 
     //public float distanceToNotAttack = 1f;

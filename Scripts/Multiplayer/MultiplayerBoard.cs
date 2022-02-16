@@ -258,7 +258,7 @@ public class MultiplayerBoard : Board
         OnPieceCommunicateTargetToAttackPiece(id, x, y);
 
     }
-    public override void PieceMarkForDeath(int id, int damage) //we need this for deaths
+    public override void PieceMarkForDeath(int id, float damage) //we need this for deaths
     {
         photonView.RPC(nameof(RPC_OnPieceMarkForDeath), RpcTarget.AllBuffered, new object[] { id, damage });
     }

@@ -15,5 +15,5 @@ MonoBehaviour:
   boardSquares:
   - position: {x: 2, y: 2}
     pieceType: 0
-    teamColor: 0
+    teamColor: 5
     direction: 0

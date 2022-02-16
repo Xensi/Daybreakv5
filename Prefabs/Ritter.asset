@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Ritter
   m_EditorClassIdentifier: 
   name: Ritter
-  models: 14
-  morale: 30
-  energy: 40
+  models: 7
+  morale: 8
+  energy: 7

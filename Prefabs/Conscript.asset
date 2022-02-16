@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Conscript
   m_EditorClassIdentifier: 
   name: Conscript
-  models: 42
+  models: 6
   morale: 10
   energy: 20

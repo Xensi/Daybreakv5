@@ -13,12 +13,12 @@ public class CameraMover : MonoBehaviour
     public float minY = 20f;
     public float maxY = 120f;
     public Rigidbody body;
-    public Collider collider;
+    public Collider cameraCollider;
     public float distToGround;
     // Start is called before the first frame update
     void Start()
     {
-        distToGround = collider.bounds.extents.y;
+        distToGround = cameraCollider.bounds.extents.y;
     }
 
     // Update is called once per frame

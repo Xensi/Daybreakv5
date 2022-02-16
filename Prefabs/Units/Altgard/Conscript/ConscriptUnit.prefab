@@ -116,28 +116,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6e53229e40008a4292c1ae673e45f8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCampaignToken: 0
-  isCampaignObjective: 0
-  missionToLoad: 
-  menuController: {fileID: 0}
   unitName: Conscript
   displayName: Conscripts
   originalSpeed: 1
-  models: 42
+  models: 6
   startingModels: 0
   oldModels: 0
-  health: 9
-  damage: 1
+  damage: 2
   morale: 10
-  maxMorale: 0
   energy: 20
   startingEnergy: 0
   startingMorale: 0
-  damageLevel: 1
-  armorLevel: 1
+  armorLevel: 0
+  weightClass: light
+  isChaff: 0
+  arcingAttack: 0
   attackType: melee
   unitType: infantry
   effectiveRange: 1
+  longRange: 0
   soldierScale: 0.765
   rowSize: 7
   hexOffset: 0.6
@@ -163,8 +160,6 @@ MonoBehaviour:
   circleNavParent: {fileID: 7885324316243032425}
   staggeredNavParent: {fileID: 1841803912138195433}
   unitPortrait: {fileID: 21300000, guid: c4ce637be62f3e9428074b81994651d8, type: 3}
-  armorPiercing: 0
-  arcingAttack: 0
   attackOrderSoundEffects:
   - {fileID: 8300000, guid: 7a07d36d8fa743544bc7cf40f0ede702, type: 3}
   - {fileID: 8300000, guid: d10b2c4741e37c143b32efea87b548da, type: 3}
@@ -181,17 +176,13 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 091ac46d29e1e7f4c813c900a51f112b, type: 3}
   - {fileID: 8300000, guid: 9888d67afba1cf04f9519465ec2349eb, type: 3}
   terrainSpeedModifier: 0
-  flankingDamage: 1
+  flankingDamage: 0
   originalEffectiveRange: 1
-  originalMidRange: 1
   originalLongRange: 1
   soldierAttacked: 0
   attackerPiece: {fileID: 0}
   rangeAttackDistance: 0
   targetedSquare: {x: 0, y: 0}
-  midRange: 0
-  longRange: 0
-  beyondTargetableRange: 0
   rangedDamageReduction: 0
   fireDamageBonus: 0
   unitID: 0
@@ -295,7 +286,7 @@ MonoBehaviour:
   OnTerrainType: 
   currentFormation: rectangle
   queuedFormation: nothing
-  accuracy: 0
+  accuracyModifier: 0
   ordersGiven: 0
   defensiveAttacking: 0
   attackedThisTurn: 0
