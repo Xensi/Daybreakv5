@@ -479,6 +479,30 @@ public class DialogueManager : MonoBehaviour
         gameInit.unreadyButtonParent.SetActive(true);
     }
 
+    public void FastLaunchDayOfGlory()
+    {
+
+        gameInit.strafeCam.transform.position = cameraPosTutorial.position;
+        gameInit.strafeCam.SetActive(true);
+        gameInit.cinematicCam.SetActive(false);
+
+        cinematicParent.SetActive(false);
+
+        gameInit.SelectLevel("DayOfGlory"); //loads the correct board layout (pieces positioning)
+        gameInit.levelGen.SelectLevel("DayOfGlory"); //loads correct map, and placement map
+        gameInit.CreateSinglePlayerBoard(); //enables execute button, creates board, finds board for level gen, generates level, finds board
+        chessUI.OnSingleplayerModeSelected(); //simply disables some screens
+        gameInit.InitializeSinglePlayerController();
+        LoadLevelUnitList("DayOfGlory");
+        gameInit.board.GenerateButtonsFromSavedUnits();
+
+
+        gameInit.chessController.AllowInput = true;
+        gameInit.placingUnitsScreen.SetActive(true);
+        gameInit.executeButtonParent.SetActive(true);
+        gameInit.unreadyButtonParent.SetActive(true);
+    }
+
 
     void StartTutorial3()
     {

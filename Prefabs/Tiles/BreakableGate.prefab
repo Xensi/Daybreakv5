@@ -12,10 +12,10 @@ GameObject:
   - component: {fileID: 2351138163357795050}
   - component: {fileID: 3829485434517231987}
   - component: {fileID: 4055170447191568243}
-  - component: {fileID: -5210303252254575650}
-  - component: {fileID: -8052037330867189629}
+  - component: {fileID: -826610526530738798}
+  - component: {fileID: 8533377813991438346}
   m_Layer: 7
-  m_Name: Trench
+  m_Name: BreakableGate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 69195000a7ff96446b68e523ae319972, type: 2}
+  - {fileID: 2100000, guid: ada8da02060b75c4683c1a19827de1c9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -96,7 +96,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cccb36210252ad34c80bd484152a9296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!65 &-5210303252254575650
+--- !u!65 &-826610526530738798
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -109,7 +109,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 10, y: 2.220446e-16, z: 10}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-8052037330867189629
+--- !u!114 &8533377813991438346
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

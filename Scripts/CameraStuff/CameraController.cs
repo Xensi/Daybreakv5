@@ -11,10 +11,18 @@ public class CameraController : MonoBehaviour
     public float originalRotation = 60;
 
 
+    public void ToggleTilesOnOff()
+    {
+
+        cam.cullingMask ^= 1 << LayerMask.NameToLayer("Tiles");
+    }
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Confined;
     }
+
+
+
     private void Update()
     {
 

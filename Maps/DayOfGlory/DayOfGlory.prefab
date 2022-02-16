@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1550565634824083460}
   - component: {fileID: 1674400061868147996}
   - component: {fileID: 1406912196052533116}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: DayOfGlory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
