@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class LevelGenerator : MonoBehaviour
 {
@@ -23,8 +25,8 @@ public class LevelGenerator : MonoBehaviour
     void Start()
     {
         //GenerateLevel();
-        
     }
+
 
     public void DestroyLevel()
     {
@@ -55,7 +57,7 @@ public class LevelGenerator : MonoBehaviour
                 placementAllowanceMap = varplacementmap;
             }
         }
-        foreach (var terrain in terrainList)
+        /*foreach (var terrain in terrainList)
         {
             Debug.Log(terrain.ToString());
             Debug.Log(strLevel + " (UnityEngine.Terrain)");
@@ -63,9 +65,13 @@ public class LevelGenerator : MonoBehaviour
             {
                 terrain.gameObject.SetActive(true);
             }
-        }
-    }
+        }*/
 
+        string sceneMap = strLevel + "Map";
+        SceneManager.LoadScene(sceneMap, LoadSceneMode.Additive);
+
+
+    }
 
     public void FindBoard()
     {

@@ -433,8 +433,6 @@ public class DialogueManager : MonoBehaviour
 
     void StartTutorial2()
     {
-
-        //Debug.Log("Starting training course");
         gameInit.strafeCam.transform.position = cameraPosTutorial.position;
         gameInit.strafeCam.SetActive(true);
         gameInit.cinematicCam.SetActive(false);
@@ -443,6 +441,14 @@ public class DialogueManager : MonoBehaviour
 
         gameInit.SelectLevel("Tutorial"); //loads the correct board layout (pieces positioning)
         gameInit.levelGen.SelectLevel("Tutorial"); //loads correct map, and placement map
+        
+        StartCoroutine(Tutorial3());
+    }
+
+    private IEnumerator Tutorial3()
+    {
+        yield return new WaitForSecondsRealtime(.01f);
+
         gameInit.CreateSinglePlayerBoard(); //enables execute button, creates board, finds board for level gen, generates level, finds board
         chessUI.OnSingleplayerModeSelected(); //simply disables some screens
         gameInit.InitializeSinglePlayerController();
@@ -457,43 +463,41 @@ public class DialogueManager : MonoBehaviour
 
     public void StartTestingGrounds()
     {
-
-        gameInit.strafeCam.transform.position = cameraPosTutorial.position;
-        gameInit.strafeCam.SetActive(true);
-        gameInit.cinematicCam.SetActive(false);
-
-        cinematicParent.SetActive(false);
-
-        gameInit.SelectLevel("Tutorial"); //loads the correct board layout (pieces positioning)
-        gameInit.levelGen.SelectLevel("Tutorial"); //loads correct map, and placement map
-        gameInit.CreateSinglePlayerBoard(); //enables execute button, creates board, finds board for level gen, generates level, finds board
-        chessUI.OnSingleplayerModeSelected(); //simply disables some screens
-        gameInit.InitializeSinglePlayerController();
-        LoadLevelUnitList("Tutorial");
-        gameInit.board.GenerateButtonsFromSavedUnits();
-
-
-        gameInit.chessController.AllowInput = true;
-        gameInit.placingUnitsScreen.SetActive(true);
-        gameInit.executeButtonParent.SetActive(true);
-        gameInit.unreadyButtonParent.SetActive(true);
+        LoadLevelSetup("Tutorial");
     }
 
     public void FastLaunchDayOfGlory()
     {
+        LoadLevelSetup("DayOfGlory");
+    }
 
+    private void LoadLevelSetup(string level)
+    {
         gameInit.strafeCam.transform.position = cameraPosTutorial.position;
         gameInit.strafeCam.SetActive(true);
         gameInit.cinematicCam.SetActive(false);
 
         cinematicParent.SetActive(false);
 
-        gameInit.SelectLevel("DayOfGlory"); //loads the correct board layout (pieces positioning)
-        gameInit.levelGen.SelectLevel("DayOfGlory"); //loads correct map, and placement map
+        gameInit.SelectLevel(level); //loads the correct board layout (pieces positioning)
+        gameInit.levelGen.SelectLevel(level); //loads correct map, and placement map
+
+        StartCoroutine(WaitForASec(level));
+    }
+
+    private IEnumerator WaitForASec(string level)
+    {
+        yield return new WaitForSecondsRealtime(0.01f);
+
+        FastLaunch(level);
+    }
+
+    private void FastLaunch(string level)
+    {
         gameInit.CreateSinglePlayerBoard(); //enables execute button, creates board, finds board for level gen, generates level, finds board
         chessUI.OnSingleplayerModeSelected(); //simply disables some screens
-        gameInit.InitializeSinglePlayerController();
-        LoadLevelUnitList("DayOfGlory");
+        gameInit.InitializeSinglePlayerController(); //creates units
+        LoadLevelUnitList(level);
         gameInit.board.GenerateButtonsFromSavedUnits();
 
 
@@ -502,7 +506,6 @@ public class DialogueManager : MonoBehaviour
         gameInit.executeButtonParent.SetActive(true);
         gameInit.unreadyButtonParent.SetActive(true);
     }
-
 
     void StartTutorial3()
     {
