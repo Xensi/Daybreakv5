@@ -112,11 +112,10 @@ public abstract class Board : MonoBehaviour
 
     public void OnSquareSelected(Vector3 inputPosition, int mouse) //called when player clicks on a board square
     {
-
         Vector2Int coords = CalculateCoordsFromPosition(inputPosition); //coords calculated from position
-        if (coords.x < 0 || coords.y < 0  || coords.x > 100 || coords.y > 100)
+        if (coords.x < 0 || coords.y < 0  || coords.x > 100 || coords.y > 100) //if outside of max coords
         {
-            return;
+            return; //return
         }
         //print(coords.x + coords.y);
         if (terrainGrid[coords.x, coords.y] == "rout")
@@ -124,33 +123,34 @@ public abstract class Board : MonoBehaviour
             //Debug.LogError("Can't place/queue onto rout!");
             return;
         }
-        if (placingPieces)
+        if (placingPieces) //STATE: PLACING PIECES
         {
-            if (mouse == 0)
+            if (mouse == 0) //left click
             {
-                //Vector2Int coords = CalculateCoordsFromPosition(inputPosition); //coords calculated from position
                 Piece piece = GetPieceOnSquare(coords); //specific piece nabbed using new coords
-                if (readyToPlaceUnit && piece == null && placementAllowedGrid[coords.x, coords.y] == 1) //there must be no unit already there to place.
+                if (readyToPlaceUnit && piece == null && placementAllowedGrid[coords.x, coords.y] == 1) //No piece on tile, within placement grid, and placing allowed (IE: placing a piece down)
                 {
+                    //Debug.Log("attempting to place a piece");
+                    Piece placedPiece = chessController.CreatePieceAndInitialize(coords, ourTeamColor, tempName, tempDir); //place piece
 
-                    Debug.Log("attempting to place a piece");
-                    Piece placedPiece = chessController.CreatePieceAndInitialize(coords, ourTeamColor, tempName, tempDir);
-
-                    //after placing, we return
+                    //after placing, we return to the pre-placement state
                     readyToPlaceUnit = false;
                     gameInit.cancelPlaceUnitButton.gameObject.SetActive(false);
-                    foreach (var button in unitButtonsList)
+                    foreach (var button in unitButtonsList) //set unit buttons active so we can choose another one to place.
                     {
                         if (button != null)
                         { 
                             button.gameObject.SetActive(true);
                         }
                     }
+
                     //say that it's been placed.
                     gameInit.saveInfoObject.listOfSavedUnits[tempPlacementID].alreadyPlaced = true;
                     unitButtonsList[tempPlacementID].interactable = false;
 
-                    var text = gameInit.placingUnitsAlertText.GetComponentInChildren<TMP_Text>();
+                    var text = gameInit.placingUnitsAlertText.GetComponentInChildren<TMP_Text>(); 
+
+                    //determine if there are units that still need to be placed
                     var j = 0;
                     foreach (var unit in gameInit.saveInfoObject.listOfSavedUnits) //go through all saved units
                     {
@@ -159,6 +159,7 @@ public abstract class Board : MonoBehaviour
                             j++;
                         }
                     }
+                    //display text based on whether units still need to be placed or not.
                     if (j == 0) //if all units have been placed
                     { //show the new text "all units placed"  
                         text.text = "All units placed.";
@@ -171,47 +172,43 @@ public abstract class Board : MonoBehaviour
                     gameInit.dirButtonParent.SetActive(false);
 
                 }
-                else if (!readyToPlaceUnit && piece != null && !piece.placedByBoard) //if we are not trying to place a unit and the location we have selected has a piece on it
+                else if (!readyToPlaceUnit && piece != null && !piece.placedByBoard) //not trying to place unit, existing piece on board, and one we placed (IE: clicked on piece for removal)
                 {
-
-                    Debug.LogError(piece.team);
-                    if (piece.team == ourTeamColor)
+                    //Debug.LogError(piece.team);
+                    if (piece.team == ourTeamColor) //perhaps redundant but just checking that its ours
                     {
+                        //if so remove from board and store in our list
                         unitButtonsList[piece.placementID].interactable = true;
                         gameInit.saveInfoObject.listOfSavedUnits[piece.placementID].alreadyPlaced = false;
                         piece.ImmediateRemoval();
-
 
                         var text = gameInit.placingUnitsAlertText.GetComponentInChildren<TMP_Text>();
                         text.text = "Select a unit to place on the field.";
                         gameInit.confirmButton.gameObject.SetActive(false);
                     }
-
-
                 }
             }
         }
-        else
+        else //STATE: COMBAT
         {
-            if (chessController == null)
+            if (chessController == null) //chess controller must exist
             {
                 return;
             }
-
-            if (!chessController.AllowInput)
+            if (!chessController.AllowInput) //chess controller must allow input
             {
                 return;
             }
             Piece piece = GetPieceOnSquare(coords); //specific piece nabbed using new coords
 
-            if (mouse == 0) //display unit info and select
+            if (mouse == 0) //on left click
             {
-                Debug.Log("mouse 0");
-                if (selectedPiece) //if selected piece exists
+                //Debug.Log("mouse 0");
+                if (selectedPiece) //if selected piece exists (MEANING: we have a piece currently selected)
                 {
-                    if (piece != null && selectedPiece == piece) //if we click on the same piece twice
+                    if (piece != null && selectedPiece == piece) //if we click on the same piece twice, then DESELECT IT
                     {
-                        Debug.Log("same piece clicked");
+                        //Debug.Log("same piece clicked");
                         //Debug.Log(selectedPiece.thisMarkerGrid[coords.x, coords.y]);
                         var gridMarker = selectedPiece.thisMarkerGrid[coords.x, coords.y]; //fetch marker, if it's there
                         if (gridMarker != null) // if marker here
@@ -353,8 +350,15 @@ public abstract class Board : MonoBehaviour
                     }
                     else if (selectedPiece.CanMoveTo(coords)) //if we click somewhere we can move, 
                     {
-                        Debug.Log("clicked somewhere we can move");
+                        //Debug.Log("clicked somewhere we can move");
                         var futureTerrain = terrainGrid[coords.x, coords.y];
+                        if (futureTerrain == "wall" || futureTerrain == "river") //We cannot queue moves onto walls or rivers.
+                        {
+                            if (selectedPiece.remainingMovement > 1) //remaining movement greater than 1 means we are moving, not turning
+                            {
+                                return;
+                            }
+                        }
                         if (selectedPiece.OnTerrainType == "road" && futureTerrain != "road") //if we go off road
                         {
                             if (selectedPiece.attacking)

@@ -3585,7 +3585,7 @@ MonoBehaviour:
   - tileType: road
     color: {r: 0.80784315, g: 0.5137255, b: 0.2, a: 1}
     prefab: {fileID: 6420406295384315722, guid: 2e06c33b56b194c4e900435211d07fea, type: 3}
-  - tileType: deep river
+  - tileType: river
     color: {r: 0.09411765, g: 0.14117648, b: 0.64705884, a: 1}
     prefab: {fileID: 6420406295384315722, guid: 78b8b9f584a2e5b45b9ab45d1553f996, type: 3}
   - tileType: shallow river
@@ -18464,8 +18464,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
-  m_RenderPostProcessing: 0
-  m_Antialiasing: 0
+  m_RenderPostProcessing: 1
+  m_Antialiasing: 1
   m_AntialiasingQuality: 2
   m_StopNaN: 0
   m_Dithering: 0
