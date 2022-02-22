@@ -195,6 +195,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 5aa5d2086d3d16d41b33b72ef6624621, type: 3}
   AllColliders: []
   AllRigidbodies: []
+  nonRagdollCollider: {fileID: 0}
   projectilePrefab: {fileID: 0}
   spread: 0
   angle: 10
@@ -205,6 +206,7 @@ MonoBehaviour:
   setInPlace: 0
   rangedAndNeedsToTurnToFaceEnemy: 0
   rotationGoal: {x: 0, y: 0, z: 0}
+  enemy: {fileID: 0}
 --- !u!114 &5076445286326577303
 MonoBehaviour:
   m_ObjectHideFlags: 0

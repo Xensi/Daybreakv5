@@ -59,7 +59,6 @@ public abstract class Board : MonoBehaviour
     public List<Piece> secondPassMoveWave = new List<Piece>();
     public List<Piece> allPieces = new List<Piece>();
 
-
     public GameObject eventPrefab;
     public GameObject eventPrefab1;
 
@@ -73,29 +72,36 @@ public abstract class Board : MonoBehaviour
 
     public TeamColor ourTeamColor = TeamColor.Blue;
 
-
     public bool placingPieces = true;
     public bool queuedAMove = false;
 
     public List<UIButton> unitButtonsList = new List<UIButton>();
-
-
-    public abstract void TriggerSlowUpdate();
-
-    public void OnTriggerSlowUpdate() //finished communicating with mp
-    {
-        ////Debug.LogError("triggered slow update");
-        //StartCoroutine(SlowUpdate(1f));
-        StartCoroutine(SlowUpdate(.5f));
-        StartCoroutine(EventUpdate(.5f));
-    }
-
+    public abstract void TriggerSlowUpdate(); //abstracts will be redefined for singleplayer and multiplayer Boards
     public abstract void SelectPieceMoved(Vector2 coords);
     public abstract void SetSelectedPiece(Vector2 coords);
     public abstract void ExecuteMoveForAllPieces();
     public abstract void ArbitrateConflict();
-
     public abstract void CommunicateQueuedMoves(int id, int x, int y);
+    public abstract void PieceCommunicateAttackTile(int id, int x, int y);
+    public abstract void CommunicateMarkers(int id, float x2, float y2, float z2, int x, int y, string team, int remainingMovement);
+    public abstract void CommunicateTurnHoldTime(int id, int turnTime, int holdTime);
+    public abstract void ClearMoves(int id);
+    public abstract void PieceApplyDamage(int id);
+    public abstract void PieceCalculateDamage(int id);
+    public abstract void PieceCheckFlankingDamage(int id);
+    public abstract void PieceUpdateTerrainType(int id, int x, int y);
+    public abstract void PieceTriggerAttacksForSoldiers(int id);
+    public abstract void PieceCommunicateTargetToAttackPiece(int id, int x, int y);
+    public abstract void ChangeFormation(int id, string formation);
+    public abstract void ChangeAttitude(int id, bool aggressive);
+    public abstract void PieceMarkForDeath(int id, float damage);
+    public abstract void ChangeStance(int id, string stance);
+    public abstract void PieceCalculateLineOfSight(int id);
+    public abstract void PieceRunThroughCylinders(int id);
+    public abstract void Unready();
+    private void Start()
+    {
+    }
     protected virtual void Awake()
     {
         UnitList = new List<Piece>();
@@ -105,15 +111,135 @@ public abstract class Board : MonoBehaviour
         executeButton.gameObject.SetActive(false);
         var uiObj = GameObject.Find("UI");
         ui = uiObj.GetComponent<ChessUIManager>();
-        Debug.Log("Awake");
+        //Debug.Log("Awake");
+    }
+    private void CreateGrid()
+    {
+        grid = new Piece[BOARD_SIZE, BOARD_SIZE];
+        routingGrid = new Piece[BOARD_SIZE, BOARD_SIZE];
+        markerGrid = new Marker[BOARD_SIZE, BOARD_SIZE];
+        markerGrid2 = new Marker[BOARD_SIZE, BOARD_SIZE];
+        terrainGrid = new String[BOARD_SIZE, BOARD_SIZE];
+        placementAllowedGrid = new int[BOARD_SIZE, BOARD_SIZE];
+    }
+    private void OnEnable()//Used OnEnable instead of start because it's networked
+    {
+        //Debug.Log("Board enabled ");
+        var gameInitObj = GameObject.Find("GameInitializer");
+        gameInit = gameInitObj.GetComponent(typeof(GameInitializer)) as GameInitializer;
+        TriggerSlowUpdate();
+    }
+    public Piece GetPieceOnSquare(Vector2Int coords)
+    {
+        if (CheckIfCoordinatedAreOnBoard(coords))
+        {
+            //Debug.Log(grid[coords.x, coords.y]);
+            return grid[coords.x, coords.y];
+        }
+        return null;
+    }
+    public bool CheckIfCoordinatedAreOnBoard(Vector2Int coords)
+    {
+        if (coords.x < 0 || coords.y < 0 || coords.x >= BOARD_SIZE || coords.y >= BOARD_SIZE)
+        {
+            return false;
+        }
+        return true;
+    }
+    public void ShowSelectionSquares(List<Vector2Int> selection, Piece piece) //this function shows squares available for movement, attacking, etc. "selection" is defined as selectedPiece.availableMoves or something similar
+    {
+        if (chessController.localPlayer == null) //for single player
+        {
+            Dictionary<Vector3, bool> squaresData = new Dictionary<Vector3, bool>();
+            for (int i = 0; i < selection.Count; i++)
+            {
+                Vector3 position = CalculatePositionFromCoords(selection[i]);
+                bool isSquareFree = GetPieceOnSquare(selection[i]) == null; //detects whether or not a square is free. if == null, then returns true and square is free. oddly, changing this code seems to do nothing
+                squaresData.Add(position, isSquareFree); //updates data, basically just says whether or not squares are free at specific pos
 
+            }
+            squareSelector.ShowSelection(squaresData); //then show squares based on data
+            squareSelector.UpdateSelection(squaresData);
+        }
+        else if (chessController.localPlayer.team == piece.team) //for multiplayer
+        {
+            Dictionary<Vector3, bool> squaresData = new Dictionary<Vector3, bool>();
+            for (int i = 0; i < selection.Count; i++)
+            {
+                Vector3 position = CalculatePositionFromCoords(selection[i]);
+                bool isSquareFree = GetPieceOnSquare(selection[i]) == null; //detects whether or not a square is free. if == null, then returns true and square is free. oddly, changing this code seems to do nothing
+                squaresData.Add(position, isSquareFree); //updates data, basically just says whether or not squares are free at specific pos
 
+            }
+            squareSelector.ShowSelection(squaresData); //then show squares based on data
+            squareSelector.UpdateSelection(squaresData);
+        }
+    }
+    public Vector3 CalculatePositionFromCoords(Vector2Int coords) //Find 3D position from grid coordinates
+    {
+        return bottomLeftSquareTransform.position + new Vector3(coords.x * squareSize, 0f, coords.y * squareSize);
+    }
+    public void OnTriggerSlowUpdate() //finished communicating with mp
+    {
+        //Debug.LogError("triggered slow update");
+        StartCoroutine(SlowUpdate(.5f));
+        StartCoroutine(EventUpdate(.5f));
+    }
+    public void GenerateButtonsFromSavedUnits()
+    {
+        var i = 0;
+        foreach (var unit in gameInit.saveInfoObject.listOfSavedUnits)
+        {
+            /*if (unit.alreadyPlaced)
+            {
+                continue; //don't make a button for those that have already been placed.
+            }*/
+            var newButton = Instantiate(gameInit.unitButtonTemplate);
+
+            var text = newButton.GetComponentInChildren<TMP_Text>();
+            text.text = unit.name + " (Models " + unit.models + "/" + unit.maxModels + ", Morale " + unit.morale + "/" + unit.maxMorale + ", Energy " + unit.energy + "/" + unit.maxEnergy + ")";
+
+            newButton.onClick.AddListener(delegate { SelectSpecificUnit(unit.name, unit.models, unit.morale, unit.energy, unit.placementID); });
+
+            //newButton.transform.parent = gameInit.unitOptionsParent.transform;
+            newButton.transform.SetParent(gameInit.unitOptionsParent.transform);
+
+            newButton.transform.position += new Vector3(1200, 500 - i * 100, 0);
+
+            unitButtonsList.Add(newButton);
+
+            i++;
+        }
+    }
+    public void SelectSpecificUnit(string name, float models, float morale, float energy, int placementID)
+    {
+        //hide all the buttons
+        foreach (var button in unitButtonsList)
+        {
+            if (button != null)
+            {
+                button.gameObject.SetActive(false);
+            }
+        }
+        Debug.Log("selected " + name + " " + models + " " + morale + " " + energy);
+        readyToPlaceUnit = true;
+        tempName = name;
+        tempModels = models;
+        tempMorale = morale;
+        tempEnergy = energy;
+        tempPlacementID = placementID;
+        //show cancellation button
+        gameInit.cancelPlaceUnitButton.gameObject.SetActive(true);
+
+        var text = gameInit.placingUnitsAlertText.GetComponentInChildren<TMP_Text>();
+        text.text = "Click within placement area.";
+        gameInit.dirButtonParent.SetActive(true);
     }
 
     public void OnSquareSelected(Vector3 inputPosition, int mouse) //called when player clicks on a board square
     {
         Vector2Int coords = CalculateCoordsFromPosition(inputPosition); //coords calculated from position
-        if (coords.x < 0 || coords.y < 0  || coords.x > 100 || coords.y > 100) //if outside of max coords
+        if (coords.x < 0 || coords.y < 0 || coords.x > 100 || coords.y > 100) //if outside of max coords
         {
             return; //return
         }
@@ -139,7 +265,7 @@ public abstract class Board : MonoBehaviour
                     foreach (var button in unitButtonsList) //set unit buttons active so we can choose another one to place.
                     {
                         if (button != null)
-                        { 
+                        {
                             button.gameObject.SetActive(true);
                         }
                     }
@@ -148,7 +274,7 @@ public abstract class Board : MonoBehaviour
                     gameInit.saveInfoObject.listOfSavedUnits[tempPlacementID].alreadyPlaced = true;
                     unitButtonsList[tempPlacementID].interactable = false;
 
-                    var text = gameInit.placingUnitsAlertText.GetComponentInChildren<TMP_Text>(); 
+                    var text = gameInit.placingUnitsAlertText.GetComponentInChildren<TMP_Text>();
 
                     //determine if there are units that still need to be placed
                     var j = 0;
@@ -203,10 +329,10 @@ public abstract class Board : MonoBehaviour
 
             if (mouse == 0) //on left click
             {
-                //Debug.Log("mouse 0");
                 if (selectedPiece) //if selected piece exists (MEANING: we have a piece currently selected)
                 {
-                    if (piece != null && selectedPiece == piece) //if we click on the same piece twice, then DESELECT IT
+                    //if we click on the same piece twice, then DESELECT IT
+                    if (piece != null && selectedPiece == piece) 
                     {
                         //Debug.Log("same piece clicked");
                         //Debug.Log(selectedPiece.thisMarkerGrid[coords.x, coords.y]);
@@ -220,25 +346,27 @@ public abstract class Board : MonoBehaviour
                         DeselectPiece(); //deselect it and hide movement paths (deselected because we clicked it twice
                         return;
                     }
-
-                    if (selectedPiece != null && selectingAction == true && !selectedPiece.moving) //if selected piece exists, and selecting action, and this piece is not moving. if we're still picking an action and we're not on default action MOVE
+                    //IE you are picking an action, so do not move
+                    else if (selectedPiece != null && selectingAction == true && !selectedPiece.moving)
                     {
                         return;
                     }
-                    else if (selectedPiece != null && selectedPiece.attacking && selectedPiece.holdingPosition && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece != selectedPiece)
+                    //SPECIAL CONDITION: if selected piece attacking and holding position, it's okay to queue move onto a space with a marker from an enemy (turning)
+                    else if (selectedPiece != null && selectedPiece.attacking && selectedPiece.holdingPosition
+                        && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece != selectedPiece)
                     {
-                        Debug.Log("different marker found"); //if we click on a space with a marker not belonging to us
-
+                        //Debug.Log("different marker found"); //if we click on a space with a marker not belonging to us
                         SelectPieceMoved(coords);
-
+                        return;
                     }
-                    else if (selectedPiece != null && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece == selectedPiece) //if you click on the same tile twice
-                    {// l  &&  && selectedPiece.attacking 
-                        Debug.Log("clicked on a position where we already have a marker for movement and we're attacking"); //next check if marker belongs to us
-                                                                                                                            //triggers when move attacking, but we need to not deselect in that case.
+                    //You are clicking on a tile that you have already queued a move onto
+                    else if (selectedPiece != null && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null
+                        && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece == selectedPiece)
+                    {
+                        //triggers when move attacking, but we need to not deselect in that case.
                         if (selectedPiece.moveAndAttackEnabled && selectedPiece.attackType == "ranged") //if move and attacking ranged unit (and we're clicking on a point we've already queued onto
                         {
-                            Debug.Log("move and attacking with ranged unit and clicking on tile twice");
+                            //Debug.Log("move and attacking with ranged unit and clicking on tile twice");
                             selectedPiece.speed = selectedPiece.longRange; //increase speed so we can queue a second move
                             selectedPiece.remainingMovement = selectedPiece.speed;
 
@@ -252,9 +380,9 @@ public abstract class Board : MonoBehaviour
                             //show selection squares from queued position
                             ShowSelectionSquares(selectedPiece.SelectAvailableSquares(queuedPosition), selectedPiece);
                         }
-                        else
+                        else //if not ranged, then we will just turn this direction
                         {
-                            Debug.Log("changing marker visual to an arrow");
+                            //Debug.Log("changing marker visual to an arrow");
                             var lastMarkerVisual = selectedPiece.markerVisuals[selectedPiece.markerVisuals.Count - 1];
 
                             GameObject markerVisual = Instantiate(selectedPiece.arrowMarkerVisualPrefab, lastMarkerVisual.transform.position, Quaternion.identity);
@@ -293,35 +421,32 @@ public abstract class Board : MonoBehaviour
                         }
 
                     }
-                    else if (piece != null && selectedPiece != piece && !piece.IsFromSameTeam(selectedPiece)) //if we click on a different piece and it's an enemy and our selectedPiece is attacking
+                    //You clicked on an enemy piece
+                    else if (piece != null && selectedPiece != piece && !piece.IsFromSameTeam(selectedPiece))
                     {
-                        if (selectedPiece.attacking)//|| selectedPiece.speed == selectedPiece.sprintSpeed
+                        if (gameInit.inTutorial && selectedPiece.attacking) //TUTORIAL ONLY
                         {
-                            if (gameInit.inTutorial && !gameInit.attackMeleeMade && selectedPiece.attackType == "melee")
+                            if (!gameInit.attackMeleeMade && selectedPiece.attackType == "melee")
                             {
                                 gameInit.attackMeleeMade = true;
-                                //gameInit.dialogueManager.SelectDialogue("Actual7");
                             }
-                            if (gameInit.inTutorial && !gameInit.attackRangedMade && selectedPiece.attackType == "ranged")
+                            if (!gameInit.attackRangedMade && selectedPiece.attackType == "ranged")
                             {
                                 gameInit.attackRangedMade = true;
-                                //gameInit.dialogueManager.SelectDialogue("Actual7");
                             }
-
-
                         }
-                        Debug.Log("Queueing move onto a position we know has an enemy"); //use selectPieceMoved instead of queuing directly
-                        SelectPieceMoved(coords);
-                        //selectedPiece.QueueMove(coords); //queue a move (but really an attack)
-                        //DeselectPiece(); //deselect because attack should basically just stop
-
+                        //Queue move onto them. We can't know if the move is valid until the turns happen
+                        //Debug.Log("Queueing move onto a position we know has an enemy"); //use selectPieceMoved instead of queuing directly
+                        SelectPieceMoved(coords); 
                     }
-                    else if (piece != null && selectedPiece != piece && selectedPiece.turning)//if we're turning and there's a unit there, still queue
+                    //If we're turning and there's a unit there, we still queue. (DEFUNCT)
+                    else if (piece != null && selectedPiece != piece && selectedPiece.turning)
                     {
-                        Debug.Log("turning override");
+                        //Debug.Log("turning override");
                         SelectPieceMoved(coords);
                     }
-                    else if (piece != null && selectedPiece != piece && piece.turnTime == 0) //if we click on a different piece, select that one and show movement paths
+                    //You clicked on a piece other than the selected piece
+                    else if (piece != null && selectedPiece != piece && piece.turnTime == 0)
                     {
                         if (isChessControllerMP) //if we're using a MP controller
                         {
@@ -332,26 +457,24 @@ public abstract class Board : MonoBehaviour
                             }
                         }
                         else //singleplayer
-                        { //make it so you can only select the units on your team
+                        { //make it so you can only select the units on your team (Somehow, already implemented. Not sure where.)
                             SelectPiece(coords);
                             ChangeStance(piece.unitID, "move");
                         }
 
                     }
-                    else if (piece != null && selectedPiece != piece && piece.turnTime > 0)//if we click on another piece with a higher turn time
-                    { //&& chessController.IsTeamTurnActive(piece.team) 
-                      //allow us to queue a move to this position then
+                    //You clicked on another piece with a higher turn time. We can queue moves onto such pieces because they will move out of the way by the time we get there. 
+                    else if (piece != null && selectedPiece != piece && piece.turnTime > 0)
+                    {
                         SelectPieceMoved(coords);
-                        /*selectedPiece.QueueMove(coords);
-                        if (selectedPiece.remainingMovement <= 0)
-                        {
-                            DeselectPiece();
-                        }*/
                     }
-                    else if (selectedPiece.CanMoveTo(coords)) //if we click somewhere we can move, 
+                    //You clicked somewhere we can move (Without taking into account impassable terrain yet)
+                    else if (selectedPiece.CanMoveTo(coords))
                     {
                         //Debug.Log("clicked somewhere we can move");
                         var futureTerrain = terrainGrid[coords.x, coords.y];
+
+                        //Deal with impassable terrain
                         if (futureTerrain == "wall" || futureTerrain == "river") //We cannot queue moves onto walls or rivers.
                         {
                             if (selectedPiece.remainingMovement > 1) //remaining movement greater than 1 means we are moving, not turning
@@ -359,29 +482,30 @@ public abstract class Board : MonoBehaviour
                                 return;
                             }
                         }
+                        //Deal with road speed change
                         if (selectedPiece.OnTerrainType == "road" && futureTerrain != "road") //if we go off road
                         {
                             if (selectedPiece.attacking)
                             {
-                                Debug.Log("piece attacking");
+                                //Debug.Log("piece attacking");
                                 selectedPiece.remainingMovement = selectedPiece.originalSpeed + 1 - selectedPiece.queuedMoves.Count; //normally remaining movement would be sprint speed + 1 - queued moves
 
                             }
                             else if (selectedPiece.sprinting)
                             {
-                                Debug.Log("piece sprinting");
+                                //Debug.Log("piece sprinting");
                                 selectedPiece.remainingMovement = selectedPiece.sprintSpeed - selectedPiece.queuedMoves.Count; //normally remaining movement would be sprint speed + 1 - queued moves
 
                             }
                             else
                             {
-                                Debug.Log("piece null");
+                                //Debug.Log("piece null");
                                 //lets say speed on road is 2 and we have speed 1 and we have one move queued, remaining movement is 0
                                 selectedPiece.remainingMovement = selectedPiece.originalSpeed - selectedPiece.queuedMoves.Count;
 
                             }
                         }
-
+                        //end of road speed change
                         if (selectedPiece.remainingMovement <= 0) //if remaining movement less than/equal to 0,
                         {
                             DeselectPiece(); //let's stop allowing moves
@@ -390,15 +514,13 @@ public abstract class Board : MonoBehaviour
                         {
                             SelectPieceMoved(coords); //place some sort of marker indicating that this piece will move there\
                         }
-
                     }
                 }
-                else
-                {
-                    if (piece != null) //for clicking on a piece normally from empty. ie left click on piece with no piece already selected
+                else //if no selected piece
+                {//for clicking on a piece normally from empty. ie left click on piece with no piece already selected
+                    if (piece != null) 
                     {
-
-                        if (piece.team != ourTeamColor)
+                        if (piece.team != ourTeamColor) // if enemy piece, do not select
                         {
                             return;
                         }
@@ -414,9 +536,10 @@ public abstract class Board : MonoBehaviour
                         else //singleplayer
                         {
                             selectingAction = true;
-                            SelectPiece(coords);
+                            SelectPiece(coords); //SELECT PIECE
                             ChangeStance(piece.unitID, "move");
-                            if (gameInit.inTutorial && !gameInit.selectionMade)
+
+                            if (gameInit.inTutorial && !gameInit.selectionMade) //TUTORIAL ONLY
                             {
                                 gameInit.selectionMade = true;
                                 gameInit.dialogueManager.SelectDialogue("Actual4");
@@ -425,94 +548,39 @@ public abstract class Board : MonoBehaviour
                     }
                 }
             }
-            else if (mouse == 1) //display dropdown and change actions
-            {
-                Debug.Log("mouse 1");
-            }
-        }
 
-        if (selectedPiece == null)
+        }
+        /*if (selectedPiece == null)
         {
-
-            Debug.Log("No piece found");
-        }
+            //Debug.Log("No piece found");
+        }*/
     }
 
-    private void OnEnable()
+    private void SelectPiece(Vector2Int coords) //piece selection on left click
     {
-        //Debug.Log("Board enabled (used instead of start because networked");
+        Piece piece = GetPieceOnSquare(coords);
 
-        var gameInitObj = GameObject.Find("GameInitializer");
-        gameInit = gameInitObj.GetComponent(typeof(GameInitializer)) as GameInitializer;
+        piece.PlaySelection();
+        //chessController.RemoveMovesEnablingAttackOnPieceOfType<King>(piece);
+        SetSelectedPiece(coords); //after this we can call selectedpiece
+        List<Vector2Int> selection = selectedPiece.availableMoves;
+        ShowSelectionSquares(selection, piece);
 
-        TriggerSlowUpdate();
-
-        
-
-    }
-
-    public void GenerateButtonsFromSavedUnits()
-    {
-        var i = 0;
-        foreach (var unit in gameInit.saveInfoObject.listOfSavedUnits)
+        foreach (var item in piece.instantiatedCylinders)
         {
-            /*if (unit.alreadyPlaced)
-            {
-                continue; //don't make a button for those that have already been placed.
-            }*/
-            var newButton = Instantiate(gameInit.unitButtonTemplate);
-
-            var text = newButton.GetComponentInChildren<TMP_Text>();
-            text.text = unit.name + " (Models " + unit.models + "/" + unit.maxModels + ", Morale " + unit.morale + "/" + unit.maxMorale + ", Energy " + unit.energy + "/" + unit.maxEnergy + ")";
-
-            newButton.onClick.AddListener(delegate { SelectSpecificUnit(unit.name, unit.models, unit.morale, unit.energy, unit.placementID); });
-
-            //newButton.transform.parent = gameInit.unitOptionsParent.transform;
-            newButton.transform.SetParent(gameInit.unitOptionsParent.transform);
-            
-            newButton.transform.position += new Vector3(1200, 500-i*100, 0);
-
-            unitButtonsList.Add(newButton);
-
-            i++;
+            Destroy(item);
         }
+        piece.instantiatedCylinders.Clear();
     }
 
 
-    public void SelectSpecificUnit(string name, float models, float morale, float energy, int placementID)
-    {
-        //hide all the buttons
-        foreach (var button in unitButtonsList)
-        {
-            if (button != null)
-            {
-
-                button.gameObject.SetActive(false);
-            }
-        }
-        Debug.Log("selected " + name + " " + models + " " + morale + " " + energy);
-        readyToPlaceUnit = true;
-        tempName = name;
-        tempModels = models;
-        tempMorale = morale;
-        tempEnergy = energy;
-        tempPlacementID = placementID;
-        //show cancellation button
-        gameInit.cancelPlaceUnitButton.gameObject.SetActive(true);
-
-        var text = gameInit.placingUnitsAlertText.GetComponentInChildren<TMP_Text>();
-        text.text = "Click within placement area.";
-        gameInit.dirButtonParent.SetActive(true);
-    }
-
-    
     public void OnCommunicateQueuedMoves(int id, int x, int y)
     {
         var coords = new Vector2Int(x, y);
         UnitList[id].queuedMoves.Add(coords);
         //piece.queuedMoves.Add(coords);
     }
-    public void OnCommunicateMarkers(int id, float x2, float y2, float z2, int x, int y, string team, int remainingMovement) //used in mp
+    public void OnCommunicateMarkers(int id, float x2, float y2, float z2, int x, int y, string team, int remainingMovement) //USED FOR MP 
     {
         //Debug.Log(team);
         var coords = new Vector2Int(x, y);
@@ -563,25 +631,9 @@ public abstract class Board : MonoBehaviour
                 }
             }
         }
-
         //Debug.Log(marker.team);
     }
-    public abstract void PieceCommunicateAttackTile(int id, int x, int y);
-    public void OnPieceCommunicateAttackTile(int id, int x, int y)
-    {
-        UnitList[id].OnCommunicateAttackTile(x, y);
-    }
-    public abstract void CommunicateMarkers(int id, float x2, float y2, float z2, int x, int y, string team, int remainingMovement);
 
-    public abstract void CommunicateTurnHoldTime(int id, int turnTime, int holdTime);
-
-    public void OnCommunicateTurnHoldTime(int id, int turnTime, int holdTime)
-    {
-        UnitList[id].turnTime = turnTime;
-        UnitList[id].holdTime = holdTime;
-    }
-
-    public abstract void ClearMoves(int id);
     public void OnClearMoves(int id)
     {
         foreach (var i in UnitList[id].instantiatedMarkers)
@@ -592,14 +644,7 @@ public abstract class Board : MonoBehaviour
         {
             Destroy(i.gameObject);
         }
-        /*if(UnitList[id].attackType == "ranged") //todo come back to delete 
-        {
-
-            Debug.Log("not clearing lines" + id);
-        }*/
-        //else
-        //{
-        //Debug.Log("clearing lines" + id);
+        
         //visually clear line prefabs and aesthetic cylinders
         foreach (var i in UnitList[id].instantiatedLines)
         {
@@ -611,7 +656,6 @@ public abstract class Board : MonoBehaviour
             Destroy(i.gameObject);
         }
         UnitList[id].aestheticCylinders.Clear();
-        //}
 
         UnitList[id].instantiatedMarkers.Clear();
         UnitList[id].markerVisuals.Clear();
@@ -619,68 +663,9 @@ public abstract class Board : MonoBehaviour
         UnitList[id].remainingMovement = UnitList[id].speed; //if we clear moves, we need to reset to allow full movement again
         UnitList[id].turnTime = 0;
     }
-    public abstract void PieceApplyDamage(int id);
-    public void OnPieceApplyDamage(int id)
-    {
-        UnitList[id].OnApplyDamage();
-    }
-    public abstract void PieceCalculateDamage(int id);
-    public void OnPieceCalculateDamage(int id)
-    {
-        UnitList[id].OnCalculateDamage();
-    }
 
-    public abstract void PieceCheckFlankingDamage(int id);
-    public void OnPieceCheckFlankingDamage(int id)
-    {
-        UnitList[id].OnCheckFlankingDamage();
-    }
-
-    public abstract void PieceUpdateTerrainType(int id, int x, int y);
-    public abstract void PieceTriggerAttacksForSoldiers(int id);
-
-    public abstract void PieceCommunicateTargetToAttackPiece(int id, int x, int y);
-
-
-    public abstract void PieceMarkForDeath(int id, float damage);
-    public void OnPieceMarkForDeath(int id, float damage)
-    {
-        UnitList[id].OnMarkForDeath(damage);
-    }
-
-    public void OnPieceCommunicateTargetToAttackPiece(int id, int x, int y)
-    {
-        UnitList[id].OnCommunicateTargetToAttackPiece(x, y);
-    }
-
-    public void OnPieceTriggerAttacksForSoldiers(int id)
-    {
-        UnitList[id].OnTriggerAttacksForSoldiers();
-    }
-
-    public void OnPieceUpdateTerrainType(int id, int x, int y)
-    {
-        UnitList[id].OnUpdateTerrainType(x, y);
-    }  
-    public abstract void ChangeFormation(int id, string formation);
-
-    public void OnChangeFormation(int id, string formation)
-    {
-
-        UnitList[id].queuedFormation = formation;
-    }
-
-    public abstract void ChangeAttitude(int id, bool aggressive);
-
-    public void OnChangeAttitude(int id, bool aggressive)
-    {
-
-        UnitList[id].aggressiveAttitude = aggressive;
-    }
-
-    public abstract void ChangeStance(int id, string stance);
-    public void OnChangeStance(int id, string stance) //this should not rely on selected piece, rather unit ID. 
-    {//using selectedpiece is preferable so you can control what parts of the function are multiplayer, like showing selection squares .. .unless, we can use unit id and check in the function if the
+    public void OnChangeStance(int id, string stance)
+    {//we can use unit id and check in the function if the
      //unit is on the same team. if they're not we can prevent showing the squares while still updating the variables
         if (stance == "sprint")
         {
@@ -724,18 +709,6 @@ public abstract class Board : MonoBehaviour
             UnitList[id].ResetStance();
         }
     }
-    public abstract void PieceCalculateLineOfSight(int id);
-    public void OnPieceCalculateLineOfSight(int id)
-    {
-        UnitList[id].OnCalculateLineOfSight();
-    }
-    public abstract void PieceRunThroughCylinders(int id);
-    public void OnPieceRunThroughCylinders(int id)
-    {
-        UnitList[id].OnRunThroughCylinders();
-    }
-    
-    public abstract void Unready();
     public void OnUnready(string team)
     {
         if (!whiteReady || !blackReady) //if at least one player is not ready yet
@@ -827,7 +800,7 @@ public abstract class Board : MonoBehaviour
             {
                 ////Debug.LogError("allpieces" + AllPieces[i] + AllPieces[i].queuedMoves.Count);
                 if (AllPieces[i].queuedMoves.Count == 1) //if exactly one moved queued and attacking, you are eligible to attack immediately  && AllPieces[i].attacking && AllPieces[i].attackedThisTurn == false
-                { 
+                {
                     piecesReadyToAttack.Add(AllPieces[i]);
                     Debug.LogError("added to pieces ready to immediate attack" + AllPieces[i]);
 
@@ -841,9 +814,9 @@ public abstract class Board : MonoBehaviour
                         AllPieces[i].accuracyModifier = -1; //for point blank range
                     }
                 }
-            } 
+            }
             AttackPhaseSetup(piecesReadyToAttack, 0); //allows for immediate attacks by pieces that are ready to attack already //attack phase setup is adding all pieces to the list for some reason . . .
-             
+
             secondPassMoveWave.Clear();
             //start of movement phase
             for (int i = 0; i < AllPieces.Length; i++) //Actually start moving
@@ -871,8 +844,8 @@ public abstract class Board : MonoBehaviour
                 }
                 overflow++;
                 Debug.Log("overflow" + overflow);
-            } 
-        } 
+            }
+        }
     }
 
     private void Preturn(Piece[] AllPieces)
@@ -905,7 +878,6 @@ public abstract class Board : MonoBehaviour
                 AllPieces[i].CheckIfEnemyInFirstQueuedMove(); //important to call before moving to see if we can immediate attack
             }
         }
-
     }
 
     private IEnumerator SlowUpdate(float speed) //calls the function responsible for checking if movement phase should be over or not
@@ -978,7 +950,6 @@ public abstract class Board : MonoBehaviour
         Debug.Log("All steps finished");
         //if all steps finished
 
-
         //but first we should allow attacks from those that can and want to, namely units that have reached their hold position
         //if queue time == hold time, they are ready to attack
         piecesReadyToAttack.Clear();
@@ -1019,7 +990,7 @@ public abstract class Board : MonoBehaviour
 
         AttackPhaseSetup(piecesReadyToAttack, 0); //allows for attacks by those that are in position
 
-
+        //create EVENTS showing what happened to units this turn
         foreach (var piece in AllPieces) //need to make it so that these only trigger per piece once per turn
         {
             if (piece.flankedByHowMany > 0 && piece.attackerPiece != null)
@@ -1049,7 +1020,7 @@ public abstract class Board : MonoBehaviour
 
         }
 
-        //check to see if we have any cavalry that still need to finish a second move step
+        //CAVALRY CHECK: see if cavalry still need to finish a second move step
         List<Piece> cavalry = new List<Piece>();
         foreach (var piece in AllPieces)
         {
@@ -1059,10 +1030,8 @@ public abstract class Board : MonoBehaviour
                 cavalry.Add(piece); //add it to the list
             }
         }
-
-        if (cavalry.Count > 0) //if we have any cavalry that still needs to move
+        if (cavalry.Count > 0) //If cavalry still needs to move
         {
-
             for (int i = 0; i < cavalry.Count; i++)
             {
                 cavalry[i].CheckIfEnemiesAdjacent();
@@ -1072,8 +1041,8 @@ public abstract class Board : MonoBehaviour
                 cavalry[i].StartMoveCoroutines(1);
             }
         }
-        else //if all units (+ cavalry) are done moving, then we should start the movement process for all units again
-        { 
+        else //If every unit (including cavalry) is done moving, then we should start the movement process for all units again
+        {
             for (int i = 0; i < AllPieces.Length; i++)
             {
                 AllPieces[i].CheckIfEnemiesAdjacent();
@@ -1134,8 +1103,6 @@ public abstract class Board : MonoBehaviour
             {
                 //Debug.LogError("Pieces ready to attack after movement" + item);
             }*/
-
-
             AttackPhaseSetup(piecesReadyToAttackAfterMovement, 1); //call this only once
         }
     }
@@ -1218,12 +1185,11 @@ public abstract class Board : MonoBehaviour
             yield return new WaitForSeconds(.1f);
             StartCoroutine(CheckIfPhysicsCalculationsProcessed(pieces, phaseNum));
         }
-
     }
 
     public void ExecuteAttacks(List<Piece> pieces, int phaseNum) //should be called even if no line of sight calculations occurred
     {
-        ////Debug.LogError("EXECUTING ATTACKS");
+        //Debug.LogError("EXECUTING ATTACKS");
         //by this point, all physics calculations should be done.
 
         for (int i = 0; i < pieces.Count; i++)
@@ -1263,7 +1229,7 @@ public abstract class Board : MonoBehaviour
         for (int i = 0; i < pieces.Count; i++)
         {
             if (pieces[i].attackedThisTurn == false)
-            { 
+            {
                 Debug.LogError("Calculating Damage");
                 pieces[i].CalculateDamage(); //calculate attack damage //there isn't a reason to call this more than once 
             }
@@ -1315,7 +1281,6 @@ public abstract class Board : MonoBehaviour
     }
     private void CleanUpPhase(List<Piece> pieces)
     {
-
         for (int i = 0; i < pieces.Count; i++) //should call this after all attacks are done
         {
             pieces[i].ApplyMorale(); //only applies model losses morale loss once per unit
@@ -1344,20 +1309,10 @@ public abstract class Board : MonoBehaviour
         {
             pieces[i].CheckIfRouting(); //if routing, remove it from the board position
         }
-        /*for (int i = 0; i < AllPieces.Length; i++) //queue rout movement for routing units
-        {
-            //Debug.Log(AllPieces[i]);
-
-            if (AllPieces[i].routing)
-            {
-                AllPieces[i].QueueRout();
-            }
-        }*/
         for (int i = 0; i < pieces.Count; i++)
         {
             pieces[i].RestoreEnergy(); //restore energy to units who haven't moved or attacked. also reset hasMoved and hasAttacked
         }
-
 
         for (int i = 0; i < pieces.Count; i++) //reset pieces for movement next turn
         {
@@ -1374,7 +1329,6 @@ public abstract class Board : MonoBehaviour
 
     public IEnumerator WaitForAnimationsToBeOver(List<Piece> pieces)
     {
-
         var num = 0;
 
         foreach (var piece in pieces)
@@ -1385,7 +1339,7 @@ public abstract class Board : MonoBehaviour
                 num++; //if we find one that's done, add it to the count
             }
         }
-        ////Debug.LogError("number done" + num);
+        //Debug.LogError("number done" + num);
         if (num >= pieces.Count || secondsPassed >= 5) //if all are done
         {
             secondsPassed = 0;
@@ -1397,15 +1351,10 @@ public abstract class Board : MonoBehaviour
             secondsPassed++;
             StartCoroutine(WaitForAnimationsToBeOver(pieces));
         }
-
-
-
     }
 
     public void AllowExecution()
     {
-
-
         //Debug.Log("Allowed Input again");
         chessController.AllowInput = true; //since turn is over, input is okay again
         executeButton.interactable = true; //and we can execute again
@@ -1442,34 +1391,9 @@ public abstract class Board : MonoBehaviour
         {
             isChessControllerMP = true;
         }
-        Debug.Log("Dependency set");
+        //Debug.Log("Dependency set");
     }
-    private void CreateGrid()
-    {
-        grid = new Piece[BOARD_SIZE, BOARD_SIZE];
-        routingGrid = new Piece[BOARD_SIZE, BOARD_SIZE];
-        markerGrid = new Marker[BOARD_SIZE, BOARD_SIZE];
-        markerGrid2 = new Marker[BOARD_SIZE, BOARD_SIZE];
-        terrainGrid = new String[BOARD_SIZE, BOARD_SIZE];
-        placementAllowedGrid = new int[BOARD_SIZE, BOARD_SIZE];
-    }
-
-    private void Start()
-    {/*
-        Piece[] AllPieces = FindObjectsOfType<Piece>();
-        for (int i = 0; i < AllPieces.Length; i++)
-        {
-            LinkGridsCallForward(AllPieces[i]);
-        }*/
-    }
-
-    public Vector3 CalculatePositionFromCoords(Vector2Int coords)
-    {
-        return bottomLeftSquareTransform.position + new Vector3(coords.x * squareSize, 0f, coords.y * squareSize);
-    }
-
-    
-    public void OnArbitrateConflict(int random)
+    public void OnArbitrateConflict(int random) //Break the tie between two units moving into the same spot
     {
         var enemy = defendant;
         var friendly = prosecutor;
@@ -1477,11 +1401,6 @@ public abstract class Board : MonoBehaviour
         {
             return;
         }
-        //var random = Random.Range(1, 3);//friendly.randomInitiative;
-        ////Debug.LogError("Arbitrating conflict" + random);
-
-        //var random = friendly.randomInitiative;
-        //Debug.Log("Random value" + random);
         if (enemy.speed > friendly.speed) //start trying to break the tie, starting with speed
         {
             friendly.wonTieBreak = false;
@@ -1553,10 +1472,6 @@ public abstract class Board : MonoBehaviour
         friendly.arbitratedConflict = true;
         enemy.arbitratedConflict = true;
     }
-
-
-
-
     public void OnSelectedPieceMoved(Vector2Int coords) //this shows up in multiplayer
     {
         if (chessController.AllowInput)
@@ -1598,13 +1513,12 @@ public abstract class Board : MonoBehaviour
         {
             selectedPiece.markForDeselect = false;
             DeselectPiece();
-        } 
+        }
     }
 
     public void OnSetSelectedPiece(Vector2Int coords) //this shows up in multiplayer
     {
         Piece piece = GetPieceOnSquare(coords);
-
 
         if (chessController.localPlayer == null || chessController.localPlayer.team == piece.team) //if sp or matches team in mp
         {
@@ -1626,9 +1540,6 @@ public abstract class Board : MonoBehaviour
             //selectedPiece.randomInitiative = Random.Range(1, 3);
             //piece.SetMaterial(testMat);
         }
-
-
-
     }
 
 
@@ -1647,80 +1558,29 @@ public abstract class Board : MonoBehaviour
         instantiatedSelectors.Clear();
     }
 
-
-    private void TryToTakeOppositePiece(Vector2Int coords)
-    {
-        Piece piece = GetPieceOnSquare(coords);
-        if (piece != null && !selectedPiece.IsFromSameTeam(piece))
-        {
-            TakePiece(piece);
-        }
-    }
-
-    private void TakePiece(Piece piece)
-    {
-        if (piece)
-        {
-            grid[piece.occupiedSquare.x, piece.occupiedSquare.y] = null;
-            chessController.OnPieceRemoved(piece);
-        }
-    }
-
-    private void EndTurn()
-    {
-        chessController.EndTurn();
-    }
-
     public void UpdateBoardOnPieceMove(Vector2Int newCoords, Vector2Int oldCoords, Piece newPiece, Piece oldPiece) //normal move means old piece is null
     {
         if (newCoords.x < 0 || newCoords.x > BOARD_SIZE || newCoords.y < 0 || newCoords.y > BOARD_SIZE)
         {
             return;
         }
-        /*if (newPiece.routing)
-        {
-            routingGrid[oldCoords.x, oldCoords.y] = oldPiece;
-            routingGrid[newCoords.x, newCoords.y] = newPiece;
-        }*/
-        //else
-        //{
-
         //Debug.Log("Update");
-        //we should take care not to overwrite pieces:
-        if (grid[oldCoords.x, oldCoords.y] == newPiece) //if old piece was us (this prevents erasing units)
+
+        //Checks to see if old position was this piece. If so, we can safely overwrite it.
+        //If it wasn't this piece, don't, since it could be an unrelated piece
+        if (grid[oldCoords.x, oldCoords.y] == newPiece) 
         {
-            grid[oldCoords.x, oldCoords.y] = oldPiece;
+            grid[oldCoords.x, oldCoords.y] = oldPiece; //oldPiece will usually be NULL
         }
-
-
         //Debug.Log(oldCoords + " " + newCoords);
-        grid[newCoords.x, newCoords.y] = newPiece;
-        //}
+        grid[newCoords.x, newCoords.y] = newPiece; //move our Piece to the new coordinates
     }
 
-
-    private void SelectPiece(Vector2Int coords) //piece selection on left click
-    {
-        Piece piece = GetPieceOnSquare(coords);
-
-        piece.PlaySelection();
-        //chessController.RemoveMovesEnablingAttackOnPieceOfType<King>(piece);
-        SetSelectedPiece(coords); //after this we can call selectedpiece
-        List<Vector2Int> selection = selectedPiece.availableMoves;
-        ShowSelectionSquares(selection, piece);
-
-        foreach (var item in piece.instantiatedCylinders)
-        {
-            Destroy(item);
-        }
-        piece.instantiatedCylinders.Clear();
-    }
 
     public void UpdateUIManager()
     {
         if (chessController.localPlayer == null) //if single player
         {
-
         }
         else if (selectedPiece != null && chessController.localPlayer.team == selectedPiece.team) //if mp and selectedpiece exists and on our team
         {
@@ -1728,56 +1588,6 @@ public abstract class Board : MonoBehaviour
             ui.ShowUnitInfoScreen(selectedPiece);
         }
     }
-
-    public void ShowSelectionSquares(List<Vector2Int> selection, Piece piece) //this function shows squares available for movement, attacking, etc. "selection" is defined as selectedPiece.availableMoves or something similar
-    {
-        if (chessController.localPlayer == null) //for single player
-        {
-            Dictionary<Vector3, bool> squaresData = new Dictionary<Vector3, bool>();
-            for (int i = 0; i < selection.Count; i++)
-            {
-                Vector3 position = CalculatePositionFromCoords(selection[i]);
-                bool isSquareFree = GetPieceOnSquare(selection[i]) == null; //detects whether or not a square is free. if == null, then returns true and square is free. oddly, changing this code seems to do nothing
-                squaresData.Add(position, isSquareFree); //updates data, basically just says whether or not squares are free at specific pos
-
-            }
-            squareSelector.ShowSelection(squaresData); //then show squares based on data
-            squareSelector.UpdateSelection(squaresData);
-        }
-        else if (chessController.localPlayer.team == piece.team) //for multiplayer
-        {
-            Dictionary<Vector3, bool> squaresData = new Dictionary<Vector3, bool>();
-            for (int i = 0; i < selection.Count; i++)
-            {
-                Vector3 position = CalculatePositionFromCoords(selection[i]);
-                bool isSquareFree = GetPieceOnSquare(selection[i]) == null; //detects whether or not a square is free. if == null, then returns true and square is free. oddly, changing this code seems to do nothing
-                squaresData.Add(position, isSquareFree); //updates data, basically just says whether or not squares are free at specific pos
-
-            }
-            squareSelector.ShowSelection(squaresData); //then show squares based on data
-            squareSelector.UpdateSelection(squaresData);
-        }
-    }
-
-    public Piece GetPieceOnSquare(Vector2Int coords)
-    {
-        if (CheckIfCoordinatedAreOnBoard(coords))
-        {
-            //Debug.Log(grid[coords.x, coords.y]);
-            return grid[coords.x, coords.y];
-        }
-        return null;
-    }
-
-    public bool CheckIfCoordinatedAreOnBoard(Vector2Int coords)
-    {
-        if (coords.x < 0 || coords.y < 0 || coords.x >= BOARD_SIZE || coords.y >= BOARD_SIZE)
-        {
-            return false;
-        }
-        return true;
-    }
-
     private Vector2Int CalculateCoordsFromPosition(Vector3 inputPosition)
     {
         int x = Mathf.FloorToInt(transform.InverseTransformPoint(inputPosition).x / squareSize) + 4; //don't have this scale with board size, numpty
@@ -1786,13 +1596,13 @@ public abstract class Board : MonoBehaviour
         return new Vector2Int(x, y);
     }
 
-    internal void OnGameRestarted()
+    internal void OnGameRestarted() //Not really used anymore
     {
         selectedPiece = null;
         CreateGrid();
     }
 
-    public bool HasPiece(Piece piece)
+    public bool HasPiece(Piece piece) //Used to determine if board has a specific piece. 
     {
         for (int i = 0; i < BOARD_SIZE; i++)
         {
@@ -1811,6 +1621,67 @@ public abstract class Board : MonoBehaviour
     {
         if (CheckIfCoordinatedAreOnBoard(coords))
             grid[coords.x, coords.y] = piece;
+    }
+    public void OnPieceCalculateLineOfSight(int id)
+    {
+        UnitList[id].OnCalculateLineOfSight();
+    }
+    public void OnPieceRunThroughCylinders(int id)
+    {
+        UnitList[id].OnRunThroughCylinders();
+    }
+
+    public void OnPieceCommunicateAttackTile(int id, int x, int y)
+    {
+        UnitList[id].OnCommunicateAttackTile(x, y);
+    }
+
+    public void OnCommunicateTurnHoldTime(int id, int turnTime, int holdTime)
+    {
+        UnitList[id].turnTime = turnTime;
+        UnitList[id].holdTime = holdTime;
+    }
+    public void OnPieceApplyDamage(int id)
+    {
+        UnitList[id].OnApplyDamage();
+    }
+    public void OnPieceCalculateDamage(int id)
+    {
+        UnitList[id].OnCalculateDamage();
+    }
+
+    public void OnPieceCheckFlankingDamage(int id)
+    {
+        UnitList[id].OnCheckFlankingDamage();
+    }
+    public void OnPieceMarkForDeath(int id, float damage)
+    {
+        UnitList[id].OnMarkForDeath(damage);
+    }
+
+    public void OnPieceCommunicateTargetToAttackPiece(int id, int x, int y)
+    {
+        UnitList[id].OnCommunicateTargetToAttackPiece(x, y);
+    }
+
+    public void OnPieceTriggerAttacksForSoldiers(int id)
+    {
+        UnitList[id].OnTriggerAttacksForSoldiers();
+    }
+
+    public void OnPieceUpdateTerrainType(int id, int x, int y)
+    {
+        UnitList[id].OnUpdateTerrainType(x, y);
+    }
+
+    public void OnChangeFormation(int id, string formation)
+    {
+        UnitList[id].queuedFormation = formation;
+    }
+    public void OnChangeAttitude(int id, bool aggressive)
+    {
+
+        UnitList[id].aggressiveAttitude = aggressive;
     }
 
 }
