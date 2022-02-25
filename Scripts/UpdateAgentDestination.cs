@@ -26,8 +26,6 @@ public class UpdateAgentDestination : MonoBehaviour
     public float queuedDamage; //this is set by parent piece
     public bool freeze = false;
 
-    //public float distanceToNotAttack = 1f;
-
     [SerializeField] private float navOffset = .9f;
     public float navOffsetAdd = 0;
     public float navOffsetAddClamp = 1;
@@ -53,7 +51,7 @@ public class UpdateAgentDestination : MonoBehaviour
 
     public Vector3 navmeshDestination;
 
-    public Vector3 debugVelocity = Vector3.zero;
+    public Vector3 DebugVelocity = Vector3.zero;
 
     public GameObject targetedSoldierDebug;
 
@@ -62,11 +60,9 @@ public class UpdateAgentDestination : MonoBehaviour
     public Vector3 rotationGoal = Vector3.zero;
     public Piece enemy;
 
-    //public bool marked = false;
     // Update is called once per frame  
     private void Awake()
     {
-
         AllColliders = GetComponentsInChildren<Collider>(true);
         AllRigidbodies = GetComponentsInChildren<Rigidbody>(true);
         foreach (var collider in AllColliders)
@@ -90,14 +86,12 @@ public class UpdateAgentDestination : MonoBehaviour
     private void Start()
     {
         defaultAgentSpeed = navAgent.speed;
-        //DoRagdoll();
-
     }
 
 
     void Update()
     {
-        debugVelocity = navAgent.velocity;
+        //DebugVelocity = navAgent.velocity;
         if (animationsEnabled || !animator.GetCurrentAnimatorStateInfo(0).IsName("BaseIdle")) //if doing something other than idle
         {
 
@@ -118,7 +112,7 @@ public class UpdateAgentDestination : MonoBehaviour
 
         }
         if (attacking && parentPiece.attackType == "melee" && navAgent.enabled)
-        { 
+        {
             if (!moveSet) //play looping animation once
             {
                 animator.Play("BaseMove");
@@ -135,7 +129,6 @@ public class UpdateAgentDestination : MonoBehaviour
 
                 }
             }
-
 
             if (animator != null) //if animator exists
             {
@@ -221,8 +214,6 @@ public class UpdateAgentDestination : MonoBehaviour
             }
             MoveAnimate();
         }
-
-
     }
     private IEnumerator rotateToFaceEnemy()
     {
@@ -315,7 +306,7 @@ public class UpdateAgentDestination : MonoBehaviour
                 {
                     tMin = targetPiece.soldierObjects[i];
                     minDist = dist;
-                    ////Debug.LogError("min dist " + minDist);
+                    //Debug.LogError("min dist " + minDist);
                 }
             }
             if (parentPiece.targetToAttackPiece != null)
@@ -329,12 +320,11 @@ public class UpdateAgentDestination : MonoBehaviour
 
                 }
                 //basically, find the closest soldier and make that our move target
-
             }
         }
 
 
-        Debug.Log("Attempting to attack!" + parentPiece);
+        //Debug.Log("Attempting to attack!" + parentPiece);
 
         if (parentPiece.attackType == "ranged")
         {
@@ -353,13 +343,12 @@ public class UpdateAgentDestination : MonoBehaviour
 
                 targetPiece.modelBar.SetHealth(targetPiece.models); //tween hp bar
                 //targetPiece.MarkForDeath(queuedDamage);
-                Debug.Log("models" + targetPiece.models);
+                //Debug.Log("models" + targetPiece.models);
 
             }
         }
         else if (ableToAttack && numberOfAttacks < maxNumberOfAttacks && parentPiece.attackType == "melee")
         {
-
             animator.Play("BaseAttack");
             numberOfAttacks++;
 
@@ -371,8 +360,6 @@ public class UpdateAgentDestination : MonoBehaviour
                 //targetPiece.MarkForDeath(queuedDamage);
                 //Debug.Log("models" + targetPiece.models);
             }
-
-
             //maybe we can increase the stopping distance with each attack
             foreach (var soldier in parentPiece.soldierObjects)
             {
@@ -381,11 +368,11 @@ public class UpdateAgentDestination : MonoBehaviour
             }
         }
         if (parentPiece.unitType == "infantry")
-        { 
+        {
             yield return new WaitForSeconds(Random.Range(1f, 2f));
         }
         else
-        { 
+        {
             yield return new WaitForSeconds(Random.Range(.1f, 1f));
         }
         if (numberOfAttacks < maxNumberOfAttacks) //if not met max attacks
@@ -417,7 +404,7 @@ public class UpdateAgentDestination : MonoBehaviour
 
             targetPiece.modelBar.SetHealth(targetPiece.models); //tween hp bar
             //targetPiece.MarkForDeath(queuedDamage);
-            Debug.Log("models" + targetPiece.models);
+            //Debug.Log("models" + targetPiece.models);
 
         }
         //yield return new WaitForSeconds(3);
@@ -429,25 +416,6 @@ public class UpdateAgentDestination : MonoBehaviour
 
     public void SpawnEffect() //called using animation events. generally signifies when attack hits
     { //requires an animation event calling this function on the Soldier prefab of a unit
-        /*var updater = targetedSoldierDebug.GetComponent<UpdateAgentDestination>();
-        if (ableToAttack && parentPiece.attackType == "melee" && parentPiece.inflictedDeaths < queuedDamage && !updater.dead) //if attacking in melee and we have more deaths to go and target is alive
-        {
-            //instead of using mark for death, just kill the soldier you attack (unless we've already killed enough)
-            updater.KillThis(targetedSoldierDebug); //this will set the soldier to be dead
-            parentPiece.inflictedDeaths++; //we killed one.
-
-            targetPiece.soldierObjects.RemoveAt(updater.positionInUnitList); //remove the soldier from list
-
-        }
-        else if (ableToAttack && parentPiece.attackType == "melee" && parentPiece.inflictedDeaths < queuedDamage && updater.dead) //if our target is dead, find another to kill
-        {
-
-            var updater2 = targetPiece.soldierObjects[0].GetComponent<UpdateAgentDestination>();
-            updater2.KillThis(targetPiece.soldierObjects[0]);
-            parentPiece.inflictedDeaths++;
-            targetPiece.soldierObjects.RemoveAt(0);
-        }*/
-
         if (attackEffect != null && effectSpawnTransform != null)
         {
             var effect = Instantiate(attackEffect, new Vector3(effectSpawnTransform.position.x, effectSpawnTransform.position.y, effectSpawnTransform.position.z), Quaternion.Euler(0, 0, 0));

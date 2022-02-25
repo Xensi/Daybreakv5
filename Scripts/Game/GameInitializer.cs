@@ -82,15 +82,11 @@ public class GameInitializer : MonoBehaviour
     public bool attackRangedExecuted = false;
     
     public DialogueManager dialogueManager;
-
-
-    
-
     public void SelectLevel(string strLevel)
     {
         foreach (var level in levels)
         {
-            Debug.Log(level.ToString());
+           //Debug.Log(level.ToString());
             if (level.ToString() == strLevel + " (BoardLayout)")
             {
                 boardLevel = level;
@@ -144,12 +140,12 @@ public class GameInitializer : MonoBehaviour
     {
         if (board.placingPieces) //when used to change dir on pieces
         {
-            Debug.Log("Changing piece orientation");
+           //Debug.Log("Changing piece orientation");
             board.tempDir = dir;
         }
         /*else
         {
-            Debug.Log("will set piece orientation on move later");
+           //Debug.Log("will set piece orientation on move later");
             board.selectedPiece.finalDirectionToTurn = dir;
         }*/
 
@@ -172,7 +168,7 @@ public class GameInitializer : MonoBehaviour
             PhotonNetwork.Instantiate(multiplayerBoardPrefab.name, boardAnchor.position, boardAnchor.rotation);
             levelGen.FindBoard();
             levelGen.GenerateLevel();
-            Debug.LogError("Generating level1");
+           //Debug.LogError("Generating level1");
         }
         //both players need to find this board, then do level generation stuff
         //FindBoard();
@@ -190,7 +186,7 @@ public class GameInitializer : MonoBehaviour
 
         if (board != null)
         {
-            Debug.Log("Board found");
+           //Debug.Log("Board found");
         }
         //once you've found the board do level generation
         //levelGen.FindBoard();
@@ -211,11 +207,11 @@ public class GameInitializer : MonoBehaviour
     public void InitializeMultiplayerController()
     {
 
-        Debug.Log("instantiating multiplayer controller");
+       //Debug.Log("instantiating multiplayer controller");
         MultiplayerChessGameController controller = Instantiate(multiplayerChessGameControllerPrefab);
         if (controller != null)
         {
-            Debug.Log("instantiated");
+           //Debug.Log("instantiated");
         }
 
         controller.SetDependencies(uiManager, board, cameraSetup);
@@ -225,15 +221,15 @@ public class GameInitializer : MonoBehaviour
 
         if (board != null)
         {
-            Debug.Log("Board" + board + "controller" + controller);
+           //Debug.Log("Board" + board + "controller" + controller);
         }
         if (board == null)
         {
-            Debug.Log("Board missing");
+           //Debug.Log("Board missing");
         }
         if (controller == null)
         {
-            Debug.Log("controller missing");
+           //Debug.Log("controller missing");
         }
         board.SetDependencies(controller, true);
         chessController = controller;
@@ -288,7 +284,7 @@ public class GameInitializer : MonoBehaviour
             return;
         }
 
-        Debug.Log("Executing moves (SP)");
+       //Debug.Log("Executing moves (SP)");
         board.squareSelector.ClearSelection(); //clear selector squares
         board.selectedPiece = null; //so that you can't queue movement erroneously
         board.ExecuteMoveForAllPieces();
@@ -304,14 +300,14 @@ public class GameInitializer : MonoBehaviour
     {
 
         board.ChangeStance(board.selectedPiece.unitID, "sprint");
-        Debug.Log("Sprint");
+       //Debug.Log("Sprint");
 
     }
     public void PieceMove()
     {
 
         board.ChangeStance(board.selectedPiece.unitID, "move");
-        Debug.Log("move");
+       //Debug.Log("move");
 
     }
     public void PieceDisengage()
@@ -319,7 +315,7 @@ public class GameInitializer : MonoBehaviour
 
 
         board.ChangeStance(board.selectedPiece.unitID, "disengage");
-        Debug.Log("disengage");
+       //Debug.Log("disengage");
 
 
     }
@@ -327,21 +323,21 @@ public class GameInitializer : MonoBehaviour
     {
 
         board.ChangeStance(board.selectedPiece.unitID, "attack");
-        Debug.Log("attack");
+       //Debug.Log("attack");
 
     }
     public void PieceMoveAttack()
     {
 
         board.ChangeStance(board.selectedPiece.unitID, "MoveAttack");
-        Debug.Log("MoveAttack");
+       //Debug.Log("MoveAttack");
 
     }
 
     public void PieceTurn()
     {
         board.ChangeStance(board.selectedPiece.unitID, "turn");
-        Debug.Log("turn");
+       //Debug.Log("turn");
 
     }
     public void ShowDropDown()

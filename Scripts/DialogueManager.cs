@@ -45,8 +45,6 @@ public class DialogueManager : MonoBehaviour
     //public List<UnitScriptableObject> tutorialUnitList;
     void Start()
     {
-
-
         startingYPos = dialogueParent.transform.position.y;
         audioSource = GetComponent<AudioSource>();
         sentences = new Queue<string>(); //first in last out?
@@ -67,7 +65,6 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-
             StartDialogue();
         }
     }
@@ -77,7 +74,7 @@ public class DialogueManager : MonoBehaviour
         foreach (var convo in conversationStarters)
         {
 
-            Debug.Log(convo.ToString());
+           //Debug.Log(convo.ToString());
             if (convo.ToString() == dialogue + " (DialogueScriptableObject)")
             {
                 loadedDialogue = convo;
@@ -152,7 +149,7 @@ public class DialogueManager : MonoBehaviour
 
     void ProcessCommand()
     {
-        Debug.LogError("Processing commands");
+       //Debug.LogError("Processing commands");
         if (loadedDialogue.commandToExecuteStart == "nod")
         {
             npcAnimController.AnimNod();
@@ -161,8 +158,6 @@ public class DialogueManager : MonoBehaviour
         {
             npcAnimController.AnimConfused();
         }
-
-
     }
 
     public void DisplayNextSentence()
@@ -255,7 +250,7 @@ public class DialogueManager : MonoBehaviour
         }
         if (loadedDialogue.commandToExecuteEnd == "startDayOfGlory")
         {
-            Debug.Log("Starting day of glory");
+           //Debug.Log("Starting day of glory");
             gameInit.strafeCam.SetActive(true);
             gameInit.cinematicCam.SetActive(false);
         }
@@ -296,7 +291,7 @@ public class DialogueManager : MonoBehaviour
     void EndTutorial3()
     {
         gameInit.chessController.AllowInput = true;
-        Debug.Log("tutorial over");
+       //Debug.Log("tutorial over");
     }
 
     public void IgnoreTutorial()
@@ -332,7 +327,7 @@ public class DialogueManager : MonoBehaviour
     void IgnoreTutorial3()
     {
         gameInit.chessController.AllowInput = true;
-        Debug.Log("tutorial ignored");
+       //Debug.Log("tutorial ignored");
     }
 
     public void LoadLevel(string level)
@@ -392,7 +387,6 @@ public class DialogueManager : MonoBehaviour
         }
         
         gameInit.board.GenerateButtonsFromSavedUnits();
-
     }
 
     public void LoadLevelUnitList(string level) // will destroy saved units list. useful if a level doesn't require units from a previous level
@@ -412,7 +406,7 @@ public class DialogueManager : MonoBehaviour
 
         foreach (var levelUnitList in levelUnitLists)
         {
-            Debug.Log(levelUnitList.ToString());
+           //Debug.Log(levelUnitList.ToString());
             if (levelUnitList.ToString() == level+"UnitList (UnitListScriptableObject)")
             {
                 gameInit.saveInfoObject.list = levelUnitList.unitList;
@@ -500,7 +494,6 @@ public class DialogueManager : MonoBehaviour
         LoadLevelUnitList(level);
         gameInit.board.GenerateButtonsFromSavedUnits();
 
-
         gameInit.chessController.AllowInput = true;
         gameInit.placingUnitsScreen.SetActive(true);
         gameInit.executeButtonParent.SetActive(true);
@@ -529,7 +522,7 @@ public class DialogueManager : MonoBehaviour
     }
     public void PresentChoices()
     {
-        Debug.Log("presenting choices");
+       //Debug.Log("presenting choices");
         Tween tween = dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
         dialogueText.text = "";
         speakerBGImage.color = loadedDialogue.speakerColorBorder;
@@ -544,7 +537,7 @@ public class DialogueManager : MonoBehaviour
             if (i < loadedDialogue.sentences.Length) //say i = 2 and tere are 2 choices
             {
                 item.transform.parent.gameObject.SetActive(true);
-                Debug.Log(loadedDialogue.sentences[i]);
+               //Debug.Log(loadedDialogue.sentences[i]);
                 item.text = loadedDialogue.sentences[i];
                 i++;
             }
@@ -577,15 +570,8 @@ public class DialogueManager : MonoBehaviour
             {
                 sentences.Enqueue(sentence);
             }
-
-
             DisplayNextSentence();
         }
         ProcessCommand();
-
     }
-
-
-
-
 }

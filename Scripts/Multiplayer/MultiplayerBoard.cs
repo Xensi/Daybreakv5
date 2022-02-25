@@ -46,34 +46,13 @@ public class MultiplayerBoard : Board
 
     }
 
-    /*public override void SelectPieceMoved(Vector2 coords) //called by onsquareselected
-    {
-        photonView.RPC(nameof(RPC_OnSelectedPieceMoved), RpcTarget.AllBuffered, new object[] { coords }); //objects are parameters
-    }
-    [PunRPC]
-    private void RPC_OnSelectedPieceMoved(Vector2 coords)
+    public override void MoveSelectedPiece(Vector2 coords) //called by onsquareselected
     {
         Vector2Int intCoords = new Vector2Int(Mathf.RoundToInt(coords.x), Mathf.RoundToInt(coords.y));
-        OnSelectedPieceMoved(intCoords); //captures/moves pieces multiplayer
-    }*/
-
-    public override void SelectPieceMoved(Vector2 coords) //called by onsquareselected
-    {
-        Vector2Int intCoords = new Vector2Int(Mathf.RoundToInt(coords.x), Mathf.RoundToInt(coords.y));
-        OnSelectedPieceMoved(intCoords); //captures/moves pieces multiplayer
+        OnMoveSelectedPiece(intCoords); //captures/moves pieces multiplayer
 
     }
 
-    /*public override void SetSelectedPiece(Vector2 coords)
-    {
-        photonView.RPC(nameof(RPC_OnSetSelectedPiece), RpcTarget.AllBuffered, new object[] { coords });
-    }
-    [PunRPC]
-    private void RPC_OnSetSelectedPiece(Vector2 coords)
-    {
-        Vector2Int intCoords = new Vector2Int(Mathf.RoundToInt(coords.x), Mathf.RoundToInt(coords.y));
-        OnSetSelectedPiece(intCoords); //literally just selects a piece idk
-    }*/
 
     public override void SetSelectedPiece(Vector2 coords)
     {

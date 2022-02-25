@@ -20,7 +20,7 @@ public class PieceCreator : MonoBehaviour
         }
         /*foreach (var item in nameToPieceDict)
         {
-            Debug.Log(item);
+           //Debug.Log(item);
         }*/
     }
 

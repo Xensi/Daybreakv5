@@ -23,7 +23,7 @@ public class SaveInfo : MonoBehaviour
         {
             DontDestroyOnLoad(this.gameObject);
             created = true;
-            Debug.Log("Awake: " + this.gameObject);
+           //Debug.Log("Awake: " + this.gameObject);
             //GenerateModifiableScripObjsAsChildren();
         }
     }

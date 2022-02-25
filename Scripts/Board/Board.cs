@@ -77,7 +77,7 @@ public abstract class Board : MonoBehaviour
 
     public List<UIButton> unitButtonsList = new List<UIButton>();
     public abstract void TriggerSlowUpdate(); //abstracts will be redefined for singleplayer and multiplayer Boards
-    public abstract void SelectPieceMoved(Vector2 coords);
+    public abstract void MoveSelectedPiece(Vector2 coords);
     public abstract void SetSelectedPiece(Vector2 coords);
     public abstract void ExecuteMoveForAllPieces();
     public abstract void ArbitrateConflict();
@@ -179,6 +179,52 @@ public abstract class Board : MonoBehaviour
     {
         return bottomLeftSquareTransform.position + new Vector3(coords.x * squareSize, 0f, coords.y * squareSize);
     }
+
+    public void DeselectPiece()
+    {
+        selectedPiece.DisplayFormation(selectedPiece.queuedFormation);
+        selectedPiece = null;
+        squareSelector.ClearSelection();
+
+        ui.HideUnitInfoScreen();
+        gameInit.HideDropDown();
+        foreach (var selector in instantiatedSelectors)
+        {
+            Destroy(selector);
+        }
+        instantiatedSelectors.Clear();
+    }
+
+    public void UpdateBoardOnPieceMove(Vector2Int newCoords, Vector2Int oldCoords, Piece newPiece, Piece oldPiece) //normal move means old piece is null
+    {
+        if (newCoords.x < 0 || newCoords.x > BOARD_SIZE || newCoords.y < 0 || newCoords.y > BOARD_SIZE)
+        {
+            return;
+        }
+        //Debug.Log("Update");
+
+        //Checks to see if old position was this piece. If so, we can safely overwrite it.
+        //If it wasn't this piece, don't, since it could be an unrelated piece
+        if (grid[oldCoords.x, oldCoords.y] == newPiece)
+        {
+            grid[oldCoords.x, oldCoords.y] = oldPiece; //oldPiece will usually be NULL
+        }
+        //Debug.Log(oldCoords + " " + newCoords);
+        grid[newCoords.x, newCoords.y] = newPiece; //move our Piece to the new coordinates
+    }
+
+
+    public void UpdateUIManager()
+    {
+        if (chessController.localPlayer == null) //if single player
+        {
+        }
+        else if (selectedPiece != null && chessController.localPlayer.team == selectedPiece.team) //if mp and selectedpiece exists and on our team
+        {
+
+            ui.ShowUnitInfoScreen(selectedPiece);
+        }
+    }
     public void OnTriggerSlowUpdate() //finished communicating with mp
     {
         //Debug.LogError("triggered slow update");
@@ -221,7 +267,7 @@ public abstract class Board : MonoBehaviour
                 button.gameObject.SetActive(false);
             }
         }
-        Debug.Log("selected " + name + " " + models + " " + morale + " " + energy);
+       //Debug.Log("selected " + name + " " + models + " " + morale + " " + energy);
         readyToPlaceUnit = true;
         tempName = name;
         tempModels = models;
@@ -356,7 +402,7 @@ public abstract class Board : MonoBehaviour
                         && selectedPiece.thisMarkerGrid[coords.x, coords.y] != null && selectedPiece.thisMarkerGrid[coords.x, coords.y].parentPiece != selectedPiece)
                     {
                         //Debug.Log("different marker found"); //if we click on a space with a marker not belonging to us
-                        SelectPieceMoved(coords);
+                        MoveSelectedPiece(coords);
                         return;
                     }
                     //You are clicking on a tile that you have already queued a move onto
@@ -437,13 +483,13 @@ public abstract class Board : MonoBehaviour
                         }
                         //Queue move onto them. We can't know if the move is valid until the turns happen
                         //Debug.Log("Queueing move onto a position we know has an enemy"); //use selectPieceMoved instead of queuing directly
-                        SelectPieceMoved(coords); 
+                        MoveSelectedPiece(coords); 
                     }
                     //If we're turning and there's a unit there, we still queue. (DEFUNCT)
                     else if (piece != null && selectedPiece != piece && selectedPiece.turning)
                     {
                         //Debug.Log("turning override");
-                        SelectPieceMoved(coords);
+                        MoveSelectedPiece(coords);
                     }
                     //You clicked on a piece other than the selected piece
                     else if (piece != null && selectedPiece != piece && piece.turnTime == 0)
@@ -466,7 +512,7 @@ public abstract class Board : MonoBehaviour
                     //You clicked on another piece with a higher turn time. We can queue moves onto such pieces because they will move out of the way by the time we get there. 
                     else if (piece != null && selectedPiece != piece && piece.turnTime > 0)
                     {
-                        SelectPieceMoved(coords);
+                        MoveSelectedPiece(coords);
                     }
                     //You clicked somewhere we can move (Without taking into account impassable terrain yet)
                     else if (selectedPiece.CanMoveTo(coords))
@@ -512,7 +558,7 @@ public abstract class Board : MonoBehaviour
                         }
                         else
                         {
-                            SelectPieceMoved(coords); //place some sort of marker indicating that this piece will move there\
+                            MoveSelectedPiece(coords); //place some sort of marker indicating that this piece will move there\
                         }
                     }
                 }
@@ -588,7 +634,7 @@ public abstract class Board : MonoBehaviour
         Marker marker = Instantiate(UnitList[id].markerPrefab, targetPosition, Quaternion.identity); //then place a marker there
         UnitList[id].instantiatedMarkers.Add(marker); //add it to the list so we can delete if need be
         marker.turnTime = UnitList[id].speed - remainingMovement;//set marker turn time. we can tell what turn time we're on by the remaining movement. for example, 2 speed - 1 remaining move: 1st turn time
-        ////Debug.LogError("Speed" + UnitList[id].speed + remainingMovement);
+        //Debug.LogError("Speed" + UnitList[id].speed + remainingMovement);
         marker.parentPiece = UnitList[id];
         marker.coords = coords;
         int num = 0;
@@ -798,11 +844,11 @@ public abstract class Board : MonoBehaviour
             piecesReadyToAttackAfterMovement.Clear();
             for (int i = 0; i < AllPieces.Length; i++) //go through each piece
             {
-                ////Debug.LogError("allpieces" + AllPieces[i] + AllPieces[i].queuedMoves.Count);
+                //Debug.LogError("allpieces" + AllPieces[i] + AllPieces[i].queuedMoves.Count);
                 if (AllPieces[i].queuedMoves.Count == 1) //if exactly one moved queued and attacking, you are eligible to attack immediately  && AllPieces[i].attacking && AllPieces[i].attackedThisTurn == false
                 {
                     piecesReadyToAttack.Add(AllPieces[i]);
-                    Debug.LogError("added to pieces ready to immediate attack" + AllPieces[i]);
+                   //Debug.LogError("added to pieces ready to immediate attack" + AllPieces[i]);
 
                 }
                 AllPieces[i].CheckIfAttacked(); //check to see if we're being attacked. if we are and haven't attacked yet, defend yourself
@@ -843,7 +889,7 @@ public abstract class Board : MonoBehaviour
                     }
                 }
                 overflow++;
-                Debug.Log("overflow" + overflow);
+               //Debug.Log("overflow" + overflow);
             }
         }
     }
@@ -902,7 +948,7 @@ public abstract class Board : MonoBehaviour
                 if (piece.lastEventEndPos != Vector3.zero)
                 {
                     num = piece.lastEventEndPos;
-                    Debug.Log("num" + num);
+                   //Debug.Log("num" + num);
                 }
                 else
                 {
@@ -936,7 +982,7 @@ public abstract class Board : MonoBehaviour
 
     public void OneStepFinished() //checks to see if one step has been finished. if so, start move coroutines again
     {
-        Debug.Log("Checking if all steps finished");
+       //Debug.Log("Checking if all steps finished");
         Piece[] AllPieces = FindObjectsOfType<Piece>();
         for (int i = 0; i < AllPieces.Length; i++) //go through all pieces and see if they're done yet.
         {
@@ -947,7 +993,7 @@ public abstract class Board : MonoBehaviour
                 return; //if there's one that hasn't finished, stop checking and don't change input allowance
             }
         }
-        Debug.Log("All steps finished");
+       //Debug.Log("All steps finished");
         //if all steps finished
 
         //but first we should allow attacks from those that can and want to, namely units that have reached their hold position
@@ -955,11 +1001,11 @@ public abstract class Board : MonoBehaviour
         piecesReadyToAttack.Clear();
         for (int i = 0; i < AllPieces.Length; i++) //go through each piece
         {
-            ////Debug.LogError("allpieces" + AllPieces[i] + AllPieces[i].queuedMoves.Count);
+            //Debug.LogError("allpieces" + AllPieces[i] + AllPieces[i].queuedMoves.Count);
             if (AllPieces[i].queueTime == AllPieces[i].holdTime && AllPieces[i].attacking) //if queue time = hold time
             {
                 piecesReadyToAttack.Add(AllPieces[i]);
-                Debug.LogError("added to pieces ready to immediate attack" + AllPieces[i]);
+               //Debug.LogError("added to pieces ready to immediate attack" + AllPieces[i]);
 
             }
             AllPieces[i].CheckIfAttacked(); //check to see if we're being attacked. if we are and haven't attacked yet, defend yourself
@@ -1026,7 +1072,7 @@ public abstract class Board : MonoBehaviour
         {
             if (piece.unitType == "cavalry" && piece.queueTime % 2 == 1 && piece.queueTime < piece.queuedMoves.Count && piece.queueTime < piece.holdTime)  //if we have any cavalry that's only on its first/third move and has more moves left to go
             {//and has not met hold time (if == hold time then we should not move
-                ////Debug.LogError("Knight queue time " + piece.queueTime + "queuedmovescount" + piece.queuedMoves.Count);
+                //Debug.LogError("Knight queue time " + piece.queueTime + "queuedmovescount" + piece.queuedMoves.Count);
                 cavalry.Add(piece); //add it to the list
             }
         }
@@ -1092,7 +1138,7 @@ public abstract class Board : MonoBehaviour
 
             for (int i = 0; i < AllPieces.Length; i++) //go through each piece
             {
-                Debug.Log(AllPieces[i].attackedThisTurn + "attacked this turn" + AllPieces[i]);
+               //Debug.Log(AllPieces[i].attackedThisTurn + "attacked this turn" + AllPieces[i]);
                 if (AllPieces[i].attacking && AllPieces[i].attackedThisTurn == false) //if attacking, you are eligible to attack after movement
                 {
                     piecesReadyToAttackAfterMovement.Add(AllPieces[i]);
@@ -1110,7 +1156,7 @@ public abstract class Board : MonoBehaviour
     {
         foreach (var item in pieces)
         {
-            Debug.LogError(item + " " + phaseNum);
+           //Debug.LogError(item + " " + phaseNum);
         }
 
         if (phaseNum == 1)
@@ -1159,7 +1205,7 @@ public abstract class Board : MonoBehaviour
 
     public IEnumerator CheckIfPhysicsCalculationsProcessed(List<Piece> pieces, int phaseNum) //this exists so that we don't have to do all the processing in one frame
     {
-        Debug.Log("Checking");
+       //Debug.Log("Checking");
         var numNotFinished = 0;
         for (int i = 0; i < pieces.Count; i++) //go through each piece
         {
@@ -1205,7 +1251,7 @@ public abstract class Board : MonoBehaviour
         {
             if (AllPieces[i].movementStopped && !AllPieces[i].attacking && AllPieces[i].targetToAttackPiece == null && AllPieces[i].attackedThisTurn == false) //if we are not attacking, have no attack target and have not attacked, and have finished moving
             {
-                Debug.Log("phase num" + phaseNum);
+               //Debug.Log("phase num" + phaseNum);
                 AllPieces[i].CheckIfAttacked(); //check to see if we're being attacked. if we are and haven't attacked yet, defend yourself
                 if (AllPieces[i].defensiveAttacking)
                 {
@@ -1230,23 +1276,23 @@ public abstract class Board : MonoBehaviour
         {
             if (pieces[i].attackedThisTurn == false)
             {
-                Debug.LogError("Calculating Damage");
+               //Debug.LogError("Calculating Damage");
                 pieces[i].CalculateDamage(); //calculate attack damage //there isn't a reason to call this more than once 
             }
         }
 
         for (int i = 0; i < AllPieces.Length; i++)
         {
-            Debug.Log("old" + AllPieces[i].oldModels + "new" + AllPieces[i].models);
+           //Debug.Log("old" + AllPieces[i].oldModels + "new" + AllPieces[i].models);
             AllPieces[i].oldModels = AllPieces[i].models;
-            Debug.Log("NEWold" + AllPieces[i].oldModels + "new" + AllPieces[i].models);
+           //Debug.Log("NEWold" + AllPieces[i].oldModels + "new" + AllPieces[i].models);
         }
 
         for (int i = 0; i < pieces.Count; i++)
         {
             if (pieces[i].attackedThisTurn == false)
             {
-                Debug.LogError("Applying Damage");
+               //Debug.LogError("Applying Damage");
                 pieces[i].ApplyDamage(); //set models -= queued damage and triggers attacks for models //very important to only call this once 
             }
         }
@@ -1256,7 +1302,7 @@ public abstract class Board : MonoBehaviour
             var totalDamage = AllPieces[i].oldModels - AllPieces[i].models; //calculate total damage dealt to each unit
             if (totalDamage > 0)
             {
-                Debug.Log("old" + AllPieces[i].oldModels + "new" + AllPieces[i].models + "total damage" + totalDamage);
+               //Debug.Log("old" + AllPieces[i].oldModels + "new" + AllPieces[i].models + "total damage" + totalDamage);
                 //AllPieces[i].MarkForDeath(totalDamage);
                 AllPieces[i].OnMarkForDeath(totalDamage);
                 //PieceMarkForDeath(AllPieces[i].unitID, totalDamage); //mp
@@ -1267,7 +1313,7 @@ public abstract class Board : MonoBehaviour
         {
             if (pieces[i].attacking)
             {
-                ////Debug.LogError("phase" + phaseNum + pieces[i]);
+                //Debug.LogError("phase" + phaseNum + pieces[i]);
                 pieces[i].attackedThisTurn = true; //so we can mark it as such
             }
 
@@ -1333,7 +1379,7 @@ public abstract class Board : MonoBehaviour
 
         foreach (var piece in pieces)
         {
-            Debug.LogError(piece + "piece animations over" + piece.animationsOver);
+           //Debug.LogError(piece + "piece animations over" + piece.animationsOver);
             if (piece.animationsOver)
             {
                 num++; //if we find one that's done, add it to the count
@@ -1468,11 +1514,11 @@ public abstract class Board : MonoBehaviour
             friendly.wonTieBreak = false;
             enemy.wonTieBreak = false;
         }
-        ////Debug.LogError("friendly " + friendly.wonTieBreak + "enemy " + enemy.wonTieBreak);
+        //Debug.LogError("friendly " + friendly.wonTieBreak + "enemy " + enemy.wonTieBreak);
         friendly.arbitratedConflict = true;
         enemy.arbitratedConflict = true;
     }
-    public void OnSelectedPieceMoved(Vector2Int coords) //this shows up in multiplayer
+    public void OnMoveSelectedPiece(Vector2Int coords) //this shows up in multiplayer
     {
         if (chessController.AllowInput)
         {
@@ -1480,7 +1526,7 @@ public abstract class Board : MonoBehaviour
             selectedPiece.QueueMove(coords);//tell piece to remember these coords and place a marker there //got error
         }
 
-        ////Debug.LogError("remainingmovement" + selectedPiece.remainingMovement + "turn time" + selectedPiece.turnTime);
+        //Debug.LogError("remainingmovement" + selectedPiece.remainingMovement + "turn time" + selectedPiece.turnTime);
         //if selected piece is attacking, ranged, move attacking, and out of remaining movement:
         if (selectedPiece.attacking && selectedPiece.attackType == "ranged" && selectedPiece.moveAndAttackEnabled && selectedPiece.remainingMovement == 0) //&& selectedPiece.turnTime >= 1
         {//if move and attack enabled, disable after first movement queued
@@ -1543,56 +1589,11 @@ public abstract class Board : MonoBehaviour
     }
 
 
-    public void DeselectPiece()
-    {
-        selectedPiece.DisplayFormation(selectedPiece.queuedFormation);
-        selectedPiece = null;
-        squareSelector.ClearSelection();
-
-        ui.HideUnitInfoScreen();
-        gameInit.HideDropDown();
-        foreach (var selector in instantiatedSelectors)
-        {
-            Destroy(selector);
-        }
-        instantiatedSelectors.Clear();
-    }
-
-    public void UpdateBoardOnPieceMove(Vector2Int newCoords, Vector2Int oldCoords, Piece newPiece, Piece oldPiece) //normal move means old piece is null
-    {
-        if (newCoords.x < 0 || newCoords.x > BOARD_SIZE || newCoords.y < 0 || newCoords.y > BOARD_SIZE)
-        {
-            return;
-        }
-        //Debug.Log("Update");
-
-        //Checks to see if old position was this piece. If so, we can safely overwrite it.
-        //If it wasn't this piece, don't, since it could be an unrelated piece
-        if (grid[oldCoords.x, oldCoords.y] == newPiece) 
-        {
-            grid[oldCoords.x, oldCoords.y] = oldPiece; //oldPiece will usually be NULL
-        }
-        //Debug.Log(oldCoords + " " + newCoords);
-        grid[newCoords.x, newCoords.y] = newPiece; //move our Piece to the new coordinates
-    }
-
-
-    public void UpdateUIManager()
-    {
-        if (chessController.localPlayer == null) //if single player
-        {
-        }
-        else if (selectedPiece != null && chessController.localPlayer.team == selectedPiece.team) //if mp and selectedpiece exists and on our team
-        {
-
-            ui.ShowUnitInfoScreen(selectedPiece);
-        }
-    }
     private Vector2Int CalculateCoordsFromPosition(Vector3 inputPosition)
     {
         int x = Mathf.FloorToInt(transform.InverseTransformPoint(inputPosition).x / squareSize) + 4; //don't have this scale with board size, numpty
         int y = Mathf.FloorToInt(transform.InverseTransformPoint(inputPosition).z / squareSize) + 4;
-        Debug.Log(x + " " + y);
+       //Debug.Log(x + " " + y);
         return new Vector2Int(x, y);
     }
 

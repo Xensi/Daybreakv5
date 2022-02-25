@@ -26,8 +26,6 @@ public class LevelGenerator : MonoBehaviour
     {
         //GenerateLevel();
     }
-
-
     public void DestroyLevel()
     {
         foreach (var terrain in terrainList)
@@ -43,7 +41,7 @@ public class LevelGenerator : MonoBehaviour
     {
         foreach (var varmap in mapList)
         {
-            Debug.Log(varmap.ToString());
+           //Debug.Log(varmap.ToString());
             if (varmap.ToString() == strLevel + " (UnityEngine.Texture2D)")
             {
                 map = varmap;
@@ -51,26 +49,15 @@ public class LevelGenerator : MonoBehaviour
         }
         foreach (var varplacementmap in placementAllowanceMapList)
         {
-            Debug.Log(varplacementmap.ToString());
+           //Debug.Log(varplacementmap.ToString());
             if (varplacementmap.ToString() == strLevel + "Placement (UnityEngine.Texture2D)")
             {
                 placementAllowanceMap = varplacementmap;
             }
         }
-        /*foreach (var terrain in terrainList)
-        {
-            Debug.Log(terrain.ToString());
-            Debug.Log(strLevel + " (UnityEngine.Terrain)");
-            if (terrain.ToString() == strLevel + " (UnityEngine.Terrain)")
-            {
-                terrain.gameObject.SetActive(true);
-            }
-        }*/
 
         string sceneMap = strLevel + "Map";
         SceneManager.LoadScene(sceneMap, LoadSceneMode.Additive);
-
-
     }
 
     public void FindBoard()
@@ -158,7 +145,5 @@ public class LevelGenerator : MonoBehaviour
 
             }
         }
-
-
     }
 }

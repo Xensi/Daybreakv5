@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class SinglePlayerBoard : Board
 {
-    public override void SelectPieceMoved(Vector2 coords)
+    public override void MoveSelectedPiece(Vector2 coords)
     {
         Vector2Int intCoords = new Vector2Int(Mathf.RoundToInt(coords.x), Mathf.RoundToInt(coords.y)); //determine coords of selected area
-        OnSelectedPieceMoved(intCoords);
+        OnMoveSelectedPiece(intCoords);
 
     }
 
