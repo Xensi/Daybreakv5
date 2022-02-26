@@ -5,10 +5,26 @@ using Pathfinding;
 [HelpURL("http://arongranberg.com/astar/docs/class_blocker_test.php")]
 public class BlockerTest : MonoBehaviour
 {
-    public void Start()
+    public SingleNodeBlocker blocker;
+    private void Awake()
     {
-        var blocker = GetComponent<SingleNodeBlocker>();
+        if (blocker == null)
+        {
+            blocker = GetComponent<SingleNodeBlocker>();
+        }
+        if (blocker.manager == null)
+        {
+            var blockManager = GameObject.FindWithTag("BlockManager");
+            blocker.manager = blockManager.GetComponent<BlockManager>();
+        }
 
-        blocker.BlockAtCurrentPosition();
+    }
+
+    private void Update()
+    {
+        if (blocker != null)
+        {
+            blocker.BlockAtCurrentPosition();
+        }
     }
 }
