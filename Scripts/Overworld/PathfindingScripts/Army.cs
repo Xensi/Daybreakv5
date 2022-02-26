@@ -21,8 +21,14 @@ public class Army : MonoBehaviour
     public ABPath path;
     public int numberOfUnitsInArmy = 10;
 
+    public float remainingDistanceNew = 0;
+    public float remainingDistanceOld = 0;
+
+    public int numberOfMovementAttempts = 0;
+
     public void Start()
     {
+        CheckSizeAndChangeSpeed();
         aiPath.canMove = false;
         tweener = GetComponent<IObjectTweener>();
 
@@ -49,9 +55,13 @@ public class Army : MonoBehaviour
     public void StartMoving()
     {
         speedCurrent = 0;
+        numberOfMovementAttempts = 0;
         CheckSizeAndChangeSpeed();
         MoveOneNode();
+        remainingDistanceNew = aiPath.remainingDistance;
+        remainingDistanceOld = aiPath.remainingDistance;
         StartCoroutine(WaitUntilMovementOver());
+        StartCoroutine(NoticeIfBlocked());
     }
     private void CheckSizeAndChangeSpeed()
     {
@@ -161,22 +171,69 @@ public class Army : MonoBehaviour
     private IEnumerator WaitUntilMovementOver()
     {
         yield return new WaitForSeconds(0.01f);
-
         if (path.error) //if we can't get a path, try to
         {
             MakePathToTarget();
         }
 
-        if (aiPath.reachedDestination && speedCurrent >= speedMax)
+        if (aiPath.reachedDestination)
+        {
+            //StopCoroutine(NoticeIfBlocked());
+            StopAllCoroutines();
+            aiPath.canMove = false;
+            yield break;
+        }
+        /*if (aiPath.reachedDestination && speedCurrent >= speedMax)
         {
             aiPath.canMove = false; //stop ai movement
             yield break;
-        }
-        else if (aiPath.reachedDestination && path.vectorPath.Count >= 2 && speedCurrent < speedMax) //if reached destination and still more tiles to move to and hasn't exceeded max movement
+        }*/
+        /*else if (aiPath.reachedDestination && path.vectorPath.Count >= 2 && speedCurrent < speedMax) //if reached destination and still more tiles to move to and hasn't exceeded max movement
         {
             MoveOneNode(); //move another node
 
-        }
+        }*/
         StartCoroutine(WaitUntilMovementOver());
+    }
+    private  IEnumerator NoticeIfBlocked()
+    {
+        yield return new WaitForSeconds(0.1f);
+        remainingDistanceNew = aiPath.remainingDistance;
+
+        float diff = remainingDistanceNew - remainingDistanceOld;
+
+        diff = Mathf.Abs(diff);
+
+        if (diff < .01f) //if diff is very low
+        {
+            numberOfMovementAttempts++;
+        }
+        if (numberOfMovementAttempts >= 5)
+        {
+            //StopCoroutine(WaitUntilMovementOver());
+            //aiPath.canMove = false;
+
+            float fixedCoordsx = RoundToZeroOrHalf(transform.position.x);
+            float fixedCoordsz = RoundToZeroOrHalf(transform.position.z);
+
+            aiTarget.transform.position = new Vector3(fixedCoordsx, 0, fixedCoordsz);
+
+            //yield break;
+        }
+        remainingDistanceOld = remainingDistanceNew;
+        StartCoroutine(NoticeIfBlocked());
+    }
+
+    private float RoundToZeroOrHalf(float a) //1.52 will be 1.5, 1.1232 will be 1
+    {
+        int b = Mathf.RoundToInt(a);
+        if (a > b)
+        {
+            return b + .5f;
+        }
+        else
+        {
+            return b - .5f;
+        }
     }
 }

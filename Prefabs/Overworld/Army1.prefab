@@ -149,6 +149,9 @@ MonoBehaviour:
   speedCurrent: 0
   blockManager: {fileID: 0}
   numberOfUnitsInArmy: 10
+  remainingDistanceNew: 0
+  remainingDistanceOld: 0
+  numberOfMovementAttempts: 0
 --- !u!114 &5904183576733785716
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -214,11 +217,11 @@ MonoBehaviour:
   rotationSpeed: 360
   slowdownDistance: 0.1
   pickNextWaypointDist: 2
-  endReachedDistance: 0.01
+  endReachedDistance: 0.05
   alwaysDrawGizmos: 0
   slowWhenNotFacingTarget: 1
   whenCloseToDestination: 0
-  constrainInsideGraph: 0
+  constrainInsideGraph: 1
 --- !u!114 &5904183576733785714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -258,7 +261,7 @@ MonoBehaviour:
   collidesWith: -1
   wallAvoidForce: 1
   wallAvoidFalloff: 1
-  priority: 0.5
+  priority: 1
   debug: 0
 --- !u!1001 &5904183575689254061
 PrefabInstance:
