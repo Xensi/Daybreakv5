@@ -41,15 +41,11 @@ public class Army : MonoBehaviour
 
         // Create a traversal provider which says that a path should be blocked by all the SingleNodeBlockers in the obstacles array
         traversalProvider = new BlockManager.TraversalProvider(blockManager, BlockManager.BlockMode.OnlySelector, obstacles);
-        //StartCoroutine(LateStart(1));
+        
     }
 
     public void Update()
     {
-    }
-    IEnumerator LateStart(float waitTime)
-    {
-        yield return new WaitForSeconds(waitTime);
     }
 
     public void StartMoving()
@@ -204,11 +200,11 @@ public class Army : MonoBehaviour
 
         diff = Mathf.Abs(diff);
 
-        if (diff < .01f) //if diff is very low
+        if (diff < .02f) //if diff is very low
         {
             numberOfMovementAttempts++;
         }
-        if (numberOfMovementAttempts >= 5)
+        if (numberOfMovementAttempts >= 10)
         {
             //StopCoroutine(WaitUntilMovementOver());
             //aiPath.canMove = false;

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Pathfinding;
 
 public class OverworldManager : MonoBehaviour
@@ -16,10 +17,16 @@ public class OverworldManager : MonoBehaviour
     public GameObject armyPrefab;
 
     public bool readyToSpawnArmy = false;
+        
+    public Button executeButton;
+    public Button combineArmy;
+
 
     // Start is called before the first frame update
     void Start()
     {
+        //executeButton.interactable = false;
+        combineArmy.interactable = false;
     }
 
     // Update is called once per frame
@@ -75,11 +82,31 @@ public class OverworldManager : MonoBehaviour
             }
         }
     }
+
+    public void CombineArmy()
+    {
+        //wait for you to left click on another army you own
+        //when you do the ai target becomes the other army
+        //when the first army collides with it, give second army all of first army's units. destroy first army
+    }
+    public void SplitArmy()
+    {
+        //choose how many troops to split
+        //left click on position to place new army
+        //new army gets the troops that split, og army loses those troops
+    }
+
     private void SpawnArmy()
     {
         GameObject newArmy = Instantiate(armyPrefab, Vector3.zero, Quaternion.identity); //instantiate army prefab
         Transform transform = newArmy.transform.GetChild(0); //get transform of figurine
         transform.position = clickPosition; //move figurine to click pos
+        Transform targetTransform = newArmy.transform.GetChild(1);
+        targetTransform.position = clickPosition;
+        Transform aiTargetTransform = newArmy.transform.GetChild(2);
+        aiTargetTransform.position = clickPosition;
+
+
         Army newArmyComp = newArmy.GetComponentInChildren<Army>(); //get army
         SingleNodeBlocker newArmyBlocker = newArmy.GetComponentInChildren<SingleNodeBlocker>();
 
@@ -106,12 +133,14 @@ public class OverworldManager : MonoBehaviour
             {
                 selectedArmy = checkedArmy;
                 foundOne = true;
+                combineArmy.interactable = true;
                 break;
             }
         }
         if (foundOne == false)
         {
             selectedArmy = null;
+            combineArmy.interactable = false;
         }
     }
     private float RoundToZeroOrHalf(float a) //1.52 will be 1.5, 1.1232 will be 1
