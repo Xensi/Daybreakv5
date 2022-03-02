@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
-using Pathfinding;
 using System.Collections;
+using Pathfinding;
 using UnityEngine.UI;
 using FoW;
 
@@ -42,6 +42,7 @@ public class Army : MonoBehaviour
 
     public int sightRadius = 4;
     public int provisions = 8;
+    public int maxProvisions = 12;
 
     public List<Button> listOfSplitOffs;
     public FogOfWarUnit fowUnit;

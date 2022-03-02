@@ -9,6 +9,9 @@ using TMPro;
 public class OverworldManager : MonoBehaviour
 {
     public List<Army> armies;
+    public List<Caravan> caravans;
+    public List<SupplyGiver> supplyGivers;
+
     public List<Army> armiesGoingToSplit;
     public List<GameObject> splitIndicatorList;
 
@@ -57,6 +60,15 @@ public class OverworldManager : MonoBehaviour
         //executeButton.interactable = false;
         combineArmyButton.interactable = false;
         splitArmyButton.interactable = false;
+
+
+        GameObject[] array;
+        array = GameObject.FindGameObjectsWithTag("SupplyGiver");
+        foreach (GameObject item in array)
+        {
+            SupplyGiver comp = item.GetComponent<SupplyGiver>();
+            supplyGivers.Add(comp);
+        }
     }
 
     // Update is called once per frame
@@ -108,6 +120,15 @@ public class OverworldManager : MonoBehaviour
         foreach (Army elArmy in armies)
         {
             elArmy.StartMoving();
+        }
+
+        foreach (SupplyGiver elGiver in supplyGivers)
+        {
+            elGiver.SpawnCaravans();
+        }
+        foreach (Caravan elCaravan in caravans)
+        {
+            elCaravan.StartMoving();
         }
     }
 
