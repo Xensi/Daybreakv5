@@ -38,11 +38,14 @@ public class Army : MonoBehaviour
     public List<bool> actuallySplitOffOrNot;
     public List<GameObject> indicators;
 
-    public int timePassed = 0;
+    public int turnCounter = 0;
 
     public int sightRadius = 4;
     public int provisions = 8;
     public int maxProvisions = 12;
+    public int starvation = 0;
+
+    public bool garrisoned = false;
 
     public List<Button> listOfSplitOffs;
     public FogOfWarUnit fowUnit;
@@ -113,7 +116,19 @@ public class Army : MonoBehaviour
 
     public void StartMoving()
     {
-        timePassed = 0;
+        turnCounter++;
+        if (turnCounter % 2 == 0)
+        {
+            turnCounter = 0;
+            if (provisions > 0)
+            {
+                provisions--;
+            }
+            else
+            {
+                starvation++;
+            }
+        }
         speedCurrent = 0;
         numberOfMovementAttempts = 0;
         CheckSizeAndChangeSpeed();

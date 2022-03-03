@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 624060421307239005}
   - component: {fileID: 624060421307239004}
   - component: {fileID: 624060421307239003}
-  - component: {fileID: 7510155745652049138}
   - component: {fileID: 1532054078174074899}
   - component: {fileID: 3182527547678717436}
   m_Layer: 17
@@ -64,6 +63,8 @@ MonoBehaviour:
   remainingDistanceOld: 0
   numberOfMovementAttempts: 0
   caravanCollider: {fileID: 1532054078174074899}
+  homeSupplySource: {fileID: 0}
+  goingHome: 0
   targetArmy: {fileID: 0}
 --- !u!114 &624060421307239005
 MonoBehaviour:
@@ -149,33 +150,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   target: {fileID: 624060423060026091}
---- !u!114 &7510155745652049138
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 624060421307239000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 560112f876f5746c780eca0d404e7139, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 2
-  radiusBackingField: 0.5
-  heightBackingField: 2
-  centerBackingField: 1
-  locked: 0
-  lockWhenNotMoving: 0
-  agentTimeHorizon: 2
-  obstacleTimeHorizon: 2
-  maxNeighbours: 10
-  layer: 1
-  collidesWith: -1
-  wallAvoidForce: 1
-  wallAvoidFalloff: 1
-  priority: 1
-  debug: 0
 --- !u!135 &1532054078174074899
 SphereCollider:
   m_ObjectHideFlags: 0
