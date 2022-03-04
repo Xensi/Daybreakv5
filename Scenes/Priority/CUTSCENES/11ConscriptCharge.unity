@@ -657,7 +657,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9817daf56c992174ebfefc6becb14dea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneToLoad: KnightCharge
+  sceneToLoad: 12KnightCharge
 --- !u!4 &272639844
 Transform:
   m_ObjectHideFlags: 0
