@@ -54,6 +54,14 @@ public class OverworldManager : MonoBehaviour
 
     public GameObject uiSplitOffParent;
 
+    public Button requestSuppliesButton;
+    public Button extortSuppliesButton;
+    public Button pillageSuppliesButton;
+
+    public Slider moraleBarSlider;
+
+    public Slider supplyBarSlider;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -80,6 +88,12 @@ public class OverworldManager : MonoBehaviour
             RightClickCheck();
         }
     }
+
+    public void GenerateArmyCards()
+    {
+
+    }
+
     public void ReadyToSpawnArmy()
     {
         if (readyToSpawnArmy)
@@ -122,14 +136,14 @@ public class OverworldManager : MonoBehaviour
             elArmy.StartMoving();
         }
 
-        foreach (SupplyGiver elGiver in supplyGivers)
+        /*foreach (SupplyGiver elGiver in supplyGivers)
         {
             elGiver.SpawnCaravans();
         }
         foreach (Caravan elCaravan in caravans)
         {
             elCaravan.StartMoving();
-        }
+        }*/
     }
 
     private void LeftClickCheck()
@@ -226,6 +240,21 @@ public class OverworldManager : MonoBehaviour
             }
         }
     }
+
+    public void SelectedArmyEnteredSupplyPoint()
+    {
+        requestSuppliesButton.interactable = true;
+        extortSuppliesButton.interactable = true;
+        //pillageSuppliesButton.interactable = true;
+    }
+
+    public void SelectedArmyExitedSupplyPoint()
+    {
+        requestSuppliesButton.interactable = false;
+        extortSuppliesButton.interactable = false;
+        //pillageSuppliesButton.interactable = true;
+    }
+
     private void ShowSplitOffs() //display and update splitoffs
     {
         int tally = 0;
@@ -280,6 +309,38 @@ public class OverworldManager : MonoBehaviour
         else
         {
             Debug.LogError("Not enough units available");
+        }
+    }
+
+    public void RequestSupplies()
+    {
+        SupplyGiver giver = selectedArmy.currentSupplyPoint; 
+        if (giver != null)
+        {//give army as many supplies as they can carry and that the town is willing to spare
+            while (selectedArmy.provisions < selectedArmy.maxProvisions && giver.storedProvisions > 0 && giver.storedProvisions > giver.reservedProvisions)
+            {
+                selectedArmy.provisions++;
+                giver.storedProvisions--;
+            }
+        }
+    }
+    public void ExtortSupplies()
+    {
+        SupplyGiver giver = selectedArmy.currentSupplyPoint;
+        if (giver != null)
+        {//request
+            while (selectedArmy.provisions < selectedArmy.maxProvisions && giver.storedProvisions > 0 && giver.storedProvisions > giver.reservedProvisions)
+            {
+                selectedArmy.provisions++;
+                giver.storedProvisions--;
+            }
+            //give army as many supplies as they can carry and that the town is willing to spare (extortion). for each supply given from reserves, generate 1 anger
+            while (selectedArmy.provisions < selectedArmy.maxProvisions && giver.storedProvisions > 0 && giver.storedProvisions > giver.extortionReservedProvisions)
+            {
+                selectedArmy.provisions++;
+                giver.storedProvisions--;
+                giver.anger++;
+            }
         }
     }
 

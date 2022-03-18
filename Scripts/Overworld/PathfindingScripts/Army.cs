@@ -50,6 +50,9 @@ public class Army : MonoBehaviour
     public List<Button> listOfSplitOffs;
     public FogOfWarUnit fowUnit;
 
+    public bool onSupplyPoint = false;
+    public SupplyGiver currentSupplyPoint;
+
     public void Awake() //Setup when spawned
     {
         aiPath.canMove = false;
@@ -108,6 +111,35 @@ public class Army : MonoBehaviour
                 Destroy(parent);
             }
         }
+        SupplyGiver collidedSupplyPoint = other.gameObject.GetComponent<SupplyGiver>();
+        if (collidedSupplyPoint != null)
+        {
+            onSupplyPoint = true;
+            currentSupplyPoint = collidedSupplyPoint;
+            collidedSupplyPoint.armyOnThisSupplyPoint = this;
+            if (overworldManager.selectedArmy == this)
+            {
+                overworldManager.SelectedArmyEnteredSupplyPoint();
+            }
+        }
+
+    }
+    private void OnTriggerExit(Collider other)
+    {
+
+        SupplyGiver collidedSupplyPoint = other.gameObject.GetComponent<SupplyGiver>();
+        if (collidedSupplyPoint != null)
+        {
+            onSupplyPoint = false;
+            currentSupplyPoint = null;
+            collidedSupplyPoint.armyOnThisSupplyPoint = null;
+
+            if (overworldManager.selectedArmy == this)
+            {
+                overworldManager.SelectedArmyExitedSupplyPoint();
+            }
+        }
+
     }
 
     public void Update()

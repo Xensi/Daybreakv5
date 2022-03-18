@@ -77,10 +77,10 @@ public class SaverSystem: MonoBehaviour
                 UnitData data = formatter.Deserialize(stream) as UnitData;
                 stream.Close();
 
-                Debug.Log(data.name);
-                Debug.Log(data.models);
-                Debug.Log(data.morale);
-                Debug.Log(data.energy);
+                Debug.Log(data.name); //HERE IS WHERE YOU DO THINGS WITH THE LOADED DATA
+                //Debug.Log(data.models);
+                //Debug.Log(data.morale);
+                //Debug.Log(data.energy);
 
             }
             else

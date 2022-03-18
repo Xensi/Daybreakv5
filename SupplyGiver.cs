@@ -17,11 +17,16 @@ public class SupplyGiver : MonoBehaviour
     public int turnsUntilNextRegain = 5;
 
     public int regainTracker = 5;
-    public int provisionsToSendEveryInterval = 2;
+    public int provisionsToSendEveryInterval = 2; 
 
     public int supportedArmyRotater = 0;
 
     public int reservedProvisions = 10;
+    public int extortionReservedProvisions = 5;
+
+    public int anger = 0;
+
+    public Army armyOnThisSupplyPoint;
 
     public void Awake()
     {

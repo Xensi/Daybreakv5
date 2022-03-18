@@ -91,7 +91,7 @@ public class SaveInfo : MonoBehaviour
 
     public void LoadScene()
     {
-        if (SceneManager.GetActiveScene().name == "test")
+        if (SceneManager.GetActiveScene().name == "savetesting")
         {
             SceneManager.LoadScene("test2", LoadSceneMode.Single);
         }
