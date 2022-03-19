@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Events;
-[CreateAssetMenu(fileName = "newArmyCard", menuName = "ArmyCard")]
-public class ArmyCardScriptableObj : ScriptableObject
+
+public class ArmyCard : MonoBehaviour
 {
     public string cardName = "Conscript";
     public Sprite cardIcon;

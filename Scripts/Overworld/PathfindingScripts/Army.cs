@@ -4,6 +4,8 @@ using System.Collections;
 using Pathfinding;
 using UnityEngine.UI;
 using FoW;
+using DG.Tweening;
+using UnityEngine.VFX;
 
 [HelpURL("http://arongranberg.com/astar/docs/class_blocker_path_test.php")]
 public class Army : MonoBehaviour
@@ -41,8 +43,12 @@ public class Army : MonoBehaviour
     public int turnCounter = 0;
 
     public int sightRadius = 4;
-    public int provisions = 8;
+    public int provisions = 8; //also known as supplies
     public int maxProvisions = 12;
+
+    public int overallMorale = 8; //army morale
+    public int maxMorale = 8;
+    
     public int starvation = 0;
 
     public bool garrisoned = false;
@@ -53,8 +59,26 @@ public class Army : MonoBehaviour
     public bool onSupplyPoint = false;
     public SupplyGiver currentSupplyPoint;
 
+    [SerializeField] private List<ArmyCardScriptableObj> startingArmy;
+    [SerializeField] private List<ArmyCard> storedArmyCards;
+
+    [SerializeField] private VisualEffect dustVFX;
+
+    [SerializeField] private GameObject icon;
+
+    private Tween shakeTween;
+
+    [SerializeField] private int maxSpeed = 1;
+
+
+
     public void Awake() //Setup when spawned
     {
+        shakeTween = icon.transform.DORotate(new Vector3(0, 93, 0), .25f).OnComplete(ShakeCallBack);
+
+        shakeTween.Pause();
+
+
         aiPath.canMove = false;
         if (overworldManager == null)
         {
@@ -73,7 +97,14 @@ public class Army : MonoBehaviour
 
         CheckSizeAndChangeSpeed();
     }
-
+    private void ShakeCallBack()
+    {
+        shakeTween = icon.transform.DORotate(new Vector3(0, 87, 0), .25f).OnComplete(ShakeCallBack2);
+    }
+    private void ShakeCallBack2()
+    {
+        shakeTween = icon.transform.DORotate(new Vector3(0, 93, 0), .25f).OnComplete(ShakeCallBack);
+    }
     public void Start()
     {
         availableUnitsInArmy = numberOfUnitsInArmy;
@@ -148,6 +179,9 @@ public class Army : MonoBehaviour
 
     public void StartMoving()
     {
+        dustVFX.Play();
+        shakeTween.Play();
+
         turnCounter++;
         if (turnCounter % 2 == 0)
         {
@@ -161,6 +195,7 @@ public class Army : MonoBehaviour
                 starvation++;
             }
         }
+        //aiPath.maxSpeed = maxSpeed;
         speedCurrent = 0;
         numberOfMovementAttempts = 0;
         CheckSizeAndChangeSpeed();
@@ -290,7 +325,12 @@ public class Army : MonoBehaviour
         {
             //StopCoroutine(NoticeIfBlocked());
             StopAllCoroutines();
+            //aiPath.maxSpeed = 0;
             aiPath.canMove = false;
+
+            dustVFX.Stop();
+            shakeTween.Pause();
+            Tween fixTween = icon.transform.DORotate(new Vector3(0, 90, 0), .5f);
             yield break;
         }
         /*if (aiPath.reachedDestination && speedCurrent >= speedMax)

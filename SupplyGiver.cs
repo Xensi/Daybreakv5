@@ -24,9 +24,23 @@ public class SupplyGiver : MonoBehaviour
     public int reservedProvisions = 10;
     public int extortionReservedProvisions = 5;
 
-    public int anger = 0;
+    public int mood = 0;
 
     public Army armyOnThisSupplyPoint;
+
+    public string supplyName = "Reevewood";
+    public string faction = "Zhanguo";
+    public string relations = "Unfriendly";
+
+    public bool isFort = false;
+    
+
+
+    public int population = 500;
+
+    public int posNeutralityBuffer = 1;
+
+    public int negNeutralityBuffer = -1;
 
     public void Awake()
     {
@@ -36,6 +50,23 @@ public class SupplyGiver : MonoBehaviour
         {
             var oManager = GameObject.FindWithTag("OverworldManager");
             overworldManager = oManager.GetComponent<OverworldManager>();
+        }
+    }
+
+    public void UpdateRelations()
+    {
+
+        if (mood > posNeutralityBuffer)
+        {
+            relations = "Friendly";
+        }
+        else if (mood <= posNeutralityBuffer && mood >= negNeutralityBuffer)
+        {
+            relations = "Neutral";
+        }
+        else if (mood < negNeutralityBuffer)
+        {
+            relations = "Unfriendly";
         }
     }
 
