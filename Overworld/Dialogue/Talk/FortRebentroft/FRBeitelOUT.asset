@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: FRBeitelOUT
+  m_EditorClassIdentifier: 
+  speaker: Recruiter Beitel
+  speakerImage: {fileID: 21300000, guid: 48aeec6bc1c26d04a826eb99e7caaec9, type: 3}
+  speakerSpeed: 0.025
+  sentences:
+  - Sorry buddy, I'm all out.
+  - What do I look like? Some kinda guy that just hands out armies?
+  - These things don't just grow on trees, ya know!
+  sentenceAudio: []
+  nextDialogue: {fileID: 0}
+  isChoices: 0
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  choicePaths: []
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  forceChangeSpeaker: 1

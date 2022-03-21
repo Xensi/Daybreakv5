@@ -41,8 +41,13 @@ public class DialogueManager : MonoBehaviour
     public Transform cameraPosTutorial;
 
     public GameObject cinematicParent;
+    public bool readingDialogue = false;
 
     //public List<UnitScriptableObject> tutorialUnitList;
+
+    [SerializeField] private OverworldManager overworldManager;
+
+    [SerializeField] private UnitManager unitManager;
     void Start()
     {
         startingYPos = dialogueParent.transform.position.y;
@@ -74,7 +79,7 @@ public class DialogueManager : MonoBehaviour
         foreach (var convo in conversationStarters)
         {
 
-           //Debug.Log(convo.ToString());
+            //Debug.Log(convo.ToString());
             if (convo.ToString() == dialogue + " (DialogueScriptableObject)")
             {
                 loadedDialogue = convo;
@@ -94,14 +99,23 @@ public class DialogueManager : MonoBehaviour
     }
     public void StartDialogue()
     {
-        speakerBGImage.color = loadedDialogue.speakerColorBorder;
-        speakerFancyBorder.color = loadedDialogue.speakerFancyBorder;
-        textspeed = loadedDialogue.speakerSpeed;
+        readingDialogue = true;
+        ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
         dialogueText.text = "";
         speakerText.text = loadedDialogue.speaker;
-        speakerImage.sprite = loadedDialogue.speakerImage;
+
         Tween tween = dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
-        tween.OnComplete(StartDialogue2);
+
+        if (loadedDialogue.isChoices)
+        {
+            choicesParent.SetActive(true);
+            PresentChoices();
+        }
+        else
+        {
+            tween.OnComplete(StartDialogue2);
+
+        }
 
     }
     public void StartDialogue2()
@@ -130,9 +144,7 @@ public class DialogueManager : MonoBehaviour
         else
         {
             choicesParent.SetActive(false);
-            textspeed = loadedDialogue.speakerSpeed;
-            speakerText.text = loadedDialogue.speaker;
-            speakerImage.sprite = loadedDialogue.speakerImage;
+            ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
             //Debug.Log("Starting conversation");
             sentences.Clear();
 
@@ -149,7 +161,7 @@ public class DialogueManager : MonoBehaviour
 
     void ProcessCommand()
     {
-       //Debug.LogError("Processing commands");
+        //Debug.LogError("Processing commands");
         if (loadedDialogue.commandToExecuteStart == "nod")
         {
             npcAnimController.AnimNod();
@@ -231,7 +243,7 @@ public class DialogueManager : MonoBehaviour
         sentenceCount = 0;
         if (loadedDialogue.nextDialogue == null)
         {
-
+            readingDialogue = false;
             //Debug.Log("End of conversation");
             //dialogueParent.SetActive(false);
             Tween tween = dialogueParent.transform.DOMove(new Vector3(dialogueParent.transform.position.x, startingYPos, dialogueParent.transform.position.z), .5f).SetEase(Ease.InOutQuad);
@@ -244,66 +256,134 @@ public class DialogueManager : MonoBehaviour
 
     public void ProcessEndCommand()
     {
-        if (loadedDialogue.commandToExecuteEnd == "startTutorial")
+        string commandEnd = loadedDialogue.commandToExecuteEnd;
+        if (commandEnd == "startTutorial")
         {
             StartTutorial();
         }
-        if (loadedDialogue.commandToExecuteEnd == "startDayOfGlory")
+        if (commandEnd == "startDayOfGlory")
         {
-           //Debug.Log("Starting day of glory");
+            //Debug.Log("Starting day of glory");
             gameInit.strafeCam.SetActive(true);
             gameInit.cinematicCam.SetActive(false);
         }
-        if (loadedDialogue.commandToExecuteEnd == "startTutorialPlacement")
+        if (commandEnd == "startTutorialPlacement")
         {
             StartTutorialPlacement();
         }
-        if (loadedDialogue.commandToExecuteEnd == "enableChessControllerInput")
+        if (commandEnd == "enableChessControllerInput")
         {
             gameInit.chessController.AllowInput = true;
         }
-        if (loadedDialogue.commandToExecuteEnd == "enableExecution")
+        if (commandEnd == "enableExecution")
         {
             gameInit.executeButtonParent.SetActive(true);
         }
-        if (loadedDialogue.commandToExecuteEnd == "ignoreTutorial")
+        if (commandEnd == "ignoreTutorial")
         {
             IgnoreTutorial();
         }
-        if (loadedDialogue.commandToExecuteEnd == "endTutorial")
+        if (commandEnd == "endTutorial")
         {
             EndTutorial();
         }
+        if (commandEnd == "moraleGain")
+        {
+            overworldManager.localeArmy.overallMorale += loadedDialogue.commandVar;
+            if (overworldManager.localeArmy.overallMorale > overworldManager.localeArmy.maxMorale)
+            {
+                overworldManager.localeArmy.overallMorale = overworldManager.localeArmy.maxMorale;
+            }
+            if (overworldManager.localeArmy.overallMorale < 0)
+            {
+                overworldManager.localeArmy.overallMorale = 0;
+            }
+        }
+        if (commandEnd == "supplyGain")
+        {
+            if (overworldManager.localeArmy.provisions < overworldManager.localeArmy.maxProvisions)
+            {
+                overworldManager.localeArmy.provisions += loadedDialogue.commandVar;
+            }
+        }
+        if (commandEnd == "destroyLocale")
+        {
+            if (overworldManager.localeArmy != null && overworldManager.localeArmy.currentLocale != null)
+            {
+                overworldManager.localeArmy.currentLocale.destroyed = true;
+                overworldManager.localeArmy.currentLocale.UpdateAppearance();
+            }
+        }
+        if (commandEnd == "multVisionRange")
+        {
+            //Debug.LogError("MULT");
+            if (overworldManager.localeArmy != null)
+            {
+                overworldManager.localeArmy.fowUnit.circleRadius = .5f + (overworldManager.localeArmy.sightRadius * loadedDialogue.commandVar);
+            }
+        }
+        if (commandEnd == "gainMaxSupply")
+        {
+            if (overworldManager.localeArmy != null)
+            {
+                overworldManager.localeArmy.maxProvisions += loadedDialogue.commandVar;
+            }
+        }
+        if (commandEnd == "gainHorses")
+        {
+            if (overworldManager.localeArmy != null)
+            {
+                overworldManager.localeArmy.horses += loadedDialogue.commandVar;
+            }
+        }
+        if (commandEnd == "giveUnit")
+        {
+            if (overworldManager.localeArmy != null)
+            {
+                for (int i = 0; i < loadedDialogue.commandVar; i++)
+                {
+                    foreach (ArmyCardScriptableObj card in unitManager.units)
+                    {
+                        if (card.cardName == loadedDialogue.commandString)
+                        {
+                            overworldManager.localeArmy.AddArmyCard(card);
+                        }
+                    }
+                }
+            }
+        }
+
+
     }
 
     void EndTutorial()
     {
         gameInit.chessController.AllowInput = false;
-        Tween tween = fadeToBlack.DOFade(1, 1).SetEase(Ease.InOutQuad); 
+        Tween tween = fadeToBlack.DOFade(1, 1).SetEase(Ease.InOutQuad);
         tween.OnComplete(EndTutorial2);
     }
     void EndTutorial2()
     {
         LoadLevel("HemmedIn");
-        Tween tween = fadeToBlack.DOFade(0, 1).SetEase(Ease.InOutQuad); 
+        Tween tween = fadeToBlack.DOFade(0, 1).SetEase(Ease.InOutQuad);
         tween.OnComplete(EndTutorial3);
     }
     void EndTutorial3()
     {
         gameInit.chessController.AllowInput = true;
-       //Debug.Log("tutorial over");
+        //Debug.Log("tutorial over");
     }
 
     public void IgnoreTutorial()
     {
         chessUI.menuOptionsParent.SetActive(false);
         chessUI.BG.gameObject.SetActive(false);
-        Tween tween = fadeToBlack.DOFade(1, 1).SetEase(Ease.InOutQuad); 
+        Tween tween = fadeToBlack.DOFade(1, 1).SetEase(Ease.InOutQuad);
         tween.OnComplete(IgnoreTutorial2);
     }
 
     void IgnoreTutorial2()
-    {   
+    {
         gameInit.strafeCam.transform.position = cameraPosTutorial.position;
         gameInit.strafeCam.SetActive(true);
         gameInit.cinematicCam.SetActive(false);
@@ -327,7 +407,7 @@ public class DialogueManager : MonoBehaviour
     void IgnoreTutorial3()
     {
         gameInit.chessController.AllowInput = true;
-       //Debug.Log("tutorial ignored");
+        //Debug.Log("tutorial ignored");
     }
 
     public void LoadLevel(string level)
@@ -342,7 +422,7 @@ public class DialogueManager : MonoBehaviour
         //save units on your team
         //gameInit.saveInfoObject.SaveExistingPieceInfoInScripObjs();
         LoadLevelUnitList(level);
-        
+
         //destroy units on board
         Piece[] AllPieces = FindObjectsOfType<Piece>();
         foreach (var piece in AllPieces)
@@ -385,7 +465,7 @@ public class DialogueManager : MonoBehaviour
             gameInit.board.unitButtonsList.Remove(item);
             Destroy(item);
         }
-        
+
         gameInit.board.GenerateButtonsFromSavedUnits();
     }
 
@@ -406,8 +486,8 @@ public class DialogueManager : MonoBehaviour
 
         foreach (var levelUnitList in levelUnitLists)
         {
-           //Debug.Log(levelUnitList.ToString());
-            if (levelUnitList.ToString() == level+"UnitList (UnitListScriptableObject)")
+            //Debug.Log(levelUnitList.ToString());
+            if (levelUnitList.ToString() == level + "UnitList (UnitListScriptableObject)")
             {
                 gameInit.saveInfoObject.list = levelUnitList.unitList;
             }
@@ -435,7 +515,7 @@ public class DialogueManager : MonoBehaviour
 
         gameInit.SelectLevel("Tutorial"); //loads the correct board layout (pieces positioning)
         gameInit.levelGen.SelectLevel("Tutorial"); //loads correct map, and placement map
-        
+
         StartCoroutine(Tutorial3());
     }
 
@@ -522,13 +602,11 @@ public class DialogueManager : MonoBehaviour
     }
     public void PresentChoices()
     {
-       //Debug.Log("presenting choices");
+        //Debug.Log("presenting choices");
         Tween tween = dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
         dialogueText.text = "";
-        speakerBGImage.color = loadedDialogue.speakerColorBorder;
-        speakerFancyBorder.color = loadedDialogue.speakerFancyBorder;
-        speakerText.text = loadedDialogue.speaker;
-        speakerImage.sprite = loadedDialogue.speakerImage;
+
+        ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
         choicesParent.SetActive(true);
 
         var i = 0;
@@ -537,7 +615,7 @@ public class DialogueManager : MonoBehaviour
             if (i < loadedDialogue.sentences.Length) //say i = 2 and tere are 2 choices
             {
                 item.transform.parent.gameObject.SetActive(true);
-               //Debug.Log(loadedDialogue.sentences[i]);
+                //Debug.Log(loadedDialogue.sentences[i]);
                 item.text = loadedDialogue.sentences[i];
                 i++;
             }
@@ -548,10 +626,31 @@ public class DialogueManager : MonoBehaviour
         }
         ProcessCommand();
     }
-
+    private void ForceChangeSpeaker(bool change)
+    {
+        if (change)
+        {
+            speakerBGImage.color = loadedDialogue.speakerColorBorder;
+            speakerFancyBorder.color = loadedDialogue.speakerFancyBorder;
+            textspeed = loadedDialogue.speakerSpeed;
+            speakerImage.sprite = loadedDialogue.speakerImage;
+            speakerText.text = loadedDialogue.speaker;
+        }
+    }
     public void ChooseChoice(int num)
     {
         loadedDialogue = loadedDialogue.choicePaths[num];
+        if (overworldManager.localeArmy.currentSupplyPoint != null)
+        {
+            if (overworldManager.localeArmy.currentSupplyPoint.npcTalkedTo[num] == true)
+            {
+                if (loadedDialogue.talkedToDialogue != null)
+                {
+                    loadedDialogue = loadedDialogue.talkedToDialogue;
+                }
+            }
+        }
+        ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
 
         if (loadedDialogue.isChoices)
         {
@@ -560,9 +659,6 @@ public class DialogueManager : MonoBehaviour
         else
         {
             choicesParent.SetActive(false);
-            textspeed = loadedDialogue.speakerSpeed;
-            speakerText.text = loadedDialogue.speaker;
-            speakerImage.sprite = loadedDialogue.speakerImage;
             //Debug.Log("Starting conversation");
             sentences.Clear();
 
@@ -573,5 +669,13 @@ public class DialogueManager : MonoBehaviour
             DisplayNextSentence();
         }
         ProcessCommand();
+
+        if (overworldManager.localeArmy.currentSupplyPoint != null)
+        {
+            if (loadedDialogue.isFirstInstanceNPC)
+            {
+                overworldManager.localeArmy.currentSupplyPoint.npcTalkedTo[num] = true;
+            }
+        }
     }
 }

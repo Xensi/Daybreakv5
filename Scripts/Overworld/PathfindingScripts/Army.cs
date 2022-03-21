@@ -10,92 +10,109 @@ using UnityEngine.VFX;
 [HelpURL("http://arongranberg.com/astar/docs/class_blocker_path_test.php")]
 public class Army : MonoBehaviour
 {
+    [Tooltip("Make this army controlled by AI, not the player.")]
+    [SerializeField] private bool aiControlled = false;
+
+    [Tooltip("Only fill out if AI controlled.")]
+    [SerializeField] private List<Transform> patrolNodes; //AI ONLY
+    [SerializeField] private Collider aiSightTrigger;
+    public string faction = "Altgard";
+    public Army focusedOnArmy;
+    [SerializeField] private DetectPlayerArmies detector;
+
+    private int nodeNumber = 0;
+
     public GameObject parent;
     private OverworldManager overworldManager;
-
     public List<SingleNodeBlocker> obstacles;
     public Transform target;
     public AIPath aiPath;
     public GameObject aiTarget;
     public int speedMax = 4;
     public int speedCurrent = 0;
-
     public BlockManager blockManager;
     BlockManager.TraversalProvider traversalProvider;
-
     public ABPath path;
     public int numberOfUnitsInArmy = 10;
     public int availableUnitsInArmy = 10;
-
     public float remainingDistanceNew = 0;
     public float remainingDistanceOld = 0;
-
     public int numberOfMovementAttempts = 0;
-
     public Collider armyCollider;
     public Army awaitingCollisionWith;
-
     public List<int> strengthToSplitOff;
     public List<Vector3> destinationForSplitOff;
     public List<bool> actuallySplitOffOrNot;
     public List<GameObject> indicators;
-
     public int turnCounter = 0;
-
     public int sightRadius = 4;
     public int provisions = 8; //also known as supplies
     public int maxProvisions = 12;
-
+    public int supplyUpkeep = 1;
     public int overallMorale = 8; //army morale
     public int maxMorale = 8;
-    
     public int starvation = 0;
-
     public bool garrisoned = false;
-
     public List<Button> listOfSplitOffs;
     public FogOfWarUnit fowUnit;
-
     public bool onSupplyPoint = false;
     public SupplyGiver currentSupplyPoint;
-
+    public LocaleInvestigatable currentLocale;
     [SerializeField] private List<ArmyCardScriptableObj> startingArmy;
-    [SerializeField] private List<ArmyCard> storedArmyCards;
-
     [SerializeField] private VisualEffect dustVFX;
-
     [SerializeField] private GameObject icon;
-
     private Tween shakeTween;
-
     [SerializeField] private int maxSpeed = 1;
+    public string befestigungName = "Hammer";
+    public string oberkommandantName = "Friedrich Weiss";
+    [SerializeField] private ArmyCard armyCardPrefab;
+    private int startingMaxProv = 8;
+    public string size = "Medium";
+    public int horses = 0;
 
-
+    public List<ArmyCard> cards;
 
     public void Awake() //Setup when spawned
     {
+        //setup the little shake while moving
         shakeTween = icon.transform.DORotate(new Vector3(0, 93, 0), .25f).OnComplete(ShakeCallBack);
-
         shakeTween.Pause();
-
-
+        //set still movement
         aiPath.canMove = false;
+        //setup managers 
         if (overworldManager == null)
         {
             var oManager = GameObject.FindWithTag("OverworldManager");
             overworldManager = oManager.GetComponent<OverworldManager>();
         }
-
         if (blockManager == null)
         {
             var manager = GameObject.FindWithTag("BlockManager");
             blockManager = manager.GetComponent<BlockManager>();
         }
-
         // Create a traversal provider which says that a path should be blocked by all the SingleNodeBlockers in the obstacles array
         traversalProvider = new BlockManager.TraversalProvider(blockManager, BlockManager.BlockMode.OnlySelector, obstacles);
-
+        //generate army 
+        if (!aiControlled)
+        {
+            GenerateStartingArmy();
+        }
+        //update size
         CheckSizeAndChangeSpeed();
+        UpdateVisionRange();
+
+        //change team if ai controlled
+        if (aiControlled)
+        {
+            fowUnit.team = 1;
+            target.transform.position = patrolNodes[nodeNumber].transform.position; //set destination;
+            detector.parentArmy = this;
+        }
+    }
+    private void UpdateVisionRange()
+    {
+        fowUnit.circleRadius = sightRadius + .5f;
+
     }
     private void ShakeCallBack()
     {
@@ -105,10 +122,111 @@ public class Army : MonoBehaviour
     {
         shakeTween = icon.transform.DORotate(new Vector3(0, 93, 0), .25f).OnComplete(ShakeCallBack);
     }
-    public void Start()
+    private void GenerateStartingArmy()
     {
+        numberOfUnitsInArmy = 0;
+        var x = 0;
+        var y = 0;
+        foreach (ArmyCardScriptableObj card in startingArmy)
+        {
+            ArmyCard newCard = Instantiate(armyCardPrefab, overworldManager.leftAnchor.position, Quaternion.identity, overworldManager.armyCompBoxParent);
+            newCard.cardName = card.cardName; //take information
+            newCard.cardColor = card.cardColor;
+            newCard.cardIcon = card.cardIcon;
+            newCard.cardTroops = card.cardTroops;
+            newCard.cardMaxTroops = card.cardMaxTroops;
+            CardVisual visuals = newCard.GetComponent<CardVisual>(); //apply to visuals
+            visuals.colorBG.color = newCard.cardColor;
+            visuals.cardName.text = newCard.cardName;
+            visuals.troopNum.text = newCard.cardTroops + "/" + newCard.cardMaxTroops;
+            visuals.icon.sprite = newCard.cardIcon;
+            numberOfUnitsInArmy++;
+            cards.Add(newCard);
+            newCard.transform.position += new Vector3(212 * x, -215 * y, 0);
+            x++;
+            if (x >= 5)
+            {
+                y++;
+                x = 0;
+            }
+        }
         availableUnitsInArmy = numberOfUnitsInArmy;
+        maxProvisions = startingMaxProv + numberOfUnitsInArmy;
+        provisions = maxProvisions;
     }
+
+    public void AddArmyCard(ArmyCardScriptableObj card)
+    {
+        ArmyCard newCard = Instantiate(armyCardPrefab, overworldManager.leftAnchor.position, Quaternion.identity, overworldManager.armyCompBoxParent);
+        newCard.cardName = card.cardName; //take information
+        newCard.cardColor = card.cardColor;
+        newCard.cardIcon = card.cardIcon;
+        newCard.cardTroops = card.cardTroops;
+        newCard.cardMaxTroops = card.cardMaxTroops;
+
+        CardVisual visuals = newCard.GetComponent<CardVisual>(); //apply to visuals
+        visuals.colorBG.color = newCard.cardColor;
+        visuals.cardName.text = newCard.cardName;
+        visuals.troopNum.text = newCard.cardTroops + "/" + newCard.cardMaxTroops;
+        visuals.icon.sprite = newCard.cardIcon;
+        numberOfUnitsInArmy++;
+        cards.Add(newCard);
+        AlignArmyCards();
+    }
+
+    private void AlignArmyCards()
+    {
+        var x = 0;
+        var y = 0;
+        foreach (ArmyCard card in cards)
+        {
+            card.transform.position += new Vector3(212 * x, -215 * y, 0);
+            x++;
+            if (x >= 5)
+            {
+                y++;
+                x = 0;
+            }
+        }
+
+    }
+    public void CheckSizeAndChangeSpeed()
+    {
+        if (numberOfUnitsInArmy <= 6) //small
+        {
+            speedMax = 6;
+            supplyUpkeep = 1;
+            size = "Small";
+        }
+        else if (numberOfUnitsInArmy <= 12) //med
+        {
+            speedMax = 4;
+            supplyUpkeep = 2;
+            size = "Medium";
+        }
+        else if (numberOfUnitsInArmy <= 18) //large
+        {
+            speedMax = 2;
+            supplyUpkeep = 3;
+            size = "Large";
+
+        }
+        else if (numberOfUnitsInArmy > 18) //full army
+        {
+            speedMax = 1;
+            supplyUpkeep = 4;
+            size = "Full";
+        }
+        /*else //scout. so far no way to trigger this
+        {
+            speedMax = 6;
+            supplyUpkeep = 1;
+            sightRadius = 8;
+            fowUnit.circleRadius = 8;
+            size = "Scout";
+        }*/
+    }
+
     public void SpawnSplitArmy()
     {
         for (int i = 0; i < strengthToSplitOff.Count; i++)
@@ -129,10 +247,10 @@ public class Army : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        Army collidedArmy = other.gameObject.GetComponent<Army>();
         //Debug.LogError("collision?");
         if (awaitingCollisionWith != null)
         {
-            Army collidedArmy = other.gameObject.GetComponent<Army>();
             if (collidedArmy == awaitingCollisionWith)
             {
                 //Debug.LogError("First army collided with second army");'
@@ -153,6 +271,17 @@ public class Army : MonoBehaviour
                 overworldManager.SelectedArmyEnteredSupplyPoint();
             }
         }
+        if (!aiControlled && collidedArmy != null && collidedArmy.faction != faction)
+        {
+            //Debug.Log("WAR");
+            numberOfMovementAttempts = 100;
+        }
+
+        LocaleInvestigatable collidedLocale = other.gameObject.GetComponent<LocaleInvestigatable>();
+        if (collidedLocale != null)
+        {
+            currentLocale = collidedLocale;
+        }
 
     }
     private void OnTriggerExit(Collider other)
@@ -172,11 +301,6 @@ public class Army : MonoBehaviour
         }
 
     }
-
-    public void Update()
-    {
-    }
-
     public void StartMoving()
     {
         dustVFX.Play();
@@ -188,43 +312,28 @@ public class Army : MonoBehaviour
             turnCounter = 0;
             if (provisions > 0)
             {
-                provisions--;
+                provisions -= supplyUpkeep;
             }
             else
             {
-                starvation++;
+                starvation += supplyUpkeep;
             }
         }
+
+        if (aiControlled && focusedOnArmy != null)
+        {
+            target.position = focusedOnArmy.transform.position;
+        }
+        UpdateVisionRange();
         //aiPath.maxSpeed = maxSpeed;
         speedCurrent = 0;
         numberOfMovementAttempts = 0;
         CheckSizeAndChangeSpeed();
-        MoveOneNode();
+        MoveOneNode(); //start the movement
         remainingDistanceNew = aiPath.remainingDistance;
         remainingDistanceOld = aiPath.remainingDistance;
         StartCoroutine(WaitUntilMovementOver());
         StartCoroutine(NoticeIfBlocked());
-    }
-    public void CheckSizeAndChangeSpeed()
-    {
-        if (numberOfUnitsInArmy >= 24) //large
-        {
-            speedMax = 2;
-        }
-        else if (numberOfUnitsInArmy >= 12) //med
-        {
-            speedMax = 4;
-        }
-        else if (numberOfUnitsInArmy >= 6) //small
-        {
-            speedMax = 5;
-        }
-        else //scout
-        {
-            speedMax = 6;
-            sightRadius = 8;
-            fowUnit.circleRadius = 8;
-        }
     }
     public ABPath DrawPath()
     {
@@ -282,14 +391,10 @@ public class Army : MonoBehaviour
         }
         return path;
     }
-
-
-
-
     private void MoveOneNode()
     {
         MakePathToTarget(); //pathfind
-        
+
         if (path.error == false)
         {
             if (path.vectorPath.Count >= 2)
@@ -331,6 +436,17 @@ public class Army : MonoBehaviour
             dustVFX.Stop();
             shakeTween.Pause();
             Tween fixTween = icon.transform.DORotate(new Vector3(0, 90, 0), .5f);
+
+            if (aiControlled)
+            {
+                nodeNumber++;
+                if (nodeNumber >= patrolNodes.Count)
+                {
+                    nodeNumber = 0;
+                }
+                target.position = patrolNodes[nodeNumber].transform.position;
+            }
+
             yield break;
         }
         /*if (aiPath.reachedDestination && speedCurrent >= speedMax)
@@ -345,7 +461,7 @@ public class Army : MonoBehaviour
         }*/
         StartCoroutine(WaitUntilMovementOver());
     }
-    private  IEnumerator NoticeIfBlocked()
+    private IEnumerator NoticeIfBlocked()
     {
         yield return new WaitForSeconds(0.1f);
         remainingDistanceNew = aiPath.remainingDistance;
@@ -373,7 +489,6 @@ public class Army : MonoBehaviour
         remainingDistanceOld = remainingDistanceNew;
         StartCoroutine(NoticeIfBlocked());
     }
-
     private float RoundToZeroOrHalf(float a) //1.52 will be 1.5, 1.1232 will be 1
     {
         int b = Mathf.RoundToInt(a);

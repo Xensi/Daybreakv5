@@ -8,6 +8,7 @@ using TMPro;
 
 public class OverworldManager : MonoBehaviour
 {
+    public List<Army> enemyArmies;
     public List<Army> armies;
     public List<Caravan> caravans;
     public List<SupplyGiver> supplyGivers;
@@ -85,10 +86,30 @@ public class OverworldManager : MonoBehaviour
     [SerializeField]
     private TMP_Text supplyPopulation;
 
-    [SerializeField] private string currentFaction = "Altgard";
+    public string currentFaction = "Altgard";
 
     private bool allowInput = true;
+    public Transform armyCompBoxParent;
+    public Transform leftAnchor;
+    //army card view
+    [SerializeField] private TMP_Text codeNameText;
+    [SerializeField] private TMP_Text headedByText;
+    [SerializeField] private TMP_Text sizeText;
+    [SerializeField] private TMP_Text visionRangeText;
+    [SerializeField] private TMP_Text upkeepText;
+    [SerializeField] private TMP_Text speedText;
 
+    public DialogueManager dialogueManager;
+    [SerializeField] private GameObject localeParent;
+    [SerializeField] private GameObject closedEyeParent;
+    [SerializeField] private Button localeExploreButton;
+    [SerializeField] private Button talkButton;
+
+    [SerializeField] private GameObject extortParent;
+
+    [SerializeField] private GameObject pillageParent;
+    [SerializeField] private GameObject talkParent;
+    public Army localeArmy;
     // Start is called before the first frame update
     void Start()
     {
@@ -116,16 +137,30 @@ public class OverworldManager : MonoBehaviour
         }
     }
 
-
     public void ToggleArmyCards() //triggered by armycomp button
     {
         if (armyCardsParent.activeSelf)
         {
             armyCardsParent.SetActive(false);
+            foreach (ArmyCard card in selectedArmy.cards)
+            {
+                card.gameObject.SetActive(false);
+            }
         }
         else
         {
+            //localeParent.SetActive(false);
             armyCardsParent.SetActive(true);
+            foreach (ArmyCard card in selectedArmy.cards)
+            {
+                card.gameObject.SetActive(true);
+            }
+            codeNameText.text = "Force: " + selectedArmy.befestigungName;
+            headedByText.text = "Headed by: " + selectedArmy.oberkommandantName;
+            sizeText.text = "Size: " + selectedArmy.size;
+            visionRangeText.text = "Vision range: " + selectedArmy.sightRadius;
+            upkeepText.text = "Upkeep: " + selectedArmy.supplyUpkeep;
+            speedText.text = "Speed: " + selectedArmy.speedMax;
         }
     }
 
@@ -171,6 +206,10 @@ public class OverworldManager : MonoBehaviour
         {
             elArmy.StartMoving();
         }
+        foreach (Army enemyArmy in enemyArmies)
+        {
+            enemyArmy.StartMoving();
+        }
 
         /*foreach (SupplyGiver elGiver in supplyGivers)
         {
@@ -182,6 +221,8 @@ public class OverworldManager : MonoBehaviour
         }*/
 
         townOptionsParent.SetActive(false);
+        armyOptionsParent.SetActive(false);
+        localeParent.SetActive(false);
         //add way to check if all moves are finished. when they are then allowinput again
     }
 
@@ -224,7 +265,7 @@ public class OverworldManager : MonoBehaviour
                     //create a button used to cancel the split later
                     int num = selectedArmy.strengthToSplitOff.Count - 1;
                     Button newButton = Instantiate(splitOffButtonTemplate);
-                    var text = newButton.GetComponentInChildren<TMP_Text>(); 
+                    var text = newButton.GetComponentInChildren<TMP_Text>();
                     text.text = "Units: " + selectedArmy.strengthToSplitOff[num] + "/ Destination" + selectedArmy.destinationForSplitOff[num].x + " " + selectedArmy.destinationForSplitOff[num].z;
 
                     newButton.transform.SetParent(uiSplitOffParent.transform);
@@ -294,7 +335,7 @@ public class OverworldManager : MonoBehaviour
                 availableProvisos = 0;
                 requestSuppliesButton.interactable = false;
             }
-            
+
         }
 
         if (selectedArmy.currentSupplyPoint != null && selectedArmy.currentSupplyPoint.faction != currentFaction)
@@ -376,7 +417,7 @@ public class OverworldManager : MonoBehaviour
 
     public void RequestSupplies()
     {
-        SupplyGiver giver = selectedArmy.currentSupplyPoint; 
+        SupplyGiver giver = selectedArmy.currentSupplyPoint;
         if (giver != null)
         {//give army as many supplies as they can carry and that the town is willing to spare
             while (selectedArmy.provisions < selectedArmy.maxProvisions && giver.storedProvisions > 0 && giver.storedProvisions > giver.reservedProvisions)
@@ -385,7 +426,10 @@ public class OverworldManager : MonoBehaviour
                 giver.storedProvisions--;
             }
             UpdateTownInfo();
+            ShowArmyInfoAndUpdateArmyBars();
+
         }
+
     }
     public void ExtortSupplies()
     {
@@ -407,6 +451,7 @@ public class OverworldManager : MonoBehaviour
             giver.UpdateRelations();
 
             UpdateTownInfo();
+            ShowArmyInfoAndUpdateArmyBars();
         }
     }
 
@@ -434,6 +479,7 @@ public class OverworldManager : MonoBehaviour
             }
             giver.UpdateRelations();
             UpdateTownInfo();
+            ShowArmyInfoAndUpdateArmyBars();
         }
     }
 
@@ -536,6 +582,11 @@ public class OverworldManager : MonoBehaviour
 
     private Army SelectArmy()
     {
+        if (dialogueManager.readingDialogue)
+        {
+            return null;
+        }
+
         bool foundOne = false;
         foreach (Army checkedArmy in armies)
         {
@@ -584,10 +635,15 @@ public class OverworldManager : MonoBehaviour
         {
             UpdateTownInfo();
         }
+        else if (selectedArmy.currentLocale != null)
+        {
+            UpdateLocaleInfo();
+        }
         else
         {
             townOptionsParent.SetActive(false);
         }
+
 
     }
     private void UpdateTownInfo()
@@ -614,8 +670,60 @@ public class OverworldManager : MonoBehaviour
         supplyFaction.text = "Faction: " + point.faction;
         supplyPopulation.text = "Population: " + point.population;
         supplyRelations.text = "Relations: " + point.relations;
+
+        if (point.faction == selectedArmy.faction) //no extorting or pillaging things that belong to you
+        {
+            extortParent.SetActive(false);
+            pillageParent.SetActive(false);
+            talkParent.SetActive(true);
+        }
+        else
+        {
+            extortParent.SetActive(true);
+            pillageParent.SetActive(true);
+            talkParent.SetActive(false);
+        }
+    }
+    private void UpdateLocaleInfo()
+    {
+        var locale = selectedArmy.currentLocale;
+        if (locale.investigated)
+        {
+            localeExploreButton.interactable = false;
+            closedEyeParent.SetActive(true);
+        }
+        else
+        {
+            localeExploreButton.interactable = true;
+            closedEyeParent.SetActive(false);
+        }
+        localeParent.SetActive(true);
     }
 
+    public void ExploreLocale()
+    {
+        localeArmy = selectedArmy;
+        DialogueScriptableObject dialogue = selectedArmy.currentLocale.localeInvestigationDialogue;
+        selectedArmy.currentLocale.investigated = true;
+        dialogueManager.loadedDialogue = dialogue;
+        dialogueManager.StartDialogue();
+        localeParent.SetActive(false);
+        armyOptionsParent.SetActive(false);
+    }
+    public void TalkToSupplyGiver()
+    {
+        localeArmy = selectedArmy;
+        DialogueScriptableObject dialogue = selectedArmy.currentSupplyPoint.talkToDialogue;
+        if (selectedArmy.currentSupplyPoint.talkDescriptionRead)
+        {
+            dialogue = selectedArmy.currentSupplyPoint.afterReadTalkToDialogue;
+        }
+        selectedArmy.currentSupplyPoint.talkDescriptionRead = true;
+        dialogueManager.loadedDialogue = dialogue;
+        dialogueManager.StartDialogue();
+        townOptionsParent.SetActive(false);
+        armyOptionsParent.SetActive(false);
+    }
     private void DeselectArmy()
     {
         selectedArmy = null;
@@ -624,6 +732,7 @@ public class OverworldManager : MonoBehaviour
         selectionIndicator.SetActive(false);
         armyOptionsParent.SetActive(false);
         townOptionsParent.SetActive(false);
+        localeParent.SetActive(false);
     }
 
     private float RoundToZeroOrHalf(float a) //1.52 will be 1.5, 1.1232 will be 1

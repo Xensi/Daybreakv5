@@ -17,7 +17,7 @@ public class SupplyGiver : MonoBehaviour
     public int turnsUntilNextRegain = 5;
 
     public int regainTracker = 5;
-    public int provisionsToSendEveryInterval = 2; 
+    public int provisionsToSendEveryInterval = 2;
 
     public int supportedArmyRotater = 0;
 
@@ -33,14 +33,22 @@ public class SupplyGiver : MonoBehaviour
     public string relations = "Unfriendly";
 
     public bool isFort = false;
-    
-
 
     public int population = 500;
 
     public int posNeutralityBuffer = 1;
 
     public int negNeutralityBuffer = -1;
+
+    public List<ArmyCardScriptableObj> cardsAvailable;
+    //public DialogueScriptableObject dialogueUponRequestingSupplies;
+
+    //public bool suppliesRequestedForFirstTime = false;
+    public bool talkDescriptionRead = false;
+    public DialogueScriptableObject talkToDialogue;
+    public DialogueScriptableObject afterReadTalkToDialogue;
+    public List<bool> npcTalkedTo;
+
 
     public void Awake()
     {
@@ -56,18 +64,45 @@ public class SupplyGiver : MonoBehaviour
     public void UpdateRelations()
     {
 
-        if (mood > posNeutralityBuffer)
+        if (population <= 0)
         {
-            relations = "Friendly";
+            relations = "Abandoned";
+            return;
         }
-        else if (mood <= posNeutralityBuffer && mood >= negNeutralityBuffer)
+
+        if (isFort && faction == overworldManager.currentFaction)
         {
-            relations = "Neutral";
+            relations = "Loyal";
         }
-        else if (mood < negNeutralityBuffer)
+        else if (isFort && faction != overworldManager.currentFaction)
+        {
+            relations = "Hostile";
+        }
+        else if (!isFort && faction != overworldManager.currentFaction)
         {
             relations = "Unfriendly";
         }
+        else if (!isFort && faction == overworldManager.currentFaction)
+        {
+            if (mood > posNeutralityBuffer)
+            {
+                relations = "Welcoming";
+            }
+            else if (mood >= 0 && mood <= posNeutralityBuffer)
+            {
+                relations = "Cooperative";
+            }
+            else if (mood <= 0 && mood >= negNeutralityBuffer)
+            {
+                relations = "Wary";
+            }
+            else if (mood < negNeutralityBuffer)
+            {
+                relations = "Unfriendly";
+            }
+        }
+
+
     }
 
     public void SpawnCaravans()
@@ -108,7 +143,7 @@ public class SupplyGiver : MonoBehaviour
 
             }
         }
-        
+
 
         if (regainTracker > 0)
         {

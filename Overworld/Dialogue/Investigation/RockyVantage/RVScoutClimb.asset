@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: RVScoutClimb
+  m_EditorClassIdentifier: 
+  speaker: Vella Rock
+  speakerImage: {fileID: 21300000, guid: 78b43ba639cea8b4bab1c37006406b73, type: 3}
+  speakerSpeed: 0.025
+  sentences:
+  - Some things are better left to your underlings. It's what they're here for.
+  - You ask for a volunteer. Without much trouble, they scrabble up the top of the
+    rocky hill.
+  - They spend a few minutes at the top surveying the landscape.
+  - Then, they return to give you their report.
+  - INSERT REPORT HERE
+  sentenceAudio: []
+  nextDialogue: {fileID: 0}
+  isChoices: 0
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  choicePaths: []
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  forceChangeSpeaker: 0

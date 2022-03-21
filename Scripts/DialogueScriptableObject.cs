@@ -19,4 +19,9 @@ public class DialogueScriptableObject : ScriptableObject
     public DialogueScriptableObject[] choicePaths;
     public string commandToExecuteStart;
     public string commandToExecuteEnd;
+    public int commandVar;
+    public string commandString;
+    public bool forceChangeSpeaker = false;
+    public DialogueScriptableObject talkedToDialogue;
+    public bool isFirstInstanceNPC = false;
 }
