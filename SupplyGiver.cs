@@ -4,29 +4,17 @@ using UnityEngine;
 
 public class SupplyGiver : MonoBehaviour
 {
-
-    public List<Army> armiesToSupport;
-    public GameObject caravanPrefab;
+    public Army armyOnThisSupplyPoint;
     public OverworldManager overworldManager;
 
-    public int turnCounter = 0;
+    private int turnCounter = 0;
 
     public int storedProvisions = 10;
     public int maxProvisions = 20;
-    public int provisionsGainedEveryInterval = 1;
-    public int turnsUntilNextRegain = 5;
-
-    public int regainTracker = 5;
-    public int provisionsToSendEveryInterval = 2;
-
-    public int supportedArmyRotater = 0;
-
     public int reservedProvisions = 10;
     public int extortionReservedProvisions = 5;
 
     public int mood = 0;
-
-    public Army armyOnThisSupplyPoint;
 
     public string supplyName = "Reevewood";
     public string faction = "Zhanguo";
@@ -37,22 +25,27 @@ public class SupplyGiver : MonoBehaviour
     public int population = 500;
 
     public int posNeutralityBuffer = 1;
-
     public int negNeutralityBuffer = -1;
 
     public List<ArmyCardScriptableObj> cardsAvailable;
-    //public DialogueScriptableObject dialogueUponRequestingSupplies;
-
-    //public bool suppliesRequestedForFirstTime = false;
     public bool talkDescriptionRead = false;
     public DialogueScriptableObject talkToDialogue;
     public DialogueScriptableObject afterReadTalkToDialogue;
     public List<bool> npcTalkedTo;
 
+    //public List<Army> armiesToSupport;
+    //public GameObject caravanPrefab;
+    //public int provisionsGainedEveryInterval = 1;
+    //public int turnsUntilNextRegain = 5;
+    //public int regainTracker = 5;
+    //public int provisionsToSendEveryInterval = 2;
+    //public int supportedArmyRotater = 0;
+    //public DialogueScriptableObject dialogueUponRequestingSupplies;
+    //public bool suppliesRequestedForFirstTime = false;
 
     public void Awake()
     {
-        regainTracker = turnsUntilNextRegain;
+        //regainTracker = turnsUntilNextRegain;
 
         if (overworldManager == null)
         {
@@ -63,7 +56,6 @@ public class SupplyGiver : MonoBehaviour
 
     public void UpdateRelations()
     {
-
         if (population <= 0)
         {
             relations = "Abandoned";
@@ -101,11 +93,9 @@ public class SupplyGiver : MonoBehaviour
                 relations = "Unfriendly";
             }
         }
-
-
     }
 
-    public void SpawnCaravans()
+    /*public void SpawnCaravans()
     {
         turnCounter++;
         if (turnCounter % 2 == 0) //every other turn we'll send a caravan
@@ -161,5 +151,5 @@ public class SupplyGiver : MonoBehaviour
             }
         }
 
-    }
+    }*/
 }

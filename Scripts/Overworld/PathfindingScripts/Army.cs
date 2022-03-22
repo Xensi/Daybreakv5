@@ -15,7 +15,6 @@ public class Army : MonoBehaviour
 
     [Tooltip("Only fill out if AI controlled.")]
     [SerializeField] private List<Transform> patrolNodes; //AI ONLY
-    [SerializeField] private Collider aiSightTrigger;
     public string faction = "Altgard";
     public Army focusedOnArmy;
     [SerializeField] private DetectPlayerArmies detector;
@@ -30,6 +29,7 @@ public class Army : MonoBehaviour
     public GameObject aiTarget;
     public int speedMax = 4;
     public int speedCurrent = 0;
+    
     public BlockManager blockManager;
     BlockManager.TraversalProvider traversalProvider;
     public ABPath path;
@@ -71,6 +71,7 @@ public class Army : MonoBehaviour
     public int horses = 0;
 
     public List<ArmyCard> cards;
+    [SerializeField] private bool checkedForcedMarch = false;
 
     public void Awake() //Setup when spawned
     {
@@ -303,23 +304,9 @@ public class Army : MonoBehaviour
     }
     public void StartMoving()
     {
+        checkedForcedMarch = false;
         dustVFX.Play();
         shakeTween.Play();
-
-        turnCounter++;
-        if (turnCounter % 2 == 0)
-        {
-            turnCounter = 0;
-            if (provisions > 0)
-            {
-                provisions -= supplyUpkeep;
-            }
-            else
-            {
-                starvation += supplyUpkeep;
-            }
-        }
-
         if (aiControlled && focusedOnArmy != null)
         {
             target.position = focusedOnArmy.transform.position;
@@ -332,8 +319,34 @@ public class Army : MonoBehaviour
         MoveOneNode(); //start the movement
         remainingDistanceNew = aiPath.remainingDistance;
         remainingDistanceOld = aiPath.remainingDistance;
+        UpkeepTrigger();
         StartCoroutine(WaitUntilMovementOver());
         StartCoroutine(NoticeIfBlocked());
+    }
+    private void UpkeepTrigger()
+    {
+        turnCounter++;
+        if (turnCounter % 2 == 0)
+        {
+            turnCounter = 0;
+            ConsumeUpkeep();
+        }
+
+    }
+    private void ConsumeUpkeep()
+    {
+
+        int requiredProvisions = 0;
+        while (requiredProvisions < supplyUpkeep)
+        {
+            requiredProvisions++;
+            provisions--;
+            if (provisions <= 0)
+            {
+                starvation += supplyUpkeep - requiredProvisions;
+                break;
+            }
+        }
     }
     public ABPath DrawPath()
     {
@@ -421,6 +434,17 @@ public class Army : MonoBehaviour
     private IEnumerator WaitUntilMovementOver()
     {
         yield return new WaitForSeconds(0.01f);
+        if (checkedForcedMarch == false)
+        {
+
+            if (aiPath.remainingDistance != 0 && aiPath.remainingDistance >= 4) //-1 is correction, 4 is intended
+            {
+                //Debug.LogError("extra upekeep");
+                ConsumeUpkeep();
+                checkedForcedMarch = true;
+            }
+        }
+
         if (path.error) //if we can't get a path, try to
         {
             MakePathToTarget();
