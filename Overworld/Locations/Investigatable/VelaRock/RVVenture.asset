@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: RVVenture
+  m_EditorClassIdentifier: 
+  speaker: Vella Rock
+  speakerImage: {fileID: 21300000, guid: 78b43ba639cea8b4bab1c37006406b73, type: 3}
+  speakerSpeed: 0.025
+  isChoices: 0
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: moraleGain
+  commandVar: -1
+  commandString: 
+  forceChangeSpeaker: 1
+  talkedToDialogue: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 0101010101010101
+  speakerSentences:
+  - {fileID: 11400000, guid: eb1814c4e461cec4bbbc226d7f22731d, type: 2}
+  - {fileID: 11400000, guid: eb1814c4e461cec4bbbc226d7f22731d, type: 2}
+  - {fileID: 11400000, guid: eb1814c4e461cec4bbbc226d7f22731d, type: 2}
+  - {fileID: 11400000, guid: eb1814c4e461cec4bbbc226d7f22731d, type: 2}
+  - {fileID: 11400000, guid: eb1814c4e461cec4bbbc226d7f22731d, type: 2}
+  - {fileID: 11400000, guid: eb1814c4e461cec4bbbc226d7f22731d, type: 2}
+  - {fileID: 11400000, guid: eb1814c4e461cec4bbbc226d7f22731d, type: 2}
+  - {fileID: 11400000, guid: eb1814c4e461cec4bbbc226d7f22731d, type: 2}
+  sentences:
+  - A squad of soldiers wielding torches bravely march into the cave.
+  - Some minutes pass. You're sure that whatever they find in there will be well
+    worth it.
+  - '. . . '
+  - 'They return, shouting and babbling amongst themselves, haphazardly fleeing the
+    cave.
+
+'
+  - 'Despite their panic, they don''t appear seriously injured, other than some minor
+    scrapes.
+
+'
+  - The soldiers give conflicting accounts as to what they found within the cave.
+    The only commonality is "eyes".
+  - A shared bout of hysterics, perhaps? You're not sure you want to check personally.
+  - (-1 morale.)
+  sentenceAudio: []
+  nextDialogue: {fileID: 0}
+  choicePaths: []

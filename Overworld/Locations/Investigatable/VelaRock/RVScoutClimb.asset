@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: RVScoutClimb
+  m_EditorClassIdentifier: 
+  speaker: Vella Rock
+  speakerImage: {fileID: 21300000, guid: 78b43ba639cea8b4bab1c37006406b73, type: 3}
+  speakerSpeed: 0.025
+  isChoices: 0
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  forceChangeSpeaker: 1
+  talkedToDialogue: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 010101010000000001
+  speakerSentences:
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - {fileID: 11400000, guid: c991328e0686eeb49898f508db3c8a9c, type: 2}
+  - {fileID: 11400000, guid: c991328e0686eeb49898f508db3c8a9c, type: 2}
+  - {fileID: 11400000, guid: c991328e0686eeb49898f508db3c8a9c, type: 2}
+  - {fileID: 11400000, guid: c991328e0686eeb49898f508db3c8a9c, type: 2}
+  - {fileID: 11400000, guid: c991328e0686eeb49898f508db3c8a9c, type: 2}
+  - {fileID: 11400000, guid: c991328e0686eeb49898f508db3c8a9c, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  sentences:
+  - Some things are better left to your underlings. It's what they're here for.
+  - You ask for a volunteer. Without much trouble, they scrabble up the top of the
+    rocky hill.
+  - They spend a few minutes at the top surveying the landscape.
+  - Then, they return to give you their report.
+  - "Westward, there\u2019s another town under Atlesian control. To the southwest
+    is a camp where they appear to be training soldiers. I bet they won\u2019t be
+    too prepared for us if we strike there."
+  - "South of that camp is Castle Borgham. Looks like they have a moat. No way we\u2019re
+    going to be crossing that unless we take the bridge.\r"
+  - "To our southeast is another Atlesian camp. I\u2019ll bet they\u2019ll put up
+    more of a fight than the southwest camp. \r"
+  - "To the south of that camp, there\u2019s a mill. If we\u2019re strapped for supplies,
+    we could head there.\r\n"
+  - You thank the scout and mull over the information they've given you.
+  sentenceAudio: []
+  nextDialogue: {fileID: 0}
+  choicePaths: []

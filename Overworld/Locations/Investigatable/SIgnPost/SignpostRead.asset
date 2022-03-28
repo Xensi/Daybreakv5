@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: SignpostRead
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  isChoices: 0
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  forceChangeSpeaker: 1
+  talkedToDialogue: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 0101
+  speakerSentences:
+  - {fileID: 11400000, guid: 474f84b79d749744e9f0968095b3e6e7, type: 2}
+  sentences:
+  - "An arrow pointing southwards reads \u201CEadin\u201D. \r\nAn arrow pointing
+    westwards reads \u201CCoilleshire\u201D.\r"
+  - "The paint used for the Coilleshire sign is worn and faded. The paint used for
+    \u201CEadin\u201D is noticeably newer, but also more messily written.\r"
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: 9153e437c1a2b6b459bea6a99d224f36, type: 2}
+  choicePaths: []

@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: MC2
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: checkHelped
+  commandVar: 0
+  commandString: shirereeve
+  dialogueIfConditionTrue: {fileID: 11400000, guid: aa2bea4fe9f1f7a468c519dafa4e58f7, type: 2}
+  isChoices: 0
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 000001
+  speakerSentences:
+  - {fileID: 11400000, guid: 0e50f2d7c194197468b70a5730395c41, type: 2}
+  - {fileID: 11400000, guid: 0e50f2d7c194197468b70a5730395c41, type: 2}
+  - {fileID: 11400000, guid: 0e50f2d7c194197468b70a5730395c41, type: 2}
+  sentences:
+  - "We\u2019re headed southeast, to Eadin. Hopefully they\u2019re in good health."
+  - The better your health, the better our wealth, I say.
+  - She gives you a wry grin.
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: 4140e2690069a1547ad59a8270171eb9, type: 2}
+  choicePaths: []

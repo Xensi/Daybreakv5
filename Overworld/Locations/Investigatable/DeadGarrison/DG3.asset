@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: DG3
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  isChoices: 0
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: moraleGain
+  commandVar: 1
+  commandString: 
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 010101
+  speakerSentences:
+  - {fileID: 11400000, guid: 31a9f1646bb6a55418add959732ab2c4, type: 2}
+  sentences:
+  - 'Your troops give out a hearty cheer. Hartwig fires off a wild round of applause. 
+    Gotfried is already off clambering over the ruined walls exploring the ruins,
+    paying little heed to your speech. '
+  - He rejoins you a few minutes later.
+  - Your display of bravado has galvanized them to press onwards with vigor and energy.
+  - (+1 morale.)
+  sentenceAudio: []
+  nextDialogue: {fileID: 0}
+  choicePaths: []

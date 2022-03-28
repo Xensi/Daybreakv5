@@ -105,7 +105,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3106764138591609976}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0, z: 0.5}
+  m_LocalPosition: {x: 1.5, y: 0, z: -16.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4860067352927109950}
@@ -129,6 +129,8 @@ GameObject:
   - component: {fileID: 3960521364752901031}
   - component: {fileID: 1125602845202632264}
   - component: {fileID: 1849511497982299107}
+  - component: {fileID: 519939360}
+  - component: {fileID: 519939361}
   m_Layer: 17
   m_Name: Army
   m_TagString: Untagged
@@ -144,7 +146,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3106764139357680108}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0, z: 0.5}
+  m_LocalPosition: {x: 1.5, y: 0, z: -16.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3106764139406317715}
@@ -167,20 +169,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   aiControlled: 0
   patrolNodes: []
-  aiSightTrigger: {fileID: 0}
   faction: Altgard
+  detectedNotSpottedArmy: {fileID: 0}
   focusedOnArmy: {fileID: 0}
+  enemyLastSeenPos: {x: 0, y: 0, z: 0}
+  lastPosKnown: 0
   detector: {fileID: 0}
   parent: {fileID: 3106764139411606892}
   obstacles: []
   target: {fileID: 3106764138591609977}
+  targetVisual: {fileID: 2048553220002377036}
   aiPath: {fileID: 3106764139357680104}
   aiTarget: {fileID: 3106764139770366302}
   speedMax: 4
   speedCurrent: 0
   blockManager: {fileID: 0}
-  numberOfUnitsInArmy: 10
-  availableUnitsInArmy: 10
+  numberOfUnitsInArmy: 1
+  availableUnitsInArmy: 1
   remainingDistanceNew: 0
   remainingDistanceOld: 0
   numberOfMovementAttempts: 0
@@ -195,8 +200,10 @@ MonoBehaviour:
   provisions: 8
   maxProvisions: 12
   supplyUpkeep: 1
-  overallMorale: 8
+  overallMorale: 5
   maxMorale: 10
+  spoils: 0
+  maxSpoils: 10
   starvation: 0
   garrisoned: 0
   listOfSplitOffs: []
@@ -213,9 +220,16 @@ MonoBehaviour:
   oberkommandantName: Friedrich Weiss
   armyCardPrefab: {fileID: 1950560840751751948, guid: 0965af2fcccd19a448cebefd8efd31c3, type: 3}
   size: Medium
-  horses: 0
+  horses: 20
+  predictedSupplyConsumption: 0
   cards: []
   checkedForcedMarch: 0
+  predictedMovementSpaces: 0
+  moving: 0
+  arrestedDernoth: 0
+  arrestedButcher: 0
+  watchdogBounds: {fileID: 0}
+  withinWatchdogBounds: 0
 --- !u!114 &3106764139357680105
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -370,10 +384,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   team: 0
   brightness: 1
-  shapeType: 0
+  shapeType: 1
   absoluteOffset: 0
   offset: {x: 0, y: 0}
-  boxSize: {x: 5, y: 5}
+  boxSize: {x: 13, y: 13}
   circleRadius: 6.5
   innerRadius: 1
   angle: 180
@@ -382,15 +396,73 @@ MonoBehaviour:
   mesh: {fileID: 0}
   lineOfSightMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   lineOfSightRaycastCount: 100
-  lineOfSightPenetration: 0
+  lineOfSightPenetration: 0.25
   lineOfSightRaycastAngle: 360
   lineOfSightRaycastOffset: 0
   lineOfSightSeeOutsideRange: 0
   multithreading: 0
   cellBased: 0
-  snapToPixelCenter: 0
+  snapToPixelCenter: 1
+--- !u!114 &519939360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3106764139357680108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82e78508c6d76e84b954af6619d8c000, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  team: 1
+  minFogStrength: 0.2
+  onFogEnter:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: WatchdogManager, Assembly-CSharp
+        m_MethodName: EnemyArmySpotted
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onFogExit:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: WatchdogManager, Assembly-CSharp
+        m_MethodName: EnemyArmyLostSight
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &519939361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3106764139357680108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e790a7cab88cbe0469aef7a442bca56d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  team: 1
+  minFogStrength: 0.2
 --- !u!1 &3106764139406317714
 GameObject:
   m_ObjectHideFlags: 0
@@ -638,7 +710,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3106764139770366302}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0, z: 0.5}
+  m_LocalPosition: {x: 1.5, y: 0, z: -16.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3106764139411606893}

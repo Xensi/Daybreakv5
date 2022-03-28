@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: C3Eadin
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  dialogueIfConditionTrue: {fileID: 0}
+  isChoices: 1
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 
+  speakerSentences:
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  sentences:
+  - "Good to know.\r"
+  - Actually, Eadin was occupied by a small force of Atlesians.
+  sentenceAudio: []
+  nextDialogue: {fileID: 0}
+  choicePaths:
+  - {fileID: 11400000, guid: 3280add2ee85e824eb4f88e86937386b, type: 2}
+  - {fileID: 11400000, guid: b51a0c08d27ea9c41a326fcc4ee9fced, type: 2}

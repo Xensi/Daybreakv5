@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: C4
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  isChoices: 0
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 00010001000001
+  speakerSentences:
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - {fileID: 11400000, guid: e0dc0ba66e5aabd4eafd74488f70e272, type: 2}
+  - {fileID: 11400000, guid: e0dc0ba66e5aabd4eafd74488f70e272, type: 2}
+  - {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
+  - {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
+  - {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  sentences:
+  - Thank you for notifying us, Maukling. But we shall decide what to do with him.
+  - 'The shire-reeve seems to open his mouth to argue, but holds his tongue when
+    he realizes who is greater in number and stronger in steel. '
+  - "Very well. We\u2019ll leave the decision to you. "
+  - 'As the disgruntled mob disperses, Dernoth collapses to his knees, prostrate,
+    and yells a number of prayers and blessings.
+
+'
+  - Holy Altgardian, I shall kiss the ground you walk upon, and renounce the false
+    heresies of my ancestors.
+  - 'We are glad that you have seen the true path, Maukling. Now please, tell us
+    how we may assist you. '
+  - Before Dernoth continues, you interject.
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: 18be4d6cb5fa5424d89af2c746a67bc3, type: 2}
+  choicePaths: []

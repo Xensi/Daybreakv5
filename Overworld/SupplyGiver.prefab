@@ -99,8 +99,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   armyOnThisSupplyPoint: {fileID: 0}
   overworldManager: {fileID: 0}
+  storedSpoils: 10
+  reservedSpoils: 7
+  extortionReservedSpoils: 5
   storedProvisions: 10
-  maxProvisions: 20
   reservedProvisions: 5
   extortionReservedProvisions: 5
   mood: 0
@@ -115,7 +117,10 @@ MonoBehaviour:
   talkDescriptionRead: 0
   talkToDialogue: {fileID: 0}
   afterReadTalkToDialogue: {fileID: 0}
+  eventDialogue: {fileID: 0}
   npcTalkedTo: 
+  extortable: 1
+  pillageable: 1
 --- !u!54 &8424120304093255392
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -155,6 +160,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5139221865801396632}
   - component: {fileID: 1773940365297585049}
+  - component: {fileID: 7323019618731000497}
   m_Layer: 0
   m_Name: Icon
   m_TagString: Untagged
@@ -227,3 +233,17 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7323019618731000497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4658878043035277248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e790a7cab88cbe0469aef7a442bca56d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  team: 0
+  minFogStrength: 0.2

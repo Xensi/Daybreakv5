@@ -12,20 +12,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
   m_Name: MIntro
   m_EditorClassIdentifier: 
-  speaker: Mill
+  speaker: Windmill
   speakerImage: {fileID: 0}
   speakerSpeed: 0.01
-  sentences: []
-  sentenceAudio: []
-  nextDialogue: {fileID: 0}
   isChoices: 0
   speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
   speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
-  choicePaths: []
   commandToExecuteStart: 
   commandToExecuteEnd: 
   commandVar: 0
   commandString: 
-  forceChangeSpeaker: 0
-  talkedToDialogue: {fileID: 0}
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
   isFirstInstanceNPC: 0
+  italicizedSentences: 010100
+  speakerSentences:
+  - {fileID: 11400000, guid: 044da300b470ec9408ffdaf7ad2cc48a, type: 2}
+  - {fileID: 11400000, guid: 044da300b470ec9408ffdaf7ad2cc48a, type: 2}
+  - {fileID: 11400000, guid: 50f0703dc762208409a869af0c3a7b90, type: 2}
+  sentences:
+  - "Your army arrives at a solitary windmill, its sails lazily turning in the breeze.\r"
+  - 'A hunched over old woman spots you through the window. She disappears from view,
+    before the door leading into the mill swings open. Using a cane, she hobbles
+    out of the windmill to greet you.
+
+'
+  - Grandchild . . . Oh deary. Would you do me a kindness? Please, help me choose.
+    Worms, or birds?
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: 7a535ca8886d74b4f8007e6a128aaae1, type: 2}
+  choicePaths: []

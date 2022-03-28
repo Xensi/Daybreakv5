@@ -7,61 +7,64 @@ using DG.Tweening;
 
 public class DialogueManager : MonoBehaviour
 {
-
-    public Queue<string> sentences;
-    public Queue<AudioClip> sentenceAudio;
-    public TMP_Text dialogueText;
-    public float textspeed = 0.1f;
-    public AudioSource audioSource;
-    public string currentSentence;
-    public bool runningText = false;
-
+    [Header("Needs to be accessible to to other files")]
     public DialogueScriptableObject loadedDialogue; //needs to be changed whenever you want to swap dialogues
-    public TMP_Text speakerText;
-    public GameObject dialogueParent;
-    public Image speakerImage;
-    public AudioClip currentAudio;
-    public int sentenceCount = 0;
-    public float startingYPos;
-    public GameObject targetPosObj;
-    public DialogueScriptableObject[] conversationStarters;
-    public bool autoStart = false;
-    public GameObject choicesParent;
-    public List<TMP_Text> choiceList;
-    public Image speakerBGImage;
-    public Image speakerFancyBorder;
-    public npcAnimController npcAnimController;
-    public GameInitializer gameInit;
-    public ChessUIManager chessUI;
-
-    public List<UnitListScriptableObject> levelUnitLists;
-
-    public Image fadeToBlack;
-
-    public Transform cameraPosTutorial;
-
-    public GameObject cinematicParent;
     public bool readingDialogue = false;
 
-    //public List<UnitScriptableObject> tutorialUnitList;
-
+    [Header("Needs to be set manually")]
     [SerializeField] private OverworldManager overworldManager;
-
     [SerializeField] private UnitManager unitManager;
-    void Start()
-    {
-        startingYPos = dialogueParent.transform.position.y;
-        audioSource = GetComponent<AudioSource>();
-        sentences = new Queue<string>(); //first in last out?
+    [SerializeField] private TMP_Text dialogueText;
+    [SerializeField] private GameObject targetPosObj;
+    [SerializeField] private GameInitializer gameInit;
+    [SerializeField] private ChessUIManager chessUI;
+    [SerializeField] private GameObject dialogueParent;
+    [SerializeField] private List<UnitListScriptableObject> levelUnitLists;
+    [SerializeField] private Transform cameraPosTutorial;
+    [SerializeField] private bool runningText = false;
+    [SerializeField] private DialogueScriptableObject[] conversationStarters;
+    [SerializeField] private bool autoStart = false;
+    [SerializeField] private GameObject choicesParent;
+    [SerializeField] private List<TMP_Text> choiceList;
+    //[SerializeField] private Image speakerBGImage;
+    [SerializeField] private List<Image> speakerBorders;
+    [SerializeField] private Image speakerFancyBorder;
+    [SerializeField] private Image fadeToBlack;
+    [SerializeField] private GameObject cinematicParent;
+    [SerializeField] private Image speakerImage;
+    [SerializeField] private TMP_Text speakerText;
+    [SerializeField] private LocationAndFactionPointsManager LFPManager;
+    [SerializeField] private SutlerManager sutlerManager;
 
-        if (autoStart)
+    //private variables
+    private float slowTextSpeed;
+    private float slowerTextSpeed;
+    private float textspeed = 0.1f;
+    private AudioSource audioSource;
+    private Queue<string> sentences;
+    private Queue<AudioClip> sentenceAudio;
+    private string currentSentence;
+    private AudioClip currentAudio;
+    private int sentenceCount = 0;
+    private float startingYPos;
+    private npcAnimController npcAnimController;
+    private bool displayingChoices = false;
+    private bool checkedCondition = false;
+
+    private void Start()
+    {
+        //define text speeds algorithmically
+        UpdateTextSpeeds();
+        startingYPos = dialogueParent.transform.position.y; //get starting y position
+        audioSource = GetComponent<AudioSource>();
+        sentences = new Queue<string>(); //A queue is first in last out
+
+        if (autoStart) //start dialogue immediately
         {
             StartCoroutine(LateStart(1));
-
         }
     }
-
-    IEnumerator LateStart(float waitTime)
+    private IEnumerator LateStart(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
         if (loadedDialogue.isChoices)
@@ -73,8 +76,12 @@ public class DialogueManager : MonoBehaviour
             StartDialogue();
         }
     }
-
-    public void SelectDialogue(string dialogue)
+    private void UpdateTextSpeeds()
+    {
+        slowTextSpeed = textspeed * 8;
+        slowerTextSpeed = textspeed * 12;
+    }
+    public void SelectDialogue(string dialogue) //used in tutorial to load then read dialogue
     {
         foreach (var convo in conversationStarters)
         {
@@ -97,14 +104,14 @@ public class DialogueManager : MonoBehaviour
             }
         }
     }
-    public void StartDialogue()
+    public void StartDialogue() //used to raise loaded dialogue and read it (assuming that dialogue screen is lowered)
     {
         readingDialogue = true;
         ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
         dialogueText.text = "";
         speakerText.text = loadedDialogue.speaker;
 
-        Tween tween = dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
+        Tween tween = dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad); //tweens dialogue up
 
         if (loadedDialogue.isChoices)
         {
@@ -113,15 +120,13 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-            tween.OnComplete(StartDialogue2);
+            tween.OnComplete(ReadDialogue);
 
         }
 
     }
-    public void StartDialogue2()
+    private void ReadDialogue() //begins actually reading dialogue
     {
-
-        //Debug.Log("Starting conversation");
         sentences.Clear();
 
         foreach (string sentence in loadedDialogue.sentences)
@@ -130,36 +135,10 @@ public class DialogueManager : MonoBehaviour
         }
 
         DisplayNextSentence();
-        ProcessCommand();
+        ProcessStartCommand();
     }
-    public void StartNextDialogue()
-    {
-
-        loadedDialogue = loadedDialogue.nextDialogue;
-
-        if (loadedDialogue.isChoices)
-        {
-            PresentChoices();
-        }
-        else
-        {
-            choicesParent.SetActive(false);
-            ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
-            //Debug.Log("Starting conversation");
-            sentences.Clear();
-
-            foreach (string sentence in loadedDialogue.sentences)
-            {
-                sentences.Enqueue(sentence);
-            }
-
-
-            DisplayNextSentence();
-        }
-        ProcessCommand();
-    }
-
-    void ProcessCommand()
+    
+    private void ProcessStartCommand() //if command needed at beginning of dialogue
     {
         //Debug.LogError("Processing commands");
         if (loadedDialogue.commandToExecuteStart == "nod")
@@ -171,13 +150,44 @@ public class DialogueManager : MonoBehaviour
             npcAnimController.AnimConfused();
         }
     }
-
-    public void DisplayNextSentence()
+    
+    private void DisplayNextSentence() //display next "sentence" (a chunk of dialogue)
     {
         if (loadedDialogue.isChoices)
         {
             return;
         }
+
+        if (loadedDialogue.italicizedSentences.Count > 0 && sentenceCount < loadedDialogue.italicizedSentences.Count) //change italicization
+        {
+            if (loadedDialogue.italicizedSentences[sentenceCount] == true)
+            {
+                dialogueText.fontStyle = FontStyles.Italic;
+            }
+            else
+            {
+
+                dialogueText.fontStyle = FontStyles.Normal;
+            }
+        }
+        if (loadedDialogue.forceChangeSpeaker && loadedDialogue.speakerSentences.Count > 0 && sentenceCount < loadedDialogue.speakerSentences.Count) //change speaker
+        {
+            if (loadedDialogue.speakerSentences[sentenceCount] != null)
+            {
+                SpeakerScriptable speaker = loadedDialogue.speakerSentences[sentenceCount];
+                //speakerBGImage.color = speaker.colorBorder;
+                foreach (Image image in speakerBorders)
+                {
+                    image.color = speaker.colorBorder;
+                }
+                speakerFancyBorder.color = speaker.fancyBorder;
+                textspeed = speaker.speed;
+                speakerImage.sprite = speaker.image;
+                speakerText.text = speaker.speakerName;
+                UpdateTextSpeeds();
+            }
+        }
+
         audioSource.Stop();
         runningText = true;
         if (sentences.Count == 0) //end of queue
@@ -203,8 +213,7 @@ public class DialogueManager : MonoBehaviour
         StopAllCoroutines();
         StartCoroutine(TypeSentence(currentSentence));
     }
-
-    IEnumerator TypeSentence(string sentence)
+    private IEnumerator TypeSentence(string sentence) //reveal characters of sentence one by one
     {
         if (currentAudio != null)
         {
@@ -212,21 +221,68 @@ public class DialogueManager : MonoBehaviour
             audioSource.clip = currentAudio;
             audioSource.Play();
         }
-        dialogueText.text = "";
-        foreach (char letter in sentence.ToCharArray())
+
+        dialogueText.text = sentence;
+        dialogueText.maxVisibleCharacters = 0;
+
+        char[] charArray = sentence.ToCharArray();
+        bool skip = false;
+        for (int i = 0; i < charArray.Length; i++)
         {
-            dialogueText.text += letter; //appends each letter to the end of the string
-            //yield return null;//waits a frame
-            yield return new WaitForSeconds(textspeed);
+            dialogueText.maxVisibleCharacters++;
+            char letter = charArray[i];
+
+
+            if (letter == '<')
+            {
+                skip = true;
+            }
+            else if (letter == '>')
+            {
+                skip = false;
+            }
+
+            if (skip)
+            {
+                yield return new WaitForSeconds(0);
+            }
+            else
+            {
+                if (letter == '.' || letter == ';' || letter == '?' || letter == '!')
+                {
+                    if (i + 1 < charArray.Length && charArray[i + 1] == ')')
+                    {
+                        yield return new WaitForSeconds(textspeed);
+
+                    }
+                    else
+                    {
+                        yield return new WaitForSeconds(slowerTextSpeed);
+                    }
+                }
+                else if (letter == ',')
+                {
+                    yield return new WaitForSeconds(slowTextSpeed);
+
+                }
+                else
+                {
+                    yield return new WaitForSeconds(textspeed);
+                }
+            }
         }
         //audioSource.Stop();
         runningText = false;
     }
-
-    public void FinishSentence()
+    public void FinishSentence() //this is triggered when the user clicks on the dialogue box
     {
+        if (displayingChoices)
+        {
+            return;
+        }
         StopAllCoroutines();
         dialogueText.text = currentSentence;
+        dialogueText.maxVisibleCharacters = currentSentence.ToCharArray().Length;
         if (runningText == false)
         {
             DisplayNextSentence();
@@ -237,25 +293,10 @@ public class DialogueManager : MonoBehaviour
         }
 
     }
-    void EndDialogue()
-    {
-        ProcessEndCommand();
-        sentenceCount = 0;
-        if (loadedDialogue.nextDialogue == null)
-        {
-            readingDialogue = false;
-            //Debug.Log("End of conversation");
-            //dialogueParent.SetActive(false);
-            Tween tween = dialogueParent.transform.DOMove(new Vector3(dialogueParent.transform.position.x, startingYPos, dialogueParent.transform.position.z), .5f).SetEase(Ease.InOutQuad);
-        }
-        else
-        {
-            StartNextDialogue();
-        }
-    }
 
-    public void ProcessEndCommand()
+    private void ProcessEndCommand()
     {
+        checkedCondition = false;
         string commandEnd = loadedDialogue.commandToExecuteEnd;
         if (commandEnd == "startTutorial")
         {
@@ -289,14 +330,17 @@ public class DialogueManager : MonoBehaviour
         }
         if (commandEnd == "moraleGain")
         {
-            overworldManager.localeArmy.overallMorale += loadedDialogue.commandVar;
-            if (overworldManager.localeArmy.overallMorale > overworldManager.localeArmy.maxMorale)
+            if (overworldManager.localeArmy != null)
             {
-                overworldManager.localeArmy.overallMorale = overworldManager.localeArmy.maxMorale;
-            }
-            if (overworldManager.localeArmy.overallMorale < 0)
-            {
-                overworldManager.localeArmy.overallMorale = 0;
+                overworldManager.localeArmy.overallMorale += loadedDialogue.commandVar;
+                if (overworldManager.localeArmy.overallMorale > overworldManager.localeArmy.maxMorale)
+                {
+                    overworldManager.localeArmy.overallMorale = overworldManager.localeArmy.maxMorale;
+                }
+                if (overworldManager.localeArmy.overallMorale < 0)
+                {
+                    overworldManager.localeArmy.overallMorale = 0;
+                }
             }
         }
         if (commandEnd == "supplyGain")
@@ -352,98 +396,234 @@ public class DialogueManager : MonoBehaviour
                 }
             }
         }
-
-
-    }
-
-    void EndTutorial()
-    {
-        gameInit.chessController.AllowInput = false;
-        Tween tween = fadeToBlack.DOFade(1, 1).SetEase(Ease.InOutQuad);
-        tween.OnComplete(EndTutorial2);
-    }
-    void EndTutorial2()
-    {
-        LoadLevel("HemmedIn");
-        Tween tween = fadeToBlack.DOFade(0, 1).SetEase(Ease.InOutQuad);
-        tween.OnComplete(EndTutorial3);
-    }
-    void EndTutorial3()
-    {
-        gameInit.chessController.AllowInput = true;
-        //Debug.Log("tutorial over");
-    }
-
-    public void IgnoreTutorial()
-    {
-        chessUI.menuOptionsParent.SetActive(false);
-        chessUI.BG.gameObject.SetActive(false);
-        Tween tween = fadeToBlack.DOFade(1, 1).SetEase(Ease.InOutQuad);
-        tween.OnComplete(IgnoreTutorial2);
-    }
-
-    void IgnoreTutorial2()
-    {
-        gameInit.strafeCam.transform.position = cameraPosTutorial.position;
-        gameInit.strafeCam.SetActive(true);
-        gameInit.cinematicCam.SetActive(false);
-        cinematicParent.SetActive(false);
-
-        gameInit.SelectLevel("HemmedIn"); //loads the correct board layout (pieces positioning)
-        gameInit.levelGen.SelectLevel("HemmedIn"); //loads correct map, and placement map
-        gameInit.CreateSinglePlayerBoard(); //enables execute button, creates board, finds board for level gen, generates level, finds board
-        chessUI.OnSingleplayerModeSelected(); //simply disables some screens
-        gameInit.InitializeSinglePlayerController();
-        LoadLevelUnitList("HemmedIn");
-        gameInit.board.GenerateButtonsFromSavedUnits();
-
-
-        gameInit.chessController.AllowInput = false; //needs to show up after chesscontroller is made 
-
-        Tween tween = fadeToBlack.DOFade(0, 1).SetEase(Ease.InOutQuad);//dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
-        tween.OnComplete(IgnoreTutorial3);
-    }
-
-    void IgnoreTutorial3()
-    {
-        gameInit.chessController.AllowInput = true;
-        //Debug.Log("tutorial ignored");
-    }
-
-    public void LoadLevel(string level)
-    {
-        gameInit.levelGen.DestroyLevel();
-        gameInit.SelectLevel(level); //loads the correct board layout (pieces positioning)
-        gameInit.levelGen.SelectLevel(level); //loads correct map, and placement map
-        //if board already exists then we should just generate the level
-        gameInit.levelGen.GenerateLevel();
-        //if controller already exists then don't make another one
-
-        //save units on your team
-        //gameInit.saveInfoObject.SaveExistingPieceInfoInScripObjs();
-        LoadLevelUnitList(level);
-
-        //destroy units on board
-        Piece[] AllPieces = FindObjectsOfType<Piece>();
-        foreach (var piece in AllPieces)
+        if (commandEnd == "makeAvailableSupplyTown")
         {
-            piece.ImmediateRemoval();
-            foreach (var corpse in piece.deadSoldiers) //delete corpses
+            if (overworldManager.localeArmy != null)
             {
-                Destroy(corpse);
+                if (overworldManager.localeArmy.currentSupplyPoint != null)
+                {
+                    overworldManager.localeArmy.currentSupplyPoint.reservedProvisions -= loadedDialogue.commandVar;
+                }
             }
-            foreach (var projectile in piece.childProjectiles)
+        }
+        if (commandEnd == "arrestDernoth")
+        {
+            if (overworldManager.localeArmy != null)
             {
-                Destroy(projectile);
+                overworldManager.localeArmy.arrestedDernoth = true;
             }
         }
 
+        if (commandEnd == "arrestButcher")
+        {
+            if (overworldManager.localeArmy != null)
+            {
+                overworldManager.localeArmy.arrestedButcher = true;
+            }
+        }
 
-        //create new units from loadout
-        gameInit.chessController.CreatePiecesFromLayout(gameInit.boardLevel);
-        //enable placement again
-        ActivatePlacementScreen();
+        if (commandEnd == "dernothMapAdvice")
+        {
+
+        }
+
+        if (commandEnd == "checkVisited")
+        {
+            //Debug.LogError("checking");
+            string location = loadedDialogue.commandString;
+            bool visited = LFPManager.CheckIfVisited(location);
+            //Debug.LogError("bool" + visited);
+            if (visited && loadedDialogue.dialogueIfConditionTrue != null)
+            {
+                checkedCondition = true;
+            }
+        }
+        if (commandEnd == "checkHelped")
+        {
+            string npcName = loadedDialogue.commandString;
+            bool helped = LFPManager.CheckIfHelped(npcName);
+            if (helped && loadedDialogue.dialogueIfConditionTrue != null)
+            {
+                checkedCondition = true;
+            }
+        }
+        if (commandEnd == "tradeSutler")
+        {
+            sutlerManager.ShowSutlerScreen();
+            sutlerManager.tradingInDialogue = true;
+        }
+        if (commandEnd == "helpNPC")
+        {
+            Debug.LogError(loadedDialogue.commandString);
+            LFPManager.SetHelped(loadedDialogue.commandString);
+        }
+        if (commandEnd == "gainSutler")
+        {
+            overworldManager.sutlerParent.SetActive(true);
+        }
+
     }
+    private void EndDialogue()
+    {
+        
+        ProcessEndCommand();
+        sentenceCount = 0;
+        if (loadedDialogue.nextDialogue == null)
+        {
+            readingDialogue = false;
+            //Debug.Log("End of conversation");
+            //dialogueParent.SetActive(false);
+            Tween tween = dialogueParent.transform.DOMove(new Vector3(dialogueParent.transform.position.x, startingYPos, dialogueParent.transform.position.z), .5f).SetEase(Ease.InOutQuad);
+        }
+        else if (checkedCondition)
+        {
+            StartNextDialogue(loadedDialogue.dialogueIfConditionTrue);
+        }
+        else
+        {
+            StartNextDialogue(loadedDialogue.nextDialogue);
+        }
+    }
+    private void StartNextDialogue(DialogueScriptableObject dialogue) //loads next dialogue and reads it
+    {
+        loadedDialogue = dialogue;
+
+        if (loadedDialogue.isChoices)
+        {
+            PresentChoices();
+        }
+        else
+        {
+            choicesParent.SetActive(false);
+            ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
+            //Debug.Log("Starting conversation");
+            sentences.Clear();
+
+            foreach (string sentence in loadedDialogue.sentences)
+            {
+                sentences.Enqueue(sentence);
+            }
+
+            DisplayNextSentence();
+        }
+        ProcessStartCommand();
+    }
+    private void PresentChoices()
+    {
+        displayingChoices = true;
+        //Debug.Log("presenting choices");
+        Tween tween = dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
+        dialogueText.text = "";
+
+        ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
+        choicesParent.SetActive(true);
+
+        var i = 0;
+        foreach (var item in choiceList)
+        {
+            if (i < loadedDialogue.sentences.Length) //say i = 2 and tere are 2 choices
+            {
+                item.transform.parent.gameObject.SetActive(true);
+                //Debug.Log(loadedDialogue.sentences[i]);
+                item.text = loadedDialogue.sentences[i];
+                i++;
+            }
+            else
+            {
+                item.transform.parent.gameObject.SetActive(false);
+            }
+        }
+        ProcessStartCommand();
+    }
+    private void ForceChangeSpeaker(bool change)
+    {
+        if (change)
+        {
+            if (loadedDialogue.speakerSentences.Count > 0) //if there's at least one speaker
+            {
+                if (loadedDialogue.speakerSentences[0] != null)
+                {
+                    SpeakerScriptable speaker = loadedDialogue.speakerSentences[0];
+                    foreach (Image image in speakerBorders)
+                    {
+                        image.color = speaker.colorBorder;
+                    }
+                    speakerFancyBorder.color = speaker.fancyBorder;
+                    textspeed = speaker.speed;
+                    speakerImage.sprite = speaker.image;
+                    speakerText.text = speaker.speakerName;
+                    UpdateTextSpeeds();
+                }
+            }
+            else
+            {
+                foreach (Image image in speakerBorders)
+                {
+                    image.color = loadedDialogue.speakerColorBorder;
+                }
+                speakerFancyBorder.color = loadedDialogue.speakerFancyBorder;
+                textspeed = loadedDialogue.speakerSpeed;
+                speakerImage.sprite = loadedDialogue.speakerImage;
+                speakerText.text = loadedDialogue.speaker;
+            }
+        }
+    }
+    public void ChooseChoice(int num) //triggered by clicking on a choice
+    {
+        loadedDialogue = loadedDialogue.choicePaths[num];
+        displayingChoices = false;
+        /*if (overworldManager.dialogueEvent == false) //weird npc code, fix later
+        {
+            if (overworldManager.localeArmy != null)
+            {
+                if (overworldManager.localeArmy.currentSupplyPoint != null)
+                {
+                    if (overworldManager.localeArmy.currentSupplyPoint.npcTalkedTo.Count > 0)
+                    {
+                        if (overworldManager.localeArmy.currentSupplyPoint.npcTalkedTo[num] == true)
+                        {
+                            if (loadedDialogue.talkedToDialogueNPC != null)
+                            {
+                                loadedDialogue = loadedDialogue.talkedToDialogueNPC;
+                            }
+                        }
+                    }
+                }
+            }
+        }*/
+        ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
+
+        if (loadedDialogue.isChoices)
+        {
+            PresentChoices();
+        }
+        else
+        {
+            choicesParent.SetActive(false);
+            //Debug.Log("Starting conversation");
+            sentences.Clear();
+
+            foreach (string sentence in loadedDialogue.sentences)
+            {
+                sentences.Enqueue(sentence);
+            }
+            DisplayNextSentence();
+        }
+        ProcessStartCommand();
+
+        /*if (overworldManager.localeArmy != null) //weird npc code fix later
+        {
+            if (overworldManager.localeArmy.currentSupplyPoint != null)
+            {
+                if (loadedDialogue.isFirstInstanceNPC)
+                {
+                    overworldManager.localeArmy.currentSupplyPoint.npcTalkedTo[num] = true;
+                }
+            }
+        }*/
+    }
+
+    //FIELD BATTLE STUFF; WILL BE MIGRATED TO FIELD BATTLE MANAGER
 
     public void ActivatePlacementScreen()
     {
@@ -468,8 +648,7 @@ public class DialogueManager : MonoBehaviour
 
         gameInit.board.GenerateButtonsFromSavedUnits();
     }
-
-    public void LoadLevelUnitList(string level) // will destroy saved units list. useful if a level doesn't require units from a previous level
+    private void DestroyAndLoadLevelUnitList(string level) // will destroy saved units list. useful if a level doesn't require units from a previous level
     {
         List<UnitInformationScript> toDestroyList = new List<UnitInformationScript>();
         foreach (var item in gameInit.saveInfoObject.listOfSavedUnits)
@@ -495,57 +674,15 @@ public class DialogueManager : MonoBehaviour
         //loads the correct unit list
         gameInit.saveInfoObject.GenerateModifiableScripObjsAsChildren(); //generates them
     }
-    public void StartTutorial()
-    {
-        gameInit.inTutorial = true;
-        chessUI.menuOptionsParent.SetActive(false);
-        chessUI.BG.gameObject.SetActive(false);
-        Tween tween = fadeToBlack.DOFade(1, 1).SetEase(Ease.InOutQuad);//dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
-        tween.OnComplete(StartTutorial2);
-
-    }
-
-    void StartTutorial2()
-    {
-        gameInit.strafeCam.transform.position = cameraPosTutorial.position;
-        gameInit.strafeCam.SetActive(true);
-        gameInit.cinematicCam.SetActive(false);
-
-        cinematicParent.SetActive(false);
-
-        gameInit.SelectLevel("Tutorial"); //loads the correct board layout (pieces positioning)
-        gameInit.levelGen.SelectLevel("Tutorial"); //loads correct map, and placement map
-
-        StartCoroutine(Tutorial3());
-    }
-
-    private IEnumerator Tutorial3()
-    {
-        yield return new WaitForSecondsRealtime(.01f);
-
-        gameInit.CreateSinglePlayerBoard(); //enables execute button, creates board, finds board for level gen, generates level, finds board
-        chessUI.OnSingleplayerModeSelected(); //simply disables some screens
-        gameInit.InitializeSinglePlayerController();
-        LoadLevelUnitList("Tutorial");
-        gameInit.board.GenerateButtonsFromSavedUnits();
-
-
-        gameInit.chessController.AllowInput = false;
-        Tween tween = fadeToBlack.DOFade(0, 1).SetEase(Ease.InOutQuad);//dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
-        tween.OnComplete(StartTutorial3);
-    }
-
     public void StartTestingGrounds()
     {
         LoadLevelSetup("Tutorial");
     }
-
     public void FastLaunchDayOfGlory()
     {
         LoadLevelSetup("DayOfGlory");
     }
-
-    private void LoadLevelSetup(string level)
+    public void LoadLevelSetup(string level)
     {
         gameInit.strafeCam.transform.position = cameraPosTutorial.position;
         gameInit.strafeCam.SetActive(true);
@@ -571,7 +708,7 @@ public class DialogueManager : MonoBehaviour
         gameInit.CreateSinglePlayerBoard(); //enables execute button, creates board, finds board for level gen, generates level, finds board
         chessUI.OnSingleplayerModeSelected(); //simply disables some screens
         gameInit.InitializeSinglePlayerController(); //creates units
-        LoadLevelUnitList(level);
+        DestroyAndLoadLevelUnitList(level);
         gameInit.board.GenerateButtonsFromSavedUnits();
 
         gameInit.chessController.AllowInput = true;
@@ -580,7 +717,97 @@ public class DialogueManager : MonoBehaviour
         gameInit.unreadyButtonParent.SetActive(true);
     }
 
-    void StartTutorial3()
+    public void DestroyLevel(string level)
+    {
+
+        gameInit.levelGen.DestroyLevel(level);
+    }
+
+    public void LoadLevel(string level) //use to swap levels on the fly. 
+    {
+        //gameInit.levelGen.DestroyLevel();
+        //gameInit.levelGen.DestroyLevel(level);
+
+        gameInit.SelectLevel(level); //loads the correct board layout (pieces positioning)
+        gameInit.levelGen.SelectLevel(level); //loads correct map, and placement map
+        //if board already exists then we should just generate the level
+        gameInit.levelGen.GenerateLevel();
+        //if controller already exists then don't make another one
+
+        //save units on your team
+        //gameInit.saveInfoObject.SaveExistingPieceInfoInScripObjs();
+        DestroyAndLoadLevelUnitList(level);
+
+        //destroy units on board
+        Piece[] AllPieces = FindObjectsOfType<Piece>();
+        foreach (var piece in AllPieces)
+        {
+            piece.ImmediateRemoval();
+            foreach (var corpse in piece.deadSoldiers) //delete corpses
+            {
+                Destroy(corpse);
+            }
+            foreach (var projectile in piece.childProjectiles)
+            {
+                Destroy(projectile);
+            }
+        }
+
+        if (gameInit.board == null)
+        {
+            gameInit.CreateSinglePlayerBoard();
+        }
+
+        gameInit.InitializeSinglePlayerController(); //creates units
+        //create new units from loadout
+        gameInit.chessController.CreatePiecesFromLayout(gameInit.boardLevel);
+        //enable placement again
+        ActivatePlacementScreen();
+    }
+
+    //TUTORIAL STUFF; WILL BE MIGRATED TO TUTORIAL MANAGER
+    
+    public void StartTutorial()
+    {
+        gameInit.inTutorial = true;
+        chessUI.menuOptionsParent.SetActive(false);
+        chessUI.BG.gameObject.SetActive(false);
+        Tween tween = fadeToBlack.DOFade(1, 1).SetEase(Ease.InOutQuad);//dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
+        tween.OnComplete(StartTutorial2);
+
+    }
+
+    private void StartTutorial2()
+    {
+        gameInit.strafeCam.transform.position = cameraPosTutorial.position;
+        gameInit.strafeCam.SetActive(true);
+        gameInit.cinematicCam.SetActive(false);
+
+        cinematicParent.SetActive(false);
+
+        gameInit.SelectLevel("Tutorial"); //loads the correct board layout (pieces positioning)
+        gameInit.levelGen.SelectLevel("Tutorial"); //loads correct map, and placement map
+
+        StartCoroutine(Tutorial3());
+    }
+
+    private IEnumerator Tutorial3()
+    {
+        yield return new WaitForSecondsRealtime(.01f);
+
+        gameInit.CreateSinglePlayerBoard(); //enables execute button, creates board, finds board for level gen, generates level, finds board
+        chessUI.OnSingleplayerModeSelected(); //simply disables some screens
+        gameInit.InitializeSinglePlayerController();
+        DestroyAndLoadLevelUnitList("Tutorial");
+        gameInit.board.GenerateButtonsFromSavedUnits();
+
+
+        gameInit.chessController.AllowInput = false;
+        Tween tween = fadeToBlack.DOFade(0, 1).SetEase(Ease.InOutQuad);//dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
+        tween.OnComplete(StartTutorial3);
+    }
+
+    private void StartTutorial3()
     {
         SelectDialogue("Actual1");
     }
@@ -590,7 +817,6 @@ public class DialogueManager : MonoBehaviour
 
         gameInit.placingUnitsScreen.SetActive(true);
     }
-
     public void ConfirmedUnitPlacementTutorial()
     {
         SelectDialogue("Actual3");
@@ -600,82 +826,58 @@ public class DialogueManager : MonoBehaviour
     {
         SelectDialogue("Actual5");
     }
-    public void PresentChoices()
+    private void EndTutorial()
     {
-        //Debug.Log("presenting choices");
-        Tween tween = dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
-        dialogueText.text = "";
-
-        ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
-        choicesParent.SetActive(true);
-
-        var i = 0;
-        foreach (var item in choiceList)
-        {
-            if (i < loadedDialogue.sentences.Length) //say i = 2 and tere are 2 choices
-            {
-                item.transform.parent.gameObject.SetActive(true);
-                //Debug.Log(loadedDialogue.sentences[i]);
-                item.text = loadedDialogue.sentences[i];
-                i++;
-            }
-            else
-            {
-                item.transform.parent.gameObject.SetActive(false);
-            }
-        }
-        ProcessCommand();
+        gameInit.chessController.AllowInput = false;
+        Tween tween = fadeToBlack.DOFade(1, 1).SetEase(Ease.InOutQuad);
+        tween.OnComplete(EndTutorial2);
     }
-    private void ForceChangeSpeaker(bool change)
+    private void EndTutorial2()
     {
-        if (change)
-        {
-            speakerBGImage.color = loadedDialogue.speakerColorBorder;
-            speakerFancyBorder.color = loadedDialogue.speakerFancyBorder;
-            textspeed = loadedDialogue.speakerSpeed;
-            speakerImage.sprite = loadedDialogue.speakerImage;
-            speakerText.text = loadedDialogue.speaker;
-        }
+        LoadLevel("HemmedIn");
+        Tween tween = fadeToBlack.DOFade(0, 1).SetEase(Ease.InOutQuad);
+        tween.OnComplete(EndTutorial3);
     }
-    public void ChooseChoice(int num)
+    private void EndTutorial3()
     {
-        loadedDialogue = loadedDialogue.choicePaths[num];
-        if (overworldManager.localeArmy.currentSupplyPoint != null)
-        {
-            if (overworldManager.localeArmy.currentSupplyPoint.npcTalkedTo[num] == true)
-            {
-                if (loadedDialogue.talkedToDialogue != null)
-                {
-                    loadedDialogue = loadedDialogue.talkedToDialogue;
-                }
-            }
-        }
-        ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
-
-        if (loadedDialogue.isChoices)
-        {
-            PresentChoices();
-        }
-        else
-        {
-            choicesParent.SetActive(false);
-            //Debug.Log("Starting conversation");
-            sentences.Clear();
-
-            foreach (string sentence in loadedDialogue.sentences)
-            {
-                sentences.Enqueue(sentence);
-            }
-            DisplayNextSentence();
-        }
-        ProcessCommand();
-
-        if (overworldManager.localeArmy.currentSupplyPoint != null)
-        {
-            if (loadedDialogue.isFirstInstanceNPC)
-            {
-                overworldManager.localeArmy.currentSupplyPoint.npcTalkedTo[num] = true;
-            }
-        }
+        gameInit.chessController.AllowInput = true;
+        //Debug.Log("tutorial over");
     }
+
+    private void IgnoreTutorial()
+    {
+        chessUI.menuOptionsParent.SetActive(false);
+        chessUI.BG.gameObject.SetActive(false);
+        Tween tween = fadeToBlack.DOFade(1, 1).SetEase(Ease.InOutQuad);
+        tween.OnComplete(IgnoreTutorial2);
+    }
+
+    private void IgnoreTutorial2()
+    {
+        gameInit.strafeCam.transform.position = cameraPosTutorial.position;
+        gameInit.strafeCam.SetActive(true);
+        gameInit.cinematicCam.SetActive(false);
+        cinematicParent.SetActive(false);
+
+        gameInit.SelectLevel("HemmedIn"); //loads the correct board layout (pieces positioning)
+        gameInit.levelGen.SelectLevel("HemmedIn"); //loads correct map, and placement map
+        gameInit.CreateSinglePlayerBoard(); //enables execute button, creates board, finds board for level gen, generates level, finds board
+        chessUI.OnSingleplayerModeSelected(); //simply disables some screens
+        gameInit.InitializeSinglePlayerController();
+        DestroyAndLoadLevelUnitList("HemmedIn");
+        gameInit.board.GenerateButtonsFromSavedUnits();
+
+
+        gameInit.chessController.AllowInput = false; //needs to show up after chesscontroller is made 
+
+        Tween tween = fadeToBlack.DOFade(0, 1).SetEase(Ease.InOutQuad);//dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
+        tween.OnComplete(IgnoreTutorial3);
+    }
+
+    private void IgnoreTutorial3()
+    {
+        gameInit.chessController.AllowInput = true;
+        //Debug.Log("tutorial ignored");
+    }
+
 }

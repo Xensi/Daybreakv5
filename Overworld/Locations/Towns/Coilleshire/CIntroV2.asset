@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: CIntroV2
+  m_EditorClassIdentifier: 
+  speaker: Coilleshire
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.02
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  isChoices: 0
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 
+  speakerSentences:
+  - {fileID: 11400000, guid: bd9061ea356defc4abb4febd4475b11d, type: 2}
+  - {fileID: 11400000, guid: bd9061ea356defc4abb4febd4475b11d, type: 2}
+  - {fileID: 11400000, guid: bd9061ea356defc4abb4febd4475b11d, type: 2}
+  - {fileID: 11400000, guid: 4fc81122073a3e749a49163eaad38c2b, type: 2}
+  - {fileID: 11400000, guid: 4fc81122073a3e749a49163eaad38c2b, type: 2}
+  - {fileID: 11400000, guid: 4fc81122073a3e749a49163eaad38c2b, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  - {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  - {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
+  sentences:
+  - 'Nestled in the shade of the forest to the north, the village of Coilleshire
+    is noisy with the sound of lumber workers slamming their axe-heads into the large
+    pines close to them. '
+  - "The Grafton forest is dense enough that their efforts don\u2019t seem to shrink
+    it in the slightest. Villagers who wander about bow their heads in acknowledgement
+    of your arrival. "
+  - Are they relieved? Anxious? Afraid? You cannot say for certain.
+  - "A peasant with a crooked cap and a bright crimson tunic steps forth with outstretched
+    arms, bowing deeply. \r\n"
+  - 'Salutations, glorious saviors. Ye who have come forth to lift the Atlesian boot
+    off our necks, my deepest gratitudes! Yes, yes!
+
+    <i>He follows you as your
+    horses trot along, babbling as you move.</i>'
+  - I forget myself in your powerful presence. My name is Dernoth. My profession-
+  - "You must be the professional arse-kisser, I assume?\n\r<i>Gottfried chuckles
+    at his own jest.\r</i>"
+  - "Ahem.\n<i>Hartwig shoots a quick glare at Gotfried, and he returns a shrug.
+    \r</i>"
+  - "We are most honored by your hospitality. And please, we are no saviors, but
+    simply wish to perform a humble duty on Maukland\u2019s behalf.\r\n\r\r<i>Hartwig
+    smiles warmly. Gotfried rolls his eyes.\r</i>"
+  - 'Aha . . . yes. And of course we wish to aid you in this duty in any way possible.
+    Borgham fell so quickly, its brave defenders fighting to the last.
+
+'
+  - "<i>Gotfried belts out a bout of laughter upon hearing this.\nHartwig shakes
+    his head disapprovingly.\r</i>\n"
+  - "Erm . . . as I was saying, the Atlesian victory was swift. And of course, we
+    can only look to you for aid. Defenseless, and helpless as we are.\n\r<i>His
+    grating, gravelly voice continues to plead.\r</i>"
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: 1c049fd553e4288418cb2193b994f000, type: 2}
+  choicePaths: []

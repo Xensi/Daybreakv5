@@ -20,8 +20,32 @@ PrefabInstance:
       value: Castle Borgham
       objectReference: {fileID: 0}
     - target: {fileID: 4665412469295489745, guid: 95c54d3bbe0417e49af5d2890430e937, type: 3}
+      propertyPath: storedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4665412469295489745, guid: 95c54d3bbe0417e49af5d2890430e937, type: 3}
+      propertyPath: reservedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4665412469295489745, guid: 95c54d3bbe0417e49af5d2890430e937, type: 3}
+      propertyPath: storedProvisions
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4665412469295489745, guid: 95c54d3bbe0417e49af5d2890430e937, type: 3}
+      propertyPath: reservedProvisions
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4665412469295489745, guid: 95c54d3bbe0417e49af5d2890430e937, type: 3}
       propertyPath: npcTalkedTo.Array.size
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4665412469295489745, guid: 95c54d3bbe0417e49af5d2890430e937, type: 3}
+      propertyPath: extortionReservedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4665412469295489745, guid: 95c54d3bbe0417e49af5d2890430e937, type: 3}
+      propertyPath: extortionReservedProvisions
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4665412469295489745, guid: 95c54d3bbe0417e49af5d2890430e937, type: 3}
       propertyPath: armiesToSupport.Array.data[0]

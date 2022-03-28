@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: C5end
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: gainHorses
+  commandVar: -1
+  commandString: 
+  isChoices: 0
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 00000001
+  speakerSentences:
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  sentences:
+  - "Well. I\u2019m . . . surprised. I suppose this is useful information after all.
+    So, what do you wish for in exchange? "
+  - "<i>He grins crookedly yet again.</i>\nI only wish for a quick steed to continue
+    my travels upon, and some food to sustain myself. \r"
+  - Then you shall have both.
+  - (-1 horse.)
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: a9b5f6a73325a9a41b5ecc83ee49da08, type: 2}
+  choicePaths: []

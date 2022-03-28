@@ -16,4 +16,5 @@ MonoBehaviour:
   cardIcon: {fileID: 21300000, guid: 58040d6c384e063499ea54d24e8f5ad5, type: 3}
   cardTroops: 80
   cardMaxTroops: 80
-  cardColor: {r: 0.19778684, g: 0.34886768, b: 0.5566038, a: 1}
+  cardColor: {r: 0.24313726, g: 0.38039216, b: 0.5764706, a: 1}
+  spoilsCost: 1

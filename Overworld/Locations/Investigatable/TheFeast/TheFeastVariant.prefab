@@ -1,0 +1,117 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &3614362667407911118
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2100335452892201713, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: mood
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201713, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: faction
+      value: Maukland
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201713, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: relations
+      value: Welcoming
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201713, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: extortable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201713, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: supplyName
+      value: The Feast
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201713, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: pillageable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201713, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: storedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201713, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: reservedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201713, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: storedProvisions
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201713, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: reservedProvisions
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201713, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: extortionReservedProvisions
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201714, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201714, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 17.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201714, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201714, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -26.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201714, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201714, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201714, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201714, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201714, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201714, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201714, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2100335452892201719, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: m_Name
+      value: TheFeast
+      objectReference: {fileID: 0}
+    - target: {fileID: 4210317634994325431, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 0d291f114967ff344851a62ad28e184a, type: 3}
+    - target: {fileID: 7323538844986342838, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.18
+      objectReference: {fileID: 0}
+    - target: {fileID: 7323538844986342838, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.18
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 2100335452892201715, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+    - {fileID: 2100335452892201712, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: 0a779004e715f004b8388dd58d1dc092, type: 3}

@@ -9,11 +9,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3674928046426528874, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_Name
-      value: ZhanguoScoutPost
+      value: ZhanguoScoutPost Variant
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: mood
       value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: isFort
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: faction
@@ -32,11 +36,47 @@ PrefabInstance:
       value: Zhanguo Scout Post
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: storedSpoils
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: reservedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: storedProvisions
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: reservedProvisions
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: extortionReservedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: armiesToSupport.Array.size
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: extortionReservedProvisions
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: armiesToSupport.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: placesBlockingRoute.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: placesBlockingRoute.Array.data[0]
+      value: 
+      objectReference: {fileID: 8461089673803606748}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: placesBlockingRoute.Array.data[1]
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
@@ -45,15 +85,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.262585
+      value: 7.5
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.13577461
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.8285794
+      value: -10.5
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalRotation.w
@@ -85,3 +125,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+--- !u!114 &8461089673803606748 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+  m_PrefabInstance: {fileID: 5157786697799677616}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97c6aa30e775e79439f969aaaab098c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

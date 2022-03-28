@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: C6
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  isChoices: 0
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 00000000
+  speakerSentences:
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
+  - {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
+  - {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
+  sentences:
+  - 'Was that your great revelation? This intelligence could be gleaned by amateur
+    falconers and hunters, let alone a scout. If you want something from us, you
+    should do better than that. '
+  - "Ah, so you drive a hard bargain. Alright, alright. I\u2019ll concede to your
+    demanding appetite for information. I only have so much information for Borgham,
+    but I <i>can</i> tell you that most Mauklendi are none too happy to work for
+    the castle garrison. "
+  - "And yes, I know what you\u2019ll say, this comes as no surprise. But consider:
+    Agents who work on your behalf from the <i>inside</i> of the castle are a boon
+    for any siege . . . is it not?"
+  - 'And lastly, on a grander scale, I can tell you that the Atlesians will not be
+    content to merely defend against your assaults for very long. Soon, they will
+    plan to strike out from Grafton, launching attacks of a scale that we have not
+    seen since the beginning of this war a year or so prior. '
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: f386babaa77139641b9cd7a6a7f4ebe2, type: 2}
+  choicePaths: []

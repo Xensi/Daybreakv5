@@ -1,0 +1,127 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &3588815670853362287
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1563903514922801450, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: be5eadd9aefec93458982591769d75e3, type: 3}
+    - target: {fileID: 3674928046426528874, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_Name
+      value: Coilleshire
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: population
+      value: 230
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: routeClear
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: supplyName
+      value: Coilleshire
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: storedSpoils
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: eventDialogue
+      value: 
+      objectReference: {fileID: 11400000, guid: 02a6696e3f58ba34ba7e0930d5b555ef, type: 2}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: maxProvisions
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: reservedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: storedProvisions
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: reservedProvisions
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: extortionReservedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: armiesToSupport.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: extortionReservedProvisions
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: armiesToSupport.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -7.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366174909288178475, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366174909288178475, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5985221084514597763, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_Name
+      value: Icon
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}

@@ -26,16 +26,18 @@ public class LevelGenerator : MonoBehaviour
     {
         //GenerateLevel();
     }
-    public void DestroyLevel()
+    public void DestroyLevel(string level)
     {
-        foreach (var terrain in terrainList)
+        /*foreach (var terrain in terrainList)
         {
             terrain.gameObject.SetActive(false);
-        }
+        }*/
         foreach (var tile in tileList)
         {
             Destroy(tile);
         }
+        string sceneMap = level + "Map";
+        SceneManager.UnloadSceneAsync(sceneMap);
     }
     public void SelectLevel(string strLevel)
     {

@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: C1A
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  isChoices: 0
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 010001000100
+  speakerSentences:
+  - {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
+  - {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  sentences:
+  - "Dernoth strokes his chin and takes an awkward bow. His laugh is like that of
+    a crow\u2019s squawk. \r"
+  - 'Good. Great. <i>Excellent, even.</i> I thank you for taking the time to bargain
+    with this humble subject of your Empire. '
+  - "Gotfried groans in annoyance.\r"
+  - Are we really wasting our time with this <i>Schwanz</i>-for-a-nose?
+  - "Dernoth\u2019s crooked grin gives way to a distraught frown. From beyond him,
+    a small mob of a few dozen armed men begin storming down the pathway, stopping
+    when they see you. "
+  - "Oh, gods be praised he\u2019s going to get hauled off. Guards, over here!"
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: 1f1c71068796288488cdefb7988f2c80, type: 2}
+  choicePaths: []

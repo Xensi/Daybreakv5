@@ -16,6 +16,10 @@ PrefabInstance:
       value: ForwardCamp Variant
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: mood
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: isFort
       value: 1
       objectReference: {fileID: 0}
@@ -28,11 +32,39 @@ PrefabInstance:
       value: 3000
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: routeClear
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: supplyName
       value: Forward Camp
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: storedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: reservedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: storedProvisions
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: reservedProvisions
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: extortionReservedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: armiesToSupport.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: extortionReservedProvisions
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}

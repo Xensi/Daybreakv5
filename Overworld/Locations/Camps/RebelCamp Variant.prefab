@@ -12,6 +12,10 @@ PrefabInstance:
       value: RebelCamp
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: isFort
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: faction
       value: Maukland
       objectReference: {fileID: 0}
@@ -24,7 +28,31 @@ PrefabInstance:
       value: Rebel Camp
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: storedSpoils
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: reservedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: storedProvisions
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: reservedProvisions
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: extortionReservedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: armiesToSupport.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: extortionReservedProvisions
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}

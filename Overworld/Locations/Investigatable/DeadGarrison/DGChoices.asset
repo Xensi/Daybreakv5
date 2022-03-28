@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: DGChoices
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  isChoices: 1
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  forceChangeSpeaker: 1
+  talkedToDialogue: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 
+  speakerSentences:
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  sentences:
+  - "Do not be distracted by old stones and rusted blades. What\u2019s new, the Mauklings
+    have abandoned forts? Our great Empire has ruins many times this size, so I am
+    hardly impressed!"
+  - 'We cannot linger here long. I have no doubts that battles raged here in ages
+    long past . . . and perhaps the warriors have not left their posts, still manning
+    them as shades. '
+  - These ruins . . . they stand as a testament to how the Kingdom of Maukland has
+    fallen. Without our guidance, all of Maukland would resemble this ruin. So take
+    heart, and take this as a reminder of our righteous cause!
+  sentenceAudio: []
+  nextDialogue: {fileID: 0}
+  choicePaths:
+  - {fileID: 11400000, guid: c0d5f366d1a986c44995c9c7196000a8, type: 2}
+  - {fileID: 11400000, guid: 90f837a9425ad8843b814572aa10ebdb, type: 2}
+  - {fileID: 11400000, guid: ae1333011ec5d2848af0693634035fe4, type: 2}

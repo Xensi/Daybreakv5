@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: MAmbush
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  dialogueIfConditionTrue: {fileID: 0}
+  isChoices: 0
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 00000000
+  speakerSentences:
+  - {fileID: 11400000, guid: 0e50f2d7c194197468b70a5730395c41, type: 2}
+  sentences:
+  - "Ah, I\u2019m real sorry about that. We couldn\u2019t. The Atlesians strong-armed
+    us into hiding, so that we wouldn\u2019t ruin their plans. Getting killed is
+    bad for business, you know."
+  - "These Atlesians . . . they\u2019re a nasty sort, aren\u2019t they? I nearly
+    thought they were going to rob us of all we had."
+  - "Say, I\u2019ve got a bargain for you, commander. How about we follow your army?"
+  - "You\u2019ve got exclusive trading rights, as long as you can protect us from
+    those scoundrels. How about it?"
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: 8742a4b282250e84c97ed5f1951240bf, type: 2}
+  choicePaths: []

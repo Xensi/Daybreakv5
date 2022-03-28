@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: VD13
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  isChoices: 0
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 010100
+  speakerSentences:
+  - {fileID: 11400000, guid: 9a455065026040a4d8da2a3059a7f4fe, type: 2}
+  - {fileID: 11400000, guid: 22892e606467ea444a4ff708684aa457, type: 2}
+  - {fileID: 11400000, guid: 22892e606467ea444a4ff708684aa457, type: 2}
+  sentences:
+  - 'A few of your soldiers begin gruffly questioning the denizens of the village,
+    inquiring as to the whereabouts of their elders. '
+  - Within a minute, the largest hovel close to the square has its doors swing open,
+    and a wizened man with a droopy beard and a cane shambles towards you.
+  - Altgardian . . . my deepest apologies. This messenger of yours was . . . slain
+    by one of our own. A rambunctious lad, too rowdy for his own good. He has long
+    since fled this village, you will not find retribution here.
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: aa20e98410713844bb4be47b5a24d6ba, type: 2}
+  choicePaths: []

@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: VDChoices
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  isChoices: 1
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 
+  speakerSentences:
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  sentences:
+  - If this is the case, punitive measures must be taken. Bring these villagers before
+    me.
+  - Doubtful. Perhaps brigands and Atlesian raiders. Perhaps it is better for us
+    to bury the poor man and move on.
+  - 'We cannot assume anything. Question the villagers, and find their leader. '
+  sentenceAudio: []
+  nextDialogue: {fileID: 0}
+  choicePaths:
+  - {fileID: 11400000, guid: 8a591af4691644941915ef52ef7489f8, type: 2}
+  - {fileID: 11400000, guid: 49e375cd5e5593745b03c2270de75c2d, type: 2}
+  - {fileID: 11400000, guid: 8a591af4691644941915ef52ef7489f8, type: 2}

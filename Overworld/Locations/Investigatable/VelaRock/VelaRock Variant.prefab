@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 1626457028754654898, guid: 559064dd4950c674fa814e8338f53214, type: 3}
       propertyPath: localeInvestigationDialogue
       value: 
-      objectReference: {fileID: 11400000, guid: 65f367017f3ec6448a036211141ea0e7, type: 2}
+      objectReference: {fileID: 11400000, guid: 6cb0974b1c968424da2f339239c6b0fa, type: 2}
     - target: {fileID: 5059624812127319041, guid: 559064dd4950c674fa814e8338f53214, type: 3}
       propertyPath: m_RootOrder
       value: 0

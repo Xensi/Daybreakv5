@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: VDIntro
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  isChoices: 0
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 01010100
+  speakerSentences:
+  - {fileID: 11400000, guid: 9a455065026040a4d8da2a3059a7f4fe, type: 2}
+  - {fileID: 11400000, guid: 9a455065026040a4d8da2a3059a7f4fe, type: 2}
+  - {fileID: 11400000, guid: 9a455065026040a4d8da2a3059a7f4fe, type: 2}
+  - {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  sentences:
+  - 'Upon entering the small town of Vindale, the business of village life comes
+    to a screeching halt. The reactions of the Mauklings have always bewildered you.
+    They normally approach you with apprehension, despite you being their liberators. '
+  - 'But today is different. Today, the normally squalling children hide in their
+    hovels. The grimy workmen do not attend their toils. They do not even approach
+    to so much as greet you. It becomes clear why when you reach the town center. '
+  - 'A delegate, a messenger it seems, lies sprawled across the ground in broad daylight.
+    Gnats nibble his pale flesh. Drawn blood oozes across the ground from an opening
+    in his neck. Hartwig shakes his head in concern. '
+  - "\u201CAre the villagers responsible for this?\u201D\r\n"
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: 71391b8225254d64293d0d0082073c4d, type: 2}
+  choicePaths: []

@@ -32,8 +32,28 @@ PrefabInstance:
       value: Peatmyre
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: storedSpoils
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: reservedSpoils
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: storedProvisions
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: extortionReservedSpoils
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: armiesToSupport.Array.size
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: extortionReservedProvisions
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: armiesToSupport.Array.data[0]
@@ -61,15 +81,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

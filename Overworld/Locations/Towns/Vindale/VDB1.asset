@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: VDB1
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  isChoices: 0
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 010100000101000000000101
+  speakerSentences:
+  - {fileID: 11400000, guid: 9a455065026040a4d8da2a3059a7f4fe, type: 2}
+  - {fileID: 11400000, guid: 22a185903082a404a813ec234a959741, type: 2}
+  - {fileID: 11400000, guid: 22a185903082a404a813ec234a959741, type: 2}
+  - {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  - {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  - {fileID: 11400000, guid: 22a185903082a404a813ec234a959741, type: 2}
+  - {fileID: 11400000, guid: 22a185903082a404a813ec234a959741, type: 2}
+  - {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  - {fileID: 11400000, guid: 22a185903082a404a813ec234a959741, type: 2}
+  - {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  - {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  sentences:
+  - "Two of your soldiers stride forward, raising their halberds to aim their tips
+    at the old man\u2019s throat. They stand ready to skewer him at a moment\u2019s
+    notice. The once quiet villagers now cry out in fear, and Hartwig looks at you
+    with some measure of concern. "
+  - A desperate shout calls out from a nearby hovel. A somewhat bulky man staggers
+    out. He looks to be a butcher, though his apron does not seem stained with the
+    blood of beasts. You see a terrified woman urge him not to go, but he meets your
+    gaze regardless.
+  - "Stop! Stop this, please! Yes, I slit your messenger\u2019s throat, it was I!
+    Spare the old man your wrath!"
+  - "So, you are the miscreant responsible for our messenger\u2019s death. For what
+    reason have you done this? "
+  - "\rHe points his sword in accusation. \r\n"
+  - "\rThe butcher fearfully collapses to his knees before you, explaining himself
+    in ragged breaths. \r\n"
+  - "I loathed the idea of your rule. To squirm beneath your boot, to bow to your
+    perverse creed . . . I thought I was better off dead. But you needn\u2019t have
+    these others pay for my mistakes. "
+  - Our rule!? For what reason? We bring salvation, light, liberation!
+  - Those who fell at Etterhall would like to say otherwise.
+  - Etterhall? What in the stars of KSH are you talking about . . .
+  - "Your companion\u2019s brows scrunch in confusion and aggravation. Gotfried regards
+    the culprit with nothing but a cold gaze, and remains silent. Even the normally
+    stoic Ingva seems perturbed . . . her eyes widen at the word \u201CEtterhall.\u201D "
+  - You swing up off your steed and approach the thief to decide his fate, and that
+    of his compatriots.
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: 9dbe7739aa5f4d840a6cbe5a77345111, type: 2}
+  choicePaths: []

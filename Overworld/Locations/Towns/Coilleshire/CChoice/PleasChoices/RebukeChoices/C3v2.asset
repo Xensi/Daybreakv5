@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: C3v2
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: checkVisited
+  commandVar: 0
+  commandString: Eadin
+  dialogueIfConditionTrue: {fileID: 11400000, guid: 8a77c3c0f588758418b75240052c4f2e, type: 2}
+  isChoices: 0
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 0101000000
+  speakerSentences:
+  - {fileID: 11400000, guid: bd9061ea356defc4abb4febd4475b11d, type: 2}
+  - {fileID: 11400000, guid: bd9061ea356defc4abb4febd4475b11d, type: 2}
+  - {fileID: 11400000, guid: e0dc0ba66e5aabd4eafd74488f70e272, type: 2}
+  - {fileID: 11400000, guid: e0dc0ba66e5aabd4eafd74488f70e272, type: 2}
+  - {fileID: 11400000, guid: e0dc0ba66e5aabd4eafd74488f70e272, type: 2}
+  sentences:
+  - "Without hesitation, Gotfried, with the help of another soldier, forcibly bind
+    the man\u2019s hands behind his back. He is dragged kicking and screeching towards
+    the shire-reeve and his posse, who in turn lock him away in the town\u2019s gaol
+    to await sentencing."
+  - "After some time, the Mauklings return. \r\n"
+  - "Your support in ending this thief\u2019s tomfoolery is much appreciated, good
+    sir. "
+  - "We don\u2019t have much, but we hope some of our supplies and horses will do
+    you some good in the coming battles. I\u2019ll make sure to get you some of the
+    best in our stock. "
+  - "Oh, and a fair word of warning before you depart. The Atlesians are now ranging
+    farther and farther from their stronghold. And come to think of it, we haven\u2019t
+    heard from Eadin in a few days . . ."
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: 3280add2ee85e824eb4f88e86937386b, type: 2}
+  choicePaths: []

@@ -16,7 +16,10 @@ public class Army : MonoBehaviour
     [Tooltip("Only fill out if AI controlled.")]
     [SerializeField] private List<Transform> patrolNodes; //AI ONLY
     public string faction = "Altgard";
+    public Army detectedNotSpottedArmy;
     public Army focusedOnArmy;
+    public Vector3 enemyLastSeenPos; //ai only
+    public bool lastPosKnown;
     [SerializeField] private DetectPlayerArmies detector;
 
     private int nodeNumber = 0;
@@ -25,11 +28,12 @@ public class Army : MonoBehaviour
     private OverworldManager overworldManager;
     public List<SingleNodeBlocker> obstacles;
     public Transform target;
+    public GameObject targetVisual;
     public AIPath aiPath;
     public GameObject aiTarget;
     public int speedMax = 4;
     public int speedCurrent = 0;
-    
+
     public BlockManager blockManager;
     BlockManager.TraversalProvider traversalProvider;
     public ABPath path;
@@ -51,6 +55,8 @@ public class Army : MonoBehaviour
     public int supplyUpkeep = 1;
     public int overallMorale = 8; //army morale
     public int maxMorale = 8;
+    public int spoils = 0;
+    public int maxSpoils = 20;
     public int starvation = 0;
     public bool garrisoned = false;
     public List<Button> listOfSplitOffs;
@@ -69,9 +75,22 @@ public class Army : MonoBehaviour
     private int startingMaxProv = 8;
     public string size = "Medium";
     public int horses = 0;
+    public int predictedSupplyConsumption = 0;
 
     public List<ArmyCard> cards;
     [SerializeField] private bool checkedForcedMarch = false;
+
+    public int predictedMovementSpaces = 0;
+    private int forcedMarchDistance = 4;
+
+    public bool moving = false;
+
+    public bool arrestedDernoth = false;
+    public bool arrestedButcher = false;
+
+
+    public Collider watchdogBounds;
+    public bool withinWatchdogBounds = true;
 
     public void Awake() //Setup when spawned
     {
@@ -108,6 +127,22 @@ public class Army : MonoBehaviour
             fowUnit.team = 1;
             target.transform.position = patrolNodes[nodeNumber].transform.position; //set destination;
             detector.parentArmy = this;
+        }
+    }
+
+    public void TriggerEventsAtLocales()
+    {
+        //Debug.LogError("EVENT");
+        if (currentSupplyPoint != null)
+        {
+            if (currentSupplyPoint.eventDialogue != null && currentSupplyPoint.eventTriggered == false)
+            {
+                overworldManager.dialogueEvent = true;
+                overworldManager.localeArmy = this;
+                overworldManager.dialogueManager.loadedDialogue = currentSupplyPoint.eventDialogue;
+                overworldManager.dialogueManager.StartDialogue();
+                currentSupplyPoint.eventTriggered = true;
+            }
         }
     }
     private void UpdateVisionRange()
@@ -155,7 +190,6 @@ public class Army : MonoBehaviour
         maxProvisions = startingMaxProv + numberOfUnitsInArmy;
         provisions = maxProvisions;
     }
-
     public void AddArmyCard(ArmyCardScriptableObj card)
     {
         ArmyCard newCard = Instantiate(armyCardPrefab, overworldManager.leftAnchor.position, Quaternion.identity, overworldManager.armyCompBoxParent);
@@ -174,7 +208,6 @@ public class Army : MonoBehaviour
         cards.Add(newCard);
         AlignArmyCards();
     }
-
     private void AlignArmyCards()
     {
         var x = 0;
@@ -193,6 +226,36 @@ public class Army : MonoBehaviour
     }
     public void CheckSizeAndChangeSpeed()
     {
+        if (aiControlled)
+        {
+            if (numberOfUnitsInArmy <= 6) //small
+            {
+                speedMax = 3;
+                supplyUpkeep = 1;
+                size = "Small";
+            }
+            else if (numberOfUnitsInArmy <= 12) //med
+            {
+                speedMax = 3;
+                supplyUpkeep = 2;
+                size = "Medium";
+            }
+            else if (numberOfUnitsInArmy <= 18) //large
+            {
+                speedMax = 2;
+                supplyUpkeep = 3;
+                size = "Large";
+
+            }
+            else if (numberOfUnitsInArmy > 18) //full army
+            {
+                speedMax = 1;
+                supplyUpkeep = 4;
+                size = "Full";
+            }
+            return;
+        }
+
         if (numberOfUnitsInArmy <= 6) //small
         {
             speedMax = 6;
@@ -227,7 +290,6 @@ public class Army : MonoBehaviour
             size = "Scout";
         }*/
     }
-
     public void SpawnSplitArmy()
     {
         for (int i = 0; i < strengthToSplitOff.Count; i++)
@@ -276,12 +338,18 @@ public class Army : MonoBehaviour
         {
             //Debug.Log("WAR");
             numberOfMovementAttempts = 100;
+            collidedArmy.numberOfMovementAttempts = 100;
         }
 
         LocaleInvestigatable collidedLocale = other.gameObject.GetComponent<LocaleInvestigatable>();
         if (collidedLocale != null)
         {
             currentLocale = collidedLocale;
+        }
+
+        if (other == watchdogBounds)
+        {
+            withinWatchdogBounds = true;
         }
 
     }
@@ -300,17 +368,59 @@ public class Army : MonoBehaviour
                 overworldManager.SelectedArmyExitedSupplyPoint();
             }
         }
+        if (other == watchdogBounds)
+        {
+            withinWatchdogBounds = false;
+        }
 
     }
     public void StartMoving()
     {
+        moving = true;
         checkedForcedMarch = false;
         dustVFX.Play();
         shakeTween.Play();
-        if (aiControlled && focusedOnArmy != null)
+
+        if (aiControlled)
         {
-            target.position = focusedOnArmy.transform.position;
+            //check if we're reached last known pos
+            bool reachedLastPos = false;
+            //check if we've reached lastPosKnown
+            Vector3 diff = transform.position - enemyLastSeenPos;
+            diff.x = Mathf.Abs(diff.x);
+            diff.z = Mathf.Abs(diff.z);
+
+            if (diff.x < 0.5f && diff.z < 0.5f) //safe check to see if we're here
+            {
+                reachedLastPos = true;
+                lastPosKnown = false;
+            }
+
+            if (!withinWatchdogBounds) //out of watchdog bounds go home
+            {
+                target.position = patrolNodes[nodeNumber].transform.position;
+            }
+            else if (focusedOnArmy != null) //if we see army, go to them
+            {
+                target.position = focusedOnArmy.transform.position;
+            }
+            else if (!reachedLastPos && lastPosKnown) //if haven't reached last pos, go there
+            {
+                target.position = enemyLastSeenPos;
+
+            }
+            else if (withinWatchdogBounds) //if ai, patrol
+            {
+                nodeNumber++;
+                if (nodeNumber >= patrolNodes.Count)
+                {
+                    nodeNumber = 0;
+                }
+                target.position = patrolNodes[nodeNumber].transform.position;
+            }
         }
+
+        
         UpdateVisionRange();
         //aiPath.maxSpeed = maxSpeed;
         speedCurrent = 0;
@@ -320,6 +430,10 @@ public class Army : MonoBehaviour
         remainingDistanceNew = aiPath.remainingDistance;
         remainingDistanceOld = aiPath.remainingDistance;
         UpkeepTrigger();
+        if (predictedMovementSpaces >= 4)
+        {
+            ConsumeUpkeep();
+        }
         StartCoroutine(WaitUntilMovementOver());
         StartCoroutine(NoticeIfBlocked());
     }
@@ -335,16 +449,15 @@ public class Army : MonoBehaviour
     }
     private void ConsumeUpkeep()
     {
-
         int requiredProvisions = 0;
         while (requiredProvisions < supplyUpkeep)
         {
             requiredProvisions++;
             provisions--;
-            if (provisions <= 0)
+            if (provisions < 0)
             {
-                starvation += supplyUpkeep - requiredProvisions;
-                break;
+                provisions = 0;
+                starvation++;
             }
         }
     }
@@ -412,7 +525,7 @@ public class Army : MonoBehaviour
         {
             if (path.vectorPath.Count >= 2)
             {
-                Debug.LogError("Starting moving");
+                //Debug.LogError("Starting moving");
                 //aiTarget.transform.position = path.vectorPath[path.vectorPath.Count-1]; //set ai destination to 1 tile in path
 
                 int tempSpeedMax = speedMax;
@@ -434,23 +547,23 @@ public class Army : MonoBehaviour
     private IEnumerator WaitUntilMovementOver()
     {
         yield return new WaitForSeconds(0.01f);
-        if (checkedForcedMarch == false)
+        /*if (checkedForcedMarch == false)
         {
 
             if (aiPath.remainingDistance != 0 && aiPath.remainingDistance >= 4) //-1 is correction, 4 is intended
             {
                 //Debug.LogError("extra upekeep");
-                ConsumeUpkeep();
+                //ConsumeUpkeep();
                 checkedForcedMarch = true;
             }
-        }
+        }*/
 
         if (path.error) //if we can't get a path, try to
         {
             MakePathToTarget();
         }
 
-        if (aiPath.reachedDestination)
+        if (aiPath.reachedDestination) //finished moving
         {
             //StopCoroutine(NoticeIfBlocked());
             StopAllCoroutines();
@@ -461,15 +574,9 @@ public class Army : MonoBehaviour
             shakeTween.Pause();
             Tween fixTween = icon.transform.DORotate(new Vector3(0, 90, 0), .5f);
 
-            if (aiControlled)
-            {
-                nodeNumber++;
-                if (nodeNumber >= patrolNodes.Count)
-                {
-                    nodeNumber = 0;
-                }
-                target.position = patrolNodes[nodeNumber].transform.position;
-            }
+            predictedMovementSpaces = 0;
+
+            moving = false;
 
             yield break;
         }
@@ -500,15 +607,21 @@ public class Army : MonoBehaviour
         }
         if (numberOfMovementAttempts >= 10)
         {
-            //StopCoroutine(WaitUntilMovementOver());
-            //aiPath.canMove = false;
+            if (checkedForcedMarch == false)
+            {
+                float traversed = predictedMovementSpaces - aiPath.remainingDistance;
+                int traversedInt = Mathf.CeilToInt(traversed);
 
+                if (traversedInt >= forcedMarchDistance)
+                {
+                    ConsumeUpkeep();
+                }
+                checkedForcedMarch = true;
+            }
             float fixedCoordsx = RoundToZeroOrHalf(transform.position.x);
             float fixedCoordsz = RoundToZeroOrHalf(transform.position.z);
 
             aiTarget.transform.position = new Vector3(fixedCoordsx, 0, fixedCoordsz);
-
-            //yield break;
         }
         remainingDistanceOld = remainingDistanceNew;
         StartCoroutine(NoticeIfBlocked());

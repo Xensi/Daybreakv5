@@ -8,89 +8,81 @@ using TMPro;
 
 public class OverworldManager : MonoBehaviour
 {
+    [Header("Add armies to these lists to enable their movement.")]
     public List<Army> enemyArmies;
     public List<Army> armies;
     public List<Caravan> caravans;
     public List<SupplyGiver> supplyGivers;
-
+    public Army soleArmy; //temporary way to get the army
     public List<Army> armiesGoingToSplit;
     public List<GameObject> splitIndicatorList;
-
     public Vector3 clickPosition;
     public Army selectedArmy;
-    [SerializeField] private SupplyGiver selectedSupplyGiver;
-
     public Transform clickPosIndicator;
     public Transform maximumRange;
-
+    public GameObject maximumRangeVisual;
     public GameObject armyPrefab;
-
     public bool readyToSpawnArmy = false;
-
     public bool readyToCombineArmy = false;
     public bool readyToSplitArmy = false;
-
     public Army firstArmy;
     public Army secondArmy;
-
     public Button executeButton;
     public Button combineArmyButton;
     public Button splitArmyButton;
-
     public Button increaseStrengthButton;
     public Button decreaseStrengthButton;
     public Button confirmStrengthButton;
-
     public UIHover ui;
-
     public TMP_Text combineArmyReminder;
     public TMP_Text splitArmyReminder;
-
     public int strengthToTransfer = 0;
-
     public GameObject selectionIndicator;
-
     public GameObject splittingIndicator;
     public Button splitOffButtonTemplate;
     public int tempStrengthHolder = 0;
-
     public GameObject uiSplitOffParent;
+    public DialogueManager dialogueManager;
 
+    public Army localeArmy;
+    public string currentFaction = "Altgard";
+    public Transform armyCompBoxParent;
+    public Transform leftAnchor;
+
+    public bool armiesMoving = false;
+    public bool dialogueEvent = false; //if false, then talking or exploring
+
+    private bool allowInput = true;
+
+    [SerializeField] private SupplyGiver selectedSupplyGiver;
     [SerializeField] private Button requestSuppliesButton;
     [SerializeField] private Button extortSuppliesButton;
     [SerializeField] private Button pillageSuppliesButton;
-
-    [SerializeField] private Slider moraleBarSlider;
-
-    [SerializeField] private TMP_Text moraleNumber;
-
-    [SerializeField] private Slider supplyBarSlider;
-
-    [SerializeField] private TMP_Text supplyNumber;
-
-    [SerializeField] private GameObject armyCardsParent;
-
+    [SerializeField] private Button talkButton;
+    [SerializeField] private Button reinforcementButton; 
+    [SerializeField] private GameObject extortParent;
+    [SerializeField] private GameObject pillageParent;
+    [SerializeField] private GameObject talkParent;
+    [SerializeField] private GameObject reinforcementParent; 
+    [SerializeField] private Slider moraleBarSlider; 
+    [SerializeField] private TMP_Text moraleNumber; 
+    [SerializeField] private Slider supplyBarSlider; 
+    [SerializeField] private TMP_Text supplyNumber; 
+    [SerializeField] private Slider spoilsBarSlider; 
+    [SerializeField] private TMP_Text spoilsNumber; 
+    [SerializeField] private GameObject armyCardsParent; 
     [SerializeField] private GameObject armyOptionsParent;
-    [SerializeField] private GameObject townOptionsParent;
-
-    [SerializeField]
-    private TMP_Text supplyName;
-
-    [SerializeField]
-    private TMP_Text supplySupplyText;
-    [SerializeField]
-    private TMP_Text supplyFaction;
-
-    [SerializeField]
-    private TMP_Text supplyRelations;
-    [SerializeField]
-    private TMP_Text supplyPopulation;
-
-    public string currentFaction = "Altgard";
-
-    private bool allowInput = true;
-    public Transform armyCompBoxParent;
-    public Transform leftAnchor;
+    [SerializeField] private GameObject townOptionsParent; 
+    [SerializeField] private TMP_Text supplyName; 
+    [SerializeField] private TMP_Text supplySupplyText;
+    [SerializeField] private TMP_Text supplySpoilsText;
+    [SerializeField] private TMP_Text supplyFaction;
+    [SerializeField] private TMP_Text taxText; 
+    [SerializeField] private LineRenderer navIndicator;
+    [SerializeField] private TMP_Text consumptionText;
+    [SerializeField] private TMP_Text consumptionReasonText; 
+    [SerializeField] private TMP_Text supplyRelations;
+    [SerializeField] private TMP_Text supplyPopulation;
     //army card view
     [SerializeField] private TMP_Text codeNameText;
     [SerializeField] private TMP_Text headedByText;
@@ -98,20 +90,13 @@ public class OverworldManager : MonoBehaviour
     [SerializeField] private TMP_Text visionRangeText;
     [SerializeField] private TMP_Text upkeepText;
     [SerializeField] private TMP_Text speedText;
-
-    public DialogueManager dialogueManager;
     [SerializeField] private GameObject localeParent;
     [SerializeField] private GameObject closedEyeParent;
     [SerializeField] private Button localeExploreButton;
-    [SerializeField] private Button talkButton;
+    public GameObject sutlerParent;
 
-    [SerializeField] private GameObject extortParent;
 
-    [SerializeField] private GameObject pillageParent;
-    [SerializeField] private GameObject talkParent;
-    public Army localeArmy;
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         //executeButton.interactable = false;
         combineArmyButton.interactable = false;
@@ -127,16 +112,33 @@ public class OverworldManager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (ui.hovering == false && allowInput)
         {
             LeftClickCheck();
             RightClickCheck();
         }
+        if (armiesMoving)
+        {
+            int numArmiesMoving = 0;
+            foreach (Army army in armies)
+            {
+                if (army.moving)
+                {
+                    numArmiesMoving++;
+                }
+            }
+            if (numArmiesMoving == 0)
+            {
+                armiesMoving = false;
+                foreach (Army army in armies)
+                {
+                    army.TriggerEventsAtLocales();
+                }
+            }
+        }
     }
-
     public void ToggleArmyCards() //triggered by armycomp button
     {
         if (armyCardsParent.activeSelf)
@@ -164,7 +166,7 @@ public class OverworldManager : MonoBehaviour
         }
     }
 
-    public void ReadyToSpawnArmy()
+    public void ReadyToSpawnArmy() //triggered by spawn army button
     {
         if (readyToSpawnArmy)
         {
@@ -202,6 +204,7 @@ public class OverworldManager : MonoBehaviour
 
         armiesGoingToSplit.Clear();
 
+        armiesMoving = true;
         foreach (Army elArmy in armies)
         {
             elArmy.StartMoving();
@@ -211,23 +214,17 @@ public class OverworldManager : MonoBehaviour
             enemyArmy.StartMoving();
         }
 
-        /*foreach (SupplyGiver elGiver in supplyGivers)
-        {
-            elGiver.SpawnCaravans();
-        }
-        foreach (Caravan elCaravan in caravans)
-        {
-            elCaravan.StartMoving();
-        }*/
-
         townOptionsParent.SetActive(false);
         armyOptionsParent.SetActive(false);
         localeParent.SetActive(false);
-        //add way to check if all moves are finished. when they are then allowinput again
     }
 
     private void LeftClickCheck()
     {
+        if (armiesMoving)
+        {
+            return;
+        }
         if (Input.GetMouseButtonDown(0))
         {
             RaycastHit hit;
@@ -425,6 +422,11 @@ public class OverworldManager : MonoBehaviour
                 selectedArmy.provisions++;
                 giver.storedProvisions--;
             }
+            while (selectedArmy.spoils < selectedArmy.maxSpoils && giver.storedSpoils > 0 && giver.storedSpoils > giver.reservedSpoils)
+            {
+                selectedArmy.spoils++;
+                giver.storedSpoils--;
+            }
             UpdateTownInfo();
             ShowArmyInfoAndUpdateArmyBars();
 
@@ -605,11 +607,20 @@ public class OverworldManager : MonoBehaviour
                 }
                 selectedArmy.CheckSizeAndChangeSpeed();
 
+                selectedArmy.targetVisual.SetActive(true);
+                navIndicator.gameObject.SetActive(true);
+
+                maximumRangeVisual.SetActive(true);
+
                 selectionIndicator.transform.position = new Vector3(selectedArmy.transform.position.x, 0.01f, selectedArmy.transform.position.z);
                 selectionIndicator.SetActive(true);
 
                 ShowSplitOffs();
                 ShowArmyInfoAndUpdateArmyBars();
+
+                ABPath path = selectedArmy.DrawPath();
+                UpdateNavigationIndicator(path);
+                UpdateConsumptionText(path);
 
                 return checkedArmy;
             }
@@ -620,6 +631,16 @@ public class OverworldManager : MonoBehaviour
         }
         return null;
     }
+
+    private void UpdateNavigationIndicator(ABPath path)
+    {
+        navIndicator.positionCount = path.vectorPath.Count;
+        for (int i = 0; i < path.vectorPath.Count; i++)
+        {
+            navIndicator.SetPosition(i, path.vectorPath[i]);
+        }
+    }
+
     private void ShowArmyInfoAndUpdateArmyBars()
     {
         armyOptionsParent.SetActive(true);
@@ -627,10 +648,13 @@ public class OverworldManager : MonoBehaviour
         moraleBarSlider.value = selectedArmy.overallMorale;
         supplyBarSlider.maxValue = selectedArmy.maxProvisions;
         supplyBarSlider.value = selectedArmy.provisions;
+        spoilsBarSlider.value = selectedArmy.spoils;
+        spoilsBarSlider.maxValue = selectedArmy.maxSpoils;
+
 
         moraleNumber.text = selectedArmy.overallMorale + "/" + selectedArmy.maxMorale;
         supplyNumber.text = selectedArmy.provisions + "/" + selectedArmy.maxProvisions;
-
+        spoilsNumber.text = selectedArmy.spoils + "/" + selectedArmy.maxSpoils;
         if (selectedArmy.currentSupplyPoint != null)
         {
             UpdateTownInfo();
@@ -665,23 +689,79 @@ public class OverworldManager : MonoBehaviour
         {
             actualReservedProv = point.storedProvisions;
         }
+        int availableSpoils = point.storedSpoils - point.reservedSpoils;
+        if (availableSpoils < 0)
+        {
+            availableSpoils = 0;
+        }
+        int actualReservedSpoils = 0;
+        if (point.storedSpoils >= point.reservedSpoils)
+        {
+            actualReservedSpoils = point.reservedSpoils;
+        }
+        else
+        {
+            actualReservedSpoils = point.storedSpoils;
+        }
         supplySupplyText.text = "Available: " + availableProvisos + "\nReserved: " + actualReservedProv;
+        supplySpoilsText.text = "Available: " + availableSpoils + "\nReserved: " + actualReservedSpoils;
 
         supplyFaction.text = "Faction: " + point.faction;
         supplyPopulation.text = "Population: " + point.population;
         supplyRelations.text = "Relations: " + point.relations;
 
+        if (point.isFort && point.faction == selectedArmy.faction)
+        {
+            taxText.text = "Resupply";
+        }
+        else
+        {
+            taxText.text = "Tax";
+        }
         if (point.faction == selectedArmy.faction) //no extorting or pillaging things that belong to you
         {
             extortParent.SetActive(false);
             pillageParent.SetActive(false);
             talkParent.SetActive(true);
+            reinforcementParent.SetActive(true);
+
+            if (point.routeClear)
+            {
+                reinforcementButton.interactable = true;
+            }
+            else
+            {
+                reinforcementButton.interactable = false;
+            }
         }
         else
         {
-            extortParent.SetActive(true);
-            pillageParent.SetActive(true);
-            talkParent.SetActive(false);
+            reinforcementParent.SetActive(false);
+            if (point.extortable)
+            {
+                extortParent.SetActive(true);
+            }
+            else
+            {
+                extortParent.SetActive(false);
+            }
+            if (point.pillageable)
+            {
+                pillageParent.SetActive(true);
+            }
+            else
+            {
+                pillageParent.SetActive(false);
+            }
+            if (!point.pillageable && !point.extortable)
+            {
+                talkParent.SetActive(true);
+            }
+            else
+            {
+                talkParent.SetActive(false);
+
+            }
         }
     }
     private void UpdateLocaleInfo()
@@ -702,6 +782,7 @@ public class OverworldManager : MonoBehaviour
 
     public void ExploreLocale()
     {
+        dialogueEvent = false;
         localeArmy = selectedArmy;
         DialogueScriptableObject dialogue = selectedArmy.currentLocale.localeInvestigationDialogue;
         selectedArmy.currentLocale.investigated = true;
@@ -712,29 +793,45 @@ public class OverworldManager : MonoBehaviour
     }
     public void TalkToSupplyGiver()
     {
+        dialogueEvent = false;
         localeArmy = selectedArmy;
-        DialogueScriptableObject dialogue = selectedArmy.currentSupplyPoint.talkToDialogue;
-        if (selectedArmy.currentSupplyPoint.talkDescriptionRead)
+
+        if (localeArmy == null)
+            return;
+        SupplyGiver supply = localeArmy.currentSupplyPoint;
+        if (supply == null)
+            return;
+        DialogueScriptableObject dialogue = supply.talkToDialogue;
+        if (dialogue == null)
+            return;
+        if (supply.talkDescriptionRead)
         {
             dialogue = selectedArmy.currentSupplyPoint.afterReadTalkToDialogue;
         }
-        selectedArmy.currentSupplyPoint.talkDescriptionRead = true;
+        supply.talkDescriptionRead = true;
         dialogueManager.loadedDialogue = dialogue;
         dialogueManager.StartDialogue();
         townOptionsParent.SetActive(false);
         armyOptionsParent.SetActive(false);
     }
-    private void DeselectArmy()
+    public void DeselectArmy()
     {
+        if (selectedArmy != null)
+        {
+            selectedArmy.targetVisual.SetActive(false);
+        }
         selectedArmy = null;
+        navIndicator.gameObject.SetActive(false);
+        maximumRangeVisual.SetActive(false);
+
         combineArmyButton.interactable = false;
         splitArmyButton.interactable = false;
         selectionIndicator.SetActive(false);
         armyOptionsParent.SetActive(false);
         townOptionsParent.SetActive(false);
         localeParent.SetActive(false);
-    }
 
+    }
     private float RoundToZeroOrHalf(float a) //1.52 will be 1.5, 1.1232 will be 1
     {
         int b = Mathf.RoundToInt(a);
@@ -749,6 +846,14 @@ public class OverworldManager : MonoBehaviour
     }
     private void RightClickCheck()
     {
+        if (armiesMoving)
+        {
+            return;
+        }
+        if (dialogueManager.readingDialogue)
+        {
+            return;
+        }
         if (Input.GetMouseButtonDown(1) && selectedArmy != null)
         {
             RaycastHit hit;
@@ -764,6 +869,9 @@ public class OverworldManager : MonoBehaviour
                 {
                     selectedArmy.target.position = clickPosition;
                     ABPath path = selectedArmy.DrawPath();
+                    UpdateNavigationIndicator(path);
+                    //Debug.Log("Path length" + path.vectorPath.Count-1);
+                    UpdateConsumptionText(path);
                     int selectedArmySpeedMax = selectedArmy.speedMax;
                     if (selectedArmySpeedMax > path.vectorPath.Count - 1)
                     {
@@ -784,6 +892,32 @@ public class OverworldManager : MonoBehaviour
                 }
             }
         }
+    }
+    private void UpdateConsumptionText(ABPath path)
+    {
+        selectedArmy.predictedMovementSpaces = path.vectorPath.Count - 1;
+
+        int provisionsConsumedThisMovement = 0;
+        if (selectedArmy.predictedMovementSpaces >= 4) //forced march threshold
+        {
+            provisionsConsumedThisMovement += selectedArmy.supplyUpkeep;
+        }
+        if (selectedArmy.turnCounter == 1)
+        {
+            provisionsConsumedThisMovement += selectedArmy.supplyUpkeep;
+        }
+        consumptionText.text = "Consumed this turn: " + provisionsConsumedThisMovement;
+        consumptionReasonText.text = "";
+        if (selectedArmy.turnCounter == 1)
+        {
+            consumptionReasonText.text += "Upkeep\n";
+        }
+        if (selectedArmy.predictedMovementSpaces >= 4)
+        {
+            consumptionReasonText.text += "Forced march!";
+        }
+        selectedArmy.predictedSupplyConsumption = provisionsConsumedThisMovement;
+
     }
 
 }

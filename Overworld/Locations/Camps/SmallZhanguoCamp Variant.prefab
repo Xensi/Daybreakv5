@@ -7,12 +7,20 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1563903514922801450, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: f6e56c7e23c0c3c4aad287c8a78a84d3, type: 3}
     - target: {fileID: 3674928046426528874, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_Name
       value: SmallZhanguoCamp
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528874, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: isFort
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
@@ -32,7 +40,31 @@ PrefabInstance:
       value: Small Zhanguo Camp
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: storedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: reservedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: storedProvisions
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: reservedProvisions
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: extortionReservedSpoils
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: armiesToSupport.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: extortionReservedProvisions
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
@@ -45,15 +77,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.411735
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.09637451
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -7.516426
+      value: -30.5
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalRotation.w
@@ -82,6 +114,14 @@ PrefabInstance:
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366174909288178475, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366174909288178475, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}

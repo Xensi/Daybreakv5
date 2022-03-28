@@ -8,11 +8,13 @@ public class SupplyGiver : MonoBehaviour
     public OverworldManager overworldManager;
 
     private int turnCounter = 0;
-
+    public int storedSpoils = 10;
+    public int reservedSpoils = 7;
+    public int extortionReservedSpoils = 5;
     public int storedProvisions = 10;
-    public int maxProvisions = 20;
-    public int reservedProvisions = 10;
+    public int reservedProvisions = 7;
     public int extortionReservedProvisions = 5;
+    //public int maxProvisions = 20;
 
     public int mood = 0;
 
@@ -31,7 +33,17 @@ public class SupplyGiver : MonoBehaviour
     public bool talkDescriptionRead = false;
     public DialogueScriptableObject talkToDialogue;
     public DialogueScriptableObject afterReadTalkToDialogue;
+    public DialogueScriptableObject eventDialogue;
+    public bool eventTriggered = false;
+
     public List<bool> npcTalkedTo;
+
+    public bool extortable = true;
+    public bool pillageable = true;
+
+    public bool routeClear = false;
+
+    public List<SupplyGiver> placesBlockingRoute;
 
     //public List<Army> armiesToSupport;
     //public GameObject caravanPrefab;

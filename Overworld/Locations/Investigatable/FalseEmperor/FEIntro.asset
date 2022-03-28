@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: FEIntro
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  isChoices: 0
+  forceChangeSpeaker: 0
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 010001010101000000000001000101
+  speakerSentences:
+  - {fileID: 11400000, guid: 7ecc854c6d0761b439096f17c8d71278, type: 2}
+  - {fileID: 11400000, guid: 42bda72bf8c9f704fa8d2dce43ec5b09, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - {fileID: 11400000, guid: a1888f876949e0340a33eea26e9127f6, type: 2}
+  - {fileID: 11400000, guid: a1888f876949e0340a33eea26e9127f6, type: 2}
+  - {fileID: 11400000, guid: a1888f876949e0340a33eea26e9127f6, type: 2}
+  - {fileID: 11400000, guid: a1888f876949e0340a33eea26e9127f6, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - {fileID: 11400000, guid: 7038511c932cb0b468533fb91d469db1, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: 7038511c932cb0b468533fb91d469db1, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  sentences:
+  - 'Heading south of Peatmyre, the roads become mushier, the soil loose. A fetid
+    stench wafts from ahead, and you can see the gnarled mangroves and murky waters
+    of the bogs. '
+  - 'This part of the bogs is much too difficult to cross. And if I recall the maps
+    correctly, we are at the edge of the Sunless Mere. I doubt that much of anything
+    awaits us here. '
+  - "You acknowledge Ingva\u2019s advice, and consider turning around. But before
+    you do, a lone table blocking the patchy road sits ahead of you. \r\n"
+  - 'As you approach, you see that a lone man sits on the far end of the table. About
+    his back is a tattered cloak. A curled, gray beard dangles from his chin, and
+    a small cluster of grapes lies on a wooden plate before him. He beckons you to
+    approach.
+
+'
+  - "You dismount. Upon getting a closer look, you notice that he has a\u2026crown?
+    Of twigs, small branches, leaves and grass atop his head. You suppose that it
+    would make for a comfy bird\u2019s nest. "
+  - "\rThe man begins to speak.\r\n"
+  - Welcome to my domain, travelers. You may call me . . . the Emperor.
+  - Emperor?
+  - Yes, the Emperor. Emperor of all of Maukland.
+  - "<i>Pfft.</i> Right. And I\u2019m the Kaiser of Altgard."
+  - Ah, so from one monarch to another, I invite you to dine with me.
+  - "He considers the Emperor\u2019s words for a second."
+  - Ah, why not I suppose.
+  - "You and the rest of your personal retinue sit at the table, while the rest of
+    your forces stop at the roadside for some respite. You break out some crusty
+    bread as today\u2019s dish of choice.\r"
+  - You decide to question this . . . Emperor.
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: 3d9df5ce1b3200449bac7753d21027b4, type: 2}
+  choicePaths: []

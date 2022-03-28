@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: MGrim
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  isChoices: 0
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: moraleGain
+  commandVar: -1
+  commandString: 
+  forceChangeSpeaker: 1
+  talkedToDialogue: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 0101000100010000010101
+  speakerSentences:
+  - {fileID: 11400000, guid: 50f0703dc762208409a869af0c3a7b90, type: 2}
+  - {fileID: 11400000, guid: 50f0703dc762208409a869af0c3a7b90, type: 2}
+  - {fileID: 11400000, guid: 50f0703dc762208409a869af0c3a7b90, type: 2}
+  - {fileID: 11400000, guid: 50f0703dc762208409a869af0c3a7b90, type: 2}
+  - {fileID: 11400000, guid: 50f0703dc762208409a869af0c3a7b90, type: 2}
+  - {fileID: 11400000, guid: 50f0703dc762208409a869af0c3a7b90, type: 2}
+  - {fileID: 11400000, guid: 50f0703dc762208409a869af0c3a7b90, type: 2}
+  - {fileID: 11400000, guid: 50f0703dc762208409a869af0c3a7b90, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - {fileID: 11400000, guid: 044da300b470ec9408ffdaf7ad2cc48a, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  sentences:
+  - 'The breeze gives one last gust before going still.
+
+'
+  - "\rHer face, once gentle and motherly, puts on a grim expression. \r\n"
+  - "You\u2019re always so busy . . . puppeteering a Judge\u2019s skin. Where you
+    walk, a court. Your word, law. \r"
+  - 'Slowly, she lifts the cane and points it squarely at your face, seemingly no
+    longer needing it for support.
+
+'
+  - 'You are but a vessel for a mad king! A tyrant who chooses, but was not chosen! '
+  - "\rShe laughs, the voice spilling out from her far younger than it ought to be.\r\n"
+  - 'Blind. Blind is what you are. The truth is right in front of you. '
+  - "I wouldn\u2019t want to visit your home.\r\n"
+  - "\rYou and your compatriots are stunned. Your army hurries to gather supplies
+    as you try not to think about what the woman said.\r\n"
+  - 'Devoid of wind, the mill stops turning entirely.
+
+'
+  - (-1 morale.)
+  sentenceAudio: []
+  nextDialogue: {fileID: 0}
+  choicePaths: []

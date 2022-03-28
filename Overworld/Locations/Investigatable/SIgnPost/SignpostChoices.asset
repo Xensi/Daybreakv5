@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: SignpostChoices
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  isChoices: 1
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  forceChangeSpeaker: 1
+  talkedToDialogue: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 
+  speakerSentences:
+  - {fileID: 11400000, guid: 474f84b79d749744e9f0968095b3e6e7, type: 2}
+  sentences:
+  - Read signpost
+  - Fix signpost
+  - Tear down signpost
+  sentenceAudio: []
+  nextDialogue: {fileID: 0}
+  choicePaths:
+  - {fileID: 11400000, guid: f8a849f0d2d3e014abc241c8a5773acd, type: 2}
+  - {fileID: 11400000, guid: ffb60643b707acf42b9686cddc0c872d, type: 2}
+  - {fileID: 11400000, guid: 299824cec583d1a40bd9932b516abd5c, type: 2}

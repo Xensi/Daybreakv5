@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: C6B
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  isChoices: 0
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  forceChangeSpeaker: 1
+  talkedToDialogue: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 0100
+  speakerSentences:
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: 42bda72bf8c9f704fa8d2dce43ec5b09, type: 2}
+  - {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  sentences:
+  - "Gotfried tilts his head in confusion.\r"
+  - "Look, I mislike this slimy creature of a man as much as you do, but this is
+    genuine intelligence. And a deal\u2019s a deal. "
+  - "Gotfried is right. I\u2019m taken aback by just how much he knows. Perhaps some
+    compensation is in order. "
+  - Commander, please. Give the poor man a chance!
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: 72d6bd60421e6814ea88db215817a39a, type: 2}
+  choicePaths: []

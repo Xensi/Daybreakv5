@@ -12,20 +12,48 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
   m_Name: DGIntro
   m_EditorClassIdentifier: 
-  speaker: 
+  speaker: Dead Garrison
   speakerImage: {fileID: 0}
   speakerSpeed: 0.01
-  sentences: []
-  sentenceAudio: []
-  nextDialogue: {fileID: 0}
   isChoices: 0
   speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
   speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
-  choicePaths: []
   commandToExecuteStart: 
   commandToExecuteEnd: 
   commandVar: 0
   commandString: 
-  forceChangeSpeaker: 0
+  forceChangeSpeaker: 1
   talkedToDialogue: {fileID: 0}
   isFirstInstanceNPC: 0
+  italicizedSentences: 0101010001000001
+  speakerSentences:
+  - {fileID: 11400000, guid: 31a9f1646bb6a55418add959732ab2c4, type: 2}
+  - {fileID: 11400000, guid: 31a9f1646bb6a55418add959732ab2c4, type: 2}
+  - {fileID: 11400000, guid: 31a9f1646bb6a55418add959732ab2c4, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: 42bda72bf8c9f704fa8d2dce43ec5b09, type: 2}
+  - {fileID: 11400000, guid: 42bda72bf8c9f704fa8d2dce43ec5b09, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  sentences:
+  - 'As you and your forces march onwards, you happen across the forlorn ruins of
+    an old garrison. The lone pillars of stone stretch out of the wind-battered soil,
+    like the fingers of a skeletal hand. '
+  - "Moss-covered pools of water congeal in what might\u2019ve been old baths or
+    aqueducts. The garrison itself seems to have one half collapsed into rubble,
+    the other standing alone. Your troops take a moment to marvel at the desolate
+    sight."
+  - 'The usually loudmouthed Gotfried is humbled into silence by the ruins. '
+  - With a new land comes new mysteries . . . I once heard Maukling villagers tell
+    stories of their ancestors warring against an enemy who used to call these lands
+    home. Their names are lost to time. These ruins bring to mind those strange stories.
+  - "Ingva looks ahead blankly, not even showing half as much awe as the others.
+    Her level of disinterest remains unchanged. \r\n"
+  - 'A dead ruin and nothing more. I see no supplies or weapons to scavenge, and
+    little evidence of Atlesian presence. This place presents no value. I recommend
+    moving onwards, commander. '
+  - 'Goodness. No sense of romance, this one. '
+  - 'You ruminate on this place for but a moment and say:'
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: ff5078de6a996e446b42063ae51fd6ed, type: 2}
+  choicePaths: []
