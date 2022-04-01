@@ -868,6 +868,7 @@ public class OverworldManager : MonoBehaviour
                 if (selectedArmy.target != null)
                 {
                     selectedArmy.target.position = clickPosition;
+                    //selectedArmy.aiTarget.transform.position = clickPosition;
                     ABPath path = selectedArmy.DrawPath();
                     UpdateNavigationIndicator(path);
                     //Debug.Log("Path length" + path.vectorPath.Count-1);

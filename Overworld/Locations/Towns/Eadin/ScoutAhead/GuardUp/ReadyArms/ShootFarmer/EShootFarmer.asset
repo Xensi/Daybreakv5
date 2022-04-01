@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: EShootFarmer
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  dialogueIfConditionTrue: {fileID: 0}
+  isChoices: 0
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 0101000001
+  speakerSentences:
+  - {fileID: 11400000, guid: 1dad7dba993f976438767fc16db21077, type: 2}
+  - {fileID: 11400000, guid: 1dad7dba993f976438767fc16db21077, type: 2}
+  - {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  - {fileID: 11400000, guid: 42bda72bf8c9f704fa8d2dce43ec5b09, type: 2}
+  - {fileID: 11400000, guid: 1dad7dba993f976438767fc16db21077, type: 2}
+  sentences:
+  - "Your bowmen react swiftly. A barrage of arrows fall around the \u201Cfarmer.\u201D
+    The arrows don\u2019t seem to fell him, but he does lunge backwards. You now
+    see the wide brimmed hat and cloak of the farmer seemingly morph before your
+    eyes. Armor. A staff, and a plumed helmet."
+  - "The arrows find marks you didn\u2019t expect them to hit, and yelps of pain
+    and foreign curses ring out, as the field comes alive with dozens of Atlesian
+    soldiers rising to do battle. The light shimmers and distorts before you in an
+    odd, wavy pattern, like on a hot summer\u2019s day."
+  - Would it have killed either of you to explain that you thought he was an Atlesian?
+  - Apologies. Instinct. Had to think on our feet. Speaking of which . . . volley
+    incoming!
+  - 'Several soldiers lift shields and huddle into formation as you prepare for battle. '
+  sentenceAudio: []
+  nextDialogue: {fileID: 0}
+  choicePaths: []

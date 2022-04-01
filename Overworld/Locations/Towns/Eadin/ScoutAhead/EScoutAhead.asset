@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
-  m_Name: EChoices
+  m_Name: EScoutAhead
   m_EditorClassIdentifier: 
   speaker: 
   speakerImage: {fileID: 0}
@@ -22,20 +22,21 @@ MonoBehaviour:
   commandVar: 0
   commandString: 
   dialogueIfConditionTrue: {fileID: 0}
-  isChoices: 1
+  isChoices: 0
   forceChangeSpeaker: 1
   talkedToDialogueNPC: {fileID: 0}
   isFirstInstanceNPC: 0
-  italicizedSentences: 000000
+  italicizedSentences: 0100
   speakerSentences:
   - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - {fileID: 11400000, guid: 42bda72bf8c9f704fa8d2dce43ec5b09, type: 2}
   sentences:
-  - Let's just head for the village square.
-  - Have our scouts reconnoiter the approach first.
-  - There's nothing for us here. Let's turn back.
+  - "Heeding Ingva\u2019s intuition, you send her and two of your most keen-eyed
+    soldiers to scout ahead. In a burst of hoofbeats, they take off across the road.
+    Upon return, the search yields little. "
+  - Old hoofprints, horse dung and nothing more. Most of it is a day old. But we
+    did find one thing; a shattered gemstone. I am unsure of why its fragments were
+    strewn about the road, but it could be indicative of something stranger.
   sentenceAudio: []
-  nextDialogue: {fileID: 0}
-  choicePaths:
-  - {fileID: 11400000, guid: a31c68d4bc30747428340a8dd0f2d281, type: 2}
-  - {fileID: 11400000, guid: b1cd374ab600bdd4fb9f15976585861b, type: 2}
-  - {fileID: 11400000, guid: 8f05c0a32032fa748b7f8ad15ffb6698, type: 2}
+  nextDialogue: {fileID: 11400000, guid: c463bfbcebb69144c97fb8a4807339e3, type: 2}
+  choicePaths: []

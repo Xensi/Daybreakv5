@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: EReadyArms
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  dialogueIfConditionTrue: {fileID: 0}
+  isChoices: 0
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 010100010001000000000001
+  speakerSentences:
+  - {fileID: 11400000, guid: 1dad7dba993f976438767fc16db21077, type: 2}
+  - {fileID: 11400000, guid: 1dad7dba993f976438767fc16db21077, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - {fileID: 11400000, guid: 309c2cdf5d627124fadd741bd510c794, type: 2}
+  - {fileID: 11400000, guid: f4937822699ede24eaa790e2d3f6c982, type: 2}
+  - {fileID: 11400000, guid: 309c2cdf5d627124fadd741bd510c794, type: 2}
+  - {fileID: 11400000, guid: 42bda72bf8c9f704fa8d2dce43ec5b09, type: 2}
+  - {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  - {fileID: 11400000, guid: 42bda72bf8c9f704fa8d2dce43ec5b09, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: f4937822699ede24eaa790e2d3f6c982, type: 2}
+  sentences:
+  - 'After a small bout of confusion spreads through your ranks as to why your column
+    has stopped, they begin preparing for combat as ordered. They gather in their
+    neat formations, and they watch their surroundings closely. '
+  - The twittering birdsongs are carried by the wind, and they continue to whistle
+    as you wonder whether your paranoia got the better of you. Your forces march,
+    armed and ready, awaiting a foe that has yet to materialize.
+  - "<i>After a few minutes of tense silence, Gotfried clicks his tongue.</i>\nIt
+    seems I owe Ingva a drink. Her bet was right, look over there.\r"
+  - You narrow your eyes and squint to see a brief glint of light in the northern
+    field, gone as quickly as it had flashed. The whistles of birds seem to grow
+    louder. Only then, you notice that there is a lack of birds to accompany them.
+  - "Somebody\u2019s rummaging about over there!"
+  - A head lifts itself from the wheat, revealing a wide brimmed hat and a pitchfork.
+  - '<i>Your subordinate lets out a nervous laugh.</i>
+
+    Nevermind. Just a Maukling,
+    sir! '
+  - "<i>Ingva\u2019s eyes narrow and she turns to you without a beat of hesitation.</i>\nHave
+    the bowmen shoot the farmer.\r\n"
+  - "<i>Hartwig\u2019s mouth falls agape.\r</i>\nWh\u2014are you mad!?\r\n"
+  - Do it.
+  - "<i>Your mercenary companion mutters something under his breath:</i>\n\u201CJust
+    like the goblins\u2026\u201D"
+  - The farmer raises his hand, gripping something tightly.
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: c9d727b1bdd435646bcef8265fb511eb, type: 2}
+  choicePaths: []

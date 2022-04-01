@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: EGuardUp
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  dialogueIfConditionTrue: {fileID: 0}
+  isChoices: 0
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 00000000
+  speakerSentences:
+  - {fileID: 11400000, guid: 42bda72bf8c9f704fa8d2dce43ec5b09, type: 2}
+  - {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  sentences:
+  - You could be right. Perhaps it could be banditry? But then why would they discard
+    the treasure like that . . . Either way, it pays to be cautious.
+  - 'We might not run into any trouble, but just in case, it may be prudent to have
+    the men ready themselves. Have soldiers don armor, string bows, the works.
+
+'
+  - Yes, but that will take some time. Keep in mind that whilst we sit on our laurels
+    readying our weapons, any would-be ambushers would see a prime opportunity.
+  - "We could retreat, if you\u2019d like.\r\n<i>Gotfried frowns and gives Hartwig
+    a look, offended by the notion.\r</i>"
+  sentenceAudio: []
+  nextDialogue: {fileID: 11400000, guid: 248b14bde086e474f8b2e3f6a3db49ba, type: 2}
+  choicePaths: []

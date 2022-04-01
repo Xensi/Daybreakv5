@@ -51,6 +51,8 @@ public class DialogueManager : MonoBehaviour
     private bool displayingChoices = false;
     private bool checkedCondition = false;
 
+    [SerializeField] private char currentChar;
+
     private void Start()
     {
         //define text speeds algorithmically
@@ -226,12 +228,13 @@ public class DialogueManager : MonoBehaviour
         dialogueText.maxVisibleCharacters = 0;
 
         char[] charArray = sentence.ToCharArray();
+        
         bool skip = false;
         for (int i = 0; i < charArray.Length; i++)
         {
-            dialogueText.maxVisibleCharacters++;
             char letter = charArray[i];
-
+            //currentChar = letter;
+            //Debug.LogError(letter);
 
             if (letter == '<')
             {
@@ -240,14 +243,15 @@ public class DialogueManager : MonoBehaviour
             else if (letter == '>')
             {
                 skip = false;
+                continue;
             }
-
             if (skip)
             {
-                yield return new WaitForSeconds(0);
+                continue;
             }
             else
             {
+                dialogueText.maxVisibleCharacters++;
                 if (letter == '.' || letter == ';' || letter == '?' || letter == '!')
                 {
                     if (i + 1 < charArray.Length && charArray[i + 1] == ')')
@@ -260,9 +264,19 @@ public class DialogueManager : MonoBehaviour
                         yield return new WaitForSeconds(slowerTextSpeed);
                     }
                 }
-                else if (letter == ',')
+                else if (letter == ',' || letter == '—')
                 {
-                    yield return new WaitForSeconds(slowTextSpeed);
+
+                    if (i + 1 < charArray.Length && charArray[i + 1] == '!')
+                    {
+                        yield return new WaitForSeconds(textspeed);
+
+                    }
+                    else
+                    {
+                        yield return new WaitForSeconds(slowTextSpeed);
+                    }
+
 
                 }
                 else

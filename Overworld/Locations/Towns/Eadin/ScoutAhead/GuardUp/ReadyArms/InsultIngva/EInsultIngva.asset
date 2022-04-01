@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
-  m_Name: EChoices
+  m_Name: EInsultIngva
   m_EditorClassIdentifier: 
   speaker: 
   speakerImage: {fileID: 0}
@@ -22,20 +22,16 @@ MonoBehaviour:
   commandVar: 0
   commandString: 
   dialogueIfConditionTrue: {fileID: 0}
-  isChoices: 1
+  isChoices: 0
   forceChangeSpeaker: 1
   talkedToDialogueNPC: {fileID: 0}
   isFirstInstanceNPC: 0
-  italicizedSentences: 000000
+  italicizedSentences: 00
   speakerSentences:
-  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - {fileID: 11400000, guid: 42bda72bf8c9f704fa8d2dce43ec5b09, type: 2}
   sentences:
-  - Let's just head for the village square.
-  - Have our scouts reconnoiter the approach first.
-  - There's nothing for us here. Let's turn back.
+  - "<i>Ingva quickly turns to look at you, failing to contain her sudden anger.\r</i>\nYou
+    dare insinuate\u2014!\r"
   sentenceAudio: []
-  nextDialogue: {fileID: 0}
-  choicePaths:
-  - {fileID: 11400000, guid: a31c68d4bc30747428340a8dd0f2d281, type: 2}
-  - {fileID: 11400000, guid: b1cd374ab600bdd4fb9f15976585861b, type: 2}
-  - {fileID: 11400000, guid: 8f05c0a32032fa748b7f8ad15ffb6698, type: 2}
+  nextDialogue: {fileID: 11400000, guid: 2d2c518956d659b4d922bd34c26f725f, type: 2}
+  choicePaths: []

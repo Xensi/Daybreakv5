@@ -26,20 +26,31 @@ MonoBehaviour:
   forceChangeSpeaker: 1
   talkedToDialogueNPC: {fileID: 0}
   isFirstInstanceNPC: 0
-  italicizedSentences: 010100
+  italicizedSentences: 010000000000
   speakerSentences:
-  - {fileID: 11400000, guid: 170a93fa3b185784a89c57f10854c4cb, type: 2}
-  - {fileID: 11400000, guid: 170a93fa3b185784a89c57f10854c4cb, type: 2}
+  - {fileID: 11400000, guid: 1dad7dba993f976438767fc16db21077, type: 2}
   - {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: 42bda72bf8c9f704fa8d2dce43ec5b09, type: 2}
   sentences:
-  - 'From afar, Eadin shows no signs of activity, no peasants walk about the streets,
-    none seem to tend the fields. The hovels lie vacant, the sound of the wind being
-    the only thing accompanying the hoofbeats of your horses.
-
-'
-  - 'No villagers emerge to greet you. Only the silent winds, as the empty village
-    sits alone in the distance. '
-  - Is it deserted, perhaps?
+  - From afar, Eadin shows little signs of activity. Songbirds circle overhead, darting
+    back and forth between scatterings of trees. If it were not for the odd figure
+    tending to a field or emerging from a hut, you would have assumed it was mostly
+    abandoned. It is a fair distance down the road.
+  - The town is awfully silent. Perhaps the war has driven the locals away?
+  - "The Atlesians wouldn\u2019t dare raid so close to Fenton. Unless they\u2019ve
+    gotten bolder. In which case, a bit of retaliation might be in order. \r\n<i>Gotfried
+    cracks his knuckles.</i>\n"
+  - "I suppose it\u2019d be prudent to greet their shire-reeve, or local lord. Or
+    whoever leads them."
+  - "The place looks dour enough that I wouldn\u2019t be surprised if the villagers
+    just up and left because they hated the place. <i>Hrm.</i> This far away and
+    I can smell the manure . . .\n<i>He winces in disgust.</i>"
+  - I mistrust the silence. I feel as if some sort of ambush awaits us, but perhaps
+    it is my paranoia grasping at straws. Should we take caution, commander? We will
+    defer to your preference.
   sentenceAudio: []
-  nextDialogue: {fileID: 0}
+  nextDialogue: {fileID: 11400000, guid: a878a76384c3ddf46921f6844310a211, type: 2}
   choicePaths: []

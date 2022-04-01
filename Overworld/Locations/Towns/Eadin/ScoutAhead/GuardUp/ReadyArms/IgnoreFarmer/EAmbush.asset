@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
-  m_Name: EChoices
+  m_Name: EAmbush
   m_EditorClassIdentifier: 
   speaker: 
   speakerImage: {fileID: 0}
@@ -22,20 +22,24 @@ MonoBehaviour:
   commandVar: 0
   commandString: 
   dialogueIfConditionTrue: {fileID: 0}
-  isChoices: 1
+  isChoices: 0
   forceChangeSpeaker: 1
   talkedToDialogueNPC: {fileID: 0}
   isFirstInstanceNPC: 0
-  italicizedSentences: 000000
+  italicizedSentences: 010101
   speakerSentences:
+  - {fileID: 11400000, guid: 1dad7dba993f976438767fc16db21077, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
   - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
   sentences:
-  - Let's just head for the village square.
-  - Have our scouts reconnoiter the approach first.
-  - There's nothing for us here. Let's turn back.
+  - A swarm of bolts rises out of the fields, and your conscripts and soldiers cry
+    out a mix of warnings and foul language. Those lucky enough to hold shields just
+    barely manage to block the heavy force of the projectiles. Some are not so lucky.
+  - Your horse is startled and rears back, nearly throwing you off. As you call out
+    orders to assemble into battle, you now see the wide brimmed hat and cloak of
+    the farmer seemingly morph before your eyes.
+  - Armor. A staff, and a plumed helmet. Foreign battle cries ring out from both
+    sides of the road as the trap is sprung.
   sentenceAudio: []
   nextDialogue: {fileID: 0}
-  choicePaths:
-  - {fileID: 11400000, guid: a31c68d4bc30747428340a8dd0f2d281, type: 2}
-  - {fileID: 11400000, guid: b1cd374ab600bdd4fb9f15976585861b, type: 2}
-  - {fileID: 11400000, guid: 8f05c0a32032fa748b7f8ad15ffb6698, type: 2}
+  choicePaths: []

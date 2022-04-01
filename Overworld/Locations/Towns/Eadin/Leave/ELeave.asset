@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: ELeave
+  m_EditorClassIdentifier: 
+  speaker: 
+  speakerImage: {fileID: 0}
+  speakerSpeed: 0.01
+  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
+  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
+  commandToExecuteStart: 
+  commandToExecuteEnd: 
+  commandVar: 0
+  commandString: 
+  dialogueIfConditionTrue: {fileID: 0}
+  isChoices: 0
+  forceChangeSpeaker: 1
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  italicizedSentences: 01010100010000
+  speakerSentences:
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - {fileID: 11400000, guid: 42bda72bf8c9f704fa8d2dce43ec5b09, type: 2}
+  - {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  sentences:
+  - "You order your forces to turn back. You hope that your instincts are not unnecessarily
+    waylaying Altgard\u2019s progress in retaking the region."
+  - Better safe than slaughtered, you muse. Fluttering songbirds chirrup as they
+    bob and weave past you on your way out. The scene feels almost serene.
+  - But before you can catch a breath in this moment of calm, the silence is shattered.
+    A volley of bolts cuts through the air with a harsh whistle. Some of the soldiers
+    around you block the projectiles with their shields, those who are not as lucky
+    are quickly felled.
+  - Damn it! An ambush!
+  - You hastily call your troops into position.
+  - "I see more enemy forces streaming out of the wheat fields to our north and the
+    brush to our south. They\u2019ve caught us in a pincer."
+  - "No shit\u2014 \r\n<i>A bolt whizzes past him and lodges itself in a nearby conscript\u2019s
+    shield.</i>"
+  sentenceAudio: []
+  nextDialogue: {fileID: 0}
+  choicePaths: []
