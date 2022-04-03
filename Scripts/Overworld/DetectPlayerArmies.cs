@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DetectPlayerArmies : MonoBehaviour
@@ -9,7 +7,7 @@ public class DetectPlayerArmies : MonoBehaviour
     {
         //Debug.LogError("collision?");
         Army collidedArmy = other.gameObject.GetComponent<Army>();
-        if (collidedArmy != null)
+        if (collidedArmy != null && collidedArmy != parentArmy)
         {
             if (collidedArmy.faction != parentArmy.faction) //if we touch another army that is another team
             {

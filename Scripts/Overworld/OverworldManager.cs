@@ -8,9 +8,11 @@ using TMPro;
 
 public class OverworldManager : MonoBehaviour
 {
-    [Header("Add armies to these lists to enable their movement.")]
+    [Header("Add armies/roaming events to these lists to enable their movement.")]
     public List<Army> enemyArmies;
     public List<Army> armies;
+    [SerializeField] private List<RoamingEvent> roamingEvents;
+
     public List<Caravan> caravans;
     public List<SupplyGiver> supplyGivers;
     public Army soleArmy; //temporary way to get the army
@@ -95,7 +97,6 @@ public class OverworldManager : MonoBehaviour
     [SerializeField] private Button localeExploreButton;
     public GameObject sutlerParent;
 
-
     private void Start()
     {
         //executeButton.interactable = false;
@@ -123,6 +124,13 @@ public class OverworldManager : MonoBehaviour
         {
             int numArmiesMoving = 0;
             foreach (Army army in armies)
+            {
+                if (army.moving)
+                {
+                    numArmiesMoving++;
+                }
+            }
+            foreach (Army army in enemyArmies)
             {
                 if (army.moving)
                 {
@@ -178,8 +186,9 @@ public class OverworldManager : MonoBehaviour
         }
     }
 
-    public void ExecuteMovesForAllArmies()
+    public void ExecuteMovesForAll()
     {
+        //SPLIT code
         foreach (GameObject i in splitIndicatorList)
         {
             Destroy(i);
@@ -203,6 +212,7 @@ public class OverworldManager : MonoBehaviour
         }
 
         armiesGoingToSplit.Clear();
+        //end split code
 
         armiesMoving = true;
         foreach (Army elArmy in armies)
@@ -213,7 +223,10 @@ public class OverworldManager : MonoBehaviour
         {
             enemyArmy.StartMoving();
         }
-
+        foreach (RoamingEvent roamer in roamingEvents)
+        {
+            roamer.StartMoving();
+        }
         townOptionsParent.SetActive(false);
         armyOptionsParent.SetActive(false);
         localeParent.SetActive(false);
@@ -321,7 +334,6 @@ public class OverworldManager : MonoBehaviour
     public void SelectedArmyEnteredSupplyPoint()
     {
         requestSuppliesButton.interactable = true;
-
 
         if (selectedArmy.currentSupplyPoint != null)
         {
@@ -637,8 +649,14 @@ public class OverworldManager : MonoBehaviour
         navIndicator.positionCount = path.vectorPath.Count;
         for (int i = 0; i < path.vectorPath.Count; i++)
         {
+
             navIndicator.SetPosition(i, path.vectorPath[i]);
         }
+    }
+
+    public void HideNavIndicator()
+    {
+        navIndicator.gameObject.SetActive(false);
     }
 
     private void ShowArmyInfoAndUpdateArmyBars()

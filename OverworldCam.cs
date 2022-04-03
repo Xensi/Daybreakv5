@@ -18,16 +18,16 @@ public class OverworldCam : MonoBehaviour
     public int minZoom = 1;
     public int maxZoom = 10;
     // Start is called before the first frame update
-    void Start()
+    public virtual void Start()
     {
     }
 
     // Update is called once per frame
-    void Update()
+    public virtual void Update()
     {
         Strafe();
     }
-    void Strafe()
+    public virtual void Strafe()
     {
 
         Vector3 pos = transform.position;

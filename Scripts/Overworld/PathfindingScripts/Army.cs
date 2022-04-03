@@ -22,7 +22,7 @@ public class Army : MonoBehaviour
     public bool lastPosKnown;
     [SerializeField] private DetectPlayerArmies detector;
 
-    private int nodeNumber = 0;
+    [SerializeField] private int nodeNumber = 0;
 
     public GameObject parent;
     private OverworldManager overworldManager;
@@ -91,6 +91,7 @@ public class Army : MonoBehaviour
 
     public Collider watchdogBounds;
     public bool withinWatchdogBounds = true;
+    private bool suddenStop = false;
 
     public void Awake() //Setup when spawned
     {
@@ -310,6 +311,26 @@ public class Army : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        if (!aiControlled)
+        {
+            SurpriseEvent surprise = other.gameObject.GetComponent<SurpriseEvent>();
+            if (surprise != null)
+            {
+                if (surprise.eventDialogue != null && surprise.eventTriggered == false)
+                {
+                    suddenStop = true;
+                    numberOfMovementAttempts = 100; //stop the movement of player
+                    overworldManager.dialogueEvent = true;
+                    overworldManager.localeArmy = this;
+                    overworldManager.dialogueManager.loadedDialogue = surprise.eventDialogue;
+                    overworldManager.dialogueManager.StartDialogue();
+                    surprise.eventTriggered = true;
+                }
+            }
+        }
+        
+
+
         Army collidedArmy = other.gameObject.GetComponent<Army>();
         //Debug.LogError("collision?");
         if (awaitingCollisionWith != null)
@@ -355,7 +376,12 @@ public class Army : MonoBehaviour
     }
     private void OnTriggerExit(Collider other)
     {
-
+        LocaleInvestigatable exitedLocale = other.gameObject.GetComponent<LocaleInvestigatable>();
+        if (exitedLocale != null)
+        {
+            suddenStop = false;
+            currentLocale = null;
+        }
         SupplyGiver collidedSupplyPoint = other.gameObject.GetComponent<SupplyGiver>();
         if (collidedSupplyPoint != null)
         {
@@ -419,7 +445,6 @@ public class Army : MonoBehaviour
                 target.position = patrolNodes[nodeNumber].transform.position;
             }
         }
-
         
         UpdateVisionRange();
         //aiPath.maxSpeed = maxSpeed;
@@ -525,7 +550,6 @@ public class Army : MonoBehaviour
         {
             if (path.vectorPath.Count >= 2)
             {
-                //Debug.LogError("Starting moving");
                 //aiTarget.transform.position = path.vectorPath[path.vectorPath.Count-1]; //set ai destination to 1 tile in path
 
                 int tempSpeedMax = speedMax;
@@ -533,10 +557,12 @@ public class Army : MonoBehaviour
                 {
                     tempSpeedMax = path.vectorPath.Count - 1;
                 }
+                //Debug.LogError(tempSpeedMax);
                 aiTarget.transform.position = path.vectorPath[tempSpeedMax];
             }
             else
             {
+                //Debug.LogError("");
                 aiTarget.transform.position = path.vectorPath[0]; //set ai destination to 1 tile in path
                 speedCurrent = speedMax; //stop movement
             }
@@ -546,52 +572,60 @@ public class Army : MonoBehaviour
     }
     private IEnumerator WaitUntilMovementOver()
     {
-        yield return new WaitForSeconds(0.01f);
-        /*if (checkedForcedMarch == false)
-        {
-
-            if (aiPath.remainingDistance != 0 && aiPath.remainingDistance >= 4) //-1 is correction, 4 is intended
-            {
-                //Debug.LogError("extra upekeep");
-                //ConsumeUpkeep();
-                checkedForcedMarch = true;
-            }
-        }*/
+        yield return new WaitForSeconds(0.1f);
 
         if (path.error) //if we can't get a path, try to
         {
             MakePathToTarget();
         }
-
-        if (aiPath.reachedDestination) //finished moving
+        if (aiControlled)
         {
-            //StopCoroutine(NoticeIfBlocked());
-            StopAllCoroutines();
-            //aiPath.maxSpeed = 0;
-            aiPath.canMove = false;
+            if (aiPath.reachedDestination)
+            {
+                suddenStop = false;
+                StopAllCoroutines();
+                aiPath.canMove = false;
+                dustVFX.Stop();
+                shakeTween.Pause();
+                Tween fixTween = icon.transform.DORotate(new Vector3(0, 90, 0), .5f);
+                predictedMovementSpaces = 0;
+                moving = false;
 
-            dustVFX.Stop();
-            shakeTween.Pause();
-            Tween fixTween = icon.transform.DORotate(new Vector3(0, 90, 0), .5f);
-
-            predictedMovementSpaces = 0;
-
-            moving = false;
-
-            yield break;
+                yield break;
+            }
         }
-        /*if (aiPath.reachedDestination && speedCurrent >= speedMax)
+        else
         {
-            aiPath.canMove = false; //stop ai movement
-            yield break;
-        }*/
-        /*else if (aiPath.reachedDestination && path.vectorPath.Count >= 2 && speedCurrent < speedMax) //if reached destination and still more tiles to move to and hasn't exceeded max movement
-        {
-            MoveOneNode(); //move another node
+            if ((aiPath.reachedDestination && MatchPositions(transform.position, target.position)) || suddenStop) //finished moving
+            {
+                suddenStop = false;
+                StopAllCoroutines();
+                aiPath.canMove = false;
+                dustVFX.Stop();
+                shakeTween.Pause();
+                Tween fixTween = icon.transform.DORotate(new Vector3(0, 90, 0), .5f);
+                predictedMovementSpaces = 0;
+                moving = false;
+                overworldManager.HideNavIndicator();
 
-        }*/
+                yield break;
+            }
+        }
         StartCoroutine(WaitUntilMovementOver());
     }
+    private bool MatchPositions(Vector3 pos1, Vector3 pos2)
+    {
+        Vector3 diff = pos1 - pos2;
+        diff.x = Mathf.Abs(diff.x);
+        diff.z = Mathf.Abs(diff.z);
+
+        if (diff.x < 0.5f && diff.z < 0.5f) //safe check to see if we clicked on army
+        {
+            return true;
+        }
+        return false;
+    }
+
     private IEnumerator NoticeIfBlocked()
     {
         yield return new WaitForSeconds(0.1f);
