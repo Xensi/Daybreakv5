@@ -14,6 +14,8 @@ public class CamRotate : MonoBehaviour
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Confined;
+
+        transform.localRotation = Quaternion.Euler(originalRotation, 0, 0);
     }
 
     private void Update()

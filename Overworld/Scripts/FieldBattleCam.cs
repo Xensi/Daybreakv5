@@ -12,8 +12,14 @@ public class FieldBattleCam : MonoBehaviour
     [SerializeField] private Transform panCorner1;
     [SerializeField] private Transform panCorner2;
     [SerializeField] private Transform maxYPos;
-      
-    public void Update()
+    [SerializeField] private float radiusToEnableAnimations = 20;
+    [SerializeField] private FightManager fightManager;
+
+    private void Start()
+    {
+        InvokeRepeating("FindFormationsNearMe", .5f, .5f);
+    }
+    private void Update()
     {
         if (Input.GetMouseButton(2))
         {
@@ -23,7 +29,7 @@ public class FieldBattleCam : MonoBehaviour
         }
         Strafe();
     }
-    public void Strafe()
+    private void Strafe()
     {
 
         Vector3 pos = transform.position;
@@ -60,5 +66,24 @@ public class FieldBattleCam : MonoBehaviour
         //if close to ground lower scroll speed?
 
         transform.position = pos; //sets position equal to updated position
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(transform.position, radiusToEnableAnimations);
+    }
+    private void FindFormationsNearMe()
+    {
+        foreach (FormationPosition item in fightManager.allFormations)
+        {
+            item.enableAnimations = false;
+        }
+        int layerMask = 1 << 23; //layer 23 formations
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, radiusToEnableAnimations, layerMask, QueryTriggerInteraction.Ignore);
+        foreach (Collider hitCollider in hitColliders)
+        { 
+            FormationPosition form = hitCollider.gameObject.GetComponent<FormationPosition>();
+            form.enableAnimations = true;
+        }
     }
 }
