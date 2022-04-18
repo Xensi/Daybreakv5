@@ -40,8 +40,17 @@ public class SoldierModel : MonoBehaviour
     public GameObject self;
     [SerializeField] private float finishedPathRotSpeed = 1;
 
+    [SerializeField] private List<SoldierModel> nearbyEnemyModels;
+
     //public SkinnedMeshRenderer[] re;
-     
+    [SerializeField] private float reqAttackTime = 3;
+    [SerializeField] private float currentAttackTime = 3;
+
+    [SerializeField] private float health = 10;
+    [SerializeField] private float damage = 1;
+    [SerializeField] private float armor = 0;
+
+
     private void Start()
     {
         animator.SetBool("walking", true);
@@ -103,6 +112,129 @@ public class SoldierModel : MonoBehaviour
         }
     }
 
+    public void CheckIfEnemyModelsNearby()
+    {
+        nearbyEnemyModels.Clear();
+        LayerMask layerMask = LayerMask.GetMask("SelfBody"); 
+        int maxColliders = 80;
+        Collider[] colliders = new Collider[maxColliders];
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, attackRange, colliders, layerMask, QueryTriggerInteraction.Ignore);
+        for (int i = 0; i < numColliders; i++)
+        {
+            if (colliders[i].gameObject == self) //if our own hitbox, ignore
+            {
+                continue;
+            }
+            SoldierModel model = colliders[i].GetComponentInParent<SoldierModel>(); 
+
+            if (model != null)
+            {
+                if (model.team == team || !model.alive)
+                {
+                    continue;
+                }
+                nearbyEnemyModels.Add(model);
+                //Debug.LogError("hit one"); 
+            }
+        }
+        FindClosestModel();
+    }
+    private void FindClosestModel()
+    { 
+        if (nearbyEnemyModels.Count <= 0)
+        {
+            targetEnemy = null;
+            return;
+        }
+        if (nearbyEnemyModels.Count == 1)
+        {
+            targetEnemy = nearbyEnemyModels[0];
+        }
+        float initDist = GetDistance(transform, nearbyEnemyModels[0].transform);
+        float compareDist = initDist;
+        targetEnemy = nearbyEnemyModels[0];
+        foreach (SoldierModel item in nearbyEnemyModels) //doesn't work yet
+        {
+            float dist = GetDistance(transform, item.gameObject.transform); 
+            if (dist < compareDist)
+            {
+                targetEnemy = item;
+                compareDist = dist;
+            }
+        } 
+    }
+    public void TryToAttackEnemy()
+    {
+        if (targetEnemy == null || animator.GetBool("damaged"))
+        {
+            return;
+        }
+        else
+        { 
+            if (currentAttackTime >= reqAttackTime) //if timer has met attack time
+            {
+                animator.SetBool("attacking", true);
+                //aiPath.canMove = false;
+
+            }
+            else
+            {
+                animator.SetBool("attacking", false);
+                //aiPath.canMove = true;
+            }
+        }
+    }
+    public void UpdateAttackTimer()
+    {
+        if (!animator.GetBool("attacking") && targetEnemy != null) //can't increment while attacking
+        { 
+            currentAttackTime += Random.Range(.1f, .5f);
+        }
+    }
+    public void DealDamage()
+    {
+        //aiPath.canMove = true;
+        if (targetEnemy != null)
+        {
+            currentAttackTime = 0;
+            targetEnemy.health -= damage;
+            targetEnemy.animator.SetBool("damaged", true);
+            targetEnemy.animator.SetBool("attacking", false);
+
+            if (targetEnemy.animator.GetBool("deployed"))
+            {
+
+                targetEnemy.animator.Play("WeaponDownDamaged");
+            }
+            else
+            {
+
+                targetEnemy.animator.Play("WeaponUpDamaged");
+            }
+            if (targetEnemy.health <= 0)
+            {
+                targetEnemy.alive = false;
+                targetEnemy.animator.SetBool("alive", false);
+                //targetEnemy.animator.Play("WeaponUpDie");
+            }
+        }
+    }
+
+    public void TookDamage()
+    {
+        animator.SetBool("damaged", false);
+        //currentAttackTime = 0;
+    }
+
+    private float GetDistance(Transform one, Transform two)
+    {
+        float dist = Vector3.Distance(one.position, two.position);
+        return dist;
+    }
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(transform.position, attackRange); 
+    }
     public void CullAnimations()
     {
         if (animate || aiPath.canMove) //if we're in range or we can move
@@ -163,7 +295,17 @@ public class SoldierModel : MonoBehaviour
 
     public void FixRotation()
     {
-        if (!aiPath.canMove)
+        if (targetEnemy != null)
+        { 
+            Vector3 targetDirection = targetEnemy.transform.position - transform.position;
+
+            float singleStep = finishedPathRotSpeed * Time.deltaTime;
+
+            Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f); 
+
+            transform.rotation = Quaternion.LookRotation(newDirection);
+        } 
+        else if (!aiPath.canMove)
         {
             transform.rotation = Quaternion.RotateTowards(transform.rotation, formPos.gameObject.transform.rotation, finishedPathRotSpeed * Time.deltaTime);
         }

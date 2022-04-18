@@ -46,29 +46,35 @@ public class FormationPosition : MonoBehaviour
     [SerializeField] private Transform highParent;
     [SerializeField] private float finishedPathRotSpeed = 1;
     public bool pathSet = false;
+
+    public List<Position> firstRowPositions;
+
     private void OnDrawGizmos()
     {
         //Gizmos.DrawWireSphere(transform.position, 4);
     }
     private void Start()
     {
-        //InvokeRepeating("CheckNearbyFormations", 1f, 1f);
-        //InvokeRepeating("CheckNearbyModels", 1f, 1f);
+        InvokeRepeating("CheckNearbyFormations", 1f, 1f); 
         currentSpeed = walkingSpeed;
         aiPath.maxSpeed = currentSpeed;
         InvokeRepeating("UpdateSoldiers", 1f, 1f);
         InvokeRepeating("FastUpdateSoldiers", .05f, .05f);
         InvokeRepeating("FixRotation", .05f, .05f);
+        InvokeRepeating("SlowUpdate", .1f, .1f);
 
     } 
     private void Update()
     {
+        UpdateLineRenderer();
+        VeryFastUpdateSoldiers(); 
+    }
+    private void SlowUpdate()
+    { 
         SlowDown();
         OffsetPositions();
-
-        UpdateLineRenderer();
         CatchDeployEvents();
-        VeryFastUpdateSoldiers(); 
+        UpdateAttackTimers();
     }
     private void UpdateLineRenderer()
     {
@@ -95,6 +101,17 @@ public class FormationPosition : MonoBehaviour
             DeployEvent(weaponsDeployed);
         }
     }
+    private void UpdateAttackTimers()
+    {
+        foreach(SoldierModel model in soldierBlock.listSoldierModels)
+        {
+            if (model.alive)
+            {
+                model.UpdateAttackTimer();
+                model.TryToAttackEnemy();
+            }
+        }
+    }
     private void UpdateSoldiers()
     {
         foreach (SoldierModel model in soldierBlock.listSoldierModels)
@@ -102,6 +119,7 @@ public class FormationPosition : MonoBehaviour
             if (model.alive)
             {
                 model.CullAnimations();
+                model.CheckIfEnemyModelsNearby();
             }
         }
     }
@@ -147,7 +165,6 @@ public class FormationPosition : MonoBehaviour
         }
 
     }
-
     public void CheckDirectionOfMovement()
     {
         compass.LookAt(aiTarget);
@@ -191,34 +208,38 @@ public class FormationPosition : MonoBehaviour
 
     private void OffsetPositions()
     {
-        if (aiPath.remainingDistance > offsetThreshold) 
+        if (enemyFormationToTarget == null)
         {
-            if (weaponsDeployed)
+            if (aiPath.remainingDistance > offsetThreshold)
             {
-                posParentTransform.localPosition = posParentStartingPos;
-                if (Mathf.Abs(aiPath.velocity.x) > requiredVelocity || Mathf.Abs(aiPath.velocity.z) > deployedRequiredVelocity)
+                if (weaponsDeployed)
+                {
+                    posParentTransform.localPosition = posParentStartingPos;
+                    if (Mathf.Abs(aiPath.velocity.x) > requiredVelocity || Mathf.Abs(aiPath.velocity.z) > deployedRequiredVelocity)
+                    {
+
+                        posParentTransform.localPosition = posParentStartingPos + deployedOffsetAmount;
+                    }
+
+                }
+                else
                 {
 
-                    posParentTransform.localPosition = posParentStartingPos + deployedOffsetAmount;
+                    posParentTransform.localPosition = posParentStartingPos;
+                    if (Mathf.Abs(aiPath.velocity.x) > requiredVelocity || Mathf.Abs(aiPath.velocity.z) > requiredVelocity)
+                    {
+
+                        posParentTransform.localPosition = posParentStartingPos + offsetAmount;
+                    }
                 }
 
             }
             else
             {
-
                 posParentTransform.localPosition = posParentStartingPos;
-                if (Mathf.Abs(aiPath.velocity.x) > requiredVelocity || Mathf.Abs(aiPath.velocity.z) > requiredVelocity)
-                {
-
-                    posParentTransform.localPosition = posParentStartingPos + offsetAmount;
-                }
             }
-
         }
-        else
-        {
-            posParentTransform.localPosition = posParentStartingPos;
-        }
+        
     }
 
     private void DeployEvent(bool sprinting)

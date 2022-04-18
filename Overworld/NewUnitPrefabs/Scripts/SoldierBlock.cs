@@ -8,7 +8,7 @@ public class SoldierBlock : MonoBehaviour
 
     [SerializeField] private GameObject soldierPrefab;
     [SerializeField] private Transform modelParent;
-    [SerializeField] private List<Transform> formationPositions;
+    [SerializeField] private List<Position> formationPositions;
     [SerializeField] private Transform FormationTransform;
     [SerializeField] private Quaternion angleToFace;
     [SerializeField] private Transform target;
@@ -20,12 +20,17 @@ public class SoldierBlock : MonoBehaviour
     {
         formPos = GetComponentInChildren<FormationPosition>();
         formPos.team = team;
-        int num = 1;
-        foreach (Transform elTransform in formationPositions)
+        int num = 0;
+        int increment = 0;
+        int row = 1;
+        foreach (Position position in formationPositions)
         {
-            GameObject soldier = Instantiate(soldierPrefab, elTransform.position, angleToFace, modelParent);
+            increment++;
+            num++;
+            GameObject soldier = Instantiate(soldierPrefab, position.transform.position, angleToFace, modelParent);
             AIDestinationSetter aiDesSet = soldier.GetComponentInChildren<AIDestinationSetter>();
-            aiDesSet.target = elTransform; 
+            aiDesSet.target = position.transform; 
+
 
 
             SoldierModel model = soldier.GetComponentInChildren<SoldierModel>();
@@ -35,12 +40,24 @@ public class SoldierBlock : MonoBehaviour
             model.self.tag = team + "Model";
 
             listSoldierModels.Add(model);
+            
             if (num == 40)
             {
                 arbiter = model;
             }
-            num++;
 
+            if (num <= 10)
+            {
+                formPos.firstRowPositions.Add(position);
+            }
+
+            position.assignedSoldierModel = model;
+            position.row = row;
+            if (increment >= 10)
+            {
+                increment = 0;
+                row++;
+            }
         }
     }
 }
