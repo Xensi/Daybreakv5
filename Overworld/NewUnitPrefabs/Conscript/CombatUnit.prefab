@@ -110,7 +110,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 53
+  m_RootOrder: 44
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &491224033830951449
 MonoBehaviour:
@@ -126,6 +126,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700109943635039
 GameObject:
   m_ObjectHideFlags: 0
@@ -155,7 +159,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 29
+  m_RootOrder: 20
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1923157237659211943
 MonoBehaviour:
@@ -171,6 +175,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700109959981597
 GameObject:
   m_ObjectHideFlags: 0
@@ -216,6 +224,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700109991791767
 GameObject:
   m_ObjectHideFlags: 0
@@ -244,8 +256,8 @@ Transform:
   m_LocalPosition: {x: 1, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 12
+  m_Father: {fileID: 9131454677924282923}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7031574571436900294
 MonoBehaviour:
@@ -261,6 +273,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110015499711
 GameObject:
   m_ObjectHideFlags: 0
@@ -290,7 +306,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 25
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5585187856073853385
 MonoBehaviour:
@@ -306,6 +322,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110029131282
 GameObject:
   m_ObjectHideFlags: 0
@@ -335,7 +355,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 70
+  m_RootOrder: 61
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2804654860183390481
 MonoBehaviour:
@@ -351,6 +371,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110055592124
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,6 +420,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110060338596
 GameObject:
   m_ObjectHideFlags: 0
@@ -425,7 +453,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 62
+  m_RootOrder: 53
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4889086385923041822
 MonoBehaviour:
@@ -441,6 +469,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110078070635
 GameObject:
   m_ObjectHideFlags: 0
@@ -470,7 +502,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 36
+  m_RootOrder: 27
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8835561440689977407
 MonoBehaviour:
@@ -486,6 +518,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110198484668
 GameObject:
   m_ObjectHideFlags: 0
@@ -514,8 +550,8 @@ Transform:
   m_LocalPosition: {x: 1, y: 0, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 14
+  m_Father: {fileID: 9131454677924282923}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3612039081505658789
 MonoBehaviour:
@@ -531,6 +567,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110249152667
 GameObject:
   m_ObjectHideFlags: 0
@@ -560,7 +600,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 30
+  m_RootOrder: 21
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2871265161950980270
 MonoBehaviour:
@@ -576,6 +616,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110250431500
 GameObject:
   m_ObjectHideFlags: 0
@@ -605,7 +649,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 45
+  m_RootOrder: 36
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7600979578432656895
 MonoBehaviour:
@@ -621,6 +665,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110267998423
 GameObject:
   m_ObjectHideFlags: 0
@@ -650,7 +698,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 68
+  m_RootOrder: 59
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2731369258092325578
 MonoBehaviour:
@@ -666,6 +714,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110313397913
 GameObject:
   m_ObjectHideFlags: 0
@@ -695,7 +747,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 78
+  m_RootOrder: 69
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5913129634313290808
 MonoBehaviour:
@@ -711,6 +763,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110317032630
 GameObject:
   m_ObjectHideFlags: 0
@@ -740,7 +796,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 74
+  m_RootOrder: 65
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5013617620356784319
 MonoBehaviour:
@@ -756,6 +812,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110327013245
 GameObject:
   m_ObjectHideFlags: 0
@@ -785,7 +845,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 64
+  m_RootOrder: 55
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7611408794927076360
 MonoBehaviour:
@@ -801,6 +861,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110328894852
 GameObject:
   m_ObjectHideFlags: 0
@@ -830,7 +894,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 66
+  m_RootOrder: 57
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5274645158571526441
 MonoBehaviour:
@@ -846,6 +910,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110351952735
 GameObject:
   m_ObjectHideFlags: 0
@@ -875,7 +943,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 24
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8557446142655686002
 MonoBehaviour:
@@ -891,6 +959,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110389307120
 GameObject:
   m_ObjectHideFlags: 0
@@ -936,6 +1008,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110394611148
 GameObject:
   m_ObjectHideFlags: 0
@@ -965,7 +1041,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 43
+  m_RootOrder: 34
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7688150024484499647
 MonoBehaviour:
@@ -981,6 +1057,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110397409195
 GameObject:
   m_ObjectHideFlags: 0
@@ -1010,7 +1090,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 48
+  m_RootOrder: 39
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5934869854123286547
 MonoBehaviour:
@@ -1026,6 +1106,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110404559320
 GameObject:
   m_ObjectHideFlags: 0
@@ -1055,7 +1139,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 76
+  m_RootOrder: 67
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2544502239671970560
 MonoBehaviour:
@@ -1071,6 +1155,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110416981790
 GameObject:
   m_ObjectHideFlags: 0
@@ -1100,7 +1188,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 39
+  m_RootOrder: 30
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5920244846080649161
 MonoBehaviour:
@@ -1116,6 +1204,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110420648599
 GameObject:
   m_ObjectHideFlags: 0
@@ -1145,7 +1237,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 77
+  m_RootOrder: 68
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7923461661254909727
 MonoBehaviour:
@@ -1161,6 +1253,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110486431558
 GameObject:
   m_ObjectHideFlags: 0
@@ -1189,8 +1285,8 @@ Transform:
   m_LocalPosition: {x: 1, y: 0, z: 6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 16
+  m_Father: {fileID: 9131454677924282923}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8018815718575040538
 MonoBehaviour:
@@ -1206,6 +1302,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110491991422
 GameObject:
   m_ObjectHideFlags: 0
@@ -1235,7 +1335,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 22
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5124181873769622213
 MonoBehaviour:
@@ -1251,6 +1351,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110495257659
 GameObject:
   m_ObjectHideFlags: 0
@@ -1296,6 +1400,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110496769151
 GameObject:
   m_ObjectHideFlags: 0
@@ -1325,7 +1433,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 28
+  m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3458381141565418405
 MonoBehaviour:
@@ -1341,6 +1449,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110502578629
 GameObject:
   m_ObjectHideFlags: 0
@@ -1370,7 +1482,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 61
+  m_RootOrder: 52
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4729485399693305144
 MonoBehaviour:
@@ -1386,6 +1498,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110525753340
 GameObject:
   m_ObjectHideFlags: 0
@@ -1414,8 +1530,8 @@ Transform:
   m_LocalPosition: {x: 1, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 15
+  m_Father: {fileID: 9131454677924282923}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4368895905987636458
 MonoBehaviour:
@@ -1431,6 +1547,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110595696069
 GameObject:
   m_ObjectHideFlags: 0
@@ -1460,7 +1580,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 52
+  m_RootOrder: 43
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8395024310394484634
 MonoBehaviour:
@@ -1476,6 +1596,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110611704336
 GameObject:
   m_ObjectHideFlags: 0
@@ -1505,7 +1629,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 71
+  m_RootOrder: 62
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5312117441244094261
 MonoBehaviour:
@@ -1521,6 +1645,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110645925866
 GameObject:
   m_ObjectHideFlags: 0
@@ -1549,8 +1677,8 @@ Transform:
   m_LocalPosition: {x: 1, y: 0, z: 8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 18
+  m_Father: {fileID: 9131454677924282923}
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3808582442309539892
 MonoBehaviour:
@@ -1566,6 +1694,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110655737670
 GameObject:
   m_ObjectHideFlags: 0
@@ -1594,8 +1726,8 @@ Transform:
   m_LocalPosition: {x: 1, y: 0, z: 7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 17
+  m_Father: {fileID: 9131454677924282923}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3427292845131314123
 MonoBehaviour:
@@ -1611,6 +1743,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110661961090
 GameObject:
   m_ObjectHideFlags: 0
@@ -1640,7 +1776,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 63
+  m_RootOrder: 54
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5214127796271842764
 MonoBehaviour:
@@ -1656,6 +1792,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110694762162
 GameObject:
   m_ObjectHideFlags: 0
@@ -1685,7 +1825,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 75
+  m_RootOrder: 66
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8125626821637259391
 MonoBehaviour:
@@ -1701,6 +1841,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110707663663
 GameObject:
   m_ObjectHideFlags: 0
@@ -1746,6 +1890,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110728819744
 GameObject:
   m_ObjectHideFlags: 0
@@ -1805,7 +1953,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 72
+  m_RootOrder: 63
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4989113293873686764
 MonoBehaviour:
@@ -1821,6 +1969,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110764293250
 GameObject:
   m_ObjectHideFlags: 0
@@ -1850,7 +2002,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 67
+  m_RootOrder: 58
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3921401848726635269
 MonoBehaviour:
@@ -1866,6 +2018,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110773037550
 GameObject:
   m_ObjectHideFlags: 0
@@ -1894,8 +2050,8 @@ Transform:
   m_LocalPosition: {x: 1, y: 0, z: 9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 19
+  m_Father: {fileID: 9131454677924282923}
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6745560629077589940
 MonoBehaviour:
@@ -1911,6 +2067,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110775486718
 GameObject:
   m_ObjectHideFlags: 0
@@ -1940,7 +2100,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 69
+  m_RootOrder: 60
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &140530368879974896
 MonoBehaviour:
@@ -1956,6 +2116,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110807774521
 GameObject:
   m_ObjectHideFlags: 0
@@ -1985,7 +2149,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 35
+  m_RootOrder: 26
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6981999833130523014
 MonoBehaviour:
@@ -2001,6 +2165,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110848617437
 GameObject:
   m_ObjectHideFlags: 0
@@ -2030,7 +2198,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 41
+  m_RootOrder: 32
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4723264250437011224
 MonoBehaviour:
@@ -2046,6 +2214,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110860795023
 GameObject:
   m_ObjectHideFlags: 0
@@ -2075,7 +2247,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 32
+  m_RootOrder: 23
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8601046610350688143
 MonoBehaviour:
@@ -2091,6 +2263,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110886673008
 GameObject:
   m_ObjectHideFlags: 0
@@ -2120,7 +2296,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 34
+  m_RootOrder: 25
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4621588302234133031
 MonoBehaviour:
@@ -2136,6 +2312,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110890606711
 GameObject:
   m_ObjectHideFlags: 0
@@ -2165,7 +2345,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 31
+  m_RootOrder: 22
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6614045520046839717
 MonoBehaviour:
@@ -2181,6 +2361,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110911429547
 GameObject:
   m_ObjectHideFlags: 0
@@ -2210,7 +2394,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 44
+  m_RootOrder: 35
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5687237106224893140
 MonoBehaviour:
@@ -2226,6 +2410,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110937688012
 GameObject:
   m_ObjectHideFlags: 0
@@ -2255,7 +2443,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 58
+  m_RootOrder: 49
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5699179267615339988
 MonoBehaviour:
@@ -2271,6 +2459,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700110976596681
 GameObject:
   m_ObjectHideFlags: 0
@@ -2316,6 +2508,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111000884123
 GameObject:
   m_ObjectHideFlags: 0
@@ -2361,6 +2557,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111038027940
 GameObject:
   m_ObjectHideFlags: 0
@@ -2389,8 +2589,8 @@ Transform:
   m_LocalPosition: {x: 1, y: 0, z: 3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 13
+  m_Father: {fileID: 9131454677924282923}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5348372361716690254
 MonoBehaviour:
@@ -2406,6 +2606,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111058348437
 GameObject:
   m_ObjectHideFlags: 0
@@ -2435,7 +2639,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 46
+  m_RootOrder: 37
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &157885835349021418
 MonoBehaviour:
@@ -2451,6 +2655,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111069054471
 GameObject:
   m_ObjectHideFlags: 0
@@ -2480,7 +2688,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 37
+  m_RootOrder: 28
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1082439343409739862
 MonoBehaviour:
@@ -2496,6 +2704,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111103716312
 GameObject:
   m_ObjectHideFlags: 0
@@ -2525,7 +2737,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 73
+  m_RootOrder: 64
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8305442836286660203
 MonoBehaviour:
@@ -2541,6 +2753,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111123590931
 GameObject:
   m_ObjectHideFlags: 0
@@ -2570,7 +2786,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 33
+  m_RootOrder: 24
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8620293840509834301
 MonoBehaviour:
@@ -2586,6 +2802,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111134051211
 GameObject:
   m_ObjectHideFlags: 0
@@ -2631,6 +2851,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111183589317
 GameObject:
   m_ObjectHideFlags: 0
@@ -2660,7 +2884,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 49
+  m_RootOrder: 40
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6847322767831312710
 MonoBehaviour:
@@ -2676,6 +2900,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111234879874
 GameObject:
   m_ObjectHideFlags: 0
@@ -2843,6 +3071,7 @@ MonoBehaviour:
   formPos: {fileID: 29422916108755641}
   listSoldierModels: []
   arbiter: {fileID: 0}
+  reinforceablePositions: []
 --- !u!1 &5955700111282336933
 GameObject:
   m_ObjectHideFlags: 0
@@ -2872,7 +3101,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 23
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6764317985063431065
 MonoBehaviour:
@@ -2888,6 +3117,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111290460574
 GameObject:
   m_ObjectHideFlags: 0
@@ -2917,7 +3150,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 40
+  m_RootOrder: 31
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7396724437997539435
 MonoBehaviour:
@@ -2933,6 +3166,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111303515792
 GameObject:
   m_ObjectHideFlags: 0
@@ -2962,7 +3199,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 51
+  m_RootOrder: 42
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2387279329173606685
 MonoBehaviour:
@@ -2978,6 +3215,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111347776709
 GameObject:
   m_ObjectHideFlags: 0
@@ -3007,7 +3248,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 56
+  m_RootOrder: 47
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2280649669102055360
 MonoBehaviour:
@@ -3023,6 +3264,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111421230610
 GameObject:
   m_ObjectHideFlags: 0
@@ -3081,8 +3326,8 @@ Transform:
   m_LocalPosition: {x: 1, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 11
+  m_Father: {fileID: 9131454677924282923}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7620010442219008552
 MonoBehaviour:
@@ -3098,6 +3343,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111470347213
 GameObject:
   m_ObjectHideFlags: 0
@@ -3127,7 +3376,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 20
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8202091744548175626
 MonoBehaviour:
@@ -3143,6 +3392,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111519842995
 GameObject:
   m_ObjectHideFlags: 0
@@ -3172,7 +3425,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 26
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1297377304073960975
 MonoBehaviour:
@@ -3188,6 +3441,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111539829866
 GameObject:
   m_ObjectHideFlags: 0
@@ -3206,7 +3463,7 @@ GameObject:
   - component: {fileID: 5716949793002326831}
   m_Layer: 23
   m_Name: FormationPositions
-  m_TagString: Untagged
+  m_TagString: Formation
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3218,7 +3475,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5955700111539829866}
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3253,12 +3510,15 @@ MonoBehaviour:
   velThreshold: 0.1
   checkRadius: 20
   rectangleCollider: {fileID: 101304830}
+  xsize: 10
+  zsize: 8
   enemyFormationToTarget: {fileID: 0}
   soldierBlock: {fileID: 5955700111243193916}
   enableAnimations: 0
-  stoppingDistance: 11
+  stoppingDistance: 12.5
   moveStopDistance: 1
   currentSpeed: 0
+  slowSpeed: 0.5
   walkingSpeed: 3
   sprintSpeed: 6.5
   selected: 0
@@ -3276,9 +3536,17 @@ MonoBehaviour:
   deployedRequiredVelocity: 4
   compass: {fileID: 6626605449947695622}
   highParent: {fileID: 1889408432676090364}
-  finishedPathRotSpeed: 1
+  finishedPathRotSpeed: 5
   pathSet: 0
-  firstRowPositions: []
+  frontlinePositions: []
+  modelAttacking: 0
+  obeyingMovementOrder: 0
+  numberOfAliveSoldiers: 80
+  maxSoldiers: 80
+  tangledUp: 0
+  slowRotate: 5
+  normRotate: 30
+  offsetSecondRow: {fileID: 9131454677924282923}
 --- !u!114 &5955700111539829870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3372,7 +3640,7 @@ Rigidbody:
   m_GameObject: {fileID: 5955700111539829866}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 0.1
+  m_Drag: 1
   m_AngularDrag: 0.05
   m_UseGravity: 0
   m_IsKinematic: 0
@@ -3391,7 +3659,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 10, y: 4, z: 8}
-  m_Center: {x: 0, y: 1.93, z: 0}
+  m_Center: {x: 0, y: 2, z: 0}
 --- !u!114 &5716949793002326831
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3448,7 +3716,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 54
+  m_RootOrder: 45
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &372852201486216194
 MonoBehaviour:
@@ -3464,6 +3732,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111588915355
 GameObject:
   m_ObjectHideFlags: 0
@@ -3493,7 +3765,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 57
+  m_RootOrder: 48
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &992323451340189648
 MonoBehaviour:
@@ -3509,6 +3781,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111596356444
 GameObject:
   m_ObjectHideFlags: 0
@@ -3538,7 +3814,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 38
+  m_RootOrder: 29
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &76514930178159346
 MonoBehaviour:
@@ -3554,6 +3830,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111624399274
 GameObject:
   m_ObjectHideFlags: 0
@@ -3583,7 +3863,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 21
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &396539421187653531
 MonoBehaviour:
@@ -3599,6 +3879,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111633469804
 GameObject:
   m_ObjectHideFlags: 0
@@ -3627,7 +3911,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 80
+  m_RootOrder: 71
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5955700111650769857
 GameObject:
@@ -3658,7 +3942,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 47
+  m_RootOrder: 38
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2462285983258505305
 MonoBehaviour:
@@ -3674,6 +3958,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111659994685
 GameObject:
   m_ObjectHideFlags: 0
@@ -3719,6 +4007,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111695449072
 GameObject:
   m_ObjectHideFlags: 0
@@ -3748,7 +4040,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 60
+  m_RootOrder: 51
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4951865631224715224
 MonoBehaviour:
@@ -3764,6 +4056,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111715953655
 GameObject:
   m_ObjectHideFlags: 0
@@ -3793,7 +4089,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 42
+  m_RootOrder: 33
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5073225599709970274
 MonoBehaviour:
@@ -3809,6 +4105,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111764308539
 GameObject:
   m_ObjectHideFlags: 0
@@ -3846,16 +4146,7 @@ Transform:
   - {fileID: 5955700110707663662}
   - {fileID: 5955700110389307123}
   - {fileID: 5955700112032372523}
-  - {fileID: 5955700112042492971}
-  - {fileID: 5955700111469577569}
-  - {fileID: 5955700109991791766}
-  - {fileID: 5955700111038027943}
-  - {fileID: 5955700110198484671}
-  - {fileID: 5955700110525753343}
-  - {fileID: 5955700110486431561}
-  - {fileID: 5955700110655737673}
-  - {fileID: 5955700110645925869}
-  - {fileID: 5955700110773037553}
+  - {fileID: 9131454677924282923}
   - {fileID: 5955700111470347212}
   - {fileID: 5955700111624399277}
   - {fileID: 5955700110491991361}
@@ -3949,7 +4240,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 50
+  m_RootOrder: 41
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7082964239208578000
 MonoBehaviour:
@@ -3965,6 +4256,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111880371989
 GameObject:
   m_ObjectHideFlags: 0
@@ -3994,7 +4289,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 65
+  m_RootOrder: 56
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &9219752110261613029
 MonoBehaviour:
@@ -4010,6 +4305,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111924917585
 GameObject:
   m_ObjectHideFlags: 0
@@ -4039,7 +4338,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 59
+  m_RootOrder: 50
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &801599745586274660
 MonoBehaviour:
@@ -4055,6 +4354,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111948577797
 GameObject:
   m_ObjectHideFlags: 0
@@ -4084,7 +4387,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 79
+  m_RootOrder: 70
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &572238791837935936
 MonoBehaviour:
@@ -4100,6 +4403,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111959498470
 GameObject:
   m_ObjectHideFlags: 0
@@ -4129,7 +4436,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 27
+  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2105143489767042935
 MonoBehaviour:
@@ -4145,6 +4452,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700111981831670
 GameObject:
   m_ObjectHideFlags: 0
@@ -4174,7 +4485,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 55
+  m_RootOrder: 46
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &35259523278190173
 MonoBehaviour:
@@ -4190,6 +4501,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700112032372520
 GameObject:
   m_ObjectHideFlags: 0
@@ -4235,6 +4550,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &5955700112042492968
 GameObject:
   m_ObjectHideFlags: 0
@@ -4263,8 +4582,8 @@ Transform:
   m_LocalPosition: {x: 1, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 5955700111764308538}
-  m_RootOrder: 10
+  m_Father: {fileID: 9131454677924282923}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2500978271202779245
 MonoBehaviour:
@@ -4280,6 +4599,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   assignedSoldierModel: {fileID: 0}
   row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
 --- !u!1 &6288200040760361686
 GameObject:
   m_ObjectHideFlags: 0
@@ -4630,3 +4953,43 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!1 &9206622942051067922
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9131454677924282923}
+  m_Layer: 0
+  m_Name: Offset
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9131454677924282923
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9206622942051067922}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 5955700112042492971}
+  - {fileID: 5955700111469577569}
+  - {fileID: 5955700109991791766}
+  - {fileID: 5955700111038027943}
+  - {fileID: 5955700110198484671}
+  - {fileID: 5955700110525753343}
+  - {fileID: 5955700110486431561}
+  - {fileID: 5955700110655737673}
+  - {fileID: 5955700110645925869}
+  - {fileID: 5955700110773037553}
+  m_Father: {fileID: 5955700111764308538}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
