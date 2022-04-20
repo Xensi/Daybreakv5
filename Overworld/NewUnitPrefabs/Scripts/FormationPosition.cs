@@ -7,14 +7,17 @@ public class FormationPosition : MonoBehaviour
     public string team = "Altgard";
     public RichAI aiPath;
     [SerializeField] private float threshold = .5f;
-    [SerializeField] private List<FormationPosition> listOfNearbyEnemies;
+    public List<FormationPosition> listOfNearbyEnemies;
     [SerializeField] private AIDestinationSetter aiDesSet;
     public Transform aiTarget;
     public Transform rotTarget;
     [SerializeField] private float velThreshold = .1f;
     [SerializeField] private float checkRadius = 10;
-    [SerializeField] private Collider rectangleCollider;
-    [SerializeField] private FormationPosition enemyFormationToTarget;
+    [SerializeField] private BoxCollider rectangleCollider;
+
+
+
+    public FormationPosition enemyFormationToTarget;
     [SerializeField] private SoldierBlock soldierBlock;
     private bool resetTarget = true;
     public bool enableAnimations = false;
@@ -24,6 +27,7 @@ public class FormationPosition : MonoBehaviour
     [SerializeField] private float moveStopDistance = 1;
 
     [SerializeField] private float currentSpeed = 0;
+    [SerializeField] private float slowSpeed = .5f;
     [SerializeField] private float walkingSpeed = 3.5f;
     [SerializeField] private float sprintSpeed = 6.5f;
 
@@ -47,35 +51,222 @@ public class FormationPosition : MonoBehaviour
     [SerializeField] private float finishedPathRotSpeed = 1;
     public bool pathSet = false;
 
-    public List<Position> firstRowPositions;
+    public List<Position> frontlinePositions;
 
+    public bool modelAttacking = false;
+
+    public bool obeyingMovementOrder;
+
+    public float numberOfAliveSoldiers = 80;
+    [SerializeField] private float maxSoldiers = 80;
+
+    public bool tangledUp = false;
+    [SerializeField] private float slowRotate = 15;
+
+    [SerializeField] private float normRotate = 30;
+    [SerializeField] private Transform offsetSecondRow;
+
+    private float colliderBoxRange = 9;
+    [SerializeField] private float xsize = 10;
+    [SerializeField] private float ysize = 4;
+    [SerializeField] private float zsize = 8;
+
+    [SerializeField] private float xoffset = 0;
+    [SerializeField] private float yoffset = 2;
+    [SerializeField] private float zoffset = 1;
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.gameObject.tag == "Formation")
+        { 
+            tangledUp = true;
+            
+        }
+    }
+    void OnCollisionStay(Collision collision)
+    {
+        if (collision.collider.gameObject.tag == "Formation")
+        {
+            tangledUp = true;
+        }
+    }
+    void OnCollisionExit(Collision collision)
+    {
+        tangledUp = false;
+    }
     private void OnDrawGizmos()
     {
         //Gizmos.DrawWireSphere(transform.position, 4);
     }
     private void Start()
     {
-        InvokeRepeating("CheckNearbyFormations", 1f, 1f); 
         currentSpeed = walkingSpeed;
         aiPath.maxSpeed = currentSpeed;
-        InvokeRepeating("UpdateSoldiers", 1f, 1f);
-        InvokeRepeating("FastUpdateSoldiers", .05f, .05f);
-        InvokeRepeating("FixRotation", .05f, .05f);
-        InvokeRepeating("SlowUpdate", .1f, .1f);
+        InvokeRepeating("VerySlowUpdate", 1f, 1f);  
+        InvokeRepeating("SlowUpdate", .5f, .5f); //normally .05f
+        InvokeRepeating("FastUpdate", .1f, .1f);
 
-    } 
-    private void Update()
+        colliderBoxRange = soldierBlock.modelAttackRange * 2;
+
+    }
+    private void VerySlowUpdate()
     {
-        UpdateLineRenderer();
-        VeryFastUpdateSoldiers(); 
+        if (numberOfAliveSoldiers <= 0)
+        {
+            foreach (FormationPosition item in listOfNearbyEnemies)
+            {
+                item.listOfNearbyEnemies.Remove(this);
+            }
+            gameObject.SetActive(false);
+        }
+        UpdateSpeed();
+        if (listOfNearbyEnemies.Count > 0)
+        {
+            offsetSecondRow.localPosition = new Vector3(-.5f,0,.5f);
+
+            int num = 0;
+            if (numberOfAliveSoldiers >= 71) //80
+            {
+                num = 0;
+            }
+            else if (numberOfAliveSoldiers >= 61) //70
+            {
+                num = 1;
+            }
+            else if (numberOfAliveSoldiers >= 51) //70
+            {
+                num = 2;
+            }
+            else if (numberOfAliveSoldiers >= 41) //70
+            {
+                num = 3;
+            }
+            else if (numberOfAliveSoldiers >= 31) //70
+            {
+                num = 4;
+            }
+            else if (numberOfAliveSoldiers >= 21) //70
+            {
+                num = 5;
+            }
+            else if (numberOfAliveSoldiers >= 11) //70
+            {
+                num = 6;
+            }
+            else if (numberOfAliveSoldiers >= 1) //70
+            {
+                num = 7;
+            }
+            rectangleCollider.center = new Vector3(xoffset, yoffset, zoffset + .5f * num); //originally .5 7
+            rectangleCollider.size = new Vector3(xsize, ysize, colliderBoxRange - 1 * num);
+
+        }
+        else
+        {
+            offsetSecondRow.localPosition = new Vector3(0, 0, 0);
+            tangledUp = false;
+            rectangleCollider.center = new Vector3(xoffset, yoffset, zoffset-1); //originally .5 7
+            rectangleCollider.size = new Vector3(xsize, ysize, colliderBoxRange-1);
+        }
+        CheckNearbyFormations();
+        UpdateSoldiers();
     }
     private void SlowUpdate()
-    { 
-        SlowDown();
-        OffsetPositions();
-        CatchDeployEvents();
+    {
         UpdateAttackTimers();
+        FixRotation();
     }
+    private void UpdateAttackTimers()
+    {
+        foreach (SoldierModel model in soldierBlock.listSoldierModels)
+        {
+            if (model.alive)
+            {
+                model.UpdateAttackTimer();
+                model.TryToAttackEnemy();
+            }
+        }
+    }
+    private void FastUpdate()
+    {
+        //SlowDown();
+        OffsetPositions();
+        //CatchDeployEvents();
+        //AdjustToHitEnemy();
+        UpdateLineRenderer();
+    }
+    private void UpdateSoldiers()
+    {
+        foreach (SoldierModel model in soldierBlock.listSoldierModels)
+        {
+            if (model.alive)
+            {
+                model.CullAnimations();
+                model.CheckIfEnemyModelsNearby();
+                model.CheckIfIdle();
+                model.UpdateRow();
+
+                model.AnimatorUpdate();
+                model.FixRotation(); //make it so this doesn't do anything if rotation is good
+                model.UpdateSpeed();
+            }
+        }
+        foreach (Position position in soldierBlock.reinforceablePositions)
+        {
+            if (position.assignedSoldierModel == null)
+            {
+                position.SeekReplacement();
+            }
+        }
+    }
+    private void UpdateSpeed()
+    {
+
+        if (enemyFormationToTarget == null) //no enemy
+        {
+            aiPath.endReachedDistance = moveStopDistance;
+            //aiPath.maxSpeed = currentSpeed;
+            weaponsDeployed = false;
+        }
+        else //yes enemy
+        {
+            aiPath.endReachedDistance = stoppingDistance;
+            //aiPath.maxSpeed = sprintSpeed;
+            weaponsDeployed = true;
+        }
+        if (tangledUp)
+        {
+            currentSpeed = walkingSpeed/2;
+            float v = Mathf.Sqrt(numberOfAliveSoldiers / maxSoldiers);
+            currentSpeed *= v;
+            aiPath.rotationSpeed = slowRotate;
+        }
+        else
+        {
+            currentSpeed = walkingSpeed;
+            aiPath.rotationSpeed = normRotate;
+        }
+
+        aiPath.maxSpeed = currentSpeed;
+
+    }
+    private void AdjustToHitEnemy() //fix this
+    {
+        if (enemyFormationToTarget != null && !obeyingMovementOrder)// 
+        {
+
+            float dist = GetDistance(transform, enemyFormationToTarget.gameObject.transform);
+            if (dist <= stoppingDistance && modelAttacking) //stop
+            {
+                aiTarget.transform.position = transform.position;
+                rotTarget.transform.position = enemyFormationToTarget.gameObject.transform.position;
+            }
+            else
+            {
+                aiTarget.transform.position = enemyFormationToTarget.gameObject.transform.position;
+            }
+        }
+    }
+
     private void UpdateLineRenderer()
     {
         if (!aiPath.reachedDestination)
@@ -101,53 +292,9 @@ public class FormationPosition : MonoBehaviour
             DeployEvent(weaponsDeployed);
         }
     }
-    private void UpdateAttackTimers()
-    {
-        foreach(SoldierModel model in soldierBlock.listSoldierModels)
-        {
-            if (model.alive)
-            {
-                model.UpdateAttackTimer();
-                model.TryToAttackEnemy();
-            }
-        }
-    }
-    private void UpdateSoldiers()
-    {
-        foreach (SoldierModel model in soldierBlock.listSoldierModels)
-        {
-            if (model.alive)
-            {
-                model.CullAnimations();
-                model.CheckIfEnemyModelsNearby();
-            }
-        }
-    }
-    private void FastUpdateSoldiers()
-    {
-        foreach (SoldierModel model in soldierBlock.listSoldierModels)
-        {
-            if (model.alive)
-            {
-                model.AnimatorUpdate();
-                model.FixRotation(); //make it so this doesn't do anything if rotation is good
-            }
-        }
-    }
-    private void VeryFastUpdateSoldiers()
-    {
-
-        foreach (SoldierModel model in soldierBlock.listSoldierModels)
-        {
-            if (model.alive)
-            {
-                model.UpdateSpeed(); 
-            }
-        }
-    }
     private void SlowDown()
     {
-        if (soldierBlock.arbiter == null)
+        /*if (soldierBlock.arbiter == null)
         {
             return;
         }
@@ -158,47 +305,43 @@ public class FormationPosition : MonoBehaviour
         if (soldierBlock.arbiter.aiPath.remainingDistance > waitThreshold)
         {
             aiPath.maxSpeed = currentSpeed - soldierBlock.arbiter.aiPath.remainingDistance;
+            if (aiPath.maxSpeed <= slowSpeed)
+            {
+                aiPath.maxSpeed = slowSpeed;
+            }
         }
         else
         {
             aiPath.maxSpeed = currentSpeed;
-        }
+        }*/
 
     }
     public void CheckDirectionOfMovement()
     {
         compass.LookAt(aiTarget);
-        float rot =  compass.localEulerAngles.y;
+        float rot = compass.localEulerAngles.y;
         float threshold = 10;
         Debug.LogError(rot);
         if (-threshold <= rot && rot <= threshold)
         {
             Debug.LogError("front");
-            aiPath.enableRotation = false;
-            //transform.LookAt(aiTarget); 
-            //highParent.rotation = Quaternion.LookRotation(highParent.position - aiTarget.position);
+            aiPath.enableRotation = false; 
         }
-        else if (90- threshold <= rot && rot <= 90+ threshold)
+        else if (90 - threshold <= rot && rot <= 90 + threshold)
         {
-            Debug.LogError("Side");
+            Debug.LogError("Side1");
             aiPath.enableRotation = false;
-
-            transform.localRotation = Quaternion.Euler(0, 0, 0);
-            highParent.localRotation = Quaternion.Euler(0, -90, 0);
+             
         }
         else if (270 - threshold <= rot && rot <= 270 + threshold)
         {
-            Debug.LogError("Side");
-            aiPath.enableRotation = false;
-            //transform.LookAt(aiTarget);
-            //highParent.rotation = Quaternion.LookRotation(highParent.position - aiTarget.position);
+            Debug.LogError("Side2");
+            aiPath.enableRotation = false; 
         }
         else if (180 - threshold <= rot && rot <= 180 + threshold)
         {
-            Debug.LogError("back"); 
-            aiPath.enableRotation = false;
-            //transform.LookAt(aiTarget);
-            //highParent.rotation = Quaternion.LookRotation(highParent.position - aiTarget.position);
+            Debug.LogError("back");
+            aiPath.enableRotation = false; 
         }
         else
         {
@@ -239,24 +382,24 @@ public class FormationPosition : MonoBehaviour
                 posParentTransform.localPosition = posParentStartingPos;
             }
         }
-        
+
     }
 
     private void DeployEvent(bool sprinting)
     {
-        if (sprinting)
+        /*if (sprinting)
         {
             currentSpeed = sprintSpeed;
         }
         else
         {
             currentSpeed = walkingSpeed;
-        }
-        aiPath.maxSpeed = currentSpeed;
-        foreach (SoldierModel soldier in soldierBlock.listSoldierModels)
+        }*/
+        //aiPath.maxSpeed = currentSpeed;
+        /*foreach (Position position in frontlinePositions) //only deploy spears for frontliners
         {
-            soldier.SetSpeed(sprinting);
-        }
+            position.assignedSoldierModel.SetSpeed(sprinting);
+        }*/
     }
     public void SetSelected(bool val)
     {
@@ -270,9 +413,14 @@ public class FormationPosition : MonoBehaviour
         {
             aiPath.canMove = true;
         }
+        if (aiPath.reachedDestination && aiPath.reachedEndOfPath && aiPath.remainingDistance < 2)
+        {
+            obeyingMovementOrder = false;
+        }
         if (aiPath.reachedDestination) //if we've reached destination
         {
             aiPath.canMove = false;
+            //obeyingMovementOrder = false;
         }
         if (enableAnimations != oldEnableAnimations)
         {
@@ -300,25 +448,37 @@ public class FormationPosition : MonoBehaviour
     {
         listOfNearbyEnemies.Clear();
         LayerMask layerMask = LayerMask.GetMask("Formation");
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, checkRadius, layerMask, QueryTriggerInteraction.Ignore);
-        foreach (Collider hitCollider in hitColliders)
+        int maxColliders = 10;
+        Collider[] hitColliders = new Collider[maxColliders]; 
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, checkRadius, hitColliders, layerMask, QueryTriggerInteraction.Ignore); //nonalloc generates no garbage
+
+        for (int i = 0; i < numColliders; i++)
         {
-            if (hitCollider == rectangleCollider)
+            if (hitColliders[i].gameObject.tag != "Formation")
             {
                 continue;
             }
-            FormationPosition form = hitCollider.gameObject.GetComponent<FormationPosition>();
-            if (form.team == team)
+            else
             {
-                continue;
+                if (hitColliders[i] == rectangleCollider) //ignore own collider
+                {
+                    continue;
+                }
+                FormationPosition form = hitColliders[i].gameObject.GetComponent<FormationPosition>();
+                if (form.team == team)
+                {
+                    continue;
+                }
+
+                listOfNearbyEnemies.Add(form);
             }
+        } 
 
-            listOfNearbyEnemies.Add(form);
-
-            //Debug.LogError("Detected other collider nearby" + hitCollider.name);
+        if (obeyingMovementOrder)
+        {
+            return;
         }
-
-        FindClosestFormation(); 
+        FindClosestFormation();
     }
 
     private void FindClosestFormation()
@@ -326,16 +486,17 @@ public class FormationPosition : MonoBehaviour
         if (listOfNearbyEnemies.Count <= 0)
         {
             enemyFormationToTarget = null;
+            aiPath.endReachedDistance = moveStopDistance;
+            aiPath.maxSpeed = currentSpeed;
+            weaponsDeployed = false;
+            tangledUp = false;
             return;
         }
-        if (listOfNearbyEnemies.Count == 1)
-        {
-            enemyFormationToTarget = listOfNearbyEnemies[0];
-        }
+        enemyFormationToTarget = listOfNearbyEnemies[0]; 
         float initDist = GetDistance(transform, listOfNearbyEnemies[0].transform);
         float compareDist = initDist;
         foreach (FormationPosition item in listOfNearbyEnemies) //doesn't work yet
-        {
+        { 
             float dist = GetDistance(transform, item.gameObject.transform);
             //Debug.LogError(dist);
             if (dist < compareDist)
@@ -343,6 +504,7 @@ public class FormationPosition : MonoBehaviour
                 enemyFormationToTarget = item;
                 compareDist = dist;
             }
+            
         }
         EngageFoe();
 
@@ -350,25 +512,11 @@ public class FormationPosition : MonoBehaviour
 
     private void EngageFoe()
     {
-        if (enemyFormationToTarget == null) //no enemy
-        {
-            aiPath.endReachedDistance = moveStopDistance;
-            aiPath.maxSpeed = currentSpeed;
-            weaponsDeployed = false;
-            return;
-        }
-        else //yes enemy
-        {
-            aiPath.endReachedDistance = stoppingDistance;
-            aiPath.maxSpeed = sprintSpeed;
-            weaponsDeployed = true;
-        }
-
         float dist = GetDistance(transform, enemyFormationToTarget.gameObject.transform);
         if (dist <= stoppingDistance)
         {
             aiTarget.transform.position = transform.position;
-            rotTarget.transform.position = enemyFormationToTarget.gameObject.transform.position; 
+            rotTarget.transform.position = enemyFormationToTarget.gameObject.transform.position;
         }
         else if (enemyFormationToTarget != null)
         {
@@ -379,7 +527,7 @@ public class FormationPosition : MonoBehaviour
 
     private void FixRotation()
     {
-        if (!aiPath.canMove)
+        if (!aiPath.canMove   && obeyingMovementOrder && !tangledUp)
         {
             Vector3 targetDirection = rotTarget.position - transform.position;
 

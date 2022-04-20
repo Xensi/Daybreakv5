@@ -193,6 +193,7 @@ public class FightManager : MonoBehaviour
 
                     item.lineRenderer2.enabled = false;
                     item.pathSet = true;
+                    item.obeyingMovementOrder = true;
                 }
                 clickPosition = hit.point;
                 clickPosition.y = 0;

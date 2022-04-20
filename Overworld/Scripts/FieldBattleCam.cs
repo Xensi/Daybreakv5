@@ -17,7 +17,7 @@ public class FieldBattleCam : MonoBehaviour
 
     private void Start()
     {
-        InvokeRepeating("FindFormationsNearMe", .5f, .5f);
+        InvokeRepeating("FindFormationsNearMe", 1f, 1f);
     }
     private void Update()
     {
@@ -79,10 +79,15 @@ public class FieldBattleCam : MonoBehaviour
             item.enableAnimations = false;
         }
         int layerMask = 1 << 23; //layer 23 formations
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, radiusToEnableAnimations, layerMask, QueryTriggerInteraction.Ignore);
-        foreach (Collider hitCollider in hitColliders)
-        { 
-            FormationPosition form = hitCollider.gameObject.GetComponent<FormationPosition>();
+        int maxColliders = 10;
+
+        Collider[] hitColliders = new Collider[maxColliders];
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, radiusToEnableAnimations, hitColliders, layerMask, QueryTriggerInteraction.Ignore);
+         
+        for (int i = 0; i < numColliders; i++)
+        {
+
+            FormationPosition form = hitColliders[i].gameObject.GetComponent<FormationPosition>();
             form.enableAnimations = true;
         }
     }
