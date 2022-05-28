@@ -62,7 +62,7 @@ public class FormationPosition : MonoBehaviour
 
     public int numberOfAliveSoldiers = 80;
     private int oldNumAlive = 80;
-    [SerializeField] private float maxSoldiers = 80;
+    public float maxSoldiers = 80;
 
     public bool tangledUp = false;
     [SerializeField] private float slowRotate = 15;
@@ -81,13 +81,24 @@ public class FormationPosition : MonoBehaviour
     [SerializeField] private float zoffset = 1;
     [SerializeField] private float zNotDeployedOffset = 0;
 
-    public bool modelsAreFighting = false;
     [SerializeField] private LineRenderer selectionLine;
     private float zSelLine;
 
     public bool playingIdleChatter = false;
     public bool playingAttackChatter = false;
-    
+    public bool playingDeathReactionChatter = false;
+
+    public bool deployedPikes = false;
+
+    public List<SoldierModel> firstLineModels;
+    public bool modelAttacked = false;
+    public bool modelTookDamage = false;
+    public bool inCombat = false;
+
+
+    [SerializeField] private float secondRowOffsetAmount = 0f;
+
+    [SerializeField] private bool chaseDetectedEnemies = true;
 
     void OnCollisionEnter(Collision collision)
     {
@@ -122,18 +133,27 @@ public class FormationPosition : MonoBehaviour
         playingIdleChatter = true;
         Invoke("EnableIdleChatter", sec);
     }
-    private void EnableIdleChatter()
-    {
-        playingIdleChatter = false;
-    }
     public void DisableAttackChatterForSeconds(float sec)
     {
         playingAttackChatter = true;
         Invoke("EnableAttackChatter", sec);
     }
+    public void DisableDeathReactionForSeconds(float sec)
+    {
+        playingDeathReactionChatter = true;
+        Invoke("EnableDeathReactionChatter", sec);
+    }
+    public void EnableDeathReactionChatter()
+    {
+        playingDeathReactionChatter = false;
+    }
     private void EnableAttackChatter()
     {
         playingAttackChatter = false;
+    }
+    private void EnableIdleChatter()
+    {
+        playingIdleChatter = false;
     }
     public void BeginUpdates()
     {
@@ -155,10 +175,28 @@ public class FormationPosition : MonoBehaviour
         UpdateSpeed();
         UpdateCollider();
         CheckNearbyFormations();
-        UpdateSoldiers(); 
+        UpdateSoldiers();
+        CheckIfInCombat();
     }
 
+    private void CheckIfInCombat()
+    {
+        if (listOfNearbyEnemies.Count > 0)
+        { 
+            if (modelAttacked || modelTookDamage)
+            {
+                inCombat = true;
+                modelAttacked = false;
+                modelTookDamage = false;
+            }
+            else
+            {
+                inCombat = false;
+            }
+        }
 
+    }
+    
     private void UpdateSoldiers()
     {
         foreach (SoldierModel model in soldierBlock.listSoldierModels)
@@ -180,6 +218,14 @@ public class FormationPosition : MonoBehaviour
             }
         }
     }
+
+    private void UpdateProjectiles()
+    {
+        foreach (ProjectileFromSoldier missile in soldierBlock.listProjectiles)
+        {  
+        }
+    }
+
     private void SlowBasedOnNumberOfDistantSoldiers()
     {
         //the more alive soldiers that are not at their position by some threshold, the more reduction in speed
@@ -190,7 +236,7 @@ public class FormationPosition : MonoBehaviour
         int num = 0;
         if (numberOfAliveSoldiers <= 10) //if very few soldiers, unable to hold the front
         { //one row remaining
-            rectangleCollider.size = new Vector3(1, 0, 1);
+            //rectangleCollider.size = new Vector3(1, 0, 1);
         }
         else
         {
@@ -256,7 +302,7 @@ public class FormationPosition : MonoBehaviour
         
         if (listOfNearbyEnemies.Count > 0)
         {
-            offsetSecondRow.localPosition = new Vector3(0, 0, .5f);
+            offsetSecondRow.localPosition = new Vector3(-secondRowOffsetAmount, 0, .5f);
         }
         else
         {
@@ -290,6 +336,13 @@ public class FormationPosition : MonoBehaviour
                 model.FixRotation(); //make it so this doesn't do anything if rotation is good 
                 model.UpdateSpeed(); //for animations update them more frequently if player is closer
                 
+            }
+        }
+        foreach (ProjectileFromSoldier missile in soldierBlock.listProjectiles)
+        {
+            if (missile.isFlying)
+            { 
+                missile.UpdateRotation();
             }
         }
 
@@ -495,7 +548,11 @@ public class FormationPosition : MonoBehaviour
             }
             
         }
-        EngageFoe();
+
+        if (chaseDetectedEnemies)
+        { 
+            EngageFoe();
+        }
 
     }
 

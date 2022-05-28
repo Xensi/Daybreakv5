@@ -61,15 +61,18 @@ public class SoldierModel : MonoBehaviour
     public Position position;
 
     [SerializeField] private List<AudioClip> deathSounds;
+    [SerializeField] private List<AudioClip> deathReactionSounds;
     [SerializeField] private List<AudioClip> attackSounds;
     [SerializeField] private List<AudioClip> attackVoiceLines;
     [SerializeField] private List<AudioClip> idleVoiceLines;
     [SerializeField] private List<AudioClip> hurtVoiceLines;
     [SerializeField] private List<AudioClip> incomingVoiceLines;
+    [SerializeField] private List<AudioClip> exhaustedVoiceLines;
 
     [SerializeField] private AudioSource voiceSource;
 
     public AudioSource impactSource;
+    public AudioSource hurtSource;
 
     [SerializeField] private float defaultStoppingDistance = 0.5f;
     [SerializeField] private float combatStoppingDistance = 0.1f;
@@ -80,7 +83,7 @@ public class SoldierModel : MonoBehaviour
     [SerializeField] private float currentFinishedAttackingTime = 0;
     [SerializeField] private float timeUntilRecovery = .1f;
     [SerializeField] private float currentRecoveryTime = 0;
-    [SerializeField] private bool attacking = false;
+    public bool attacking = false;
     [SerializeField] private bool moving = false;
     [SerializeField] private bool damaged = false;
     [SerializeField] private bool deployed = false;
@@ -89,20 +92,52 @@ public class SoldierModel : MonoBehaviour
     [SerializeField] private int numRandIdleAnims = 5;
     [SerializeField] private int numRandAttackAnims = 2;
 
+    [SerializeField] private float waitForAttackChatterTime = 3;
+    [SerializeField] private float waitForDeathReactionChatterTime = 3;
+    [SerializeField] private float waitForIdleChatterTime = 3;
+
+
+    [SerializeField] private bool exhausted = false;
+
+
+
+    public List<SkinnedMeshRenderer> nornalMeshes;
+    public List<SkinnedMeshRenderer> veteranMeshes;
+    public bool isVeteran = false;
+    [SerializeField] private int numKills = 0;
+
+    [SerializeField] private float minimumAttackRange = 1;
+
+    [SerializeField] private bool melee = true;
+    [SerializeField] private ProjectileFromSoldier projectile;
+    [Range(20.0f, 75.0f)] [SerializeField] private float LaunchAngle;
+
+    [SerializeField] private bool allowedToDealDamage = true;
+    [SerializeField] private float projectileDeviationAmount = 5;
+
+    [SerializeField] private Transform projectileSpawn;
     private void Start()
     { 
         currentIdleTimer = UnityEngine.Random.Range(0, reqIdleTimer);
         animator.SetBool("walking", true);
-        animator.SetBool("deployed", false);
         animator.SetInteger("row", position.row);
         currentSpeed = walkSpeed;
         currentAccel = defaultAccel;
         aiPath.endReachedDistance = defaultStoppingDistance;
+
+        if (melee)
+        {
+            SetDeployed(false);
+        }
+        else
+        {
+            SetDeployed(true); //ranged is always deployed . . . ? for now.
+        }
     }
     private void SetDeployed(bool val)
     {
         deployed = val;
-        animator.SetBool("deployed", val); //and animations will match
+        animator.SetBool("deployed", val); //and animations will match 
     }
     private void SetAttacking(bool val)
     {
@@ -125,11 +160,14 @@ public class SoldierModel : MonoBehaviour
         float dampTime = .1f;
         float deltaTime = .1f;
         if (aiPath.canMove)
-        { 
-            if (animator.GetCurrentAnimatorStateInfo(0).IsTag("idle") || idle) //if we are idle or in idle anim state
-            {
-                SetIdle(false);
-                animator.Play("WalkingBlend");
+        {
+            if (formPos.listOfNearbyEnemies.Count == 0)
+            { 
+                if (animator.GetCurrentAnimatorStateInfo(0).IsTag("idle") || idle) //if we are idle or in idle anim state
+                {
+                    SetIdle(false);
+                    animator.Play("WalkingBlend");
+                }
             }
 
             float threshold = .1f;
@@ -162,26 +200,44 @@ public class SoldierModel : MonoBehaviour
     } 
     
     public void DeployWeaponsInAdvance()
-    { 
-        if (formPos.listOfNearbyEnemies.Count > 0)
+    {  
+        if (formPos.listOfNearbyEnemies.Count > 0) //check if enemies nearby
         { 
-            if (position.row <= 2)
+            if (position.row <= 2) //check if we're in second row and 
             {
                 if (!deployed)
                 { 
-                    SetDeployed(true);
-                    if (!formPos.playingAttackChatter)
+                    if (melee)
+                    { 
+                        SetDeployed(true);
+                    }
+
+                    if (!formPos.inCombat)
                     {
-                        formPos.playingAttackChatter = true;
-                        formPos.DisableAttackChatterForSeconds(3);
-                        voiceSource.PlayOneShot(incomingVoiceLines[UnityEngine.Random.Range(0, incomingVoiceLines.Count)]);
+                        if (!formPos.playingAttackChatter)
+                        {
+                            formPos.playingAttackChatter = true;
+                            formPos.DisableAttackChatterForSeconds(waitForAttackChatterTime);
+                            if (formPos.numberOfAliveSoldiers <= formPos.maxSoldiers / 2)
+                            {
+                                voiceSource.PlayOneShot(exhaustedVoiceLines[UnityEngine.Random.Range(0, exhaustedVoiceLines.Count)]);
+                            }
+                            else
+                            {
+                                voiceSource.PlayOneShot(incomingVoiceLines[UnityEngine.Random.Range(0, incomingVoiceLines.Count)]);
+                            }
+
+                        }
                     }
                 }
             }
         }
-        else
+        else //if none don't be deployed
         {
-            SetDeployed(false);
+            if (melee)
+            {
+                SetDeployed(false);
+            }
         }
     }
 
@@ -214,36 +270,78 @@ public class SoldierModel : MonoBehaviour
         if (!attacking && !damaged) //increment if not attacking and not damaged
         {
             currentAttackTime += .1f; //increment timer
-            
-            if (currentAttackTime >= reqAttackTime && targetEnemy != null && targetEnemy.alive) //if we reach attack time, and we have a valid target
-            {
-                SetDeployed(true);
+            //&& GetDistance(transform, targetEnemy.transform) >= minimumAttackRange
+            if (currentAttackTime >= reqAttackTime && targetEnemy != null && targetEnemy.alive ) //if we reach attack time, and we have a valid target
+            {  //start an attack
+                if (melee)
+                {
+                    SetDeployed(true);
+                }
                 SetAttacking(true);
                 currentDamageTime = 0;
                 SetMoving(false);
+
+                allowedToDealDamage = true;
+
                 if (!formPos.playingAttackChatter)
                 {
                     formPos.playingAttackChatter = true;
-                    formPos.DisableAttackChatterForSeconds(3);
+                    formPos.DisableAttackChatterForSeconds(waitForAttackChatterTime);
                     voiceSource.PlayOneShot(attackVoiceLines[UnityEngine.Random.Range(0, attackVoiceLines.Count)]);
                 }
             }
         }
     }
-    public void UpdateDamageTimer()
+    public void UpdateDamageTimer() //ATTACK CODE
     {
         if (attacking) //increment only if attacking
         {
             currentDamageTime += .1f;
 
-            if (currentDamageTime >= timeUntilDamage)
+            if (currentDamageTime >= timeUntilDamage && allowedToDealDamage)
             {
-                currentDamageTime = 0; //reset damage time
+                allowedToDealDamage = false;
+                //currentDamageTime = 0; //reset damage time
                 currentAttackTime = 0;
-                DealDamage();
+
+                if (melee)
+                { 
+                    DealDamage();
+                }
+                else //ranged
+                { 
+                    FireProjectile();
+                } 
             }
         }
     }
+
+    public void DealDamage()
+    { //check if in range, otherwise whiff  
+        formPos.modelAttacked = true;
+        if (targetEnemy != null && targetEnemy.alive)
+        {
+            targetEnemy.impactSource.PlayOneShot(attackSounds[UnityEngine.Random.Range(0, attackSounds.Count)]); //play impact sound at enemy position
+            targetEnemy.SufferDamage(damage, this);
+            /*if (GetDistance(transform, targetEnemy.transform) <= attackRange) //if still within range of attack
+            { 
+            }*/
+        }
+    }
+    private void FireProjectile()
+    {
+        formPos.modelAttacked = true;
+        if (targetEnemy != null)
+        {
+            impactSource.PlayOneShot(attackSounds[UnityEngine.Random.Range(0, attackSounds.Count)]); //play impact sound at enemy position
+            ProjectileFromSoldier missile = Instantiate(projectile, projectileSpawn.position, Quaternion.identity); //spawn the projectile
+            missile.formPosParent = formPos;
+            formPos.soldierBlock.listProjectiles.Add(missile);
+            missile.LaunchProjectile(targetEnemy.transform, LaunchAngle, projectileDeviationAmount);
+        }
+        
+    }
+
     public void UpdateFinishedAttackingTimer()
     {
         if (attacking) //increment only if attacking
@@ -272,26 +370,21 @@ public class SoldierModel : MonoBehaviour
             }
         }
     }
-    public void DealDamage()
-    { //check if in range, otherwise whiff  
-        if (targetEnemy != null && targetEnemy.alive)
-        {
-            targetEnemy.impactSource.PlayOneShot(attackSounds[UnityEngine.Random.Range(0, attackSounds.Count)]); //play impact sound at enemy position
-            if (GetDistance(transform, targetEnemy.transform) <= attackRange) //if still within range of attack
-            { 
-                targetEnemy.SufferDamage(damage, this);
-            }
-        }
-    }
     private void SufferDamage(float dmg, SoldierModel origin)
     {
-        health -= dmg;
+        float val = dmg - armor;
+        if (val < 0)
+        {
+            val = 0;
+        }
+
+        health -= val;
 
         SetAttacking(false);
         SetMoving(false);
         SetDamaged(true);
 
-        voiceSource.PlayOneShot(hurtVoiceLines[UnityEngine.Random.Range(0, hurtVoiceLines.Count)]);
+        hurtSource.PlayOneShot(hurtVoiceLines[UnityEngine.Random.Range(0, hurtVoiceLines.Count)]);
            
         if (deployed)
         { 
@@ -308,9 +401,12 @@ public class SoldierModel : MonoBehaviour
             if (origin != null)
             {
                 origin.targetEnemy = null;
+                origin.numKills++;
             }
         }
-    }
+
+        formPos.modelTookDamage = true; 
+    } 
     private void KillThis()
     {
         SetAlive(false);
@@ -320,7 +416,41 @@ public class SoldierModel : MonoBehaviour
         selfCollider.enabled = false;
         position.assignedSoldierModel = null;
         formPos.numberOfAliveSoldiers -= 1;
-        voiceSource.PlayOneShot(deathSounds[UnityEngine.Random.Range(0, deathSounds.Count)]); 
+        voiceSource.PlayOneShot(deathSounds[UnityEngine.Random.Range(0, deathSounds.Count)]);
+
+
+        if (!formPos.playingDeathReactionChatter)
+        {
+            formPos.playingDeathReactionChatter = true;
+            formPos.DisableDeathReactionForSeconds(waitForDeathReactionChatterTime);
+
+            LayerMask layerMask = LayerMask.GetMask("Model");
+            int maxColliders = 5;
+            Collider[] colliders = new Collider[maxColliders];
+            int numColliders = Physics.OverlapSphereNonAlloc(transform.position, attackRange, colliders, layerMask, QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < numColliders; i++)
+            {
+                if (colliders[i].gameObject == self) //if our own hitbox, ignore
+                {
+                    continue;
+                }
+                if (colliders[i].gameObject.tag == team + "Model") //if our team
+                {
+                    SoldierModel model = colliders[i].GetComponent<SoldierModel>();
+                    if (model != null)
+                    {
+                        if (model.alive)
+                        {
+                            model.voiceSource.PlayOneShot(deathReactionSounds[UnityEngine.Random.Range(0, deathReactionSounds.Count)]);
+                            break;
+                        }
+                    }
+                }
+
+            }
+             
+        }
+         
     }
     public void CheckIfEnemyModelsNearby()
     {
@@ -374,7 +504,7 @@ public class SoldierModel : MonoBehaviour
     
     public void CheckIfIdle()
     {
-        if (!aiPath.canMove)
+        if (!aiPath.canMove && formPos.listOfNearbyEnemies.Count == 0)
         { 
             currentIdleTimer += UnityEngine.Random.Range(0, 2);
             if (currentIdleTimer >= reqIdleTimer)
@@ -383,11 +513,14 @@ public class SoldierModel : MonoBehaviour
 
                 SetIdle(true);
 
-                if (!formPos.playingIdleChatter)
+                if (formPos.listOfNearbyEnemies.Count == 0)
                 {
-                    formPos.playingIdleChatter = true;
-                    formPos.DisableIdleChatterForSeconds(10);
-                    voiceSource.PlayOneShot(idleVoiceLines[UnityEngine.Random.Range(0, idleVoiceLines.Count)]);
+                    if (!formPos.playingIdleChatter)
+                    {
+                        formPos.playingIdleChatter = true;
+                        formPos.DisableIdleChatterForSeconds(waitForIdleChatterTime);
+                        voiceSource.PlayOneShot(idleVoiceLines[UnityEngine.Random.Range(0, idleVoiceLines.Count)]);
+                    } 
                 }
 
             }
@@ -418,7 +551,9 @@ public class SoldierModel : MonoBehaviour
     }
     void OnDrawGizmosSelected()
     {
-        Gizmos.DrawWireSphere(transform.position, attackRange); 
+        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, minimumAttackRange);
     }
     public void CommonSense()
     { 

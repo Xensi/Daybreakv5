@@ -5,10 +5,10 @@ ModelImporter:
   internalIDToNameTable:
   - first:
       74: -623603649343465320
-    second: conscriptMoveNoShield
+    second: conLoweredRun
   - first:
       74: -5823910672584971674
-    second: conscriptIdleNoShield
+    second: conLoweredIdle
   - first:
       74: -1929416706599162133
     second: conscriptAttackLowered
@@ -17,7 +17,7 @@ ModelImporter:
     second: conscriptTPOSE
   - first:
       74: -4464311152635226496
-    second: conscriptSpearWalk
+    second: conLoweredWalk
   - first:
       74: 761935594621108216
     second: conscriptReady
@@ -150,7 +150,7 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: conscriptMoveNoShield
+      name: conLoweredRun
       takeName: Scene
       internalID: 0
       firstFrame: 0
@@ -179,7 +179,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: conscriptIdleNoShield
+      name: conLoweredIdle
       takeName: Scene
       internalID: 0
       firstFrame: 18
@@ -266,7 +266,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: conscriptSpearWalk
+      name: conLoweredWalk
       takeName: Scene
       internalID: 0
       firstFrame: 70

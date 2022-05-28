@@ -23,7 +23,9 @@ public class SoldierBlock : MonoBehaviour
 
     [SerializeField] private float desiredWalkingSpeed = 3;
     public bool melee = true;
+    public bool hasSpecialVeterans = false;
 
+    public List<ProjectileFromSoldier> listProjectiles;
     void Start()
     {
         formPos = GetComponentInChildren<FormationPosition>();
@@ -62,10 +64,23 @@ public class SoldierBlock : MonoBehaviour
             if (num <= 10) //row 1
             {
                 formPos.frontlinePositions.Add(position);
+                formPos.firstLineModels.Add(model);
             }
             if (num <= 70)
             {
                 reinforceablePositions.Add(position);
+            }
+            if (num >= 71 && hasSpecialVeterans)
+            {
+                model.isVeteran = true;
+                foreach (SkinnedMeshRenderer mesh in model.nornalMeshes)
+                {
+                    mesh.enabled = false;
+                }
+                foreach (SkinnedMeshRenderer mesh in model.veteranMeshes)
+                {
+                    mesh.enabled = true;
+                }
             }
             position.formPos = formPos;
             position.assignedSoldierModel = model;
