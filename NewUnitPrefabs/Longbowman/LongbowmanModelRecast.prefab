@@ -29,7 +29,7 @@ Transform:
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 2169595719131868828}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &4013500636507265404
 AudioSource:
@@ -242,7 +242,7 @@ Transform:
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 2169595719131868828}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &5019969114610797930
 AudioSource:
@@ -423,7 +423,7 @@ Transform:
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 2169595719131868828}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &6880501607377708057
 AudioSource:
@@ -617,8 +617,8 @@ GameObject:
   - component: {fileID: 4782491434103856791}
   - component: {fileID: 4782491434103856789}
   - component: {fileID: 2286667199278184226}
-  - component: {fileID: 1910734412749173582}
-  - component: {fileID: 844625678798338517}
+  - component: {fileID: 4642260731385595388}
+  - component: {fileID: 6059095444175471395}
   - component: {fileID: 7586394984505008617}
   m_Layer: 24
   m_Name: Model
@@ -638,7 +638,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 2513303012816125692}
   - {fileID: 2969072984330332787}
   - {fileID: 357174710475291929}
   - {fileID: 6657995151701423004}
@@ -700,7 +699,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c23e0c2eb0ccd54594e51e55db8c15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aiPath: {fileID: 7586394984505008617}
+  richAI: {fileID: 7586394984505008617}
   animator: {fileID: 9211102524227596297}
   threshold: 0.5
   walkSpeed: 3
@@ -710,7 +709,9 @@ MonoBehaviour:
   settledRotationSpeed: 2.5
   team: Zhanguo
   targetEnemy: {fileID: 0}
-  attackRange: 80
+  attackRange: 160
+  meleeAttackRange: 3
+  rangedAttackRange: 160
   colliderList: []
   rigidBodyList: []
   aiDesSet: {fileID: 4782491434103856791}
@@ -723,14 +724,14 @@ MonoBehaviour:
   movingSpeed: 0
   alive: 1
   self: {fileID: 2169595719131868819}
-  selfCollider: {fileID: 1910734412749173582}
+  selfCollider: {fileID: 4642260731385595388}
   finishedPathRotSpeed: 20
   nearbyEnemyModels: []
   reqAttackTime: 2
   currentAttackTime: 2
-  health: 30
-  damage: 3
-  armor: 1
+  health: 20
+  damage: 2
+  armor: 0
   currentIdleTimer: 0
   reqIdleTimer: 20
   position: {fileID: 0}
@@ -766,6 +767,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 55513d0911d5fc844bb475dcfeff93e5, type: 3}
   - {fileID: 8300000, guid: 667713a19e76acd4596fae260549c201, type: 3}
   - {fileID: 8300000, guid: a3f8b4c3a2bb6eb4cb837d27a920e714, type: 3}
+  projectileImpactSounds:
+  - {fileID: 8300000, guid: 00a686f5cfaa58049b633ef3ed04645b, type: 3}
+  - {fileID: 8300000, guid: 3eb06404fd67e7e4ba7c709859039275, type: 3}
+  - {fileID: 8300000, guid: 959d72e5f1abbb147905d97d68fd7754, type: 3}
+  - {fileID: 8300000, guid: 1a02ad5c1b8094c4abfe81e37f66eb8d, type: 3}
   attackVoiceLines:
   - {fileID: 8300000, guid: 6f392b9d09249254788c31f63ae16964, type: 3}
   - {fileID: 8300000, guid: 2e07c90f4f363464db9958ddc49a20d7, type: 3}
@@ -832,7 +838,7 @@ MonoBehaviour:
   hurtSource: {fileID: 5019969114610797930}
   defaultStoppingDistance: 0.1
   combatStoppingDistance: 0.001
-  timeUntilDamage: 2.7
+  timeUntilDamage: 2.9
   currentDamageTime: 0
   timeUntilFinishedAttacking: 3
   currentFinishedAttackingTime: 0
@@ -861,8 +867,8 @@ MonoBehaviour:
   allowedToDealDamage: 1
   projectileDeviationAmount: 10
   projectileSpawn: {fileID: 2513303012816125692}
---- !u!135 &1910734412749173582
-SphereCollider:
+--- !u!136 &4642260731385595388
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -871,10 +877,11 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.2
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &844625678798338517
+  m_Radius: 0.25
+  m_Height: 1.25
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.75, z: 0}
+--- !u!54 &6059095444175471395
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -888,7 +895,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &7586394984505008617
 MonoBehaviour:
@@ -904,10 +911,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 5
   radius: 0.2
-  height: 2
+  height: 1.5
   canMove: 1
   maxSpeed: 3
-  gravity: {x: 0, y: 0, z: 0}
+  gravity: {x: NaN, y: NaN, z: NaN}
   groundMask:
     serializedVersion: 2
     m_Bits: 8192
@@ -944,7 +951,7 @@ GameObject:
   m_Layer: 24
   m_Name: ProjectileSpawn
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 1206586993520771344, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -955,11 +962,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8703863504565669321}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.23, z: 0.702}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.7730799, y: -0.06781304, z: -0.27535447, w: 0.5673877}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.4323455, y: 1.4323455, z: 1.4323463}
   m_Children: []
-  m_Father: {fileID: 2169595719131868828}
+  m_Father: {fileID: 7975393199449087400}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &3368408127892000152
@@ -971,7 +978,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 26910dc1185e9054fb39415b0794ff1f, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 26910dc1185e9054fb39415b0794ff1f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1040,5 +1047,10 @@ Animator:
 --- !u!137 &6289457300616995794 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: -435062118009934262, guid: 26910dc1185e9054fb39415b0794ff1f, type: 3}
+  m_PrefabInstance: {fileID: 3368408127892000152}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7975393199449087400 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4616388099309572144, guid: 26910dc1185e9054fb39415b0794ff1f, type: 3}
   m_PrefabInstance: {fileID: 3368408127892000152}
   m_PrefabAsset: {fileID: 0}

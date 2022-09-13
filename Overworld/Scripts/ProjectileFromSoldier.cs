@@ -7,15 +7,31 @@ public class ProjectileFromSoldier : MonoBehaviour
 {
     [SerializeField] private Rigidbody rigid;
     public FormationPosition formPosParent;
+    public SoldierModel soldierParent;
     private Quaternion initialRotation;
     private Quaternion finalRotation;
     public bool isFlying = true;
+    [SerializeField] private GameObject model;
+    [SerializeField] private AudioSource audioSource;
+    public float damage = 1;
+    private bool canDamage = false;
 
+    private void Awake()
+    {
+        initialRotation = transform.rotation;
+    }
     private void Start()
     {
         //Destroy(this, 10);
         Invoke("SelfDestruct", 20);
-        initialRotation = transform.rotation;
+        Invoke("StartDamage", .5f);
+        model.SetActive(true);
+
+    }
+
+    private void StartDamage()
+    {
+        canDamage = true;
     }
 
     private void SelfDestruct()
@@ -26,8 +42,22 @@ public class ProjectileFromSoldier : MonoBehaviour
     public void LaunchProjectile(Transform target, float LaunchAngle, float deviationAmount)
     {
         Vector3 projectileXZPos = new Vector3(transform.position.x, 0.0f, transform.position.z);
-        //Vector3 targetXZPos = new Vector3(target.position.x, 0.0f, target.position.z);
-        Vector3 targetXZPos = new Vector3(target.position.x + Random.Range(-deviationAmount, deviationAmount), 0.0f, target.position.z + Random.Range(-deviationAmount, deviationAmount));
+
+        float xdiff = target.position.x - transform.position.x;
+
+        float zdiff = target.position.z - transform.position.z;
+
+        float desiredOffset = 5;
+
+        float pythagoras = Mathf.Sqrt(Mathf.Pow(xdiff, 2) + Mathf.Pow(zdiff, 2));
+
+        float scaling = desiredOffset / pythagoras;
+
+        xdiff *= scaling;
+
+        zdiff *= scaling;
+
+        Vector3 targetXZPos = new Vector3(target.position.x + xdiff + Random.Range(-deviationAmount, deviationAmount), 0.0f, target.position.z + zdiff + Random.Range(-deviationAmount, deviationAmount));
         transform.LookAt(targetXZPos);
 
         // shorthands for the formula
@@ -46,28 +76,51 @@ public class ProjectileFromSoldier : MonoBehaviour
         Vector3 globalVelocity = transform.TransformDirection(localVelocity);
 
         // launch the object by setting its initial velocity and flipping its state
-        rigid.velocity = globalVelocity; 
+        rigid.velocity = globalVelocity;
     }
 
     public void UpdateRotation()
-    { 
+    {
         transform.rotation = Quaternion.LookRotation(rigid.velocity) * initialRotation;
     }
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Terrain")
+        if (other.gameObject.tag == "AltgardModel" || other.gameObject.tag == "ZhanguoModel" )
         {
+            if (canDamage)
+            { 
+                //Debug.Log("collided w model");
+                SoldierModel hitModel = other.GetComponent<SoldierModel>();
+                if (hitModel != null && hitModel.alive)
+                {
+                    canDamage = false;
+                    audioSource.PlayOneShot(soldierParent.projectileImpactSounds[UnityEngine.Random.Range(0, soldierParent.projectileImpactSounds.Count)]); //play impact sound at enemy position
+                    hitModel.SufferDamage(damage, soldierParent);
+
+/*
+                    isFlying = false;
+                    finalRotation = transform.rotation;
+                    transform.rotation = finalRotation;
+                    rigid.constraints = RigidbodyConstraints.FreezeAll;
+
+
+                    transform.parent = other.gameObject.transform;*/
+                    SelfDestruct();
+
+                }
+            }
+        }
+        if (other.gameObject.tag == "Terrain" && canDamage)
+        {
+            canDamage = false;
+            //Debug.Log("collided w terrain");
+            audioSource.PlayOneShot(soldierParent.projectileImpactSounds[UnityEngine.Random.Range(0, soldierParent.projectileImpactSounds.Count)]); //play impact sound at enemy position
             isFlying = false;
             finalRotation = transform.rotation;
             transform.rotation = finalRotation;
             rigid.constraints = RigidbodyConstraints.FreezeAll;
-            //Debug.Log("Collision");
-            //first, save the rotation
-            /* 
-             //stop updating rotation
+            
 
-             //final set for rotation?*/
         }
     }
-
 }

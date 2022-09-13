@@ -12,6 +12,10 @@ PrefabInstance:
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 29422916108755641, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
+      propertyPath: colliderBoxRange
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 29422916108755641, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: chaseDetectedEnemies
       value: 0
       objectReference: {fileID: 0}
@@ -40,12 +44,24 @@ PrefabInstance:
       value: Altgard
       objectReference: {fileID: 0}
     - target: {fileID: 5955700111243193916, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
+      propertyPath: melee
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5955700111243193916, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
+      propertyPath: canBeRanged
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5955700111243193916, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: soldierPrefab
       value: 
-      objectReference: {fileID: 528764997490013229, guid: a80c26632d012b14ea9ed153566607ed, type: 3}
+      objectReference: {fileID: 528764997490013229, guid: 905adc397372d284ab7f811a5466d200, type: 3}
     - target: {fileID: 5955700111243193916, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: modelAttackRange
-      value: 80
+      value: 160
+      objectReference: {fileID: 0}
+    - target: {fileID: 5955700111243193916, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
+      propertyPath: hasSpecialVeterans
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5955700111243193917, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: m_RootOrder

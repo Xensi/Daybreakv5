@@ -12,6 +12,7 @@ public class FormationPosition : MonoBehaviour
     public Transform aiTarget;
     public Transform rotTarget;
     [SerializeField] private float velThreshold = .1f;
+    [Tooltip("Checks nearby formations. Nearby formations can be moved towards automatically.")]
     [SerializeField] private float checkRadius = 10;
     [SerializeField] private BoxCollider rectangleCollider;
 
@@ -23,6 +24,9 @@ public class FormationPosition : MonoBehaviour
     public bool enableAnimations = false;
     private bool oldEnableAnimations = false;
 
+
+
+    [Tooltip("When to stop moving when auto-engaging.")]
     [SerializeField] private float stoppingDistance = 10;
     [SerializeField] private float moveStopDistance = 1;
 
@@ -70,7 +74,7 @@ public class FormationPosition : MonoBehaviour
     [SerializeField] private float normRotate = 30;
     [SerializeField] private Transform offsetSecondRow;
 
-    private float colliderBoxRange = 9;
+    [SerializeField] private float colliderBoxRange = 9;
     private float colliderBoxNotDeployedRange = 8;
     [SerializeField] private float xsize = 10;
     [SerializeField] private float ysize = 4;
@@ -100,6 +104,8 @@ public class FormationPosition : MonoBehaviour
 
     [SerializeField] private bool chaseDetectedEnemies = true;
 
+    public bool engagedInMelee = false;
+
     void OnCollisionEnter(Collision collision)
     {
         if (collision.collider.gameObject.tag == "Formation")
@@ -123,7 +129,11 @@ public class FormationPosition : MonoBehaviour
     {
         currentSpeed = walkingSpeed;
         aiPath.maxSpeed = currentSpeed;
-        colliderBoxRange = soldierBlock.modelAttackRange * 2;
+
+        if (soldierBlock.melee)
+        { 
+            colliderBoxRange = soldierBlock.modelAttackRange * 2;
+        }
         BeginUpdates();
         selectionLine.enabled = false;
 
@@ -208,6 +218,14 @@ public class FormationPosition : MonoBehaviour
                 model.CullAnimations();
                 model.CheckIfIdle();
                 model.DeployWeaponsInAdvance();
+                model.CheckIfAlive();
+
+                if (soldierBlock.canBeRanged)
+                {
+                    model.UpdateMeleeEngagement(); 
+                }
+
+
             }
         }
         foreach (Position item in soldierBlock.reinforceablePositions)
@@ -319,8 +337,29 @@ public class FormationPosition : MonoBehaviour
                 model.UpdateMovementStatus(); 
             }
         }
-        FixRotation(); 
-    } 
+        FixRotation();
+        CheckIfInMeleeRange();
+    }
+
+    private void CheckIfInMeleeRange()
+    {
+        if (enemyFormationToTarget != null)
+        { 
+            float dist = GetDistance(transform, enemyFormationToTarget.gameObject.transform);
+            if (dist <= stoppingDistance)
+            {
+                engagedInMelee = true;
+            }
+            else
+            {
+                engagedInMelee = false;
+            }
+        }
+        else
+        {
+            engagedInMelee = false;
+        }
+    }
     private void FastUpdate()
     { 
         OffsetPositions(); 
@@ -571,9 +610,11 @@ public class FormationPosition : MonoBehaviour
 
     }
 
+
+
     private void FixRotation()
     {
-        if (!aiPath.canMove   && obeyingMovementOrder && !tangledUp)
+        if (!aiPath.canMove && obeyingMovementOrder && !tangledUp)
         {
             Vector3 targetDirection = rotTarget.position - transform.position;
 

@@ -23,9 +23,17 @@ public class SoldierBlock : MonoBehaviour
 
     [SerializeField] private float desiredWalkingSpeed = 3;
     public bool melee = true;
+
+    public bool canBeRanged = false;
+
     public bool hasSpecialVeterans = false;
 
     public List<ProjectileFromSoldier> listProjectiles;
+
+    public bool useActualMaxSpeed = true;
+    public float forcedMaxSpeed = 0;
+
+
     void Start()
     {
         formPos = GetComponentInChildren<FormationPosition>();
@@ -47,12 +55,12 @@ public class SoldierBlock : MonoBehaviour
             SoldierModel model = soldier.GetComponentInChildren<SoldierModel>();
             model.walkSpeed = desiredWalkingSpeed;
             model.runSpeed = desiredWalkingSpeed * 2;
-            model.aiPath.maxSpeed = desiredWalkingSpeed;
+            model.richAI.maxSpeed = desiredWalkingSpeed;
             model.target = target;
             model.team = team;
             model.formPos = formPos;
             model.self.tag = team + "Model";
-            model.attackRange = modelAttackRange;
+            //model.attackRange = modelAttackRange;
             
             listSoldierModels.Add(model);
             
@@ -94,4 +102,10 @@ public class SoldierBlock : MonoBehaviour
             }
         }
     }
+
+    public void SelfDestruct()
+    {
+        Destroy(this);
+    }
+
 }

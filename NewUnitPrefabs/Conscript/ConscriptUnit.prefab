@@ -3113,7 +3113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e3675a29ecacc146be0a818b6772328, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  soldierPrefab: {fileID: 632593851823049858, guid: 492a79336f5af0d49ae294cefedfa79f, type: 3}
+  soldierPrefab: {fileID: 632593851823049858, guid: 6f9bb144dfca8f146b19c0057ab81097, type: 3}
   modelParent: {fileID: 5955700110728819747}
   formationPositions:
   - {fileID: 4824575326693472580}
@@ -3207,7 +3207,9 @@ MonoBehaviour:
   modelAttackRange: 4.5
   desiredWalkingSpeed: 3
   melee: 1
+  canBeRanged: 0
   hasSpecialVeterans: 1
+  listProjectiles: []
 --- !u!1 &5955700111282336933
 GameObject:
   m_ObjectHideFlags: 0
@@ -3683,6 +3685,7 @@ MonoBehaviour:
   slowRotate: 15
   normRotate: 30
   offsetSecondRow: {fileID: 9131454677924282923}
+  colliderBoxRange: 9
   xsize: 10
   ysize: 4
   zsize: 8
@@ -3700,6 +3703,8 @@ MonoBehaviour:
   modelTookDamage: 0
   inCombat: 0
   secondRowOffsetAmount: 0
+  chaseDetectedEnemies: 1
+  engagedInMelee: 0
 --- !u!114 &5955700111539829870
 MonoBehaviour:
   m_ObjectHideFlags: 0

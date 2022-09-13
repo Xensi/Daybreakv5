@@ -5,7 +5,7 @@ using UnityEngine;
 using Pathfinding;
 public class SoldierModel : MonoBehaviour
 {
-    public RichAI aiPath;
+    public RichAI richAI;
     //[SerializeField] private AILerp aiPath;
 
     public Animator animator;
@@ -22,6 +22,8 @@ public class SoldierModel : MonoBehaviour
     [SerializeField] private SoldierModel targetEnemy;
 
     public float attackRange = 1;
+    public float meleeAttackRange = 1;
+    public float rangedAttackRange = 160;
 
     [SerializeField] private Collider[] colliderList;
     [SerializeField] private Rigidbody[] rigidBodyList;
@@ -52,7 +54,7 @@ public class SoldierModel : MonoBehaviour
     [SerializeField] private float currentAttackTime = 3;
 
     [SerializeField] private float health = 10;
-    [SerializeField] private float damage = 1;
+    [SerializeField] float damage = 1;
     [SerializeField] private float armor = 0;
 
     [SerializeField] private int currentIdleTimer = 0;
@@ -63,6 +65,7 @@ public class SoldierModel : MonoBehaviour
     [SerializeField] private List<AudioClip> deathSounds;
     [SerializeField] private List<AudioClip> deathReactionSounds;
     [SerializeField] private List<AudioClip> attackSounds;
+    public List<AudioClip> projectileImpactSounds;
     [SerializeField] private List<AudioClip> attackVoiceLines;
     [SerializeField] private List<AudioClip> idleVoiceLines;
     [SerializeField] private List<AudioClip> hurtVoiceLines;
@@ -108,7 +111,7 @@ public class SoldierModel : MonoBehaviour
 
     [SerializeField] private float minimumAttackRange = 1;
 
-    [SerializeField] private bool melee = true;
+    public bool melee = true;
     [SerializeField] private ProjectileFromSoldier projectile;
     [Range(20.0f, 75.0f)] [SerializeField] private float LaunchAngle;
 
@@ -123,16 +126,21 @@ public class SoldierModel : MonoBehaviour
         animator.SetInteger("row", position.row);
         currentSpeed = walkSpeed;
         currentAccel = defaultAccel;
-        aiPath.endReachedDistance = defaultStoppingDistance;
+        richAI.endReachedDistance = defaultStoppingDistance;
 
         if (melee)
         {
             SetDeployed(false);
+            animator.SetBool("melee", true);
         }
         else
         {
             SetDeployed(true); //ranged is always deployed . . . ? for now.
+            animator.SetBool("melee", false);
         }
+
+        animator.SetFloat("angle", 0);
+
     }
     private void SetDeployed(bool val)
     {
@@ -155,11 +163,18 @@ public class SoldierModel : MonoBehaviour
         alive = val;
         animator.SetBool("alive", val);
     }
+    public void CheckIfAlive()
+    {
+        if (health <= 0)
+        {
+            KillThis(); 
+        }
+    }
     public void UpdateSpeed()
     {
         float dampTime = .1f;
         float deltaTime = .1f;
-        if (aiPath.canMove)
+        if (richAI.canMove)
         {
             if (formPos.listOfNearbyEnemies.Count == 0)
             { 
@@ -171,17 +186,33 @@ public class SoldierModel : MonoBehaviour
             }
 
             float threshold = .1f;
-            movingSpeed = Mathf.Sqrt(Mathf.Pow(aiPath.velocity.x, 2) + Mathf.Pow(aiPath.velocity.z, 2)); //calculate speed vector
+            movingSpeed = Mathf.Sqrt(Mathf.Pow(richAI.velocity.x, 2) + Mathf.Pow(richAI.velocity.z, 2)); //calculate speed vector
 
             float adjustedSpeed = movingSpeed;
-            if (deployed)
+
+            if (formPos.soldierBlock.useActualMaxSpeed)
             {
-                adjustedSpeed /= aiPath.maxSpeed * 2; //at max speed = 1;
+                if (deployed)
+                {
+                    adjustedSpeed /= richAI.maxSpeed * 2; //at max speed = 1;
+                }
+                else
+                {
+                    adjustedSpeed /= richAI.maxSpeed; //actual speed divided by max speed normalizes it to 0-1
+                }
             }
             else
             {
-                adjustedSpeed /= aiPath.maxSpeed;
+                if (deployed)
+                {
+                    adjustedSpeed /= formPos.soldierBlock.forcedMaxSpeed * 2; //at max speed = 1;
+                }
+                else
+                {
+                    adjustedSpeed /= formPos.soldierBlock.forcedMaxSpeed; //actual speed divided by max speed normalizes it to 0-1
+                }
             }
+            
 
             if (adjustedSpeed > threshold)
             {
@@ -249,11 +280,11 @@ public class SoldierModel : MonoBehaviour
         }
         else //if not attacking, check
         {
-            if (aiPath.remainingDistance > threshold) // if there's still path to traverse 
+            if (richAI.remainingDistance > threshold) // if there's still path to traverse 
             {
                 SetMoving(true);
             }
-            if (aiPath.reachedDestination) //if we've reached destination
+            if (richAI.reachedDestination) //if we've reached destination
             {
                 SetMoving(false);
             } 
@@ -262,7 +293,7 @@ public class SoldierModel : MonoBehaviour
     private void SetMoving(bool val)
     {
         moving = val;
-        aiPath.canMove = val; //we can move
+        richAI.canMove = val; //we can move
         animator.SetBool("moving", val); //and animations will match
     }
     public void UpdateAttackTimer()
@@ -292,6 +323,25 @@ public class SoldierModel : MonoBehaviour
             }
         }
     }
+    private void SetMelee(bool val)
+    {
+        melee = val;
+        animator.SetBool("melee", val);
+
+    }
+    public void UpdateMeleeEngagement()
+    { 
+        if (formPos.engagedInMelee)
+        {
+            SetMelee(true); 
+            attackRange = meleeAttackRange;
+        }
+        else
+        {
+            SetMelee(false); 
+            attackRange = rangedAttackRange;
+        }
+    }
     public void UpdateDamageTimer() //ATTACK CODE
     {
         if (attacking) //increment only if attacking
@@ -309,7 +359,7 @@ public class SoldierModel : MonoBehaviour
                     DealDamage();
                 }
                 else //ranged
-                { 
+                {
                     FireProjectile();
                 } 
             }
@@ -336,8 +386,18 @@ public class SoldierModel : MonoBehaviour
             impactSource.PlayOneShot(attackSounds[UnityEngine.Random.Range(0, attackSounds.Count)]); //play impact sound at enemy position
             ProjectileFromSoldier missile = Instantiate(projectile, projectileSpawn.position, Quaternion.identity); //spawn the projectile
             missile.formPosParent = formPos;
+            missile.soldierParent = this;
+            missile.damage = damage;
             formPos.soldierBlock.listProjectiles.Add(missile);
-            missile.LaunchProjectile(targetEnemy.transform, LaunchAngle, projectileDeviationAmount);
+
+            float dist = GetDistance(transform, targetEnemy.transform);
+            float angle = dist * 0.5f;
+            float clamped = Mathf.Clamp(angle, 0, 45);
+            float deviation = projectileDeviationAmount * dist * 0.01f;
+            float adjusted = clamped / 45;
+            //Debug.Log(deviation + "deviation" + clamped + "angle");
+            animator.SetFloat("angle", adjusted);
+            missile.LaunchProjectile(targetEnemy.transform, clamped, deviation);
         }
         
     }
@@ -370,7 +430,7 @@ public class SoldierModel : MonoBehaviour
             }
         }
     }
-    private void SufferDamage(float dmg, SoldierModel origin)
+    public void SufferDamage(float dmg, SoldierModel origin)
     {
         float val = dmg - armor;
         if (val < 0)
@@ -409,9 +469,10 @@ public class SoldierModel : MonoBehaviour
     } 
     private void KillThis()
     {
+        animator.enabled = true;
         SetAlive(false);
-        aiPath.canMove = false;
-        aiPath.enableRotation = false;
+        richAI.canMove = false;
+        richAI.enableRotation = false;
 
         selfCollider.enabled = false;
         position.assignedSoldierModel = null;
@@ -450,7 +511,13 @@ public class SoldierModel : MonoBehaviour
             }
              
         }
-         
+
+
+        if (formPos.numberOfAliveSoldiers <= 0)
+        {
+            formPos.soldierBlock.SelfDestruct();
+        }
+
     }
     public void CheckIfEnemyModelsNearby()
     {
@@ -504,7 +571,7 @@ public class SoldierModel : MonoBehaviour
     
     public void CheckIfIdle()
     {
-        if (!aiPath.canMove && formPos.listOfNearbyEnemies.Count == 0)
+        if (!richAI.canMove && formPos.listOfNearbyEnemies.Count == 0)
         { 
             currentIdleTimer += UnityEngine.Random.Range(0, 2);
             if (currentIdleTimer >= reqIdleTimer)
@@ -567,11 +634,11 @@ public class SoldierModel : MonoBehaviour
     }
     public void CullAnimations()
     {
-        if (animate || aiPath.canMove || attacking || !alive) //if we're in range or we can move
+        if (animate || richAI.canMove || attacking || !alive) //if we're in range or we can move
         { //fix this so that when death animation is over disables all components 
             animator.enabled = true;
         }
-        else if (!animate || !aiPath.canMove)
+        else if (!animate || !richAI.canMove)
         { //if we're out of range or we can't move 
             animator.enabled = false;
         }
@@ -584,10 +651,10 @@ public class SoldierModel : MonoBehaviour
 
     public void FixRotation()
     {
-        aiPath.enableRotation = true;
+        richAI.enableRotation = true;
         if (targetEnemy != null)
         {
-            aiPath.enableRotation = false;
+            richAI.enableRotation = false;
             Vector3 targetDirection = targetEnemy.transform.position - transform.position;
 
             float singleStep = finishedPathRotSpeed * Time.deltaTime;
@@ -599,7 +666,7 @@ public class SoldierModel : MonoBehaviour
         }  
         else if (formPos.listOfNearbyEnemies.Count > 0)
         { 
-            aiPath.enableRotation = false;
+            richAI.enableRotation = false;
             Vector3 targetDirection = formPos.soldierBlock.target.transform.position - transform.position;
 
             float singleStep = finishedPathRotSpeed * Time.deltaTime;
@@ -608,7 +675,7 @@ public class SoldierModel : MonoBehaviour
 
             transform.rotation = Quaternion.LookRotation(newDirection);
         }
-        else if (!aiPath.canMove)
+        else if (!richAI.canMove)
         {
             transform.rotation = Quaternion.RotateTowards(transform.rotation, formPos.gameObject.transform.rotation, finishedPathRotSpeed * Time.deltaTime);
         }
