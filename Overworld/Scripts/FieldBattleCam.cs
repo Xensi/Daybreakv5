@@ -87,7 +87,7 @@ public class FieldBattleCam : MonoBehaviour
         for (int i = 0; i < numColliders; i++)
         {
 
-            FormationPosition form = hitColliders[i].gameObject.GetComponent<FormationPosition>();
+            FormationPosition form = hitColliders[i].gameObject.GetComponentInParent<FormationPosition>();
             form.enableAnimations = true;
         }
     }

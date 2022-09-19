@@ -5,63 +5,79 @@ using UnityEngine;
 using Pathfinding;
 public class SoldierModel : MonoBehaviour
 {
-    public RichAI richAI;
-    //[SerializeField] private AILerp aiPath;
-
+    [Header("Assign these! If null then something will break")]
+    public RichAI richAI;  
     public Animator animator;
-    [SerializeField] private float threshold = .1f;
-    public float walkSpeed = 3;
-    public float runSpeed = 6;
-
-    
-
-    [SerializeField] private float sprintSpeed = 6;
     public Transform target;
-    [SerializeField] private float settledRotationSpeed = 1;
-    public string team = "Altgard";
-    [SerializeField] private SoldierModel targetEnemy;
-
-    public float attackRange = 1;
-    public float meleeAttackRange = 1;
-    public float rangedAttackRange = 160;
-
-    [SerializeField] private Collider[] colliderList;
-    [SerializeField] private Rigidbody[] rigidBodyList;
     [SerializeField] private AIDestinationSetter aiDesSet;
-    public FormationPosition formPos;
-    public bool animate = false;
-    [SerializeField] private float catchUpThreshold = .5f;
-    //[SerializeField] private bool walking = false;
-    [SerializeField] private float defaultAccel = 5;
-    [SerializeField] private float sprintAccel = 10;
+    public CharacterController characterController;
+    [Header("Assign these if ranged")]
+    [SerializeField] private bool isMagic = false;
+    [SerializeField] private Transform projectileSpawn;
+    [SerializeField] private ProjectileFromSoldier projectile;
 
-    public float currentSpeed = 0;
-    private float currentAccel = 0;
-
-    public float movingSpeed = 0;
-
-    public bool alive = true;
-    private bool oldAlive = true;
-
-    public GameObject self;
-    public Collider selfCollider;
-    [SerializeField] private float finishedPathRotSpeed = 1;
-
-    [SerializeField] private List<SoldierModel> nearbyEnemyModels;
-
-    //public SkinnedMeshRenderer[] re;
-    [SerializeField] private float reqAttackTime = 3;
-    [SerializeField] private float currentAttackTime = 3;
-
+    [Header("Change these per unit")] 
     [SerializeField] private float health = 10;
     [SerializeField] float damage = 1;
     [SerializeField] private float armor = 0;
+
+    [SerializeField] private float timeUntilDamage = .8f;
+    [SerializeField] private float currentDamageTime = 0;
+    [SerializeField] private float timeUntilFinishedAttacking = 1f;
+    [SerializeField] private float currentFinishedAttackingTime = 0;
+    [SerializeField] private float timeUntilRecovery = .1f;
+    [SerializeField] private float currentRecoveryTime = 0;
+
+    [SerializeField] private float magicRechargeTime = 60f;
+    [SerializeField] private float currentMagicRecharge = 0;
+    public bool magicCharged = true;
+
+    [Header("Loading vars")]
+    [SerializeField] private bool rangedNeedsLoading = false;
+    [SerializeField] private int ammo = 0; //start unloaded typically.
+    [SerializeField] private int maxAmmo = 1;
+    [SerializeField] private bool loadingRightNow = false; 
+    [SerializeField] private float currentFinishedLoadingTime = 0;
+    [SerializeField] private float timeUntilFinishedLoading = 1f;
+
+
+    [Header("Public")]
+    public float walkSpeed = 3;
+    public float runSpeed = 6;
+    public string team = "Altgard";
+
+    public float attackRange = 1;
+    public float meleeAttackRange = 1;
+    public float rangedAttackRange = 160; 
+    public FormationPosition formPos;
+    public bool animate = false; 
+    public float currentSpeed = 0; 
+    public float movingSpeed = 0; 
+    public bool alive = true;
+    [Header("Exposed")]
+    [SerializeField] private float sprintSpeed = 6;
+    [SerializeField] private float settledRotationSpeed = 1;
+    [SerializeField] private float threshold = .1f;
+    [SerializeField] private SoldierModel targetEnemy;
+    [SerializeField] private float catchUpThreshold = .5f; //not used
+    [SerializeField] private float defaultAccel = 5;
+    [SerializeField] private float sprintAccel = 10;
+
+
+    public GameObject self; 
+    [SerializeField] private float finishedPathRotSpeed = 1;
+
+    [SerializeField] private List<SoldierModel> nearbyEnemyModels; 
+    [SerializeField] private float reqAttackTime = 3;
+    [SerializeField] private float currentAttackTime = 3;
+
 
     [SerializeField] private int currentIdleTimer = 0;
 
     [SerializeField] private int reqIdleTimer = 20;
     public Position position;
 
+    [Header("Sounds")]
     [SerializeField] private List<AudioClip> deathSounds;
     [SerializeField] private List<AudioClip> deathReactionSounds;
     [SerializeField] private List<AudioClip> attackSounds;
@@ -71,6 +87,7 @@ public class SoldierModel : MonoBehaviour
     [SerializeField] private List<AudioClip> hurtVoiceLines;
     [SerializeField] private List<AudioClip> incomingVoiceLines;
     [SerializeField] private List<AudioClip> exhaustedVoiceLines;
+    [SerializeField] private List<AudioClip> movingVoiceLines;
 
     [SerializeField] private AudioSource voiceSource;
 
@@ -80,12 +97,6 @@ public class SoldierModel : MonoBehaviour
     [SerializeField] private float defaultStoppingDistance = 0.5f;
     [SerializeField] private float combatStoppingDistance = 0.1f;
 
-    [SerializeField] private float timeUntilDamage = .8f;
-    [SerializeField] private float currentDamageTime = 0;
-    [SerializeField] private float timeUntilFinishedAttacking = 1f;
-    [SerializeField] private float currentFinishedAttackingTime = 0;
-    [SerializeField] private float timeUntilRecovery = .1f;
-    [SerializeField] private float currentRecoveryTime = 0;
     public bool attacking = false;
     [SerializeField] private bool moving = false;
     [SerializeField] private bool damaged = false;
@@ -96,6 +107,7 @@ public class SoldierModel : MonoBehaviour
     [SerializeField] private int numRandAttackAnims = 2;
 
     [SerializeField] private float waitForAttackChatterTime = 3;
+    [SerializeField] private float waitForMarchChatterTime = 10;
     [SerializeField] private float waitForDeathReactionChatterTime = 3;
     [SerializeField] private float waitForIdleChatterTime = 3;
 
@@ -104,28 +116,30 @@ public class SoldierModel : MonoBehaviour
 
 
 
-    public List<SkinnedMeshRenderer> nornalMeshes;
+    public List<SkinnedMeshRenderer> normalMeshes;
     public List<SkinnedMeshRenderer> veteranMeshes;
     public bool isVeteran = false;
-    [SerializeField] private int numKills = 0;
-
-    [SerializeField] private float minimumAttackRange = 1;
+    [SerializeField] private int numKills = 0; 
 
     public bool melee = true;
-    [SerializeField] private ProjectileFromSoldier projectile;
     [Range(20.0f, 75.0f)] [SerializeField] private float LaunchAngle;
 
     [SerializeField] private bool allowedToDealDamage = true;
     [SerializeField] private float projectileDeviationAmount = 5;
 
-    [SerializeField] private Transform projectileSpawn;
+
+    public GameObject selectionCircle;
+
+    public CapsuleCollider hurtbox;
+
+
+
     private void Start()
     { 
         currentIdleTimer = UnityEngine.Random.Range(0, reqIdleTimer);
         animator.SetBool("walking", true);
         animator.SetInteger("row", position.row);
-        currentSpeed = walkSpeed;
-        currentAccel = defaultAccel;
+        currentSpeed = walkSpeed; 
         richAI.endReachedDistance = defaultStoppingDistance;
 
         if (melee)
@@ -140,7 +154,28 @@ public class SoldierModel : MonoBehaviour
         }
 
         animator.SetFloat("angle", 0);
+        if (characterController == null)
+        {
+            characterController = GetComponent<CharacterController>();
+        }
+        if (hurtbox == null)
+        {
+            hurtbox = GetComponentInChildren<CapsuleCollider>();
+        }
+        animator.SetInteger("ammo", ammo);
 
+        if (rangedNeedsLoading && ammo <= 0)
+        { 
+            Reload();
+        }
+        if (!rangedNeedsLoading && ammo == 0) //give ammo if we dont use it at all
+        {
+            ModifyAmmo(1);
+        }
+    }
+    public void UpdateCharController()
+    { 
+        characterController.enabled = position.activeController;
     }
     private void SetDeployed(bool val)
     {
@@ -151,7 +186,8 @@ public class SoldierModel : MonoBehaviour
     {
         attacking = val;
         animator.SetBool("attacking", val); //and animations will match 
-        animator.SetInteger("randomAttack", UnityEngine.Random.Range(0, numRandAttackAnims));
+        animator.SetInteger("randomAttack", UnityEngine.Random.Range(0, numRandAttackAnims)); 
+        formPos.modelAttacking = val;
     }
     private void SetDamaged(bool val)
     {
@@ -165,7 +201,7 @@ public class SoldierModel : MonoBehaviour
     }
     public void CheckIfAlive()
     {
-        if (health <= 0)
+        if (alive && health <= 0)
         {
             KillThis(); 
         }
@@ -230,16 +266,16 @@ public class SoldierModel : MonoBehaviour
 
     } 
     
-    public void DeployWeaponsInAdvance()
-    {  
+    public void UpdateDeploymentStatus()
+    {
         if (formPos.listOfNearbyEnemies.Count > 0) //check if enemies nearby
-        { 
+        {
             if (position.row <= 2) //check if we're in second row and 
             {
                 if (!deployed)
-                { 
+                {
                     if (melee)
-                    { 
+                    {
                         SetDeployed(true);
                     }
 
@@ -248,7 +284,7 @@ public class SoldierModel : MonoBehaviour
                         if (!formPos.playingAttackChatter)
                         {
                             formPos.playingAttackChatter = true;
-                            formPos.DisableAttackChatterForSeconds(waitForAttackChatterTime);
+                            formPos.DisableAttackChatterForSeconds(10);
                             if (formPos.numberOfAliveSoldiers <= formPos.maxSoldiers / 2)
                             {
                                 voiceSource.PlayOneShot(exhaustedVoiceLines[UnityEngine.Random.Range(0, exhaustedVoiceLines.Count)]);
@@ -265,16 +301,30 @@ public class SoldierModel : MonoBehaviour
         }
         else //if none don't be deployed
         {
-            if (melee)
-            {
-                SetDeployed(false);
-            }
+            SetDeployed(false);
         }
     }
 
     public void UpdateMovementStatus()
     { 
-        if (attacking || damaged)
+        if (formPos.obeyingMovementOrder)
+        {
+            if (!formPos.playingMarchChatter)
+            {
+                formPos.playingMarchChatter = true;
+                formPos.DisableMarchChatterForSeconds(10);
+                voiceSource.PlayOneShot(movingVoiceLines[UnityEngine.Random.Range(0, movingVoiceLines.Count)]);
+            }
+        }
+        if (attacking)
+        {
+            SetMoving(false);
+        }
+        else if (damaged)
+        {
+            SetMoving(false); 
+        }
+        else if (loadingRightNow)
         {
             SetMoving(false);
         }
@@ -283,6 +333,7 @@ public class SoldierModel : MonoBehaviour
             if (richAI.remainingDistance > threshold) // if there's still path to traverse 
             {
                 SetMoving(true);
+                
             }
             if (richAI.reachedDestination) //if we've reached destination
             {
@@ -296,31 +347,119 @@ public class SoldierModel : MonoBehaviour
         richAI.canMove = val; //we can move
         animator.SetBool("moving", val); //and animations will match
     }
+    public void UpdateMageTimer()
+    {
+        if (!magicCharged)
+        { 
+            currentMagicRecharge += 1;
+
+            if (currentMagicRecharge >= magicRechargeTime)
+            {
+                magicCharged = true;
+                currentMagicRecharge = 0;
+            }
+        }
+    }
     public void UpdateAttackTimer()
     {
-        if (!attacking && !damaged) //increment if not attacking and not damaged
+        if (!attacking && !damaged && !loadingRightNow && !isMagic) //increment if not attacking and not damaged not reloading not magic
         {
             currentAttackTime += .1f; //increment timer
-            //&& GetDistance(transform, targetEnemy.transform) >= minimumAttackRange
-            if (currentAttackTime >= reqAttackTime && targetEnemy != null && targetEnemy.alive ) //if we reach attack time, and we have a valid target
-            {  //start an attack
-                if (melee)
-                {
-                    SetDeployed(true);
+
+            if (melee)
+            {
+                if (currentAttackTime >= reqAttackTime && targetEnemy != null && targetEnemy.alive && !formPos.holdFire) //if we reach attack time, and we have a valid target
+                {  //start an attack
+                    AttackCodeChecks();
                 }
-                SetAttacking(true);
-                currentDamageTime = 0;
-                SetMoving(false);
-
-                allowedToDealDamage = true;
-
-                if (!formPos.playingAttackChatter)
+                else if (currentAttackTime >= reqAttackTime && formPos.focusFire && !formPos.holdFire)
                 {
-                    formPos.playingAttackChatter = true;
-                    formPos.DisableAttackChatterForSeconds(waitForAttackChatterTime);
-                    voiceSource.PlayOneShot(attackVoiceLines[UnityEngine.Random.Range(0, attackVoiceLines.Count)]);
+                    AttackCodeChecks();
                 }
             }
+            else
+            {
+                if (currentAttackTime >= reqAttackTime && formPos.enemyFormationToTarget != null && formPos.enemyFormationToTarget.alive && !formPos.holdFire) //if we reach attack time, and we have a valid target
+                {  //start an attack
+                    AttackCodeChecks();
+                }
+                else if (currentAttackTime >= reqAttackTime && formPos.focusFire && !formPos.holdFire)
+                {
+                    AttackCodeChecks();
+                }
+            }
+
+            
+        }
+    }
+    private void AttackCodeChecks()
+    {
+        if (melee) //if melee, we can attack while moving
+        {
+            SetDeployed(true);
+            AttackCodeContinued();
+        }
+        else if (!formPos.obeyingMovementOrder && !formPos.aiPath.canMove) //ranged
+        { 
+            if (CanRangedHitWithAngle())
+            { 
+                AttackCodeContinued();
+            } 
+        } 
+    }
+    private bool CanRangedHitWithAngle()
+    {
+        Vector3 targetPos = new Vector3(0, 0, 0);
+        if (formPos.focusFire)
+        {
+            if (formPos.formationToFocusFire != null) //if we have a formation to focus on
+            {
+                targetPos = formPos.formationToFocusFire.transform.position;
+            }
+            else //otherwise use the terrain position.
+            {
+                targetPos = formPos.focusFirePos;
+            }
+        }
+        else
+        {
+            //targetPos = targetEnemy.transform.position;
+            targetPos = formPos.enemyFormationToTarget.transform.position;
+        }
+
+        //calculations
+        float dist = Vector3.Distance(transform.position, targetPos);
+        float angle = 0;
+        if (formPos.soldierBlock.arcingProjectiles)
+        {
+            angle = dist * 0.5f;
+        }
+        float clamped = Mathf.Clamp(angle, 0, 45);
+        float angleTester = clamped / 5;
+        //angle consideration; the lower the angle, the lower your row must be to fire. otherwise it cancels
+        Debug.Log(angleTester);
+        if (angleTester >= position.row)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    private void AttackCodeContinued()
+    {  
+        SetAttacking(true); //attacking starts here
+        SetMoving(false); //stop moving while attacking.
+        currentDamageTime = 0;
+
+        allowedToDealDamage = true;
+
+        if (!formPos.playingAttackChatter) //play some attack voice line
+        {
+            formPos.playingAttackChatter = true;
+            formPos.DisableAttackChatterForSeconds(10);
+            voiceSource.PlayOneShot(attackVoiceLines[UnityEngine.Random.Range(0, attackVoiceLines.Count)]);
         }
     }
     private void SetMelee(bool val)
@@ -344,14 +483,13 @@ public class SoldierModel : MonoBehaviour
     }
     public void UpdateDamageTimer() //ATTACK CODE
     {
-        if (attacking) //increment only if attacking
+        if (attacking && !loadingRightNow) //increment only if attacking and not reloading
         {
             currentDamageTime += .1f;
 
             if (currentDamageTime >= timeUntilDamage && allowedToDealDamage)
             {
-                allowedToDealDamage = false;
-                //currentDamageTime = 0; //reset damage time
+                allowedToDealDamage = false; 
                 currentAttackTime = 0;
 
                 if (melee)
@@ -360,46 +498,150 @@ public class SoldierModel : MonoBehaviour
                 }
                 else //ranged
                 {
-                    FireProjectile();
+                    FireProjectile(); 
                 } 
             }
         }
     }
+    private void Reload()
+    {
+        SetLoading(true);
+    }
+    private void SetLoading(bool val)
+    {
+        animator.SetBool("loading", val);
+        loadingRightNow = val;
+    }
+    public void UpdateLoadTimer()
+    {
+        if (loadingRightNow) //increment if loading
+        {
+            if (damaged)
+            {
+                CancelLoading();
+            }
 
+
+            currentFinishedLoadingTime += .1f; //increment timer 
+            if (currentFinishedLoadingTime >= timeUntilFinishedLoading)
+            {
+                FinishReload();
+            }
+        }
+    }
+    private void CancelLoading()
+    {
+        SetLoading(false);
+        currentFinishedLoadingTime = 0;
+    }
+    private void FinishReload()
+    {
+        SetLoading(false);
+        currentFinishedLoadingTime = 0;
+        ModifyAmmo(1);
+    }
     public void DealDamage()
     { //check if in range, otherwise whiff  
         formPos.modelAttacked = true;
         if (targetEnemy != null && targetEnemy.alive)
         {
             targetEnemy.impactSource.PlayOneShot(attackSounds[UnityEngine.Random.Range(0, attackSounds.Count)]); //play impact sound at enemy position
-            targetEnemy.SufferDamage(damage, this);
-            /*if (GetDistance(transform, targetEnemy.transform) <= attackRange) //if still within range of attack
-            { 
-            }*/
+            targetEnemy.SufferDamage(damage, this); 
         }
     }
-    private void FireProjectile()
+    public void MageCastProjectile(Vector3 targetPos, int abilityNum, string mageType) //let's fire projectiles at a target
     {
-        formPos.modelAttacked = true;
-        if (targetEnemy != null)
-        {
-            impactSource.PlayOneShot(attackSounds[UnityEngine.Random.Range(0, attackSounds.Count)]); //play impact sound at enemy position
-            ProjectileFromSoldier missile = Instantiate(projectile, projectileSpawn.position, Quaternion.identity); //spawn the projectile
-            missile.formPosParent = formPos;
-            missile.soldierParent = this;
-            missile.damage = damage;
-            formPos.soldierBlock.listProjectiles.Add(missile);
+        magicCharged = false;
+        formPos.modelAttacked = true;   
+        impactSource.PlayOneShot(attackSounds[UnityEngine.Random.Range(0, attackSounds.Count)]); 
+        ProjectileFromSoldier missile = Instantiate(projectile, projectileSpawn.position, Quaternion.identity); //spawn the projectile
+        missile.formPosParent = formPos; //communicate some info to the missile
+        missile.soldierParent = this;
+        missile.damage = damage;
 
-            float dist = GetDistance(transform, targetEnemy.transform);
-            float angle = dist * 0.5f;
+        formPos.soldierBlock.listProjectiles.Add(missile);
+
+        float dist = Vector3.Distance(transform.position, targetPos);
+        float angle = 0;
+        if (formPos.soldierBlock.arcingProjectiles)
+        {
+            angle = dist * 0.5f;
+        }
+        float clamped = Mathf.Clamp(angle, 0, 45); 
+        if (mageType == "Pyromancer")
+        {
+            if (abilityNum == 0)
+            {
+                clamped = 70;
+            }
+        }
+        float deviation = projectileDeviationAmount * dist * 0.01f;
+
+        float clampedDeviation = Mathf.Clamp(deviation, 2, 999);
+        float adjusted = clamped / 45; //for anim 
+        animator.SetFloat("angle", adjusted);
+
+        missile.LaunchProjectile(targetPos, clamped, clampedDeviation); //fire at the position of the target with a clamped angle and deviation based on distance
+    }
+    private void FireProjectile() //let's fire projectiles at a target
+    {
+        if (targetEnemy != null || formPos.focusFire || formPos.enemyFormationToTarget != null)
+        { 
+            Vector3 targetPos = new Vector3(0, 0, 0);
+            if (formPos.focusFire)
+            {
+                if (formPos.formationToFocusFire != null) //if we have a formation to focus on
+                {
+                    targetPos = formPos.formationToFocusFire.transform.position;
+                }
+                else //otherwise use the terrain position.
+                { 
+                    targetPos = formPos.focusFirePos;
+                }
+            }
+            else
+            {
+                //targetPos = targetEnemy.transform.position;
+                targetPos = formPos.enemyFormationToTarget.transform.position;
+            }
+
+            //calculations
+            float dist = Vector3.Distance(transform.position, targetPos);
+            float angle = 0;
+            if (formPos.soldierBlock.arcingProjectiles)
+            {
+                angle = dist * 0.5f;
+            }
+
             float clamped = Mathf.Clamp(angle, 0, 45);
             float deviation = projectileDeviationAmount * dist * 0.01f;
-            float adjusted = clamped / 45;
-            //Debug.Log(deviation + "deviation" + clamped + "angle");
+
+            float clampedDeviation = Mathf.Clamp(deviation, 2, 999);
+            float adjusted = clamped / 45; //for anim   
+
+            impactSource.PlayOneShot(attackSounds[UnityEngine.Random.Range(0, attackSounds.Count)]); 
+            ProjectileFromSoldier missile = Instantiate(projectile, projectileSpawn.position, Quaternion.identity); //spawn the projectile
+            missile.formPosParent = formPos; //communicate some info to the missile
+            missile.soldierParent = this;
+            missile.damage = damage;
+
+            formPos.soldierBlock.listProjectiles.Add(missile);
+
+            
             animator.SetFloat("angle", adjusted);
-            missile.LaunchProjectile(targetEnemy.transform, clamped, deviation);
+             
+            missile.LaunchProjectile(targetPos, clamped, clampedDeviation); //fire at the position of the target with a clamped angle and deviation based on distance
         }
-        
+
+        if (rangedNeedsLoading) //if we need reloading and we're out
+        {
+            ModifyAmmo(-1);
+            if (ammo <= 0)
+            {
+                Reload();
+            }
+        }
+        formPos.modelAttacked = true;
     }
 
     public void UpdateFinishedAttackingTimer()
@@ -415,6 +657,12 @@ public class SoldierModel : MonoBehaviour
                 SetMoving(true);
             }
         }
+    }
+    private void ModifyAmmo(int num)
+    {
+        ammo += num;
+        ammo = Mathf.Clamp(ammo, 0, maxAmmo);
+        animator.SetInteger("ammo", ammo);
     }
     public void UpdateRecoveryTimer()
     {
@@ -443,6 +691,9 @@ public class SoldierModel : MonoBehaviour
         SetAttacking(false);
         SetMoving(false);
         SetDamaged(true);
+        //reset timers so that our animations dont desync 
+        currentDamageTime = 0;
+        currentFinishedAttackingTime = 0;
 
         hurtSource.PlayOneShot(hurtVoiceLines[UnityEngine.Random.Range(0, hurtVoiceLines.Count)]);
            
@@ -465,25 +716,35 @@ public class SoldierModel : MonoBehaviour
             }
         }
 
-        formPos.modelTookDamage = true; 
+        formPos.modelTookDamage = true;
+        
+        if (origin.melee)
+        { 
+            formPos.GetTangledUp();
+        }
+        
     } 
-    private void KillThis()
+    public void KillThis()
     {
+        richAI.gravity = Vector3.zero;
+        characterController.enabled = false;
+        selectionCircle.SetActive(false);
         animator.enabled = true;
         SetAlive(false);
         richAI.canMove = false;
-        richAI.enableRotation = false;
-
-        selfCollider.enabled = false;
+        richAI.enableRotation = false; 
         position.assignedSoldierModel = null;
         formPos.numberOfAliveSoldiers -= 1;
-        voiceSource.PlayOneShot(deathSounds[UnityEngine.Random.Range(0, deathSounds.Count)]);
-
+        animator.Play("WeaponUpDie");
+        if (voiceSource.enabled)
+        { 
+            voiceSource.PlayOneShot(deathSounds[UnityEngine.Random.Range(0, deathSounds.Count)]);
+        }
 
         if (!formPos.playingDeathReactionChatter)
         {
             formPos.playingDeathReactionChatter = true;
-            formPos.DisableDeathReactionForSeconds(waitForDeathReactionChatterTime);
+            formPos.DisableDeathReactionForSeconds(10);
 
             LayerMask layerMask = LayerMask.GetMask("Model");
             int maxColliders = 5;
@@ -506,49 +767,54 @@ public class SoldierModel : MonoBehaviour
                             break;
                         }
                     }
-                }
-
-            }
-             
-        }
-
-
+                } 
+            } 
+        } 
         if (formPos.numberOfAliveSoldiers <= 0)
         {
             formPos.soldierBlock.SelfDestruct();
         }
-
+        richAI.enabled = false;
+        aiDesSet.enabled = false;
+        hurtbox.enabled = false;
+        Invoke("DelayedDisable", 2);
+    }
+    private void DelayedDisable()
+    {
+        voiceSource.enabled = false;
+        impactSource.enabled = false; 
+        enabled = false;
     }
     public void CheckIfEnemyModelsNearby()
     {
-        nearbyEnemyModels.Clear(); //wipe the list
+        nearbyEnemyModels.Clear(); //wipe the list 
         targetEnemy = null;
         //grab nearby models
         LayerMask layerMask = LayerMask.GetMask("Model");
-        int maxColliders = 80;
+        int maxColliders = 160;
         Collider[] colliders = new Collider[maxColliders];
         int numColliders = Physics.OverlapSphereNonAlloc(transform.position, attackRange, colliders, layerMask, QueryTriggerInteraction.Ignore);
-        for (int i = 0; i < numColliders; i++)
+        for (int i = 0; i < numColliders; i++) //go for hurtboxes
         {
-            if (colliders[i].gameObject == self) //if our own hitbox, ignore
+            if (colliders[i].gameObject == self || colliders[i].gameObject.tag == team + "Model") //ignore character controller
             {
                 continue;
             }
-            if (colliders[i].gameObject.tag != team + "Model") //if enemy team
-            { 
-                SoldierModel model = colliders[i].GetComponent<SoldierModel>();
+            if (colliders[i].gameObject.tag == "Hurtbox") //if is hurtbox
+            {
+                SoldierModel model = colliders[i].GetComponentInParent<SoldierModel>();
                 if (model != null)
                 {
-                    if (model.alive)
+                    if (model.alive && model.team != team) //alive and enemy
                     {
                         nearbyEnemyModels.Add(model);
-                    } 
+                    }
                 }
             }
 
         }
         if (nearbyEnemyModels.Count > 0)
-        { 
+        {
             TargetClosestEnemyModel(); //set target enemy to be closest model
         }
     }
@@ -567,8 +833,7 @@ public class SoldierModel : MonoBehaviour
                 compareDist = dist;
             }
         } 
-    }
-    
+    }  
     public void CheckIfIdle()
     {
         if (!richAI.canMove && formPos.listOfNearbyEnemies.Count == 0)
@@ -585,7 +850,7 @@ public class SoldierModel : MonoBehaviour
                     if (!formPos.playingIdleChatter)
                     {
                         formPos.playingIdleChatter = true;
-                        formPos.DisableIdleChatterForSeconds(waitForIdleChatterTime);
+                        formPos.DisableIdleChatterForSeconds(10);
                         voiceSource.PlayOneShot(idleVoiceLines[UnityEngine.Random.Range(0, idleVoiceLines.Count)]);
                     } 
                 }
@@ -615,27 +880,23 @@ public class SoldierModel : MonoBehaviour
     {
         float dist = Vector3.Distance(one.position, two.position);
         return dist;
-    }
+    } 
     void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireSphere(transform.position, attackRange);
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, minimumAttackRange);
+        Gizmos.color = Color.green; 
     }
-    public void CommonSense()
-    { 
-        if (formPos.soldierBlock.melee)
-        { 
-            if (formPos.listOfNearbyEnemies.Count <= 0 && nearbyEnemyModels.Count <= 0) //if no nearby enemies
-            {
-                SetAttacking(false);
-            }
+    public void StopAttackingWhenNoEnemiesNearby()
+    {
+        if (formPos.listOfNearbyEnemies.Count <= 0 && nearbyEnemyModels.Count <= 0) //if no nearby enemies
+        {
+            SetAttacking(false);
         }
     }
     public void CullAnimations()
     {
         if (animate || richAI.canMove || attacking || !alive) //if we're in range or we can move
-        { //fix this so that when death animation is over disables all components 
+        {  
             animator.enabled = true;
         }
         else if (!animate || !richAI.canMove)
@@ -652,7 +913,29 @@ public class SoldierModel : MonoBehaviour
     public void FixRotation()
     {
         richAI.enableRotation = true;
-        if (targetEnemy != null)
+        if (formPos.focusFire && !formPos.holdFire && !formPos.obeyingMovementOrder)
+        {
+            richAI.enableRotation = false;
+
+            Vector3 targetDirection = new Vector3(0, 0, 0);
+            if (formPos.formationToFocusFire != null)
+            {
+                targetDirection = formPos.formationToFocusFire.transform.position - transform.position;
+            }
+            else
+            {
+                targetDirection = formPos.focusFirePos - transform.position;
+            }
+
+
+            float singleStep = finishedPathRotSpeed * Time.deltaTime;
+
+            Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
+            newDirection.y = 0;
+
+            transform.rotation = Quaternion.LookRotation(newDirection);
+        }
+        else if (targetEnemy != null) // && !formPos.holdFire && !formPos.obeyingMovementOrder
         {
             richAI.enableRotation = false;
             Vector3 targetDirection = targetEnemy.transform.position - transform.position;
@@ -660,24 +943,38 @@ public class SoldierModel : MonoBehaviour
             float singleStep = finishedPathRotSpeed * Time.deltaTime;
 
             Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
-             
+            newDirection.y = 0;
 
             transform.rotation = Quaternion.LookRotation(newDirection);
-        }  
-        else if (formPos.listOfNearbyEnemies.Count > 0)
-        { 
+        }
+        else if (targetEnemy == null && formPos.enemyFormationToTarget != null)
+        {
+            richAI.enableRotation = false;
+            Vector3 targetDirection = formPos.enemyFormationToTarget.transform.position - transform.position;
+
+            float singleStep = finishedPathRotSpeed * Time.deltaTime;
+
+            Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
+            newDirection.y = 0;
+
+            transform.rotation = Quaternion.LookRotation(newDirection);
+        }
+
+        /*if (formPos.listOfNearbyEnemies.Count > 0) //makes guys face forward
+        {
             richAI.enableRotation = false;
             Vector3 targetDirection = formPos.soldierBlock.target.transform.position - transform.position;
 
             float singleStep = finishedPathRotSpeed * Time.deltaTime;
 
-            Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f); 
+            Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
+            newDirection.y = 0;
 
             transform.rotation = Quaternion.LookRotation(newDirection);
-        }
-        else if (!richAI.canMove)
+        }*/
+        /*if (!richAI.canMove)
         {
             transform.rotation = Quaternion.RotateTowards(transform.rotation, formPos.gameObject.transform.rotation, finishedPathRotSpeed * Time.deltaTime);
-        }
+        }*/
     }
 }

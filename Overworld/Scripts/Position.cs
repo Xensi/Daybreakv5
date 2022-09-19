@@ -15,6 +15,7 @@ public class Position : MonoBehaviour
     public string team = "Altgard";
     public FormationPosition formPos;
 
+    public bool activeController = false;
     private void OnDrawGizmosSelected()
     {
 
@@ -32,10 +33,10 @@ public class Position : MonoBehaviour
         LayerMask layerMask = LayerMask.GetMask("Model");
         int maxColliders = 80;
         Collider[] colliders = new Collider[maxColliders];
-        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, range+numTimesSought, colliders, layerMask, QueryTriggerInteraction.Ignore);
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, range+numTimesSought, colliders, layerMask, QueryTriggerInteraction.Ignore); //use hurtboxes now
         for (int i = 0; i < numColliders; i++)
         { 
-            SoldierModel model = colliders[i].GetComponent<SoldierModel>();
+            SoldierModel model = colliders[i].GetComponentInParent<SoldierModel>();
 
             if (model != null)
             {
@@ -45,12 +46,8 @@ public class Position : MonoBehaviour
                 }
             }
         }
-        numTimesSought++;
-        //Debug.LogError(candidates.Count + team + row);
-        if (candidates.Count <= 0)
-        { 
-        }
-        else
+        numTimesSought++; 
+        if (candidates.Count > 0)
         {
             GetClosest();
         }

@@ -81,7 +81,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &3225195838671620388
+--- !u!1 &436454117761585913
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -89,130 +89,59 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5796930556046936510}
-  - component: {fileID: 3000039097625683347}
+  - component: {fileID: 6231826380439476831}
+  - component: {fileID: 4519688069860035886}
+  - component: {fileID: 7119678853879353878}
   m_Layer: 23
-  m_Name: SelectionLine
-  m_TagString: Untagged
+  m_Name: SelectionThreshold
+  m_TagString: SelectableObject
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5796930556046936510
+  m_IsActive: 0
+--- !u!4 &6231826380439476831
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3225195838671620388}
+  m_GameObject: {fileID: 436454117761585913}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.1, z: 0}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111539829869}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!120 &3000039097625683347
-LineRenderer:
+--- !u!54 &4519688069860035886
+Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3225195838671620388}
+  m_GameObject: {fileID: 436454117761585913}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!65 &7119678853879353878
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 436454117761585913}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 0
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 1074ae2a3908bce40b5f6ed220c5982a, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Positions:
-  - {x: -5, y: 0, z: 4}
-  - {x: 5, y: 0, z: 4}
-  - {x: 5, y: 0, z: -4}
-  - {x: -5, y: 0, z: -4}
-  - {x: -5, y: 0, z: 4}
-  m_Parameters:
-    serializedVersion: 3
-    widthMultiplier: 0.1
-    widthCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    colorGradient:
-      serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 0, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 0
-      ctime1: 65535
-      ctime2: 0
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 0
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    numCornerVertices: 0
-    numCapVertices: 0
-    alignment: 0
-    textureMode: 0
-    shadowBias: 0.5
-    generateLightingData: 0
-  m_UseWorldSpace: 0
-  m_Loop: 0
+  serializedVersion: 2
+  m_Size: {x: 9.63, y: 3, z: 8.09}
+  m_Center: {x: 0, y: -2.95, z: 0}
 --- !u!1 &5955700109937747232
 GameObject:
   m_ObjectHideFlags: 0
@@ -262,6 +191,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700109943635039
 GameObject:
   m_ObjectHideFlags: 0
@@ -311,6 +241,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700109959981597
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,6 +291,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700109991791767
 GameObject:
   m_ObjectHideFlags: 0
@@ -409,6 +341,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110015499711
 GameObject:
   m_ObjectHideFlags: 0
@@ -458,6 +391,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110029131282
 GameObject:
   m_ObjectHideFlags: 0
@@ -507,6 +441,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110055592124
 GameObject:
   m_ObjectHideFlags: 0
@@ -556,6 +491,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110060338596
 GameObject:
   m_ObjectHideFlags: 0
@@ -605,6 +541,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110078070635
 GameObject:
   m_ObjectHideFlags: 0
@@ -654,6 +591,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110198484668
 GameObject:
   m_ObjectHideFlags: 0
@@ -703,6 +641,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110249152667
 GameObject:
   m_ObjectHideFlags: 0
@@ -752,6 +691,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110250431500
 GameObject:
   m_ObjectHideFlags: 0
@@ -801,6 +741,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110267998423
 GameObject:
   m_ObjectHideFlags: 0
@@ -850,6 +791,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110313397913
 GameObject:
   m_ObjectHideFlags: 0
@@ -899,6 +841,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110317032630
 GameObject:
   m_ObjectHideFlags: 0
@@ -948,6 +891,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110327013245
 GameObject:
   m_ObjectHideFlags: 0
@@ -997,6 +941,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110328894852
 GameObject:
   m_ObjectHideFlags: 0
@@ -1046,6 +991,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110351952735
 GameObject:
   m_ObjectHideFlags: 0
@@ -1095,6 +1041,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110389307120
 GameObject:
   m_ObjectHideFlags: 0
@@ -1144,6 +1091,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110394611148
 GameObject:
   m_ObjectHideFlags: 0
@@ -1193,6 +1141,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110397409195
 GameObject:
   m_ObjectHideFlags: 0
@@ -1242,6 +1191,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110404559320
 GameObject:
   m_ObjectHideFlags: 0
@@ -1291,6 +1241,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110416981790
 GameObject:
   m_ObjectHideFlags: 0
@@ -1340,6 +1291,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110420648599
 GameObject:
   m_ObjectHideFlags: 0
@@ -1389,6 +1341,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110486431558
 GameObject:
   m_ObjectHideFlags: 0
@@ -1438,6 +1391,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110491991422
 GameObject:
   m_ObjectHideFlags: 0
@@ -1487,6 +1441,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110495257659
 GameObject:
   m_ObjectHideFlags: 0
@@ -1536,6 +1491,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110496769151
 GameObject:
   m_ObjectHideFlags: 0
@@ -1585,6 +1541,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110502578629
 GameObject:
   m_ObjectHideFlags: 0
@@ -1634,6 +1591,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110525753340
 GameObject:
   m_ObjectHideFlags: 0
@@ -1683,6 +1641,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110595696069
 GameObject:
   m_ObjectHideFlags: 0
@@ -1732,6 +1691,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110611704336
 GameObject:
   m_ObjectHideFlags: 0
@@ -1781,6 +1741,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110645925866
 GameObject:
   m_ObjectHideFlags: 0
@@ -1830,6 +1791,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110655737670
 GameObject:
   m_ObjectHideFlags: 0
@@ -1879,6 +1841,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110661961090
 GameObject:
   m_ObjectHideFlags: 0
@@ -1928,6 +1891,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110694762162
 GameObject:
   m_ObjectHideFlags: 0
@@ -1977,6 +1941,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110707663663
 GameObject:
   m_ObjectHideFlags: 0
@@ -2026,6 +1991,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110728819744
 GameObject:
   m_ObjectHideFlags: 0
@@ -2105,6 +2071,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110764293250
 GameObject:
   m_ObjectHideFlags: 0
@@ -2154,6 +2121,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110773037550
 GameObject:
   m_ObjectHideFlags: 0
@@ -2203,6 +2171,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110775486718
 GameObject:
   m_ObjectHideFlags: 0
@@ -2252,6 +2221,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110807774521
 GameObject:
   m_ObjectHideFlags: 0
@@ -2301,6 +2271,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110848617437
 GameObject:
   m_ObjectHideFlags: 0
@@ -2350,6 +2321,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110860795023
 GameObject:
   m_ObjectHideFlags: 0
@@ -2399,6 +2371,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110886673008
 GameObject:
   m_ObjectHideFlags: 0
@@ -2448,6 +2421,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110890606711
 GameObject:
   m_ObjectHideFlags: 0
@@ -2497,6 +2471,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110911429547
 GameObject:
   m_ObjectHideFlags: 0
@@ -2546,6 +2521,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110937688012
 GameObject:
   m_ObjectHideFlags: 0
@@ -2595,6 +2571,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700110976596681
 GameObject:
   m_ObjectHideFlags: 0
@@ -2644,6 +2621,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111000884123
 GameObject:
   m_ObjectHideFlags: 0
@@ -2693,6 +2671,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111038027940
 GameObject:
   m_ObjectHideFlags: 0
@@ -2742,6 +2721,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111058348437
 GameObject:
   m_ObjectHideFlags: 0
@@ -2791,6 +2771,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111069054471
 GameObject:
   m_ObjectHideFlags: 0
@@ -2840,6 +2821,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111103716312
 GameObject:
   m_ObjectHideFlags: 0
@@ -2889,6 +2871,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111123590931
 GameObject:
   m_ObjectHideFlags: 0
@@ -2938,6 +2921,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111134051211
 GameObject:
   m_ObjectHideFlags: 0
@@ -2987,6 +2971,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111183589317
 GameObject:
   m_ObjectHideFlags: 0
@@ -3036,6 +3021,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111234879874
 GameObject:
   m_ObjectHideFlags: 0
@@ -3114,6 +3100,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   soldierPrefab: {fileID: 632593851823049858, guid: 6f9bb144dfca8f146b19c0057ab81097, type: 3}
+  magePrefab: {fileID: 0}
+  mageType: 
   modelParent: {fileID: 5955700110728819747}
   formationPositions:
   - {fileID: 4824575326693472580}
@@ -3196,20 +3184,29 @@ MonoBehaviour:
   - {fileID: 7923461661254909727}
   - {fileID: 5913129634313290808}
   - {fileID: 572238791837935936}
+  magePositions:
+  - {fileID: 6063903901977476612}
+  - {fileID: 1102557136594692312}
   FormationTransform: {fileID: 5955700111539829869}
   angleToFace: {x: 0, y: -0.70710677, z: 0, w: 0.70710677}
   target: {fileID: 5955700111234879877}
   team: Altgard
   formPos: {fileID: 29422916108755641}
   listSoldierModels: []
+  listMageModels: []
+  modelsArray: []
+  reinforcePositionsArray: []
   arbiter: {fileID: 0}
   reinforceablePositions: []
   modelAttackRange: 4.5
   desiredWalkingSpeed: 3
   melee: 1
   canBeRanged: 0
+  arcingProjectiles: 1
   hasSpecialVeterans: 1
   listProjectiles: []
+  useActualMaxSpeed: 1
+  forcedMaxSpeed: 0
 --- !u!1 &5955700111282336933
 GameObject:
   m_ObjectHideFlags: 0
@@ -3259,6 +3256,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111290460574
 GameObject:
   m_ObjectHideFlags: 0
@@ -3308,6 +3306,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111303515792
 GameObject:
   m_ObjectHideFlags: 0
@@ -3357,6 +3356,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111347776709
 GameObject:
   m_ObjectHideFlags: 0
@@ -3406,6 +3406,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111421230610
 GameObject:
   m_ObjectHideFlags: 0
@@ -3485,6 +3486,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111470347213
 GameObject:
   m_ObjectHideFlags: 0
@@ -3534,6 +3536,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111519842995
 GameObject:
   m_ObjectHideFlags: 0
@@ -3583,6 +3586,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111539829866
 GameObject:
   m_ObjectHideFlags: 0
@@ -3596,9 +3600,7 @@ GameObject:
   - component: {fileID: 5955700111539829870}
   - component: {fileID: 5955700111539829868}
   - component: {fileID: 5955700111539829871}
-  - component: {fileID: 101304829}
-  - component: {fileID: 101304830}
-  - component: {fileID: 5716949793002326831}
+  - component: {fileID: 393470069997403603}
   m_Layer: 23
   m_Name: FormationPositions
   m_TagString: Formation
@@ -3623,7 +3625,7 @@ Transform:
   - {fileID: 7364247578490165410}
   - {fileID: 4841988476330284533}
   - {fileID: 2093588303820026131}
-  - {fileID: 5796930556046936510}
+  - {fileID: 6231826380439476831}
   m_Father: {fileID: 5955700111243193917}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3648,12 +3650,12 @@ MonoBehaviour:
   rotTarget: {fileID: 4907032232984804433}
   velThreshold: 0.1
   checkRadius: 20
-  rectangleCollider: {fileID: 101304830}
+  stoppingDistance: 4
+  moveStopDistance: 1
+  rectangleCollider: {fileID: 0}
   enemyFormationToTarget: {fileID: 0}
   soldierBlock: {fileID: 5955700111243193916}
   enableAnimations: 0
-  stoppingDistance: 12.5
-  moveStopDistance: 1
   currentSpeed: 0
   slowSpeed: 0.5
   walkingSpeed: 3
@@ -3682,7 +3684,7 @@ MonoBehaviour:
   numberOfAliveSoldiers: 80
   maxSoldiers: 80
   tangledUp: 0
-  slowRotate: 15
+  slowRotate: 5
   normRotate: 30
   offsetSecondRow: {fileID: 9131454677924282923}
   colliderBoxRange: 9
@@ -3693,18 +3695,32 @@ MonoBehaviour:
   yoffset: 2
   zoffset: 1
   zNotDeployedOffset: 0
-  selectionLine: {fileID: 3000039097625683347}
   playingIdleChatter: 0
   playingAttackChatter: 0
   playingDeathReactionChatter: 0
+  playingMarchChatter: 0
   deployedPikes: 0
   firstLineModels: []
   modelAttacked: 0
   modelTookDamage: 0
   inCombat: 0
   secondRowOffsetAmount: 0
+  holdFire: 0
   chaseDetectedEnemies: 1
   engagedInMelee: 0
+  focusFire: 0
+  focusFirePos: {x: 0, y: 0, z: 0}
+  formationToFocusFire: {fileID: 0}
+  movementManuallyStopped: 0
+  destinationsList: []
+  finishedChangedFacing: 1
+  charController: {fileID: 393470069997403603}
+  charRadius: 4.5
+  isCavalry: 0
+  freezeFormPos: 0
+  freezeTimer: 0
+  shouldRotateToward: 0
+  alive: 1
 --- !u!114 &5955700111539829870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3760,11 +3776,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 5
-  radius: 4
-  height: 2
+  radius: 1
+  height: 30.74
   canMove: 1
   maxSpeed: 3
-  gravity: {x: 0, y: 0, z: 0}
+  gravity: {x: NaN, y: NaN, z: NaN}
   groundMask:
     serializedVersion: 2
     m_Bits: 8192
@@ -3781,32 +3797,16 @@ MonoBehaviour:
     visualizeSensitivity: 0
   targetCompatibility: {fileID: 0}
   acceleration: 5
-  rotationSpeed: 30
+  rotationSpeed: 60
   slowdownTime: 0.5
-  endReachedDistance: 4
+  endReachedDistance: 1
   wallForce: 3
   wallDist: 1
   funnelSimplification: 1
-  slowWhenNotFacingTarget: 1
+  slowWhenNotFacingTarget: 0
   animCompatibility: {fileID: 0}
---- !u!54 &101304829
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5955700111539829866}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 1
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 116
-  m_CollisionDetection: 0
---- !u!65 &101304830
-BoxCollider:
+--- !u!143 &393470069997403603
+CharacterController:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -3816,35 +3816,13 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 10, y: 4, z: 8}
-  m_Center: {x: 0, y: 2, z: 0}
---- !u!114 &5716949793002326831
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5955700111539829866}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 560112f876f5746c780eca0d404e7139, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 2
-  radiusBackingField: 0.5
-  heightBackingField: 2
-  centerBackingField: 1
-  locked: 0
-  lockWhenNotMoving: 0
-  agentTimeHorizon: 0.1
-  obstacleTimeHorizon: 1
-  maxNeighbours: 10
-  layer: 1
-  collidesWith: 1
-  wallAvoidForce: 1
-  wallAvoidFalloff: 1
-  priority: 0.5
-  debug: 0
+  m_Height: 31.15
+  m_Radius: 4.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.1
+  m_SkinWidth: 1
+  m_MinMoveDistance: 0
+  m_Center: {x: 0, y: 16.24, z: 0}
 --- !u!1 &5955700111557707647
 GameObject:
   m_ObjectHideFlags: 0
@@ -3894,6 +3872,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111588915355
 GameObject:
   m_ObjectHideFlags: 0
@@ -3943,6 +3922,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111596356444
 GameObject:
   m_ObjectHideFlags: 0
@@ -3992,6 +3972,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111624399274
 GameObject:
   m_ObjectHideFlags: 0
@@ -4041,6 +4022,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111633469804
 GameObject:
   m_ObjectHideFlags: 0
@@ -4050,8 +4032,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5955700111633469807}
+  - component: {fileID: 6063903901977476612}
   m_Layer: 0
-  m_Name: Kommandant
+  m_Name: Mage1
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -4065,12 +4048,31 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5955700111633469804}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1, y: 0, z: 4.5}
+  m_LocalPosition: {x: 5.5, y: 0, z: 2.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5955700111764308538}
   m_RootOrder: 71
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6063903901977476612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5955700111633469804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c264bbd1454e24543847c719540e06ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignedSoldierModel: {fileID: 0}
+  row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111650769857
 GameObject:
   m_ObjectHideFlags: 0
@@ -4120,6 +4122,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111659994685
 GameObject:
   m_ObjectHideFlags: 0
@@ -4169,6 +4172,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111695449072
 GameObject:
   m_ObjectHideFlags: 0
@@ -4218,6 +4222,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111715953655
 GameObject:
   m_ObjectHideFlags: 0
@@ -4267,6 +4272,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111764308539
 GameObject:
   m_ObjectHideFlags: 0
@@ -4366,6 +4372,7 @@ Transform:
   - {fileID: 5955700110313397912}
   - {fileID: 5955700111948577796}
   - {fileID: 5955700111633469807}
+  - {fileID: 219943608044186134}
   m_Father: {fileID: 1889408432676090364}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
@@ -4418,6 +4425,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111880371989
 GameObject:
   m_ObjectHideFlags: 0
@@ -4467,6 +4475,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111924917585
 GameObject:
   m_ObjectHideFlags: 0
@@ -4516,6 +4525,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111948577797
 GameObject:
   m_ObjectHideFlags: 0
@@ -4565,6 +4575,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111959498470
 GameObject:
   m_ObjectHideFlags: 0
@@ -4614,6 +4625,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700111981831670
 GameObject:
   m_ObjectHideFlags: 0
@@ -4663,6 +4675,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700112032372520
 GameObject:
   m_ObjectHideFlags: 0
@@ -4712,6 +4725,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &5955700112042492968
 GameObject:
   m_ObjectHideFlags: 0
@@ -4761,6 +4775,7 @@ MonoBehaviour:
   numTimesSought: 0
   team: Altgard
   formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &6288200040760361686
 GameObject:
   m_ObjectHideFlags: 0
@@ -4843,7 +4858,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1
+        value: 0.1
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -4981,6 +4996,56 @@ Transform:
   m_Father: {fileID: 5955700111243193917}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8564787070028213989
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 219943608044186134}
+  - component: {fileID: 1102557136594692312}
+  m_Layer: 0
+  m_Name: Mage2
+  m_TagString: Untagged
+  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &219943608044186134
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8564787070028213989}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 5.5, y: 0, z: 6.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5955700111764308538}
+  m_RootOrder: 72
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1102557136594692312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8564787070028213989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c264bbd1454e24543847c719540e06ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  assignedSoldierModel: {fileID: 0}
+  row: 1
+  candidates: []
+  numTimesSought: 0
+  team: Altgard
+  formPos: {fileID: 0}
+  activeController: 0
 --- !u!1 &8662906131483449148
 GameObject:
   m_ObjectHideFlags: 0
@@ -5055,7 +5120,6 @@ LineRenderer:
   m_Positions:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 1}
-  - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -5064,7 +5128,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1
+        value: 0.1
         inSlope: 0
         outSlope: 0
         tangentMode: 0

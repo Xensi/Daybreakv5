@@ -15,7 +15,9 @@ public class ProjectileFromSoldier : MonoBehaviour
     [SerializeField] private AudioSource audioSource;
     public float damage = 1;
     private bool canDamage = false;
+    [SerializeField] private int penetrationNum = 1;
 
+    [SerializeField] private GameObject explosion;
     private void Awake()
     {
         initialRotation = transform.rotation;
@@ -24,7 +26,7 @@ public class ProjectileFromSoldier : MonoBehaviour
     {
         //Destroy(this, 10);
         Invoke("SelfDestruct", 20);
-        Invoke("StartDamage", .5f);
+        Invoke("StartDamage", .25f);
         model.SetActive(true);
 
     }
@@ -39,13 +41,13 @@ public class ProjectileFromSoldier : MonoBehaviour
         formPosParent.soldierBlock.listProjectiles.Remove(this);
         Destroy(gameObject);
     }
-    public void LaunchProjectile(Transform target, float LaunchAngle, float deviationAmount)
+    public void LaunchProjectile(Vector3 targetPos, float LaunchAngle, float deviationAmount)
     {
         Vector3 projectileXZPos = new Vector3(transform.position.x, 0.0f, transform.position.z);
 
-        float xdiff = target.position.x - transform.position.x;
+        float xdiff = targetPos.x - transform.position.x;
 
-        float zdiff = target.position.z - transform.position.z;
+        float zdiff = targetPos.z - transform.position.z;
 
         float desiredOffset = 5;
 
@@ -57,14 +59,14 @@ public class ProjectileFromSoldier : MonoBehaviour
 
         zdiff *= scaling;
 
-        Vector3 targetXZPos = new Vector3(target.position.x + xdiff + Random.Range(-deviationAmount, deviationAmount), 0.0f, target.position.z + zdiff + Random.Range(-deviationAmount, deviationAmount));
+        Vector3 targetXZPos = new Vector3(targetPos.x + xdiff + Random.Range(-deviationAmount, deviationAmount), 0.0f, targetPos.z + zdiff + Random.Range(-deviationAmount, deviationAmount));
         transform.LookAt(targetXZPos);
 
         // shorthands for the formula
         float R = Vector3.Distance(projectileXZPos, targetXZPos);
         float G = Physics.gravity.y;
         float tanAlpha = Mathf.Tan(LaunchAngle * Mathf.Deg2Rad);
-        float H = (target.position.y) - transform.position.y;
+        float H = (targetPos.y) - transform.position.y;
 
         // calculate the local space components of the velocity 
         // required to land the projectile on the target object 
@@ -83,29 +85,49 @@ public class ProjectileFromSoldier : MonoBehaviour
     {
         transform.rotation = Quaternion.LookRotation(rigid.velocity) * initialRotation;
     }
+    private void Update()
+    {
+        if (isFlying)
+        {
+           UpdateRotation();
+        }
+    }
+    private void DisableThis()
+    {
+        CapsuleCollider capsule = GetComponent<CapsuleCollider>();
+        capsule.enabled = false;
+        audioSource.enabled = false;
+    }
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "AltgardModel" || other.gameObject.tag == "ZhanguoModel" )
+        if (other.gameObject.tag == "Hurtbox") //
         {
             if (canDamage)
-            { 
-                //Debug.Log("collided w model");
-                SoldierModel hitModel = other.GetComponent<SoldierModel>();
+            {  
+                SoldierModel hitModel = other.GetComponentInParent<SoldierModel>();
                 if (hitModel != null && hitModel.alive)
                 {
-                    canDamage = false;
-                    audioSource.PlayOneShot(soldierParent.projectileImpactSounds[UnityEngine.Random.Range(0, soldierParent.projectileImpactSounds.Count)]); //play impact sound at enemy position
-                    hitModel.SufferDamage(damage, soldierParent);
+                    //canDamage = false;
 
-/*
-                    isFlying = false;
-                    finalRotation = transform.rotation;
-                    transform.rotation = finalRotation;
-                    rigid.constraints = RigidbodyConstraints.FreezeAll;
+                    if (soldierParent != null)
+                    {
+                        audioSource.PlayOneShot(soldierParent.projectileImpactSounds[UnityEngine.Random.Range(0, soldierParent.projectileImpactSounds.Count)]); //play impact sound at enemy position
+                    }
+                    hitModel.SufferDamage(damage, soldierParent); 
+                    /*
+                        isFlying = false;
+                        finalRotation = transform.rotation;
+                        transform.rotation = finalRotation;
+                        rigid.constraints = RigidbodyConstraints.FreezeAll;
 
 
-                    transform.parent = other.gameObject.transform;*/
-                    SelfDestruct();
+                        transform.parent = other.gameObject.transform;*/
+
+                    penetrationNum--;
+                    if (penetrationNum <= 0)
+                    { 
+                        SelfDestruct();
+                    } 
 
                 }
             }
@@ -119,8 +141,14 @@ public class ProjectileFromSoldier : MonoBehaviour
             finalRotation = transform.rotation;
             transform.rotation = finalRotation;
             rigid.constraints = RigidbodyConstraints.FreezeAll;
-            
+            if (explosion != null)
+            {
+                GameObject exp = Instantiate(explosion, transform.position, Quaternion.identity);
+                exp.transform.position = new Vector3(exp.transform.position.x, 0, exp.transform.position.z);
+                gameObject.SetActive(false);
+            }
+            DisableThis();
 
         }
-    }
+    } 
 }
