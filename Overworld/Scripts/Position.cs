@@ -6,7 +6,7 @@ using Pathfinding;
 public class Position : MonoBehaviour
 {
     public SoldierModel assignedSoldierModel;
-    public int row = 1;
+    public Row row;
      
     [SerializeField] private List<SoldierModel> candidates;
 
@@ -16,6 +16,10 @@ public class Position : MonoBehaviour
     public FormationPosition formPos;
 
     public bool activeController = false;
+    private void Start()
+    {
+        
+    }
     private void OnDrawGizmosSelected()
     {
 
@@ -24,12 +28,16 @@ public class Position : MonoBehaviour
     public void SeekReplacement(float range = 5f)
     {
         if (assignedSoldierModel != null)
-        {
-            return;
-        } 
+        { 
+            if (assignedSoldierModel.alive)
+            {
+                return;
+            }
+        }
+        //safety check
 
-        candidates.Clear();
-
+        //get candidates
+        candidates.Clear(); 
         LayerMask layerMask = LayerMask.GetMask("Model");
         int maxColliders = 80;
         Collider[] colliders = new Collider[maxColliders];
@@ -40,12 +48,22 @@ public class Position : MonoBehaviour
 
             if (model != null)
             {
-                if (model.formPos == formPos && model.alive && model.position.row > row) //must be same team, be alive, and be in a row lower than ours (greater in number)
+                if (model.modelPosition != null)
                 { 
-                    candidates.Add(model);
+                    if (model.formPos != null)
+                    {
+                        if (model.modelPosition.row != null)
+                        { 
+                            if (model.formPos == formPos && model.alive && model.modelPosition.row.rowPositionInList > row.rowPositionInList) //must be same team, be alive, and be in a row in higher position (farther back)
+                            {
+                                candidates.Add(model);
+                            }
+                        }
+                    }
                 }
             }
         }
+        //
         numTimesSought++; 
         if (candidates.Count > 0)
         {
@@ -57,44 +75,66 @@ public class Position : MonoBehaviour
     {
         if (assignedSoldierModel != null)
         {
-            return;
-        }
-        if (candidates.Count <= 0) //if no candidates
-        {
-            assignedSoldierModel = null;
-            return;
-        }
-        if (candidates.Count == 1)
-        {
-            assignedSoldierModel = candidates[0];
-        }
-        assignedSoldierModel = candidates[0];
-        float initDist = GetDistance(transform, candidates[0].transform);
-        float compareDist = initDist;
-        foreach (SoldierModel model in candidates) //doesn't work yet
-        {
-            float dist = GetDistance(transform, model.gameObject.transform);
-            //Debug.LogError(dist);
-            if (dist < compareDist)
+            if (assignedSoldierModel.alive)
             {
-                assignedSoldierModel = model;
-                compareDist = dist;
+                return;
             }
         }
-        UpdateModelPosition();
+        //safety
+        if (candidates.Count <= 0) //if no candidates
+        { 
+            return;
+        }
+        SoldierModel model = candidates[0];
+        if (model != null)
+        {
+            if (candidates.Count == 1) //only 1 candidate, so let's do it
+            {
+                assignedSoldierModel = model;
+                UpdateModelPosition();
+            }
+            else //multiple candidates
+            {
+                assignedSoldierModel = model; //set for now
+                if (candidates.Contains(assignedSoldierModel))
+                { 
+                    candidates.Remove(assignedSoldierModel);
+                    //Check if others are closer
+                    float compareDist = Vector3.Distance(transform.position, assignedSoldierModel.transform.position);
+                    foreach (SoldierModel modelCandidate in candidates) 
+                    {
+                        float dist = Vector3.Distance(assignedSoldierModel.transform.position, modelCandidate.transform.position); 
+                        if (dist < compareDist)
+                        { 
+                            assignedSoldierModel = modelCandidate;
+                            compareDist = dist;
+                        }
+                    }
+                    UpdateModelPosition();
+                } 
+            }
+        }
+        
     }
 
     private void UpdateModelPosition()
-    {
-        if (assignedSoldierModel == null)
-        {
-            return;
-        }
-        AIDestinationSetter aiDesSet = assignedSoldierModel.GetComponent<AIDestinationSetter>();
-        aiDesSet.target = transform; //it will go here
-        assignedSoldierModel.position.assignedSoldierModel = null; //remove from original position
-        assignedSoldierModel.position = this; //update its assigned position
+    { 
+        if (assignedSoldierModel != null)
+        { 
+            AIDestinationSetter aiDesSet = assignedSoldierModel.GetComponent<AIDestinationSetter>();
+            aiDesSet.target = transform; //it will go here
+            if (assignedSoldierModel.modelPosition != null)
+            { 
+                assignedSoldierModel.modelPosition.assignedSoldierModel = null; //remove from original position
+            }
+            assignedSoldierModel.modelPosition = this; //update its assigned position
+            row.UpdateModelsInRow();
+
+
+            numTimesSought = 0;
+        } 
     }
+
 
     private float GetDistance(Transform one, Transform two)
     {

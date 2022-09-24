@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 632593851823049858}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -17.1, y: 0, z: 9}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 344633261419014168}
@@ -64,6 +64,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 8787404965627157221}
   - {fileID: 3982261020442672746}
   - {fileID: 7292235816535552596}
   - {fileID: 2689751519511806273}
@@ -132,11 +133,34 @@ MonoBehaviour:
   target: {fileID: 344633261419014168}
   aiDesSet: {fileID: 5606755766205998648}
   characterController: {fileID: 6195138401729923258}
+  modelProj: {fileID: 3616627480558307331, guid: 281ad1397c9e19d4f9456537da0d28b6, type: 3}
+  selectionCircle: {fileID: 5733960279720619429}
+  hurtbox: {fileID: 0}
+  renderers:
+  - {fileID: 5409076864808648626}
+  - {fileID: 7751876075197670836}
+  - {fileID: 5756994222749165944}
+  - {fileID: 467577213804918611}
+  - {fileID: 1515953026599779078}
+  - {fileID: 8929592719863901551}
+  - {fileID: 3133445733794599951}
+  - {fileID: 15361424209103540}
   isMagic: 0
   projectileSpawn: {fileID: 0}
   projectile: {fileID: 0}
+  directFire: 0
+  fireEffect: {fileID: 0}
+  power: 100
+  volleyFireAndRetreat: 0
+  eyeline: {fileID: 0}
+  projectileDeviationAmount: 5
+  projectileDeviationAmountVertical: 5
+  attackBox: {fileID: 0}
+  adjustWalkSpeedVisually: 0.5
+  playIdleAnims: 0
   health: 20
   damage: 4
+  armorPiercingDamage: 1
   armor: 1
   timeUntilDamage: 0.5
   currentDamageTime: 0
@@ -144,15 +168,44 @@ MonoBehaviour:
   currentFinishedAttackingTime: 0
   timeUntilRecovery: 0.1
   currentRecoveryTime: 0
+  reqAttackTime: 2
+  currentAttackTime: 2
   magicRechargeTime: 60
   currentMagicRecharge: 0
   magicCharged: 1
+  chargeDamage: 0
+  stopWhenAttacking: 1
+  stopWhenLoading: 1
+  attacksCanLaunchEnemies: 0
+  canOnlyAttackWhileMoving: 0
+  attacksBreakEnemyCohesion: 0
+  directionalAttacks: 0
+  angleOfAttack: 20
+  attacksDontFaceEnemy: 0
+  impactAttacks: 0
+  defaultStoppingDistance: 0.01
+  combatStoppingDistance: 0.001
   rangedNeedsLoading: 0
   ammo: 0
   maxAmmo: 1
+  internalAmmoCapacity: 100
   loadingRightNow: 0
   currentFinishedLoadingTime: 0
   timeUntilFinishedLoading: 1
+  justFired: 0
+  allowedToDealDamage: 1
+  modelPosition: {fileID: 0}
+  braced: 0
+  movingSpeed: 0
+  alive: 1
+  attacking: 0
+  moving: 0
+  damaged: 0
+  deployed: 0
+  idle: 0
+  knockedDown: 0
+  airborne: 0
+  targetEnemy: {fileID: 0}
   walkSpeed: 3
   runSpeed: 6
   team: Altgard
@@ -162,23 +215,17 @@ MonoBehaviour:
   formPos: {fileID: 0}
   animate: 0
   currentSpeed: 0
-  movingSpeed: 0
-  alive: 1
+  documentedMaxSpeed: 5
   sprintSpeed: 6
   settledRotationSpeed: 2.5
   threshold: 0.5
-  targetEnemy: {fileID: 0}
   catchUpThreshold: 4
   defaultAccel: 25
   sprintAccel: 25
   self: {fileID: 1263844604610811452}
-  finishedPathRotSpeed: 20
   nearbyEnemyModels: []
-  reqAttackTime: 2
-  currentAttackTime: 2
   currentIdleTimer: 0
   reqIdleTimer: 20
-  position: {fileID: 0}
   deathSounds:
   - {fileID: 8300000, guid: a9ed4e62be7a3bc48b39657eccfa95ca, type: 3}
   - {fileID: 8300000, guid: 4245bafa826caac43b14f33d47e8f95d, type: 3}
@@ -282,13 +329,6 @@ MonoBehaviour:
   voiceSource: {fileID: 9141015875115079745}
   impactSource: {fileID: 1591402140560106788}
   hurtSource: {fileID: 7209586873058947378}
-  defaultStoppingDistance: 0.01
-  combatStoppingDistance: 0.001
-  attacking: 0
-  moving: 0
-  damaged: 0
-  deployed: 0
-  idle: 0
   numRandIdleAnims: 5
   numRandAttackAnims: 2
   waitForAttackChatterTime: 5
@@ -306,10 +346,15 @@ MonoBehaviour:
   numKills: 0
   melee: 1
   LaunchAngle: 0
-  allowedToDealDamage: 1
-  projectileDeviationAmount: 5
-  selectionCircle: {fileID: 5733960279720619429}
-  hurtbox: {fileID: 0}
+  pendingDamage: 0
+  pendingArmorPiercingDamage: 0
+  speedSlow: 0
+  startingMaxSpeed: 0
+  ignoreAsNearby: 0
+  getUpTime: 0
+  getUpTimeCap: 8
+  useOldWalkCalculations: 1
+  normalizedSpeed: 0
 --- !u!114 &5255507575147437489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399,7 +444,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1263844604610811443}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &7562278576444467049
 CapsuleCollider:
@@ -444,7 +489,7 @@ Transform:
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 1263844604610811443}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &1591402140560106788
 AudioSource:
@@ -458,7 +503,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: d7055b53c29304f4c9b33aaa75265db1, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.25
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -556,7 +601,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0.99
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -625,7 +670,7 @@ Transform:
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 1263844604610811443}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &7209586873058947378
 AudioSource:
@@ -639,7 +684,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: d7055b53c29304f4c9b33aaa75265db1, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.25
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -737,7 +782,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0.99
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -806,7 +851,7 @@ Transform:
   m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children: []
   m_Father: {fileID: 1263844604610811443}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &9141015875115079745
 AudioSource:
@@ -918,7 +963,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0.99
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -1018,7 +1063,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1263844604610811443}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!33 &4749364877204254956
 MeshFilter:
@@ -1069,6 +1114,36 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &7395700382184058538
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8787404965627157221}
+  m_Layer: 24
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8787404965627157221
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7395700382184058538}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.001, z: 0.117}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_Children: []
+  m_Father: {fileID: 1263844604610811443}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &4026274592993175466
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1194,7 +1269,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5968125750232126974, guid: 4d9759c8632213345914b19dbb7282c2, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5968125750232126974, guid: 4d9759c8632213345914b19dbb7282c2, type: 3}
       propertyPath: m_LocalScale.x
@@ -1314,14 +1389,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4d9759c8632213345914b19dbb7282c2, type: 3}
---- !u!95 &3734351615755724846 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 302627842310492036, guid: 4d9759c8632213345914b19dbb7282c2, type: 3}
+--- !u!137 &5756994222749165944 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8648249215844699858, guid: 4d9759c8632213345914b19dbb7282c2, type: 3}
   m_PrefabInstance: {fileID: 4026274592993175466}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &7292235816535552596 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5968125750232126974, guid: 4d9759c8632213345914b19dbb7282c2, type: 3}
+--- !u!137 &467577213804918611 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3575041814029226233, guid: 4d9759c8632213345914b19dbb7282c2, type: 3}
   m_PrefabInstance: {fileID: 4026274592993175466}
   m_PrefabAsset: {fileID: 0}
 --- !u!137 &1515953026599779078 stripped
@@ -1347,5 +1422,20 @@ SkinnedMeshRenderer:
 --- !u!137 &5409076864808648626 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 9002930576977172504, guid: 4d9759c8632213345914b19dbb7282c2, type: 3}
+  m_PrefabInstance: {fileID: 4026274592993175466}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &3734351615755724846 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 302627842310492036, guid: 4d9759c8632213345914b19dbb7282c2, type: 3}
+  m_PrefabInstance: {fileID: 4026274592993175466}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7292235816535552596 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5968125750232126974, guid: 4d9759c8632213345914b19dbb7282c2, type: 3}
+  m_PrefabInstance: {fileID: 4026274592993175466}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7751876075197670836 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 6661951196704031262, guid: 4d9759c8632213345914b19dbb7282c2, type: 3}
   m_PrefabInstance: {fileID: 4026274592993175466}
   m_PrefabAsset: {fileID: 0}

@@ -705,10 +705,27 @@ MonoBehaviour:
   target: {fileID: 2697507056178058304}
   aiDesSet: {fileID: 4782491434103856791}
   characterController: {fileID: 6071910612669868933}
+  modelProj: {fileID: 3616627480558307331, guid: 281ad1397c9e19d4f9456537da0d28b6, type: 3}
+  selectionCircle: {fileID: 3185494639271716655}
+  hurtbox: {fileID: 2408882275481971699}
+  renderers:
+  - {fileID: 6289457300616995794}
+  isMagic: 0
   projectileSpawn: {fileID: 2513303012816125692}
   projectile: {fileID: 8333262704199657843, guid: 1e1eb2ce0b65ee24cbb6d00700ef8278, type: 3}
+  directFire: 0
+  fireEffect: {fileID: 0}
+  power: 100
+  volleyFireAndRetreat: 0
+  eyeline: {fileID: 0}
+  projectileDeviationAmount: 15
+  projectileDeviationAmountVertical: 5
+  attackBox: {fileID: 0}
+  adjustWalkSpeedVisually: 1
+  playIdleAnims: 0
   health: 20
-  damage: 8
+  damage: 19
+  armorPiercingDamage: 1
   armor: 1
   timeUntilDamage: 2.6
   currentDamageTime: 0
@@ -716,15 +733,44 @@ MonoBehaviour:
   currentFinishedAttackingTime: 0
   timeUntilRecovery: 0.5
   currentRecoveryTime: 0
+  reqAttackTime: 2
+  currentAttackTime: 2
   magicRechargeTime: 60
   currentMagicRecharge: 0
   magicCharged: 1
+  chargeDamage: 0
+  stopWhenAttacking: 1
+  stopWhenLoading: 1
+  attacksCanLaunchEnemies: 0
+  canOnlyAttackWhileMoving: 0
+  attacksBreakEnemyCohesion: 0
+  directionalAttacks: 0
+  angleOfAttack: 20
+  attacksDontFaceEnemy: 0
+  impactAttacks: 0
+  defaultStoppingDistance: 0.1
+  combatStoppingDistance: 0.001
   rangedNeedsLoading: 0
   ammo: 0
   maxAmmo: 1
+  internalAmmoCapacity: 100
   loadingRightNow: 0
   currentFinishedLoadingTime: 0
   timeUntilFinishedLoading: 1
+  justFired: 0
+  allowedToDealDamage: 1
+  modelPosition: {fileID: 0}
+  braced: 0
+  movingSpeed: 0
+  alive: 1
+  attacking: 0
+  moving: 0
+  damaged: 0
+  deployed: 0
+  idle: 0
+  knockedDown: 0
+  airborne: 0
+  targetEnemy: {fileID: 0}
   walkSpeed: 3
   runSpeed: 6
   team: Altgard
@@ -734,23 +780,17 @@ MonoBehaviour:
   formPos: {fileID: 0}
   animate: 0
   currentSpeed: 0
-  movingSpeed: 0
-  alive: 1
+  documentedMaxSpeed: 5
   sprintSpeed: 6
   settledRotationSpeed: 2.5
   threshold: 0.5
-  targetEnemy: {fileID: 0}
   catchUpThreshold: 4
   defaultAccel: 25
   sprintAccel: 25
   self: {fileID: 2169595719131868819}
-  finishedPathRotSpeed: 20
   nearbyEnemyModels: []
-  reqAttackTime: 2
-  currentAttackTime: 2
   currentIdleTimer: 0
   reqIdleTimer: 20
-  position: {fileID: 0}
   deathSounds:
   - {fileID: 8300000, guid: a9ed4e62be7a3bc48b39657eccfa95ca, type: 3}
   - {fileID: 8300000, guid: 4245bafa826caac43b14f33d47e8f95d, type: 3}
@@ -860,13 +900,6 @@ MonoBehaviour:
   voiceSource: {fileID: 6880501607377708057}
   impactSource: {fileID: 4013500636507265404}
   hurtSource: {fileID: 5019969114610797930}
-  defaultStoppingDistance: 0.1
-  combatStoppingDistance: 0.001
-  attacking: 0
-  moving: 0
-  damaged: 0
-  deployed: 0
-  idle: 0
   numRandIdleAnims: 0
   numRandAttackAnims: 1
   waitForAttackChatterTime: 5
@@ -880,10 +913,15 @@ MonoBehaviour:
   numKills: 0
   melee: 0
   LaunchAngle: 45
-  allowedToDealDamage: 1
-  projectileDeviationAmount: 15
-  selectionCircle: {fileID: 3185494639271716655}
-  hurtbox: {fileID: 0}
+  pendingDamage: 0
+  pendingArmorPiercingDamage: 0
+  speedSlow: 0
+  startingMaxSpeed: 0
+  ignoreAsNearby: 0
+  getUpTime: 0
+  getUpTimeCap: 8
+  useOldWalkCalculations: 1
+  normalizedSpeed: 0
 --- !u!114 &7586394984505008617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1165,11 +1203,6 @@ PrefabInstance:
       objectReference: {fileID: 22100000, guid: 96504481d966ec748ae074f2dc7c7055, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 26910dc1185e9054fb39415b0794ff1f, type: 3}
---- !u!4 &2969072984330332787 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 26910dc1185e9054fb39415b0794ff1f, type: 3}
-  m_PrefabInstance: {fileID: 3368408127892000152}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7975393199449087400 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4616388099309572144, guid: 26910dc1185e9054fb39415b0794ff1f, type: 3}
@@ -1178,5 +1211,15 @@ Transform:
 --- !u!95 &9211102524227596297 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 26910dc1185e9054fb39415b0794ff1f, type: 3}
+  m_PrefabInstance: {fileID: 3368408127892000152}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2969072984330332787 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 26910dc1185e9054fb39415b0794ff1f, type: 3}
+  m_PrefabInstance: {fileID: 3368408127892000152}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &6289457300616995794 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -435062118009934262, guid: 26910dc1185e9054fb39415b0794ff1f, type: 3}
   m_PrefabInstance: {fileID: 3368408127892000152}
   m_PrefabAsset: {fileID: 0}

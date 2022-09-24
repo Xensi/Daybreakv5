@@ -97,7 +97,9 @@ ModelImporter:
     animationPositionError: 0.5
     animationScaleError: 0.5
     animationWrapMode: 0
-    extraExposedTransformPaths: []
+    extraExposedTransformPaths:
+    - metarig/spine/spine.001/spine.002/spine.003/spine.004/spine.005/spine.006
+    - metarig/spine/spine.001
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16

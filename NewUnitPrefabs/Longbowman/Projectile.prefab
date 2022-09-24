@@ -55,8 +55,12 @@ MonoBehaviour:
   model: {fileID: 1010308767193230033}
   audioSource: {fileID: 3643499196720698354}
   damage: 1
+  armorPiercingDamage: 1
   penetrationNum: 1
-  explosion: {fileID: 0}
+  explosionEffect: {fileID: 0}
+  isModelProj: 0
+  startingPos: {x: 0, y: 0, z: 0}
+  blood: {fileID: 391419766968761899, guid: abd561fe7477c0b42865b82a76206f70, type: 3}
 --- !u!136 &6003265907274017126
 CapsuleCollider:
   m_ObjectHideFlags: 0

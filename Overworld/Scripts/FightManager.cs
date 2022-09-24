@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI; 
+using UnityEngine.UI;
+using TMPro;
 
 public class FightManager : MonoBehaviour
 {
@@ -30,7 +31,11 @@ public class FightManager : MonoBehaviour
 
     [SerializeField] private GameObject rangedUI;
     [SerializeField] private GameObject meleeUI;
-    [SerializeField] private GameObject pyromancerUI;
+    [SerializeField] private GameObject magicUI;
+    [SerializeField] private GameObject braceUI;
+    [SerializeField] private GameObject chaffBombUI;
+    [SerializeField] private Button setBraceButton;
+    [SerializeField] private Button setUnbraceButton;
     [SerializeField] private Button setHoldButton;
     [SerializeField] private Button setFireButton;
     [SerializeField] private Button setFreeFireButton;
@@ -41,7 +46,10 @@ public class FightManager : MonoBehaviour
     [SerializeField] private Button setAllowFightButton;
 
     [SerializeField] private Button setHoldPositionButton;
-    [SerializeField] private Button setPursueButton; 
+    [SerializeField] private Button setPursueButton;
+    [SerializeField] private Button mageAbility1;
+    [SerializeField] private Button mageAbility2;
+    [SerializeField] private TMP_Text mageHeader;
 
     public bool hoveringUI = false;
 
@@ -57,6 +65,7 @@ public class FightManager : MonoBehaviour
     [SerializeField] private bool magicTargeting = false;
     [SerializeField] private bool wasMagicTargeting = false;
     [SerializeField] private int abilityNumber = 0;
+    [SerializeField] private bool drawingLine = false; 
     void OnEnable()
     {
         allFormations.Clear();
@@ -137,12 +146,26 @@ public class FightManager : MonoBehaviour
     {
         foreach (FormationPosition item in selectedFormations)
         {
-            item.ResumeCommand();
+            if (!item.braced)
+            { 
+                item.ResumeCommand();
+            }
         }
         UpdateGUI();
     }
 
-    private void UpdateGUI()
+    public void SetBrace(bool val)
+    {
+        foreach (FormationPosition formation in selectedFormations)
+        {
+            if (formation.canBrace)
+            {
+                formation.SetBrace(val);
+            }
+        }
+        UpdateGUI();
+    }
+    public void UpdateGUI()
     {
         bool isSelectedRanged = false;
         bool isSelectedMelee = false;
@@ -151,18 +174,78 @@ public class FightManager : MonoBehaviour
         int numberFreeFiring = 0;
         int numStopped = 0;
         int numChasing = 0;
+        int numBraced = 0;
         foreach (GameObject item in targetList)
         {
             Destroy(item.gameObject);
         }  
         targetList.Clear();
-        pyromancerUI.SetActive(false);
+        magicUI.SetActive(false); 
+
+        mageAbility1.interactable = false;
+        mageAbility2.interactable = false;
         foreach (FormationPosition formation in selectedFormations)
         { 
-            if (formation.soldierBlock.mageType == "Pyromancer")
+            if (formation.canBrace)
             {
-                pyromancerUI.SetActive(true);
-            } 
+                braceUI.SetActive(true);
+            }
+            else
+            {
+                braceUI.SetActive(false);
+            }
+            if (formation.braced)
+            {
+                numBraced++;
+            }
+            //show mage interface
+            if (formation.soldierBlock.listMageModels.Count > 0 || formation.soldierBlock.mageType == "Gallowglass") //formation.soldierBlock.mageType == "Pyromancer"
+            {
+                foreach(SoldierModel model in formation.soldierBlock.listMageModels)
+                {
+                    if (model.alive)
+                    { 
+                        magicUI.SetActive(true);
+                        if (model.magicCharged)
+                        { 
+                            mageAbility1.interactable = true;
+                            mageAbility2.interactable = true;
+                        }
+                    } 
+                }
+            }
+            // change abilities 
+            mageHeader.text = formation.soldierBlock.mageType;
+            TMP_Text text = mageAbility1.GetComponentInChildren<TMP_Text>();
+            TMP_Text text2 = mageAbility2.GetComponentInChildren<TMP_Text>();
+            mageAbility1.enabled = true;
+            mageAbility2.enabled = true;
+            if (formation.soldierBlock.mageType == "Pyromancer")
+            { 
+                text.text = "Fireball";
+                text2.text = "Smokescreen";
+            }
+            if (formation.soldierBlock.mageType == "Gallowglass")
+            {
+                text.text = "Chaff Bombs";
+                mageAbility2.enabled = false;
+            }
+            if (formation.soldierBlock.mageType == "Eldritch")
+            {
+                text.text = "Eldritch Morass";
+                text2.text = "Auroral Barrier";
+            }
+            if (formation.soldierBlock.mageType == "Seele")
+            {
+                text.text = "Raise Dead";
+                text2.text = "Curse Foe";
+            }
+            if (formation.soldierBlock.mageType == "Flammen")
+            {
+                text.text = "Disgorge Flame";
+                mageAbility2.enabled = false;
+            }
+            //
             if (formation.holdFire)
             {
                 numberHoldingFire++;
@@ -211,6 +294,16 @@ public class FightManager : MonoBehaviour
             {
                 numStopped++;
             }
+        }
+        if (numBraced == selectedFormations.Count)
+        {
+            setBraceButton.interactable = false;
+            setUnbraceButton.interactable = true;
+        }
+        else
+        {
+            setBraceButton.interactable = true;
+            setUnbraceButton.interactable = false;
         }
         if (numberHoldingFire == selectedFormations.Count)
         {
@@ -268,10 +361,19 @@ public class FightManager : MonoBehaviour
             setPursueButton.interactable = false;
         }
         rangedUI.SetActive(isSelectedRanged); //if at least one is ranged or melee, then we activate
-        meleeUI.SetActive(isSelectedMelee);
-
+        meleeUI.SetActive(isSelectedMelee); 
     }
 
+    public void ClearOrders()
+    {
+        foreach (FormationPosition formation in selectedFormations)
+        {
+            formation.ClearOrders(); 
+        }
+
+        //Clear pos list based on selected
+        UpdateGUI();
+    }
     public void SetAutoFire( bool holdFire) //for bowmen
     {
         foreach (FormationPosition formation in selectedFormations)
@@ -306,23 +408,137 @@ public class FightManager : MonoBehaviour
 
     private void TargetMagicLeftClickCheck()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (selectedFormations.Count == 1)
         { 
-            foreach (FormationPosition item in selectedFormations)
+            if (Input.GetMouseButtonDown(0))
             {
-                item.CastMagic(forceFireTarget.transform.position, abilityNumber);
+                foreach (FormationPosition item in selectedFormations)
+                {
+                    item.CastMagic(forceFireTarget.transform.position, abilityNumber);
+                }
+                UpdateGUI();
+                magicTargeting = false;
+                forceFireTarget.SetActive(false);
             }
-            UpdateGUI();
-            magicTargeting = false;
-            forceFireTarget.SetActive(false); 
         }
+        else
+        {
+            if (Input.GetMouseButtonDown(0) && !hoveringUI) //start drawing line
+            {
+                lineFormationPosList.Clear();
+                ClearPlacementMarkers();
+                drawingLine = true;
+            }
+            if (Input.GetMouseButton(0) && !hoveringUI && drawingLine) //held and moving and such
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                float distanceSoFar = 9999;
+                var hits = Physics.RaycastAll(ray, distanceSoFar);
+                bool haveHit = false;
+                RaycastHit candidateHit = new RaycastHit();
+                foreach (RaycastHit hit in hits)
+                {
+                    if (hit.collider.tag == "Terrain")
+                    {
+                        if (hit.distance < distanceSoFar)
+                        {
+                            candidateHit = hit;
+                            distanceSoFar = hit.distance;
+                            haveHit = true;
+                        }
+                    }
+                }
+                if (haveHit)
+                {
+                    if (lineFormationPosList.Count < selectedFormations.Count) //only create formpos positions up to number of selected formpos
+                    {
+                        if (lineFormationPosList.Count == 0)
+                        {
+                            PlaceTargeter(candidateHit.point);
+                        }
+                        else if (Vector3.Distance(lineFormationPosList[lineFormationPosList.Count - 1], candidateHit.point) >= lineOffset) //if distance between last and new is high enough
+                        {
+                            PlaceTargeter(candidateHit.point);
+                        }
+                    }
+                }
+            }
+
+            if (Input.GetMouseButtonUp(0) && !hoveringUI)
+            { 
+                List<FormationPosition> formList = new List<FormationPosition>();
+                foreach (FormationPosition selForm in selectedFormations)
+                {
+                    formList.Add(selForm);
+                }
+                foreach (Vector3 pos in lineFormationPosList) //for each point
+                {
+                    FormationPosition tempFormPos = null;
+                    float currentDistance = 99999;
+                    foreach (FormationPosition item in formList) //get closest formation
+                    {
+                        float newDistance = Vector3.Distance(item.transform.position, pos);
+                        if (newDistance < currentDistance)
+                        {
+                            currentDistance = newDistance;
+                            tempFormPos = item;
+                        }
+                    }
+                    tempFormPos.CastMagic(pos, abilityNumber);
+                    formList.Remove(tempFormPos); //so it can't be chosen again //if this becomes a problem then make another list
+                }
+                UpdateGUI();
+                magicTargeting = false;
+                forceFireTarget.SetActive(false);
+                drawingLine = false;
+            }
+        }
+    } 
+    private void PlaceTargeter(Vector3 pos)
+    { 
+        lineFormationPosList.Add(pos);
+        GameObject target = Instantiate(forceFireTargetPrefab, pos, Quaternion.Euler(90, 0, 0));
+        placementMarkers.Add(target);
+
+        float distanceBetween = Vector3.Distance(target.transform.position, GetClosestSelectedFormationToPoint(target.transform.position).transform.position); //not perfect
+        distanceBetween *= 0.25f;
+        distanceBetween = Mathf.Clamp(distanceBetween, 5, 999);
+        target.transform.localScale = new Vector3(distanceBetween, distanceBetween, 100); //adjust scaling
     }
+
+    private FormationPosition GetClosestSelectedFormationToPoint(Vector3 point)
+    {
+        List<FormationPosition> formList = new List<FormationPosition>();
+        foreach (FormationPosition selForm in selectedFormations)
+        {
+            formList.Add(selForm);
+        } 
+        FormationPosition tempFormPos = null;
+        float currentDistance = 99999;
+
+        foreach (FormationPosition item in formList) //Selects closest formation
+        {
+            float newDistance = Vector3.Distance(item.transform.position, point);
+            if (newDistance < currentDistance)
+            {
+                currentDistance = newDistance;
+                tempFormPos = item;
+            }
+        } 
+        return tempFormPos;
+    }
+
     private void TargetMagicRightClickCheck()
     {
         if (Input.GetMouseButtonDown(1))
         {
             magicTargeting = false;
-            forceFireTarget.SetActive(false); 
+            forceFireTarget.SetActive(false);
+
+            lineFormationPosList.Clear();
+            ClearPlacementMarkers();
+            drawingLine = false;
         }
     }
     public void StopFocusFire()
@@ -336,24 +552,155 @@ public class FightManager : MonoBehaviour
     }
     private void ForceFireLeftClickCheck()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-
-            foreach (FormationPosition item in selectedFormations)
-            {
-                item.formationToFocusFire = null;//need to clear this first
-                item.focusFirePos = forceFireTarget.transform.position;
-                item.focusFire = true;
-                if (formationToFocusFire != null)
+        //
+        if (selectedFormations.Count == 1)
+        {  
+            if (Input.GetMouseButtonDown(0))
+            { 
+                foreach (FormationPosition item in selectedFormations)
                 {
-                    item.formationToFocusFire = formationToFocusFire;
+                    item.formationToFocusFire = null;//need to clear this first
+                    item.focusFirePos = forceFireTarget.transform.position;
+                    item.focusFire = true;
+                    if (formationToFocusFire != null)
+                    {
+                        item.formationToFocusFire = formationToFocusFire;
+                    }
+                }
+                UpdateGUI();
+                forceFiring = false;
+                forceFireTarget.SetActive(false);
+                formationToFocusFire = null;
+            }
+        }
+        else
+        {
+            if (Input.GetMouseButtonDown(0) && !hoveringUI) //start drawing line
+            {
+                lineFormationPosList.Clear();
+                ClearPlacementMarkers();
+                drawingLine = true;
+            }
+            if (Input.GetMouseButton(0) && !hoveringUI && drawingLine) //held and moving and such
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                float distanceSoFar = 9999;
+                var hits = Physics.RaycastAll(ray, distanceSoFar);
+                bool haveHit = false;
+                RaycastHit candidateHit = new RaycastHit();
+                foreach (RaycastHit hit in hits)
+                {
+                    if (hit.collider.tag == "Terrain")
+                    {
+                        if (hit.distance < distanceSoFar)
+                        {
+                            candidateHit = hit;
+                            distanceSoFar = hit.distance;
+                            haveHit = true;
+                        }
+                    }
+                }
+                if (haveHit)
+                {
+                    if (lineFormationPosList.Count < selectedFormations.Count) //only create formpos positions up to number of selected formpos
+                    {
+                        if (lineFormationPosList.Count == 0)
+                        {
+                            PlaceTargeter(candidateHit.point);
+                        }
+                        else if (Vector3.Distance(lineFormationPosList[lineFormationPosList.Count - 1], candidateHit.point) >= lineOffset) //if distance between last and new is high enough
+                        {
+                            PlaceTargeter(candidateHit.point);
+                        }
+                    }
                 }
             }
-            UpdateGUI();
-            forceFiring = false;
-            forceFireTarget.SetActive(false);
-            formationToFocusFire = null;
+
+            if (Input.GetMouseButtonUp(0) && !hoveringUI)
+            {
+
+                if (lineFormationPosList.Count == 1)
+                { 
+                    foreach (FormationPosition item in selectedFormations)
+                    {
+                        item.formationToFocusFire = null;//need to clear this first
+                        item.focusFire = true;
+                        Vector3 pos = lineFormationPosList[0];
+                        LayerMask layerMask = LayerMask.GetMask("Formation");
+                        int maxColliders = 1;
+                        float radius = 5;
+                        Collider[] hitColliders = new Collider[maxColliders];
+                        int numColliders = Physics.OverlapSphereNonAlloc(pos, radius, hitColliders, layerMask, QueryTriggerInteraction.Ignore);
+
+                        if (hitColliders[0] != null) //is formation
+                        {
+                            FormationPosition form = hitColliders[0].gameObject.GetComponent<FormationPosition>();
+                            item.formationToFocusFire = form;
+                        }
+                        else
+                        {
+                            item.focusFirePos = pos;
+                        }
+                    }
+                    UpdateGUI();
+                    forceFiring = false;
+                    forceFireTarget.SetActive(false);
+                    formationToFocusFire = null;
+                    drawingLine = false;
+                }
+                else
+                {
+                    List<FormationPosition> formList = new List<FormationPosition>();
+                    foreach (FormationPosition selForm in selectedFormations)
+                    {
+                        formList.Add(selForm);
+                    }
+                    foreach (Vector3 pos in lineFormationPosList) //for each point
+                    {
+                        FormationPosition tempFormPos = null;
+                        float currentDistance = 99999;
+                        foreach (FormationPosition item in formList) //get closest formation
+                        {
+                            float newDistance = Vector3.Distance(item.transform.position, pos);
+                            if (newDistance < currentDistance)
+                            {
+                                currentDistance = newDistance;
+                                tempFormPos = item;
+                            }
+                        }
+
+                        tempFormPos.formationToFocusFire = null;
+                        tempFormPos.focusFire = true;
+                        //check to see if pos is a formation or not
+
+                        LayerMask layerMask = LayerMask.GetMask("Formation");
+                        int maxColliders = 1;
+                        float radius = 5;
+                        Collider[] hitColliders = new Collider[maxColliders];
+                        int numColliders = Physics.OverlapSphereNonAlloc(pos, radius, hitColliders, layerMask, QueryTriggerInteraction.Ignore);
+
+                        if (hitColliders[0] != null) //is formation
+                        {
+                            FormationPosition form = hitColliders[0].gameObject.GetComponent<FormationPosition>();
+                            tempFormPos.formationToFocusFire = form;
+                        }
+                        else
+                        {
+                            tempFormPos.focusFirePos = pos;
+                        }
+                        formList.Remove(tempFormPos); //so it can't be chosen again //if this becomes a problem then make another list
+                    }
+
+                    UpdateGUI();
+                    forceFiring = false;
+                    forceFireTarget.SetActive(false);
+                    formationToFocusFire = null;
+                    drawingLine = false;
+                } 
+            }
         }
+
     }
     private void ForceFireRightClickCheck()
     {
@@ -411,7 +758,7 @@ public class FightManager : MonoBehaviour
             formationToFocusFire = null;
         }
         forceFireTarget.transform.position = pos;
-        float distanceBetween = Vector3.Distance(forceFireTarget.transform.position, selectedFormations[0].transform.position);
+        float distanceBetween = Vector3.Distance(forceFireTarget.transform.position, GetClosestSelectedFormationToPoint(forceFireTarget.transform.position).transform.position);
         distanceBetween *= 0.25f;
         distanceBetween = Mathf.Clamp(distanceBetween, 5, 999);
         forceFireTarget.transform.localScale = new Vector3(distanceBetween, distanceBetween, 100);
@@ -449,6 +796,10 @@ public class FightManager : MonoBehaviour
         Vector2 max = selectionBox.anchoredPosition + (selectionBox.sizeDelta / 2);
         foreach (FormationPosition form in yourFormations) //select units if in box
         {
+            if (form.fleeing)
+            {
+                continue;
+            }
             Vector3 screenPos = cam.WorldToScreenPoint(form.transform.position);
 
             if (screenPos.x > min.x && screenPos.x < max.x && screenPos.y > min.y && screenPos.y < max.y)
@@ -529,6 +880,10 @@ public class FightManager : MonoBehaviour
                 SoldierModel model = hitColliders[0].gameObject.GetComponentInParent<SoldierModel>();
 
                 FormationPosition form = model.formPos;
+                if (form.fleeing)
+                {
+                    return;
+                }
                 if (!Input.GetKey(KeyCode.LeftShift)) 
                 {
                     DeselectOtherUnits(form);
@@ -698,15 +1053,11 @@ public class FightManager : MonoBehaviour
                     {
                         if (lineFormationPosList.Count == 0)
                         {
-                            lineFormationPosList.Add(candidateHit.point); 
-                            GameObject target = Instantiate(forceFireTargetPrefab, candidateHit.point, Quaternion.Euler(90, 0, 0));
-                            placementMarkers.Add(target);
+                            PlaceTargeter(candidateHit.point);
                         }
                         else if (Vector3.Distance(lineFormationPosList[lineFormationPosList.Count - 1], candidateHit.point) >= lineOffset) //if distance between last and new is high enough
                         {
-                            lineFormationPosList.Add(candidateHit.point);
-                            GameObject target = Instantiate(forceFireTargetPrefab, candidateHit.point, Quaternion.Euler(90, 0, 0));
-                            placementMarkers.Add(target);
+                            PlaceTargeter(candidateHit.point);
                         }
 
                     } 
@@ -740,7 +1091,7 @@ public class FightManager : MonoBehaviour
                 {
                     foreach (FormationPosition item in selectedFormations)
                     {
-                        item.aiTarget.transform.position = heldPosition;
+                        item.rotTarget.transform.position = heldPosition;
                         item.pathSet = true;
                         item.obeyingMovementOrder = true; 
 
@@ -752,9 +1103,14 @@ public class FightManager : MonoBehaviour
                         else
                         {
                             item.shouldRotateToward = false;
-                        } 
+                        }
+
+
+                        item.aiTarget.transform.position = item.destinationsList[0];
+
                     }
                 }
+                
             }
             else if (selectedFormations.Count > 1)
             {
@@ -783,28 +1139,7 @@ public class FightManager : MonoBehaviour
                     tempFormPos.obeyingMovementOrder = true;
                     tempFormPos.shouldRotateToward = false;
                     formList.Remove(tempFormPos); //so it can't be chosen again //if this becomes a problem then make another list
-                }
-                /*foreach (FormationPosition item in formList) //for each point 
-                {
-                    Vector3 tempPos = Vector3.zero;
-                    float currentDistance = 99999;
-                    foreach (Vector3 pos in lineFormationPosList) //get closest formation
-                    {
-                        float newDistance = Vector3.Distance(item.transform.position, pos);
-                        if (newDistance < currentDistance)
-                        {
-                            currentDistance = newDistance;
-                            tempPos = pos;
-                        }
-                    }
-                    item.aiTarget.transform.position = tempPos; //tell closest formation to go there 
-                    item.destinationsList.Clear();
-                    item.destinationsList.Add(tempPos);
-                    item.pathSet = true;
-                    item.obeyingMovementOrder = true;
-                    item.shouldRotateToward = false;
-                    lineFormationPosList.Remove(tempPos); //so it can't be chosen again //if this becomes a problem then make another list
-                }*/
+                } 
             }
         }
     }

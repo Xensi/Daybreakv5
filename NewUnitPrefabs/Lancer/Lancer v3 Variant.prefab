@@ -51,10 +51,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -1026236169043733813, guid: 22128fb6bcf560343a7ea68fad79eba2, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 619be94db23a1444188db4a6ec1d9152, type: 2}
     - target: {fileID: 919132149155446097, guid: 22128fb6bcf560343a7ea68fad79eba2, type: 3}
       propertyPath: m_Name
       value: Lancer v3 Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 4822305280206771424, guid: 22128fb6bcf560343a7ea68fad79eba2, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 619be94db23a1444188db4a6ec1d9152, type: 2}
     - target: {fileID: 5866666021909216657, guid: 22128fb6bcf560343a7ea68fad79eba2, type: 3}
       propertyPath: m_Controller
       value: 

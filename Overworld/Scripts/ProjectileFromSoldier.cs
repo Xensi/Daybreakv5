@@ -14,10 +14,18 @@ public class ProjectileFromSoldier : MonoBehaviour
     [SerializeField] private GameObject model;
     [SerializeField] private AudioSource audioSource;
     public float damage = 1;
+    public float armorPiercingDamage = 1;
     private bool canDamage = false;
     [SerializeField] private int penetrationNum = 1;
 
-    [SerializeField] private GameObject explosion;
+    [SerializeField] private GameObject explosionEffect;
+
+    [SerializeField] private bool isModelProj = false;
+
+    public Vector3 startingPos;
+
+    [SerializeField] private GameObject blood;
+
     private void Awake()
     {
         initialRotation = transform.rotation;
@@ -27,7 +35,10 @@ public class ProjectileFromSoldier : MonoBehaviour
         //Destroy(this, 10);
         Invoke("SelfDestruct", 20);
         Invoke("StartDamage", .25f);
-        model.SetActive(true);
+        if (model != null)
+        { 
+            model.SetActive(true);
+        }
 
     }
 
@@ -40,6 +51,12 @@ public class ProjectileFromSoldier : MonoBehaviour
     {
         formPosParent.soldierBlock.listProjectiles.Remove(this);
         Destroy(gameObject);
+    }
+
+    public void FireBullet(Vector3 direction, float power)
+    {
+        rigid.AddForce(direction * power);
+        isFlying = true;
     }
     public void LaunchProjectile(Vector3 targetPos, float LaunchAngle, float deviationAmount)
     {
@@ -79,6 +96,7 @@ public class ProjectileFromSoldier : MonoBehaviour
 
         // launch the object by setting its initial velocity and flipping its state
         rigid.velocity = globalVelocity;
+        isFlying = true;
     }
 
     public void UpdateRotation()
@@ -91,6 +109,11 @@ public class ProjectileFromSoldier : MonoBehaviour
         {
            UpdateRotation();
         }
+        if (isModelProj && isFlying)
+        {
+            soldierParent.transform.position = transform.position; 
+            soldierParent.transform.rotation = Quaternion.LookRotation(-rigid.velocity) * initialRotation;
+        }
     }
     private void DisableThis()
     {
@@ -100,55 +123,100 @@ public class ProjectileFromSoldier : MonoBehaviour
     }
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Hurtbox") //
+        if (isModelProj)
         {
-            if (canDamage)
-            {  
-                SoldierModel hitModel = other.GetComponentInParent<SoldierModel>();
-                if (hitModel != null && hitModel.alive)
+             
+            if (other.gameObject.tag == "Terrain" || other.gameObject.tag == "BufferTerrain")
+            { 
+                isFlying = false;
+                finalRotation = transform.rotation;
+                transform.rotation = finalRotation; 
+                soldierParent.richAI.enabled = true;
+                soldierParent.transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 0, 999), transform.position.z);
+                Vector3 heading = startingPos - transform.position;
+                soldierParent.transform.rotation = Quaternion.LookRotation(heading, Vector3.up);
+                soldierParent.airborne = false;
+                DisableThis();
+            }
+        }
+        else
+        {
+            if (other.gameObject.tag == "Hurtbox") //
+            {
+                if (canDamage)
                 {
-                    //canDamage = false;
-
-                    if (soldierParent != null)
+                    SoldierModel hitModel = other.GetComponentInParent<SoldierModel>();
+                    if (hitModel != null && hitModel.alive)
                     {
-                        audioSource.PlayOneShot(soldierParent.projectileImpactSounds[UnityEngine.Random.Range(0, soldierParent.projectileImpactSounds.Count)]); //play impact sound at enemy position
+                        //canDamage = false;
+
+                        if (soldierParent != null)
+                        {
+                            if (soldierParent.projectileImpactSounds.Count > 0)
+                            {
+                                audioSource.PlayOneShot(soldierParent.projectileImpactSounds[Random.Range(0, soldierParent.projectileImpactSounds.Count)]); //play impact sound at enemy position
+                            }
+                        }
+                        float damageMult = 1;
+                        BodyPart bodyPart = other.GetComponent<BodyPart>();
+                        if (bodyPart != null)
+                        {
+                            damageMult = bodyPart.multiplierDamage;
+                        }
+                        hitModel.SufferDamage(damage, armorPiercingDamage, soldierParent, damageMult);
+                        /*if (blood != null)
+                        {
+
+                            float offset = .5f;
+                            Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset));
+                            Vector3 newPos = new Vector3(hitModel.transform.position.x, transform.position.y, hitModel.transform.position.z);
+                            GameObject bloodObj = Instantiate(blood, newPos, transform.rotation, hitModel.transform);
+                        }*/
+                        /*
+                            isFlying = false;
+                            finalRotation = transform.rotation;
+                            transform.rotation = finalRotation;
+                            rigid.constraints = RigidbodyConstraints.FreezeAll; 
+                            transform.parent = other.gameObject.transform;*/
+
+                        penetrationNum--;
+                        if (penetrationNum <= 0)
+                        {
+                            SelfDestruct();
+                        }
+
                     }
-                    hitModel.SufferDamage(damage, soldierParent); 
-                    /*
-                        isFlying = false;
-                        finalRotation = transform.rotation;
-                        transform.rotation = finalRotation;
-                        rigid.constraints = RigidbodyConstraints.FreezeAll;
-
-
-                        transform.parent = other.gameObject.transform;*/
-
-                    penetrationNum--;
-                    if (penetrationNum <= 0)
-                    { 
-                        SelfDestruct();
-                    } 
-
                 }
             }
-        }
-        if (other.gameObject.tag == "Terrain" && canDamage)
-        {
-            canDamage = false;
-            //Debug.Log("collided w terrain");
-            audioSource.PlayOneShot(soldierParent.projectileImpactSounds[UnityEngine.Random.Range(0, soldierParent.projectileImpactSounds.Count)]); //play impact sound at enemy position
-            isFlying = false;
-            finalRotation = transform.rotation;
-            transform.rotation = finalRotation;
-            rigid.constraints = RigidbodyConstraints.FreezeAll;
-            if (explosion != null)
+            if (other.gameObject.tag == "Terrain" || other.gameObject.tag == "BufferTerrain" )
             {
-                GameObject exp = Instantiate(explosion, transform.position, Quaternion.identity);
-                exp.transform.position = new Vector3(exp.transform.position.x, 0, exp.transform.position.z);
-                gameObject.SetActive(false);
-            }
-            DisableThis();
+                if (canDamage)
+                {
+                    canDamage = false;
+                    //Debug.Log("collided w terrain");
 
-        }
+                    if (soldierParent.projectileImpactSounds.Count > 0)
+                    {
+                        audioSource.PlayOneShot(soldierParent.projectileImpactSounds[Random.Range(0, soldierParent.projectileImpactSounds.Count)]); //play impact sound at enemy position
+                    }
+
+                    isFlying = false;
+                    finalRotation = transform.rotation;
+                    transform.rotation = finalRotation;
+                    if (explosionEffect != null)
+                    {
+                        GameObject exp = Instantiate(explosionEffect, transform.position, Quaternion.identity);
+                        exp.transform.position = new Vector3(exp.transform.position.x, 0, exp.transform.position.z);
+                        //gameObject.SetActive(false);
+                    }
+                    else
+                    {
+
+                        rigid.constraints = RigidbodyConstraints.FreezeAll;
+                    }
+                    DisableThis();
+                }  
+            }
+        } 
     } 
 }

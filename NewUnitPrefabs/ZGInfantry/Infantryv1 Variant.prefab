@@ -1,5 +1,123 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2256382747887080393
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6017302493329862501}
+  - component: {fileID: 717159401349261569}
+  - component: {fileID: 6420036322252391876}
+  m_Layer: 24
+  m_Name: Chest
+  m_TagString: Hurtbox
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6017302493329862501
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2256382747887080393}
+  m_LocalRotation: {x: 0.061593857, y: 0.000030981002, z: -0.0000019200443, w: -0.99810135}
+  m_LocalPosition: {x: 0, y: -0.44, z: 0}
+  m_LocalScale: {x: 2.546386, y: 2.5463872, z: 2.5463865}
+  m_Children: []
+  m_Father: {fileID: 3496024511231370423}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &717159401349261569
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2256382747887080393}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.18
+  m_Height: 1.07
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6420036322252391876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2256382747887080393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15eb3c5e0a6ba2a47b4f742ddc40ccd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  multiplierDamage: 1
+--- !u!1 &8260133532132818496
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1803739210624106143}
+  - component: {fileID: 1833067527885423588}
+  - component: {fileID: 4098414868704180894}
+  m_Layer: 24
+  m_Name: Head
+  m_TagString: Hurtbox
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1803739210624106143
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8260133532132818496}
+  m_LocalRotation: {x: 0.3042874, y: 0.033109475, z: -0.0020015002, w: -0.9520026}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 2.546386, y: 2.5463872, z: 2.5463874}
+  m_Children: []
+  m_Father: {fileID: 4281047447167244153}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &1833067527885423588
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8260133532132818496}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.075
+  m_Height: 0.21
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4098414868704180894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8260133532132818496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15eb3c5e0a6ba2a47b4f742ddc40ccd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  multiplierDamage: 2
 --- !u!1001 &9163930196390794057
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -69,3 +187,13 @@ PrefabInstance:
       objectReference: {fileID: 22100000, guid: 60ee7ebe0d9ecfa4d89f14c4411f0f22, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a5d25902f1c8ae14e993877ba803f732, type: 3}
+--- !u!4 &3496024511231370423 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -3483377961399715842, guid: a5d25902f1c8ae14e993877ba803f732, type: 3}
+  m_PrefabInstance: {fileID: 9163930196390794057}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4281047447167244153 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -4303888670455872464, guid: a5d25902f1c8ae14e993877ba803f732, type: 3}
+  m_PrefabInstance: {fileID: 9163930196390794057}
+  m_PrefabAsset: {fileID: 0}

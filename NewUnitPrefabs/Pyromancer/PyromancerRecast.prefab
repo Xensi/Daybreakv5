@@ -43,7 +43,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: d7055b53c29304f4c9b33aaa75265db1, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.25
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -141,7 +141,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0.99
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -256,7 +256,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: d7055b53c29304f4c9b33aaa75265db1, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.25
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -354,7 +354,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0.99
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -535,7 +535,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0.99
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -751,9 +751,15 @@ MonoBehaviour:
   target: {fileID: 2697507056178058304}
   aiDesSet: {fileID: 4782491434103856791}
   characterController: {fileID: 7140041493310519279}
+  modelProj: {fileID: 3616627480558307331, guid: 281ad1397c9e19d4f9456537da0d28b6, type: 3}
+  selectionCircle: {fileID: 3811729922713892476}
+  hurtbox: {fileID: 1383645721446493584}
+  renderers: []
   isMagic: 1
   projectileSpawn: {fileID: 811959319155645061}
   projectile: {fileID: 8333262704199657843, guid: fbd1a6bf1af3b9f4abe2a537db07bfec, type: 3}
+  directFire: 0
+  attackBox: {fileID: 0}
   health: 40
   damage: 30
   armor: 0
@@ -763,7 +769,7 @@ MonoBehaviour:
   currentFinishedAttackingTime: 0
   timeUntilRecovery: 0.1
   currentRecoveryTime: 0
-  magicRechargeTime: 60
+  magicRechargeTime: 10
   currentMagicRecharge: 0
   magicCharged: 1
   rangedNeedsLoading: 0
@@ -772,6 +778,17 @@ MonoBehaviour:
   loadingRightNow: 0
   currentFinishedLoadingTime: 0
   timeUntilFinishedLoading: 1
+  braced: 0
+  movingSpeed: 0
+  alive: 1
+  attacking: 0
+  moving: 0
+  damaged: 0
+  deployed: 0
+  idle: 0
+  knockedDown: 0
+  airborne: 0
+  targetEnemy: {fileID: 0}
   walkSpeed: 3
   runSpeed: 6
   team: Zhanguo
@@ -781,12 +798,10 @@ MonoBehaviour:
   formPos: {fileID: 0}
   animate: 0
   currentSpeed: 0
-  movingSpeed: 0
-  alive: 1
+  documentedMaxSpeed: 5
   sprintSpeed: 6
   settledRotationSpeed: 2.5
   threshold: 0.5
-  targetEnemy: {fileID: 0}
   catchUpThreshold: 4
   defaultAccel: 25
   sprintAccel: 25
@@ -824,13 +839,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 4ebecaf8e49c1c14ebf918828e946289, type: 3}
   - {fileID: 8300000, guid: dac63f257bb1a55498c3ec9c7b50819b, type: 3}
   attackSounds:
-  - {fileID: 8300000, guid: 085e682ba9d66ab43a37b63401655ab8, type: 3}
-  - {fileID: 8300000, guid: 00a686f5cfaa58049b633ef3ed04645b, type: 3}
-  - {fileID: 8300000, guid: 3eb06404fd67e7e4ba7c709859039275, type: 3}
-  - {fileID: 8300000, guid: 959d72e5f1abbb147905d97d68fd7754, type: 3}
-  - {fileID: 8300000, guid: 1a02ad5c1b8094c4abfe81e37f66eb8d, type: 3}
-  projectileImpactSounds:
-  - {fileID: 8300000, guid: 4b7be2fcc53ffd4478f373072c2fd418, type: 3}
+  - {fileID: 8300000, guid: 9a6dcb40e49afc448841d1f0120f9bc7, type: 3}
+  projectileImpactSounds: []
   attackVoiceLines:
   - {fileID: 8300000, guid: 6f392b9d09249254788c31f63ae16964, type: 3}
   - {fileID: 8300000, guid: 2e07c90f4f363464db9958ddc49a20d7, type: 3}
@@ -898,11 +908,6 @@ MonoBehaviour:
   hurtSource: {fileID: 5019969114610797930}
   defaultStoppingDistance: 0.1
   combatStoppingDistance: 0.001
-  attacking: 0
-  moving: 0
-  damaged: 0
-  deployed: 0
-  idle: 0
   numRandIdleAnims: 0
   numRandAttackAnims: 1
   waitForAttackChatterTime: 5
@@ -918,8 +923,23 @@ MonoBehaviour:
   LaunchAngle: 0
   allowedToDealDamage: 1
   projectileDeviationAmount: 10
-  selectionCircle: {fileID: 3811729922713892476}
-  hurtbox: {fileID: 0}
+  pendingDamage: 0
+  pendingArmorPiercingDamage: 0
+  stopWhenAttacking: 1
+  attacksCanLaunchEnemies: 0
+  canOnlyAttackWhileMoving: 0
+  attacksBreakEnemyCohesion: 0
+  directionalAttacks: 0
+  angleOfAttack: 20
+  attacksDontFaceEnemy: 0
+  impactAttacks: 0
+  speedSlow: 0
+  startingMaxSpeed: 0
+  ignoreAsNearby: 0
+  getUpTime: 0
+  getUpTimeCap: 8
+  useOldWalkCalculations: 1
+  normalizedSpeed: 0
 --- !u!114 &7586394984505008617
 MonoBehaviour:
   m_ObjectHideFlags: 0
