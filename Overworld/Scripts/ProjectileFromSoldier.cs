@@ -26,6 +26,8 @@ public class ProjectileFromSoldier : MonoBehaviour
 
     [SerializeField] private GameObject blood;
 
+    [SerializeField] private bool shouldAlwaysSpawnExplosion = false;
+
     private void Awake()
     {
         initialRotation = transform.rotation;
@@ -183,6 +185,21 @@ public class ProjectileFromSoldier : MonoBehaviour
                         if (penetrationNum <= 0)
                         {
                             SelfDestruct();
+                        }
+
+                        if (shouldAlwaysSpawnExplosion)
+                        { 
+                            if (explosionEffect != null)
+                            {
+                                GameObject exp = Instantiate(explosionEffect, transform.position, Quaternion.identity);
+                                exp.transform.position = new Vector3(exp.transform.position.x, 0, exp.transform.position.z);
+                                //gameObject.SetActive(false);
+                            }
+                            else
+                            {
+
+                                rigid.constraints = RigidbodyConstraints.FreezeAll;
+                            }
                         }
 
                     }

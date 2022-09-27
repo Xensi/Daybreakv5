@@ -70,6 +70,7 @@ Transform:
   - {fileID: 9062061658093899716}
   - {fileID: 7512412669584327858}
   - {fileID: 7722764400275130588}
+  - {fileID: 7828973743558373536}
   m_Father: {fileID: 2333349050910930595}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -177,8 +178,8 @@ MonoBehaviour:
   - {fileID: 3578411043755036811}
   - {fileID: 2904833500614756079}
   isMagic: 0
-  projectileSpawn: {fileID: 0}
-  projectile: {fileID: 0}
+  projectileSpawn: {fileID: 7828973743558373536}
+  projectile: {fileID: 8333262704199657843, guid: eabbea967cb3d3b4ca41216766f6bd8a, type: 3}
   directFire: 0
   fireEffect: {fileID: 0}
   power: 100
@@ -187,6 +188,7 @@ MonoBehaviour:
   projectileDeviationAmount: 5
   projectileDeviationAmountVertical: 5
   attackBox: {fileID: 0}
+  startingMaxSpeed: 0
   adjustWalkSpeedVisually: 1
   playIdleAnims: 0
   health: 30
@@ -206,6 +208,7 @@ MonoBehaviour:
   magicCharged: 1
   chargeDamage: 0
   stopWhenAttacking: 1
+  stopWhenDamaged: 1
   stopWhenLoading: 1
   attacksCanLaunchEnemies: 0
   canOnlyAttackWhileMoving: 0
@@ -224,9 +227,9 @@ MonoBehaviour:
   currentFinishedLoadingTime: 0
   timeUntilFinishedLoading: 1
   justFired: 0
+  braced: 0
   allowedToDealDamage: 1
   modelPosition: {fileID: 0}
-  braced: 0
   movingSpeed: 0
   alive: 1
   attacking: 0
@@ -380,12 +383,12 @@ MonoBehaviour:
   pendingDamage: 0
   pendingArmorPiercingDamage: 0
   speedSlow: 0
-  startingMaxSpeed: 0
   ignoreAsNearby: 0
   getUpTime: 0
   getUpTimeCap: 8
   useOldWalkCalculations: 1
   normalizedSpeed: 0
+  routing: 0
 --- !u!114 &5255507575147437489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1145,6 +1148,36 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &8771867479385034642
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7828973743558373536}
+  m_Layer: 24
+  m_Name: ProjSpawn
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7828973743558373536
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8771867479385034642}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.115, z: 0.095}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1263844604610811443}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2483939898950230404
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1237,16 +1270,6 @@ SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 4326494085221863024, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
   m_PrefabInstance: {fileID: 2483939898950230404}
   m_PrefabAsset: {fileID: 0}
---- !u!137 &8114061269494517399 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 5972430139213016851, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
-  m_PrefabInstance: {fileID: 2483939898950230404}
-  m_PrefabAsset: {fileID: 0}
---- !u!137 &6138449927126781097 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 8595293074428734765, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
-  m_PrefabInstance: {fileID: 2483939898950230404}
-  m_PrefabAsset: {fileID: 0}
 --- !u!137 &2128612143754919047 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 4607995348688903427, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
@@ -1327,9 +1350,9 @@ SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 6642336603567755430, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
   m_PrefabInstance: {fileID: 2483939898950230404}
   m_PrefabAsset: {fileID: 0}
---- !u!137 &7603365399138986877 stripped
+--- !u!137 &401700809961916314 stripped
 SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 5475302540318198521, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
+  m_CorrespondingSourceObject: {fileID: 2876563139831096862, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
   m_PrefabInstance: {fileID: 2483939898950230404}
   m_PrefabAsset: {fileID: 0}
 --- !u!137 &8985722902883242454 stripped
@@ -1345,6 +1368,11 @@ SkinnedMeshRenderer:
 --- !u!137 &2904833500614756079 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 732029007001102187, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
+  m_PrefabInstance: {fileID: 2483939898950230404}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &7603365399138986877 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5475302540318198521, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
   m_PrefabInstance: {fileID: 2483939898950230404}
   m_PrefabAsset: {fileID: 0}
 --- !u!137 &7041376065734528549 stripped
@@ -1367,9 +1395,9 @@ SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 8188981596490611137, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
   m_PrefabInstance: {fileID: 2483939898950230404}
   m_PrefabAsset: {fileID: 0}
---- !u!137 &401700809961916314 stripped
+--- !u!137 &6138449927126781097 stripped
 SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 2876563139831096862, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8595293074428734765, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
   m_PrefabInstance: {fileID: 2483939898950230404}
   m_PrefabAsset: {fileID: 0}
 --- !u!137 &8547630512966350053 stripped
@@ -1405,6 +1433,11 @@ SkinnedMeshRenderer:
 --- !u!137 &8117475507492934820 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 5971679485158094112, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
+  m_PrefabInstance: {fileID: 2483939898950230404}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &8114061269494517399 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5972430139213016851, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
   m_PrefabInstance: {fileID: 2483939898950230404}
   m_PrefabAsset: {fileID: 0}
 --- !u!137 &8669871455927283590 stripped

@@ -180,8 +180,10 @@ public class FightManager : MonoBehaviour
             Destroy(item.gameObject);
         }  
         targetList.Clear();
-        magicUI.SetActive(false); 
+        magicUI.SetActive(false);
 
+        mageAbility1.gameObject.SetActive(true);
+        mageAbility2.gameObject.SetActive(true); 
         mageAbility1.interactable = false;
         mageAbility2.interactable = false;
         foreach (FormationPosition formation in selectedFormations)
@@ -199,14 +201,14 @@ public class FightManager : MonoBehaviour
                 numBraced++;
             }
             //show mage interface
-            if (formation.soldierBlock.listMageModels.Count > 0 || formation.soldierBlock.mageType == "Gallowglass") //formation.soldierBlock.mageType == "Pyromancer"
+            if (formation.soldierBlock.listMageModels.Count > 0) //formation.soldierBlock.mageType == "Pyromancer"
             {
                 foreach(SoldierModel model in formation.soldierBlock.listMageModels)
                 {
                     if (model.alive)
                     { 
                         magicUI.SetActive(true);
-                        if (model.magicCharged)
+                        if (model.magicCharged && formation.allowedToCastMagic)
                         { 
                             mageAbility1.interactable = true;
                             mageAbility2.interactable = true;
@@ -214,6 +216,17 @@ public class FightManager : MonoBehaviour
                     } 
                 }
             }
+
+            if (formation.soldierBlock.mageType == "Gallowglass")
+            { 
+                magicUI.SetActive(true);
+                if (formation.abilityCharged)
+                {
+                    mageAbility1.interactable = true;
+                    mageAbility2.interactable = true;
+                }
+            }
+
             // change abilities 
             mageHeader.text = formation.soldierBlock.mageType;
             TMP_Text text = mageAbility1.GetComponentInChildren<TMP_Text>();
@@ -228,7 +241,7 @@ public class FightManager : MonoBehaviour
             if (formation.soldierBlock.mageType == "Gallowglass")
             {
                 text.text = "Chaff Bombs";
-                mageAbility2.enabled = false;
+                mageAbility2.gameObject.SetActive(false);
             }
             if (formation.soldierBlock.mageType == "Eldritch")
             {
@@ -243,7 +256,7 @@ public class FightManager : MonoBehaviour
             if (formation.soldierBlock.mageType == "Flammen")
             {
                 text.text = "Disgorge Flame";
-                mageAbility2.enabled = false;
+                mageAbility2.gameObject.SetActive(false);
             }
             //
             if (formation.holdFire)
@@ -1103,10 +1116,10 @@ public class FightManager : MonoBehaviour
                         else
                         {
                             item.shouldRotateToward = false;
-                        }
-
-
+                        } 
                         item.aiTarget.transform.position = item.destinationsList[0];
+
+                        item.CheckIfRotateOrNot();
 
                     }
                 }

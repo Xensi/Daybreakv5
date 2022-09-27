@@ -798,6 +798,7 @@ MonoBehaviour:
   projectileDeviationAmount: 5
   projectileDeviationAmountVertical: 5
   attackBox: {fileID: 714997625328607547}
+  startingMaxSpeed: 6
   adjustWalkSpeedVisually: 0.5
   playIdleAnims: 0
   health: 25
@@ -849,6 +850,7 @@ MonoBehaviour:
   knockedDown: 0
   airborne: 0
   targetEnemy: {fileID: 0}
+  pendingLaunched: 0
   walkSpeed: 3
   runSpeed: 6
   team: Zhanguo
@@ -993,12 +995,13 @@ MonoBehaviour:
   pendingDamage: 0
   pendingArmorPiercingDamage: 0
   speedSlow: 0
-  startingMaxSpeed: 0
   ignoreAsNearby: 0
   getUpTime: 0
   getUpTimeCap: 8
   useOldWalkCalculations: 1
   normalizedSpeed: 0
+  routing: 0
+  pendingDamageSource: {fileID: 0}
 --- !u!114 &2750967650358227166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1015,7 +1018,7 @@ MonoBehaviour:
   radius: 0.2
   height: 2
   canMove: 1
-  maxSpeed: 3
+  maxSpeed: 6
   gravity: {x: NaN, y: NaN, z: NaN}
   groundMask:
     serializedVersion: 2

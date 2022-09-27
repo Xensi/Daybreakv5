@@ -91,7 +91,8 @@ public class SoldierModel : MonoBehaviour
     [SerializeField] private bool idle = false;
     public bool knockedDown = false;
     public bool airborne = false;
-    [SerializeField] private SoldierModel targetEnemy; 
+    [SerializeField] private SoldierModel targetEnemy;
+    public bool pendingLaunched = false;
 
 
     [Header("Public")]
@@ -182,9 +183,15 @@ public class SoldierModel : MonoBehaviour
 
     public bool routing = false;
 
+    public Transform pendingDamageSource;
+
     private void Start()
-    { 
+    {
         startingMaxSpeed = richAI.maxSpeed;
+        /*if (startingMaxSpeed <= 0)
+        {
+            startingMaxSpeed = 3;
+        }*/
         currentIdleTimer = UnityEngine.Random.Range(0, reqIdleTimer);
         animator.SetBool("walking", true);
         currentSpeed = walkSpeed;
@@ -275,9 +282,18 @@ public class SoldierModel : MonoBehaviour
     {
         if (pendingDamage > 0 || pendingArmorPiercingDamage > 0)
         {
-            SufferDamage(pendingDamage, pendingArmorPiercingDamage, null);
+            SufferDamage(pendingDamage, pendingArmorPiercingDamage, null, 1);
             pendingDamage = 0;
             pendingArmorPiercingDamage = 0;
+
+            if (pendingLaunched)
+            { 
+                float maxDistance = 0.01f;
+                Vector3 heading = pendingDamageSource.position - transform.position;
+                Vector3 pos = transform.position + (-heading * maxDistance); //launch them in the opposite direction please
+                LaunchModel(pos, 1, pendingDamageSource.position);
+                pendingLaunched = false;
+            }  
         } 
     }
     public void UpdateSpeed()
@@ -295,10 +311,11 @@ public class SoldierModel : MonoBehaviour
                 }
             }
             if (!routing)
-            { 
-                richAI.maxSpeed = startingMaxSpeed * 0.5f - speedSlow;
+            {
+                //richAI.maxSpeed = startingMaxSpeed * 0.5f - speedSlow;
+                richAI.maxSpeed = startingMaxSpeed - speedSlow;
             }
-            else
+            else //if routing
             {
                 richAI.maxSpeed = startingMaxSpeed * 2;
             }
@@ -306,10 +323,12 @@ public class SoldierModel : MonoBehaviour
             speedSlow = Mathf.Clamp(speedSlow, 0, documentedMaxSpeed * 0.5f);
 
             float threshold = .1f;
-            movingSpeed = Mathf.Sqrt(Mathf.Pow(richAI.velocity.x, 2) + Mathf.Pow(richAI.velocity.z, 2)); //calculate speed vector
-
-
-
+            movingSpeed = Mathf.Sqrt(Mathf.Pow(richAI.velocity.x, 2) + Mathf.Pow(richAI.velocity.z, 2)); //calculate speed vector 
+            float min = .01f;
+            if (movingSpeed < min)
+            {
+                movingSpeed = 0;
+            }
 
             normalizedSpeed = movingSpeed;
 
@@ -605,17 +624,20 @@ public class SoldierModel : MonoBehaviour
         if (!attacking && !damaged && !loadingRightNow && !isMagic) //increment if not attacking and not damaged not reloading not magic
         {
 
-            if (impactAttacks && !attackBox.canDamage)
+            if (currentAttackTime < reqAttackTime)
             {
                 currentAttackTime += .1f; //increment timer
+            }
+
+            if (impactAttacks && !attackBox.canDamage)
+            {
                 if (currentAttackTime >= reqAttackTime)
                 {
                     AttackCodeChecks();
                 }
             }
             else
-            {
-                currentAttackTime += .1f; //increment timer
+            { 
                 if (melee)
                 {
                     if (currentAttackTime >= reqAttackTime && targetEnemy != null && targetEnemy.alive && CheckIfInAttackRange() &&  !formPos.holdFire) //if we reach attack time, and we have a valid target
@@ -641,8 +663,38 @@ public class SoldierModel : MonoBehaviour
     {
         return (Vector3.Distance(transform.position, targetEnemy.transform.position) <= attackRange);
     }
-    private void AttackCodeChecks()
+    private void AttackCodeChecks() //called to see if we can make an attack
     {
+        Vector3 heading;
+        if (melee)
+        {
+            if (targetEnemy != null)
+            {
+                heading = targetEnemy.transform.position - transform.position;
+            }
+            else
+            {
+                return;
+            }
+        }
+        else
+        {
+            if (formPos.enemyFormationToTarget != null)
+            { 
+                heading = formPos.enemyFormationToTarget.transform.position - transform.position;
+            }
+            else
+            {
+                return;
+            }
+        }  
+        float angle = Vector3.Angle(heading, transform.forward);
+        float threshold = 25;
+        if (angle > threshold)
+        {
+            return;
+        }
+
         if (routing)
         {
             return;
@@ -921,13 +973,14 @@ public class SoldierModel : MonoBehaviour
                     force = normalizedSpeed * trampleDebuff;
                 }
 
-                enemy.SufferDamage(damage * force, armorPiercingDamage * force, this); 
+                enemy.SufferDamage(damage * force, armorPiercingDamage * force, this, 1); 
             } 
         }
     }
 
     public void SufferDamage(float dmg, float armorPiercingDmg, SoldierModel origin, float damageMultiplier = 1)
-    {
+    { 
+
         float damageAfterArmor = dmg - armor;
         damageAfterArmor = Mathf.Clamp(damageAfterArmor, 0, 999);
         health -= damageAfterArmor * damageMultiplier;
@@ -967,6 +1020,11 @@ public class SoldierModel : MonoBehaviour
                 origin.targetEnemy = null;
                 origin.numKills++;
             }
+            if (isMagic)
+            { 
+                FightManager obj = FindObjectOfType<FightManager>();
+                obj.UpdateGUI();
+            }
         }
 
         formPos.modelTookDamage = true;
@@ -1004,7 +1062,7 @@ public class SoldierModel : MonoBehaviour
         missile.LaunchProjectile(targetPos, angle, deviation); //fire at the position of the target with a clamped angle and deviation based on distance
     }
     public void MageCastProjectile(Vector3 targetPos, int abilityNum, string mageType) //let's fire projectiles at a target
-    {
+    { 
         magicCharged = false;
         formPos.modelAttacked = true; 
         if (attackSounds.Count > 0)
@@ -1022,6 +1080,13 @@ public class SoldierModel : MonoBehaviour
             if (abilityNum == 0)
             {
                 clamped = 60;
+            }
+        }
+        if (mageType == "Gallowglass")
+        {
+            if (abilityNum == 0)
+            {
+                clamped = 10;
             }
         }
         float deviation = projectileDeviationAmount * dist * 0.01f;

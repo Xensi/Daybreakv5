@@ -4,6 +4,11 @@ using UnityEngine;
 using Pathfinding;
 public class FormationPosition : MonoBehaviour
 {
+    public bool abilityCharged = true; 
+    [SerializeField] private float abilityRechargeTime = 60f;
+    [SerializeField] private float currentAbilityRechargeTime = 0;
+    public bool allowedToCastMagic = true;
+    public float timeUntilAllowedToCastMagicAgain = 0;
     public bool canBrace = false;
     public bool braced = false;
     public string team = "Altgard"; //Whose team are we on?
@@ -432,7 +437,7 @@ public class FormationPosition : MonoBehaviour
     private void SetMoving(bool val)
     { 
         aiPath.canMove = val;
-        aiPath.enableRotation = val;
+        //aiPath.enableRotation = val;
     }
     private void UpdateFormationMovementStatus()
     {
@@ -474,6 +479,7 @@ public class FormationPosition : MonoBehaviour
                             {
                                 //Debug.Log("setting target to destination 1");
                                 aiTarget.transform.position = destinationsList[0];
+                                CheckIfRotateOrNot();
                             }
                         }
                     }
@@ -501,6 +507,30 @@ public class FormationPosition : MonoBehaviour
     }
     private void VerySlowUpdate()
     {
+        if (timeUntilAllowedToCastMagicAgain > 0)
+        {
+            timeUntilAllowedToCastMagicAgain--;
+            if (timeUntilAllowedToCastMagicAgain <= 0)
+            {
+                allowedToCastMagic = true;
+                FightManager obj = FindObjectOfType<FightManager>();
+                obj.UpdateGUI();
+            }
+        }
+
+        if (!abilityCharged)
+        {
+            currentAbilityRechargeTime += 1;
+
+            if (currentAbilityRechargeTime >= abilityRechargeTime)
+            {
+                abilityCharged = true;
+                FightManager obj = FindObjectOfType<FightManager>();
+                obj.UpdateGUI();
+                currentAbilityRechargeTime = 0;
+            }
+        }
+
         /*if (fleeing)
         {
             float bounds = 25;
@@ -651,6 +681,7 @@ public class FormationPosition : MonoBehaviour
         Vector3 pos = transform.position + (-transform.forward * 200);
         //Vector3 randomPosition = new Vector3(UnityEngine.Random.Range(-999, 999), 0, UnityEngine.Random.Range(-999, 999));
         aiTarget.transform.position = pos;
+        CheckIfRotateOrNot();
         fleeing = true;
 
         FightManager obj = FindObjectOfType<FightManager>();
@@ -851,6 +882,20 @@ public class FormationPosition : MonoBehaviour
 
         lineRenderer2.enabled = !finishedChangedFacing;
     } 
+    public void CheckIfRotateOrNot()
+    {
+        Vector3 heading = aiTarget.transform.position - transform.position;
+        float threshold = 30;
+        if (Vector3.Angle(heading, -transform.forward) <= threshold)
+        {
+            Debug.Log("good");
+            aiPath.enableRotation = false;
+        }
+        else
+        {
+            aiPath.enableRotation = true;
+        }
+    }
     public void CheckDirectionOfMovement()
     {
         compass.LookAt(aiTarget);
@@ -927,6 +972,21 @@ public class FormationPosition : MonoBehaviour
                     if (mage.magicCharged && mage.alive)
                     { 
                         mage.MageCastProjectile(targetPos, abilityNum, soldierBlock.mageType); //magic charged equals false
+                        break;
+                    }
+                }
+            }
+        }
+        if (soldierBlock.mageType == "Gallowglass")
+        {
+            if (abilityNum == 0)
+            {
+                foreach (SoldierModel model in soldierBlock.listSoldierModels)
+                {
+                    if (abilityCharged && model.alive)
+                    {
+                        model.MageCastProjectile(targetPos, abilityNum, soldierBlock.mageType); //magic charged equals false
+                        abilityCharged = false;
                         break;
                     }
                 }
@@ -1009,6 +1069,7 @@ public class FormationPosition : MonoBehaviour
             //Debug.Log("chasing foe");
             aiTarget.transform.position = enemyFormationToTarget.gameObject.transform.position;
             rotTarget.transform.position = enemyFormationToTarget.gameObject.transform.position;
+            CheckIfRotateOrNot();
         }
 
     }

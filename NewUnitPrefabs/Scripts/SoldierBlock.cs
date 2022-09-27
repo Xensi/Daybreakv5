@@ -46,9 +46,16 @@ public class SoldierBlock : MonoBehaviour
 
     [SerializeField] private bool manuallyAssignRows = false;
 
+    private bool initialized = false;
 
-    void Start()
+
+    void OnEnable()
     {
+        if (initialized)
+        {
+            return;
+        }
+        initialized = true;
         modelsArray = new SoldierModel[82];
         formationPositions = new Position[80];
 
