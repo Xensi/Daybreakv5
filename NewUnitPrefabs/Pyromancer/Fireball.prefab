@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 3616627480558307331}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 6, y: 6, z: 6}
+  m_LocalScale: {x: 3.6, y: 3.6, z: 3.6}
   m_Children:
   - {fileID: 4794684272446624541}
   - {fileID: 2741586137240003322}
@@ -60,6 +60,8 @@ MonoBehaviour:
   explosionEffect: {fileID: 100002, guid: 2cc1320b387b00d41ae0751ab592885c, type: 3}
   isModelProj: 0
   startingPos: {x: 0, y: 0, z: 0}
+  blood: {fileID: 0}
+  shouldAlwaysSpawnExplosion: 0
 --- !u!136 &6003265907274017126
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -463,23 +465,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 19800000, guid: d763ab2fd2048374d9624fe5dc6764c6, type: 3}
       propertyPath: InitialModule.maxNumParticles
-      value: 200
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 19800000, guid: d763ab2fd2048374d9624fe5dc6764c6, type: 3}
       propertyPath: InitialModule.startSize.minScalar
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 19800000, guid: d763ab2fd2048374d9624fe5dc6764c6, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 19800000, guid: d763ab2fd2048374d9624fe5dc6764c6, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
-      value: 1
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 19800000, guid: d763ab2fd2048374d9624fe5dc6764c6, type: 3}
       propertyPath: InitialModule.startColor.maxColor.b
-      value: 0.22327036
+      value: 0.44025153
       objectReference: {fileID: 0}
     - target: {fileID: 19800000, guid: d763ab2fd2048374d9624fe5dc6764c6, type: 3}
       propertyPath: InitialModule.startColor.maxColor.g
-      value: 0.6024612
+      value: 0.71447176
       objectReference: {fileID: 0}
     - target: {fileID: 19800000, guid: d763ab2fd2048374d9624fe5dc6764c6, type: 3}
       propertyPath: InitialModule.startColor.maxColor.r
@@ -488,6 +494,10 @@ PrefabInstance:
     - target: {fileID: 19800000, guid: d763ab2fd2048374d9624fe5dc6764c6, type: 3}
       propertyPath: InitialModule.gravityModifier.scalar
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 19800000, guid: d763ab2fd2048374d9624fe5dc6764c6, type: 3}
+      propertyPath: InitialModule.startLifetime.minScalar
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 19800000, guid: d763ab2fd2048374d9624fe5dc6764c6, type: 3}
       propertyPath: ColorModule.gradient.maxGradient.ctime4

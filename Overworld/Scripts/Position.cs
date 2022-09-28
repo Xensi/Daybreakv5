@@ -15,16 +15,7 @@ public class Position : MonoBehaviour
     public string team = "Altgard";
     public FormationPosition formPos;
 
-    public bool activeController = false;
-    private void Start()
-    {
-        
-    }
-    private void OnDrawGizmosSelected()
-    {
-
-         //Gizmos.DrawWireSphere(transform.position, 5+numTimesSought);
-    }
+    public bool activeController = false; 
     public void SeekReplacement(float range = 5f)
     {
         if (assignedSoldierModel != null)
@@ -35,39 +26,32 @@ public class Position : MonoBehaviour
             }
         }
         //safety check
-
-        //get candidates
-        candidates.Clear(); 
-        LayerMask layerMask = LayerMask.GetMask("Model");
-        int maxColliders = 80;
-        Collider[] colliders = new Collider[maxColliders];
-        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, range+numTimesSought, colliders, layerMask, QueryTriggerInteraction.Ignore); //use hurtboxes now
-        for (int i = 0; i < numColliders; i++)
-        { 
-            SoldierModel model = colliders[i].GetComponentInParent<SoldierModel>();
-
-            if (model != null)
-            {
-                if (model.modelPosition != null)
-                { 
-                    if (model.formPos != null)
-                    {
-                        if (model.modelPosition.row != null)
-                        { 
-                            if (model.formPos == formPos && model.alive && model.modelPosition.row.rowPositionInList > row.rowPositionInList) //must be same team, be alive, and be in a row in higher position (farther back)
-                            {
-                                candidates.Add(model);
-                            }
-                        }
-                    }
-                }
-            }
+        //first get a row behind us
+        int behindUs = row.rowPositionInList + 1 + numTimesSought;
+        if (behindUs == 8)
+        {
+            //out of bounds 
+            return;
         }
-        //
-        numTimesSought++; 
+        //get candidates
+        candidates.Clear();
+        //instead of this, just select a suitable replacement from a row that is behind us if possible 
+        Row desiredRow = row.soldierBlock.rows[behindUs];
+        foreach (Position item in desiredRow.positionsInRow)
+        {
+            if (item.assignedSoldierModel != null)
+            {
+                candidates.Add(item.assignedSoldierModel);
+            }
+        }    
         if (candidates.Count > 0)
         {
             GetClosest();
+        }
+        else
+        { 
+            numTimesSought++;
+            //SeekReplacement(); //keep going until out of bounds?
         }
     }
 
@@ -133,13 +117,5 @@ public class Position : MonoBehaviour
 
             numTimesSought = 0;
         } 
-    }
-
-
-    private float GetDistance(Transform one, Transform two)
-    {
-        float dist = Vector3.Distance(one.position, two.position);
-        return dist;
-    }
-
+    } 
 }

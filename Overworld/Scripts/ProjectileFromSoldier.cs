@@ -165,21 +165,7 @@ public class ProjectileFromSoldier : MonoBehaviour
                         {
                             damageMult = bodyPart.multiplierDamage;
                         }
-                        hitModel.SufferDamage(damage, armorPiercingDamage, soldierParent, damageMult);
-                        /*if (blood != null)
-                        {
-
-                            float offset = .5f;
-                            Vector3 randomOffset = new Vector3(UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset), UnityEngine.Random.Range(-offset, offset));
-                            Vector3 newPos = new Vector3(hitModel.transform.position.x, transform.position.y, hitModel.transform.position.z);
-                            GameObject bloodObj = Instantiate(blood, newPos, transform.rotation, hitModel.transform);
-                        }*/
-                        /*
-                            isFlying = false;
-                            finalRotation = transform.rotation;
-                            transform.rotation = finalRotation;
-                            rigid.constraints = RigidbodyConstraints.FreezeAll; 
-                            transform.parent = other.gameObject.transform;*/
+                        hitModel.SufferDamage(damage, armorPiercingDamage, soldierParent, damageMult); 
 
                         penetrationNum--;
                         if (penetrationNum <= 0)

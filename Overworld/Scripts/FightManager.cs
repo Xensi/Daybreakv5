@@ -11,9 +11,10 @@ public class FightManager : MonoBehaviour
     public List<FormationPosition> allFormations;
 
     public List<FormationPosition> yourFormations;
+    public List<FormationPosition> aiFormations;
 
     public List<FormationPosition> selectedFormations;
-    [SerializeField] private string team = "Altgard";
+    [SerializeField] private string team = "Altgard"; //teams are Altgard, Zhanguo
 
 
     [SerializeField] private RectTransform selectionBox;
@@ -65,30 +66,132 @@ public class FightManager : MonoBehaviour
     [SerializeField] private bool magicTargeting = false;
     [SerializeField] private bool wasMagicTargeting = false;
     [SerializeField] private int abilityNumber = 0;
-    [SerializeField] private bool drawingLine = false; 
+    [SerializeField] private bool drawingLine = false;
+
+     
+    private enum combatStrategy
+    {
+        Attack,
+        Defend
+    } 
+    private combatStrategy aiState = combatStrategy.Attack;
+
     void OnEnable()
     {
+    } 
+
+    private void Start()
+    {
+        battleUI.SetActive(false); 
+        InvokeRepeating("AIBrain", 0f, 1f);
+        InvokeRepeating("AIBrainMage", 5f, 5f); //don't do immediately, not urgent
+
         allFormations.Clear();
         FormationPosition[] array = FindObjectsOfType<FormationPosition>();
         foreach (FormationPosition item in array)
         {
             allFormations.Add(item);
-            if (item.team == "Altgard")
+            if (item.team == team)
             {
                 yourFormations.Add(item);
             }
+            else
+            {
+                aiFormations.Add(item);
+            }
         }
-
     }
 
-    private void Start()
+    private void AIBrain()
     {
-        battleUI.SetActive(false);
+        switch (aiState)
+        {
+            case combatStrategy.Attack:
+                AIRaisePursueRadius();
+                break;
+            case combatStrategy.Defend:
+                AISetDefaultPursueRadius();
+                break;
+            default:
+                break;
+        }
+    }
+    private void AIBrainMage()
+    {
+        switch (aiState)
+        {
+            case combatStrategy.Attack: 
+                AIAllMagesPickTargetsAndFire();
+                break;
+            case combatStrategy.Defend:
+                AIAllMagesPickTargetsAndFire();
+                break;
+            default:
+                break;
+        }
+    }
+    private void AIRaisePursueRadius()
+    {
+        float newRadius = 200;
+        foreach (FormationPosition formPos in aiFormations)
+        {
+            formPos.engageEnemyRadius = newRadius;
+        }
+    }
+    private void AISetDefaultPursueRadius()
+    {
+        foreach (FormationPosition formPos in aiFormations)
+        {
+            formPos.engageEnemyRadius = formPos.startingPursueRadius;
+        }
+    }
+    private void AIAllMagesPickTargetsAndFire()
+    {
+        List<FormationPosition> aiFormList = new List<FormationPosition>();
+        foreach (FormationPosition aiForm in aiFormations)
+        {
+            aiFormList.Add(aiForm);
+        } 
+        List<FormationPosition> curatedPlayerForms = new List<FormationPosition>();
+        foreach (FormationPosition form in yourFormations)
+        {
+            if (form.alive && !form.fleeing)
+            { 
+                curatedPlayerForms.Add(form);
+            }
+        }
+        foreach (FormationPosition playerForms in curatedPlayerForms) //for each enemy formation
+        {
+            FormationPosition tempFormPos = null;
+            float currentDistance = 99999;
+            foreach (FormationPosition item in aiFormList) //get closest formation
+            {
+                float newDistance = Vector3.Distance(item.transform.position, playerForms.transform.position);
+
+                float tooClose = 20;
+
+                if (newDistance < tooClose) //if too close
+                { 
+                    continue; //skip this one to avoid friendly fire
+                }
+
+                if (newDistance < currentDistance)
+                {
+                    currentDistance = newDistance;
+                    tempFormPos = item;
+                }
+            }
+            if (tempFormPos != null)
+            {
+                float offset = playerForms.movingSpeed; 
+                tempFormPos.CastMagic(playerForms.transform.position + (playerForms.transform.forward * offset), 0); //0 is temp   
+                aiFormList.Remove(tempFormPos); //so it can't be chosen again //if this becomes a problem then make another list
+            }
+        } 
     }
 
     public void HoldPositionCommand()
-    {
-
+    { 
         foreach (FormationPosition item in selectedFormations)
         {
             item.StopChaseCommand();
@@ -96,8 +199,7 @@ public class FightManager : MonoBehaviour
         UpdateGUI();
     }
     public void PursueCommand()
-    {
-
+    { 
         foreach (FormationPosition item in selectedFormations)
         {
             item.PursueCommand();
@@ -396,6 +498,9 @@ public class FightManager : MonoBehaviour
         UpdateGUI();
     }
 
+    private float doubleClickTimeOut = .25f;
+    private float doubleClickTime = 0;
+    private bool checkingDoubleClick = false;
     // Update is called once per frame
     void Update()
     {
@@ -416,6 +521,17 @@ public class FightManager : MonoBehaviour
             LeftClickCheck();
             RightClickCheck();
         }
+
+        if (checkingDoubleClick)
+        {
+            doubleClickTime += Time.deltaTime;
+            if (doubleClickTime >= doubleClickTimeOut)
+            {
+                checkingDoubleClick = false;
+                doubleClickTime = 0;
+            }
+        }
+
     }
      
 
@@ -817,7 +933,7 @@ public class FightManager : MonoBehaviour
 
             if (screenPos.x > min.x && screenPos.x < max.x && screenPos.y > min.y && screenPos.y < max.y)
             {
-                if (form.alive)
+                if (form.alive && form.team == team)
                 {   
 
                     if (!Input.GetKey(KeyCode.LeftShift))
@@ -838,9 +954,7 @@ public class FightManager : MonoBehaviour
                             selectedFormations.Remove(form);
                         }
                         form.TriggerSelectionCircles(form.selected);
-                    }
-
-                     
+                    } 
                 }
             }
         }
@@ -885,10 +999,10 @@ public class FightManager : MonoBehaviour
             LayerMask layerMask = LayerMask.GetMask("Model");
             int maxColliders = 1;
             Collider[] hitColliders = new Collider[maxColliders];
-            float radius = .5f;
+            float radius = 2f;
             int numColliders = Physics.OverlapSphereNonAlloc(candidateHit.point, radius, hitColliders, layerMask, QueryTriggerInteraction.Ignore); //nonalloc generates no garbage 
 
-            if (numColliders > 0)
+            if (numColliders > 0) //at least 1
             {
                 SoldierModel model = hitColliders[0].gameObject.GetComponentInParent<SoldierModel>();
 
@@ -902,7 +1016,7 @@ public class FightManager : MonoBehaviour
                     DeselectOtherUnits(form);
                 }
                  
-                if (form.alive && model.alive)
+                if (form.alive && model.alive && form.team == team)
                 {  
                     form.SetSelected(!form.selected); 
                     if (form.selected)
@@ -914,6 +1028,12 @@ public class FightManager : MonoBehaviour
                         selectedFormations.Remove(form);
                     }
                     form.TriggerSelectionCircles(form.selected);
+
+                    if (checkingDoubleClick)
+                    {
+                        SelectSimilar(form);
+                    }
+                    checkingDoubleClick = true;
                 }
             }
             else
@@ -923,9 +1043,22 @@ public class FightManager : MonoBehaviour
                     DeselectUnits();
                 } 
             }
+        }  
+    }
+    private void SelectSimilar(FormationPosition ogForm)
+    {
+        foreach (FormationPosition form in yourFormations)
+        {
+            if (form.type == ogForm.type && form.alive && !form.fleeing)
+            { 
+                form.SetSelected(true);
+                form.TriggerSelectionCircles(true);
+                if (!selectedFormations.Contains(form))
+                {
+                    selectedFormations.Add(form);
+                }
+            }
         }
-
-
     }
     private void DeselectOtherUnits(FormationPosition exclude)
     {
@@ -950,6 +1083,16 @@ public class FightManager : MonoBehaviour
         }
         UpdateGUI();
     }
+    public void DeselectFormation(FormationPosition formPos)
+    {
+        if (selectedFormations.Contains(formPos))
+        {
+            selectedFormations.Remove(formPos);
+        }
+        formPos.SetSelected(false);
+        formPos.TriggerSelectionCircles(false);
+        UpdateGUI();
+    }
     void OnDrawGizmosSelected()
     {
         foreach (Vector3 item in lineFormationPosList)
@@ -966,6 +1109,7 @@ public class FightManager : MonoBehaviour
         }
         placementMarkers.Clear();
     }
+
     private void RightClickCheck()
     {
         if (Input.GetMouseButtonDown(1)) //set movepos

@@ -594,69 +594,71 @@ public class SoldierModel : MonoBehaviour
     }
     public void UpdateAttackTimer()
     {
+        //Debug.Log("timer");
         if (routing)
         {
             return;
-        }
-        /*float ranksThatCanFire = 2;
-        if (retreatAfterFire && position.row > ranksThatCanFire)
-        {
-            SetAttacking(false);
-            return;
-        }
-        if (mustBeInFormationToFireAndReload && richAI.remainingDistance > threshold)
-        {
-            SetAttacking(false);
-            return;
-        }*/
+        } 
         if (!melee && HasTarget())
         {
             if (ObstructedByTeamMate(GetTarget()))
             {
-                SetAttacking(false);
+                SetAttacking(false); 
                 return;
             }
         }
         if (airborne || knockedDown)
-        {
+        { 
             return;
         }
         if (!attacking && !damaged && !loadingRightNow && !isMagic) //increment if not attacking and not damaged not reloading not magic
         {
 
-            if (currentAttackTime < reqAttackTime)
+            if (currentAttackTime < reqAttackTime) //timer goes up
             {
                 currentAttackTime += .1f; //increment timer
             }
-
-            if (impactAttacks && !attackBox.canDamage)
+            else //timer has reached
             {
-                if (currentAttackTime >= reqAttackTime)
+                //Debug.Log("timer reached");
+                if (impactAttacks && !attackBox.canDamage) //cavalry/braced inf
                 {
                     AttackCodeChecks();
                 }
-            }
-            else
-            { 
-                if (melee)
-                {
-                    if (currentAttackTime >= reqAttackTime && targetEnemy != null && targetEnemy.alive && CheckIfInAttackRange() &&  !formPos.holdFire) //if we reach attack time, and we have a valid target
-                    {  //start an attack
-                        AttackCodeChecks();
-                    } 
-                }
                 else
                 {
-                    if (currentAttackTime >= reqAttackTime && formPos.enemyFormationToTarget != null && formPos.enemyFormationToTarget.alive && !formPos.holdFire) //if we reach attack time, and we have a valid target
-                    {  //start an attack
-                        AttackCodeChecks();
-                    }
-                    else if (currentAttackTime >= reqAttackTime && formPos.focusFire && !formPos.holdFire)
+                    if (melee)
                     {
-                        AttackCodeChecks();
+                        if (targetEnemy != null && targetEnemy.alive && CheckIfInAttackRange() && !formPos.holdFire) //if we reach attack time, and we have a valid target
+                        {  //start an attack
+                            AttackCodeChecks();
+                        }
+                    }
+                    else //ranged
+                    { 
+                        //Debug.Log("ranged reached");
+                        if (!formPos.holdFire)
+                        {
+                            //Debug.Log("not hold fire");
+                            if (formPos.focusFire)
+                            {
+
+                                //Debug.Log("Focus fire");
+                                AttackCodeChecks();
+                            }
+                            else if (formPos.enemyFormationToTarget != null )
+                            { 
+                                //Debug.Log("formation to target present");
+                                if (formPos.enemyFormationToTarget.alive)
+                                { 
+                                    //Debug.Log("formation enemy alive");
+                                    AttackCodeChecks();
+                                }
+                            }
+                        } 
                     }
                 }
-            }
+            }  
         }
     }
     private bool CheckIfInAttackRange()
@@ -665,7 +667,8 @@ public class SoldierModel : MonoBehaviour
     }
     private void AttackCodeChecks() //called to see if we can make an attack
     {
-        Vector3 heading;
+        //Debug.Log("checks"); //reachable
+        /*Vector3 heading;
         if (melee)
         {
             if (targetEnemy != null)
@@ -677,7 +680,7 @@ public class SoldierModel : MonoBehaviour
                 return;
             }
         }
-        else
+        else //ranged
         {
             if (formPos.enemyFormationToTarget != null)
             { 
@@ -687,37 +690,48 @@ public class SoldierModel : MonoBehaviour
             {
                 return;
             }
-        }  
-        float angle = Vector3.Angle(heading, transform.forward);
+        }  */
+        //angle checks
+        /*float angle = Vector3.Angle(heading, transform.forward);
         float threshold = 25;
         if (angle > threshold)
         {
             return;
-        }
+        }*/
 
         if (routing)
         {
+            //Debug.Log("rout");
             return;
         }
         if (canOnlyAttackWhileMoving && !moving)
         {
+            //Debug.Log("still");
             return;
         }
         if (melee) //if melee, we can attack while moving
         {
+            //Debug.Log("melee");
             SetDeployed(true);
             AttackCodeContinued();
         }
-        else if (!formPos.obeyingMovementOrder && !formPos.aiPath.canMove) //ranged
+        else //ranged
         {
-            if (CanRangedHitWithAngle() || directFire)
+            //Debug.Log("ranged");
+            if (!formPos.obeyingMovementOrder && !formPos.aiPath.canMove) //ranged; if not working check what conditions we are set to be able to move in
             {
-                AttackCodeContinued();
+                //Debug.Log("not moving");
+                if (CanRangedHitWithAngle() || directFire)
+                {
+                    //Debug.Log("can fire");
+                    AttackCodeContinued();
+                }
             }
         }
     }
     private void AttackCodeContinued()
     {
+        //Debug.Log("continued");
         if (routing)
         {
             return;
@@ -1236,7 +1250,7 @@ public class SoldierModel : MonoBehaviour
     }
     private void FireProjectile() //let's fire projectiles at a target
     {
-        Debug.Log("firing proj");
+        //Debug.Log("firing proj");
         if (targetEnemy != null || formPos.focusFire || formPos.enemyFormationToTarget != null)
         {
             Vector3 targetPos = GetTarget();
@@ -1345,7 +1359,8 @@ public class SoldierModel : MonoBehaviour
             if (modelPosition.row != null)
             { 
                 modelPosition.row.RemoveModelFromRow(this);
-                modelPosition.assignedSoldierModel = null;
+                modelPosition.assignedSoldierModel = null; 
+                modelPosition.SeekReplacement();
                 modelPosition = null;
             }
         } 
@@ -1376,8 +1391,8 @@ public class SoldierModel : MonoBehaviour
                 voiceSource.PlayOneShot(deathSounds[UnityEngine.Random.Range(0, deathSounds.Count)]);
             }
         }
-
-        if (!formPos.playingDeathReactionChatter)
+        //simplify
+        /*if (!formPos.playingDeathReactionChatter)
         {
             formPos.playingDeathReactionChatter = true;
             formPos.DisableDeathReactionForSeconds(10);
@@ -1392,23 +1407,17 @@ public class SoldierModel : MonoBehaviour
                 {
                     continue;
                 }
-                if (colliders[i].gameObject.tag == team + "Model") //if our team
+                SoldierModel model = colliders[i].GetComponentInParent<SoldierModel>(); //find someone who will say something about their death
+                if (model != null)
                 {
-                    SoldierModel model = colliders[i].GetComponentInParent<SoldierModel>();
-                    if (model != null)
+                    if (model.team == team && model.alive && deathReactionSounds.Count > 0)
                     {
-                        if (model.alive)
-                        {
-                            if (deathReactionSounds.Count > 0)
-                            { 
-                                model.voiceSource.PlayOneShot(deathReactionSounds[UnityEngine.Random.Range(0, deathReactionSounds.Count)]);
-                            }
-                            break;
-                        }
-                    }
-                } 
+                        model.voiceSource.PlayOneShot(deathReactionSounds[UnityEngine.Random.Range(0, deathReactionSounds.Count)]);
+                        break;
+                    } 
+                }
             } 
-        } 
+        } */
         if (formPos.numberOfAliveSoldiers <= 0)
         {
             formPos.soldierBlock.SelfDestruct();
@@ -1448,7 +1457,7 @@ public class SoldierModel : MonoBehaviour
         int numColliders = Physics.OverlapSphereNonAlloc(transform.position, attackRange, colliders, layerMask, QueryTriggerInteraction.Ignore);
         for (int i = 0; i < numColliders; i++) //go for hurtboxes
         {
-            if (colliders[i].gameObject == self || colliders[i].gameObject.tag == team + "Model") //ignore character controller
+            if (colliders[i].gameObject == self) 
             {
                 continue;
             }

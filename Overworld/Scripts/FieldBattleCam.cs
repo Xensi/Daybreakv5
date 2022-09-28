@@ -13,7 +13,7 @@ public class FieldBattleCam : MonoBehaviour
     [SerializeField] private Transform panCorner2;
     [SerializeField] private Transform maxYPos;
     [SerializeField] private float radiusToEnableAnimations = 20;
-    [SerializeField] private FightManager fightManager;
+    [SerializeField] private FightManager fightManager; 
 
     private void Start()
     {
@@ -34,7 +34,13 @@ public class FieldBattleCam : MonoBehaviour
 
         Vector3 pos = transform.position;
 
-        pan = panSpeed * Mathf.Sqrt(pos.y + defaultSpeed) * 0.1f;
+        float mod = 1;
+
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            mod = 2;
+        }
+        pan = panSpeed * Mathf.Sqrt(pos.y + defaultSpeed) * 0.1f * mod;
 
         if (Input.GetKey("w"))
         {
@@ -88,7 +94,10 @@ public class FieldBattleCam : MonoBehaviour
         {
 
             FormationPosition form = hitColliders[i].gameObject.GetComponentInParent<FormationPosition>();
-            form.enableAnimations = true;
+            if (form != null)
+            { 
+                form.enableAnimations = true;
+            }
         }
     }
 }

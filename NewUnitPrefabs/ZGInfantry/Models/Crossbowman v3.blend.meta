@@ -60,6 +60,8 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths:
     - metarig/hand.R.001
+    - metarig/spine/spine.001/spine.002/spine.003/spine.004/spine.005/spine.006
+    - metarig/spine/spine.001
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
@@ -325,7 +327,11 @@ ModelImporter:
       additiveReferencePoseFrame: 170
     isReadable: 0
   meshes:
-    lODScreenPercentages: []
+    lODScreenPercentages:
+    - 0.25
+    - 0.125
+    - 0.0625
+    - 0.01
     globalScale: 1
     meshCompression: 0
     addColliders: 0

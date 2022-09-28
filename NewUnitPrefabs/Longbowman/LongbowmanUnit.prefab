@@ -8,6 +8,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 29422916108755641, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
+      propertyPath: type
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 29422916108755641, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: checkRadius
       value: 160
       objectReference: {fileID: 0}

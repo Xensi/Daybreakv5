@@ -759,9 +759,19 @@ MonoBehaviour:
   projectileSpawn: {fileID: 811959319155645061}
   projectile: {fileID: 8333262704199657843, guid: fbd1a6bf1af3b9f4abe2a537db07bfec, type: 3}
   directFire: 0
+  fireEffect: {fileID: 0}
+  power: 100
+  volleyFireAndRetreat: 0
+  eyeline: {fileID: 0}
+  projectileDeviationAmount: 10
+  projectileDeviationAmountVertical: 5
   attackBox: {fileID: 0}
+  startingMaxSpeed: 0
+  adjustWalkSpeedVisually: 1
+  playIdleAnims: 0
   health: 40
   damage: 30
+  armorPiercingDamage: 0
   armor: 0
   timeUntilDamage: 0.4
   currentDamageTime: 0
@@ -769,16 +779,35 @@ MonoBehaviour:
   currentFinishedAttackingTime: 0
   timeUntilRecovery: 0.1
   currentRecoveryTime: 0
-  magicRechargeTime: 10
+  reqAttackTime: 2
+  currentAttackTime: 2
+  magicRechargeTime: 45
   currentMagicRecharge: 0
   magicCharged: 1
+  chargeDamage: 0
+  stopWhenAttacking: 1
+  stopWhenDamaged: 1
+  stopWhenLoading: 1
+  attacksCanLaunchEnemies: 0
+  canOnlyAttackWhileMoving: 0
+  attacksBreakEnemyCohesion: 0
+  directionalAttacks: 0
+  angleOfAttack: 20
+  attacksDontFaceEnemy: 0
+  impactAttacks: 0
+  defaultStoppingDistance: 0.1
+  combatStoppingDistance: 0.001
   rangedNeedsLoading: 0
   ammo: 0
   maxAmmo: 1
+  internalAmmoCapacity: 100
   loadingRightNow: 0
   currentFinishedLoadingTime: 0
   timeUntilFinishedLoading: 1
+  justFired: 0
   braced: 0
+  allowedToDealDamage: 1
+  modelPosition: {fileID: 0}
   movingSpeed: 0
   alive: 1
   attacking: 0
@@ -789,6 +818,7 @@ MonoBehaviour:
   knockedDown: 0
   airborne: 0
   targetEnemy: {fileID: 0}
+  pendingLaunched: 0
   walkSpeed: 3
   runSpeed: 6
   team: Zhanguo
@@ -806,13 +836,9 @@ MonoBehaviour:
   defaultAccel: 25
   sprintAccel: 25
   self: {fileID: 2169595719131868819}
-  finishedPathRotSpeed: 20
   nearbyEnemyModels: []
-  reqAttackTime: 2
-  currentAttackTime: 2
   currentIdleTimer: 0
   reqIdleTimer: 20
-  position: {fileID: 0}
   deathSounds:
   - {fileID: 8300000, guid: a9ed4e62be7a3bc48b39657eccfa95ca, type: 3}
   - {fileID: 8300000, guid: 4245bafa826caac43b14f33d47e8f95d, type: 3}
@@ -906,8 +932,6 @@ MonoBehaviour:
   voiceSource: {fileID: 6880501607377708057}
   impactSource: {fileID: 4013500636507265404}
   hurtSource: {fileID: 5019969114610797930}
-  defaultStoppingDistance: 0.1
-  combatStoppingDistance: 0.001
   numRandIdleAnims: 0
   numRandAttackAnims: 1
   waitForAttackChatterTime: 5
@@ -921,25 +945,16 @@ MonoBehaviour:
   numKills: 0
   melee: 1
   LaunchAngle: 0
-  allowedToDealDamage: 1
-  projectileDeviationAmount: 10
   pendingDamage: 0
   pendingArmorPiercingDamage: 0
-  stopWhenAttacking: 1
-  attacksCanLaunchEnemies: 0
-  canOnlyAttackWhileMoving: 0
-  attacksBreakEnemyCohesion: 0
-  directionalAttacks: 0
-  angleOfAttack: 20
-  attacksDontFaceEnemy: 0
-  impactAttacks: 0
   speedSlow: 0
-  startingMaxSpeed: 0
   ignoreAsNearby: 0
   getUpTime: 0
   getUpTimeCap: 8
   useOldWalkCalculations: 1
   normalizedSpeed: 0
+  routing: 0
+  pendingDamageSource: {fileID: 0}
 --- !u!114 &7586394984505008617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1118,6 +1133,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2169595719131868828}
     m_Modifications:
+    - target: {fileID: 2148899308618284982, guid: 1b6f0dbe79f1481459b321aeccc60b5a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2718225079040141760, guid: 1b6f0dbe79f1481459b321aeccc60b5a, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -1162,6 +1181,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2755336964066137347, guid: 1b6f0dbe79f1481459b321aeccc60b5a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3092180457832628785, guid: 1b6f0dbe79f1481459b321aeccc60b5a, type: 3}
       propertyPath: m_Avatar
       value: 
@@ -1169,6 +1192,22 @@ PrefabInstance:
     - target: {fileID: 3382981646160409466, guid: 1b6f0dbe79f1481459b321aeccc60b5a, type: 3}
       propertyPath: m_Name
       value: Pyromancer v9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3463305640617382261, guid: 1b6f0dbe79f1481459b321aeccc60b5a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5134619506935225218, guid: 1b6f0dbe79f1481459b321aeccc60b5a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5280442403142054806, guid: 1b6f0dbe79f1481459b321aeccc60b5a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5532813198636172396, guid: 1b6f0dbe79f1481459b321aeccc60b5a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1b6f0dbe79f1481459b321aeccc60b5a, type: 3}

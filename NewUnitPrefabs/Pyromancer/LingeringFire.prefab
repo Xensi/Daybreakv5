@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &400000
 Transform:
   m_ObjectHideFlags: 0
@@ -674,7 +674,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 0.8
+      value: 1.44
       mode: 0
       spread: 0
       speed:
@@ -4712,7 +4712,7 @@ Transform:
   m_GameObject: {fileID: 100002}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 4, y: 4, z: 4}
+  m_LocalScale: {x: 2.4, y: 2.4, z: 2.4}
   m_Children:
   - {fileID: 400000}
   - {fileID: 400004}
@@ -5482,7 +5482,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 120
+      scalar: 30
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -9534,13 +9534,15 @@ MonoBehaviour:
   damage: 0
   armorPiercingDamage: 1
   interval: 0.25
-  radius: 5
+  radius: 3
   timer: 0
   allowedDamageTicks: 1
   currentDamageTicks: 0
   eternal: 1
   working: 1
-  knocksBack: 1
+  knocksBack: 0
+  damageFromThisPreventsCastingMagic: 0
+  denyMagicForTime: 60
 --- !u!1 &100004
 GameObject:
   m_ObjectHideFlags: 0
@@ -10069,7 +10071,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 2000
+    maxNumParticles: 500
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -10334,7 +10336,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 120
+      scalar: 60
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -28775,7 +28777,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &846123579331770200
 Transform:
   m_ObjectHideFlags: 0
@@ -47958,7 +47960,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: c6a877cd1f78c9340b4cacfed5dd17e9, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 9fb7b423572fe724d988645c5d08e4d2, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -48925,7 +48927,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 120
+      scalar: 30
       minScalar: 10
       maxCurve:
         serializedVersion: 2
