@@ -13,7 +13,7 @@ public class FieldBattleCam : MonoBehaviour
     [SerializeField] private Transform panCorner2;
     [SerializeField] private Transform maxYPos;
     [SerializeField] private float radiusToEnableAnimations = 20;
-    [SerializeField] private FightManager fightManager; 
+    [SerializeField] private FightManager fightManager;  
 
     private void Start()
     {
@@ -28,6 +28,36 @@ public class FieldBattleCam : MonoBehaviour
             transform.localRotation = Quaternion.Euler(0, turn.x, 0);
         }
         Strafe();
+        UpdateFarAwayIcons();
+    }
+    private void UpdateFarAwayIcons()
+    {
+        if (fightManager.allFormations.Count > 0)
+        {
+            foreach (FormationPosition form in fightManager.allArray)
+            { 
+                float distance = Vector3.Distance(transform.position, form.transform.position);
+                float reqDistance = 75;
+                Color color = form.farAwayIcon.color;
+                float gradual = 1000;
+                form.showSoldierModels = true;
+                if (distance > reqDistance)
+                { 
+                    float math = Mathf.Clamp((Mathf.Exp(distance-reqDistance)-1)/gradual, 0, 1);
+                    color.a = math;
+                    if (math >= 1)
+                    {
+                        form.showSoldierModels = false;
+                    }
+                    
+                }
+                else
+                {
+                    color.a = 0;
+                }
+                form.farAwayIcon.color = color;
+            }
+        }
     }
     private void Strafe()
     {
@@ -91,13 +121,12 @@ public class FieldBattleCam : MonoBehaviour
         int numColliders = Physics.OverlapSphereNonAlloc(transform.position, radiusToEnableAnimations, hitColliders, layerMask, QueryTriggerInteraction.Ignore);
          
         for (int i = 0; i < numColliders; i++)
-        {
-
+        { 
             FormationPosition form = hitColliders[i].gameObject.GetComponentInParent<FormationPosition>();
             if (form != null)
             { 
                 form.enableAnimations = true;
             }
         }
-    }
+    } 
 }

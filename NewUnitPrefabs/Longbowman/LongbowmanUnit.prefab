@@ -23,6 +23,10 @@ PrefabInstance:
       propertyPath: chaseDetectedEnemies
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 98565761933592747, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: afd10384352895744acfd2be8d79e010, type: 3}
     - target: {fileID: 223466555313006376, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: m_IsActive
       value: 1

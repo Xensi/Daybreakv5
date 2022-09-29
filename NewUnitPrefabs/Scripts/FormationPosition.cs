@@ -4,6 +4,9 @@ using UnityEngine;
 using Pathfinding;
 public class FormationPosition : MonoBehaviour
 {
+    public bool showSoldierModels = true;
+    public SpriteRenderer farAwayIcon;
+    public GameObject farAwayIconMask;
     public enum FormationType
     {
         Infantry,
@@ -226,6 +229,10 @@ public class FormationPosition : MonoBehaviour
         if (fleeing)
         {
             FullUnfreeze();
+            farAwayIcon.enabled = false;
+            Color color = farAwayIcon.color;
+            color.a = 0;
+            farAwayIcon.color = color;
             return;
         }
         freezeFormPos = true;
@@ -345,10 +352,10 @@ public class FormationPosition : MonoBehaviour
             {
                 position.SeekReplacement();
             }
-            else if (numberOfAliveSoldiers < maxSoldiers) //if not null, then no need to replace, but skip
+            /*else if (numberOfAliveSoldiers < maxSoldiers) //if not null, then no need to replace, but skip
             {
                 CheckForEmptyPositionsToFill();
-            }
+            }*/
         }
     }
     private void RapidUpdate()
@@ -482,8 +489,7 @@ public class FormationPosition : MonoBehaviour
             if (model != null)
             {
                 if (model.alive)
-                {
-                    
+                { 
                     model.CheckForPendingDamage();
                     if (!model.routing)
                     { 
@@ -495,7 +501,7 @@ public class FormationPosition : MonoBehaviour
                     model.UpdateMovementStatus();
                     model.UpdateRecoveryTimer(); 
                     model.UpdateSpeed();
-
+                    model.UpdateVisibility();
                 }
             }
         } 
@@ -641,6 +647,8 @@ public class FormationPosition : MonoBehaviour
     }
     private void UpdateSoldiers()
     {
+        float height = 0;
+        float num = 0;
         for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
         {
             SoldierModel model = soldierBlock.modelsArray[i];
@@ -661,10 +669,18 @@ public class FormationPosition : MonoBehaviour
                     model.CheckIfIdle(); 
                     model.CheckIfAlive();
                     model.UpdateCharController();
+
+                    height += model.transform.position.y;
+                    num++;
                 }
             }
         }
-        
+
+        height = height / num;
+        float offset = .5f;
+        height += offset;
+        farAwayIcon.transform.localPosition = new Vector3(farAwayIcon.transform.localPosition.x, height, farAwayIcon.transform.localPosition.z); //set to average height
+        farAwayIconMask.transform.localPosition = new Vector3(farAwayIconMask.transform.localPosition.x, height, farAwayIconMask.transform.localPosition.z);
     }
     private void UpdateSpeed()
     {
@@ -745,6 +761,10 @@ public class FormationPosition : MonoBehaviour
     private void BeginFleeing()
     {
         fleeing = true;
+
+        farAwayIcon.enabled = false;
+        farAwayIconMask.SetActive(false);
+
         FightManager obj = FindObjectOfType<FightManager>();
         obj.DeselectFormation(this);
 
@@ -879,10 +899,18 @@ public class FormationPosition : MonoBehaviour
             posParentTransform.localPosition = new Vector3(-4.5f, 0, 3.5f - num * .5f);
             int x = 10;
             int y = 4;
+            int math = z - num;
             if (charCollider != null)
             {
-                charCollider.size = new Vector3(x, y, z - num); 
+                charCollider.size = new Vector3(x, y, math); 
             }
+            int defSize = 10;
+            float remedy = 1.25f;
+            float calc = math * remedy;
+
+            farAwayIconMask.gameObject.transform.localScale = new Vector3(defSize, calc, 1);
+            farAwayIcon.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
+
             /*if (!soldierBlock.canBeRanged)
             { 
                 if (listOfNearbyEnemies.Count > 0)
@@ -963,7 +991,7 @@ public class FormationPosition : MonoBehaviour
     public void CheckIfRotateOrNot()
     {
         Vector3 heading = aiTarget.transform.position - transform.position;
-        float threshold = 30;
+        float threshold = 50;
         if (Vector3.Angle(heading, -transform.forward) <= threshold)
         { 
             aiPath.enableRotation = false;

@@ -14,7 +14,7 @@ public class SoldierModel : MonoBehaviour
     [SerializeField] private GameObject modelProj;
     public GameObject selectionCircle; 
     public CapsuleCollider hurtbox;
-    [SerializeField] private List<SkinnedMeshRenderer> renderers;
+    public List<SkinnedMeshRenderer> renderers;
     [Header("Assign these if ranged")]
     [SerializeField] private bool isMagic = false;
     [SerializeField] private Transform projectileSpawn;
@@ -278,6 +278,15 @@ public class SoldierModel : MonoBehaviour
             KillThis();
         }
     }
+
+    public void UpdateVisibility()
+    { 
+        foreach (Renderer rend in renderers)
+        {
+            rend.enabled = formPos.showSoldierModels;
+            //rend.material.color = formPos.farAwayIcon.color;
+        }
+    }
     public void CheckForPendingDamage()
     {
         if (pendingDamage > 0 || pendingArmorPiercingDamage > 0)
@@ -480,7 +489,7 @@ public class SoldierModel : MonoBehaviour
             SetMoving(false);
             return;
         }
-        else if (formPos.movementManuallyStopped || knockedDown || airborne)
+        else if (knockedDown || airborne)
         {
             SetMoving(false);
             return;
@@ -1430,8 +1439,9 @@ public class SoldierModel : MonoBehaviour
         { 
             foreach (SkinnedMeshRenderer item in renderers)
             {
+                item.enabled = true;
                 item.material.color = Color.gray;
-            }
+            } 
         }
         DelayedDisable();
     }

@@ -9,6 +9,7 @@ public class FightManager : MonoBehaviour
     private Vector3 clickPosition;
 
     public List<FormationPosition> allFormations;
+    public FormationPosition[] allArray;
 
     public List<FormationPosition> yourFormations;
     public List<FormationPosition> aiFormations;
@@ -82,12 +83,15 @@ public class FightManager : MonoBehaviour
 
     private void Start()
     {
+        allArray = new FormationPosition[30];
+
         battleUI.SetActive(false); 
         InvokeRepeating("AIBrain", 0f, 1f);
         InvokeRepeating("AIBrainMage", 5f, 5f); //don't do immediately, not urgent
 
         allFormations.Clear();
         FormationPosition[] array = FindObjectsOfType<FormationPosition>();
+        allArray = array;
         foreach (FormationPosition item in array)
         {
             allFormations.Add(item);

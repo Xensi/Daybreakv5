@@ -23,6 +23,10 @@ PrefabInstance:
       propertyPath: secondRowOffsetAmount
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 98565761933592747, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 3ca461f934157d34ea81cf3f08b10655, type: 3}
     - target: {fileID: 393470069997403603, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: m_Radius
       value: 4
