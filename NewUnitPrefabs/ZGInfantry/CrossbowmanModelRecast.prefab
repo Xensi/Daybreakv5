@@ -692,7 +692,7 @@ MonoBehaviour:
   traversableTags: -1
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
-    value: -1
+    value: 1
 --- !u!114 &5827362390270535189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -718,6 +718,7 @@ MonoBehaviour:
   - {fileID: 4254795548668518836}
   - {fileID: 6484654289031379952}
   - {fileID: 5635665277290162447}
+  maxFiringAngle: 45
   isMagic: 0
   projectileSpawn: {fileID: 982202589084974697}
   projectile: {fileID: 8333262704199657843, guid: 271be5a4804644c448122b73d5e8fe0a, type: 3}
@@ -729,6 +730,8 @@ MonoBehaviour:
   projectileDeviationAmount: 15
   projectileDeviationAmountVertical: 5
   attackBox: {fileID: 0}
+  spine: {fileID: 8510760356686029061}
+  head: {fileID: 9075106528872190667}
   startingMaxSpeed: 0
   adjustWalkSpeedVisually: 1
   playIdleAnims: 0
@@ -1189,5 +1192,15 @@ SkinnedMeshRenderer:
 --- !u!95 &7556566186551913322 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 3663773504485849952, guid: 39f50357b60e3c44f8b438475dd3c753, type: 3}
+  m_PrefabInstance: {fileID: 6486879452708622346}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8510760356686029061 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3177937207772393743, guid: 39f50357b60e3c44f8b438475dd3c753, type: 3}
+  m_PrefabInstance: {fileID: 6486879452708622346}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &9075106528872190667 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2879848758734684865, guid: 39f50357b60e3c44f8b438475dd3c753, type: 3}
   m_PrefabInstance: {fileID: 6486879452708622346}
   m_PrefabAsset: {fileID: 0}

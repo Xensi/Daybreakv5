@@ -20,6 +20,10 @@ PrefabInstance:
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 29422916108755641, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
+      propertyPath: engageEnemyRadius
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 29422916108755641, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: secondRowOffsetAmount
       value: 0.5
       objectReference: {fileID: 0}

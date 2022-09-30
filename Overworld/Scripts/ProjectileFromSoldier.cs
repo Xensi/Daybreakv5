@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 public class ProjectileFromSoldier : MonoBehaviour
-{
+{ 
     [SerializeField] private Rigidbody rigid;
     public FormationPosition formPosParent;
     public SoldierModel soldierParent;
@@ -164,8 +164,42 @@ public class ProjectileFromSoldier : MonoBehaviour
                         if (bodyPart != null)
                         {
                             damageMult = bodyPart.multiplierDamage;
+                            float randomX = UnityEngine.Random.Range(-360, 360);
+                            float randomY = UnityEngine.Random.Range(-360, 360);
+                            float randomZ = UnityEngine.Random.Range(-360, 360);
+                            float x = UnityEngine.Random.Range(-.1f, .1f);
+                            float y = UnityEngine.Random.Range(-.1f, .1f);
+                            float z = UnityEngine.Random.Range(-.1f, .1f);
+                            Vector3 newVec = new Vector3(x, y, z);
+                            float modDamage = damage * .5f;
+                            Vector3 spawnVec;
+                            Vector3 heading;
+                            if (bodyPart.type == BodyPart.BodyType.Head)
+                            {
+                                spawnVec = hitModel.head.position;
+                                heading = hitModel.head.position - transform.position;
+                            }
+                            else
+                            {
+                                spawnVec = hitModel.spine.position;
+                                heading = hitModel.spine.position - transform.position;
+                            }
+                            GameObject decal = Instantiate(blood, spawnVec + newVec, Quaternion.identity);
+
+                            if (bodyPart.type == BodyPart.BodyType.Head)
+                            {
+                                decal.transform.parent = hitModel.head;
+                            }
+                            else
+                            {
+                                decal.transform.parent = hitModel.spine;
+                            }
+                            decal.transform.rotation = Quaternion.LookRotation(heading);
+                            decal.transform.localScale = new Vector3(modDamage, modDamage, modDamage);
                         }
                         hitModel.SufferDamage(damage, armorPiercingDamage, soldierParent, damageMult); 
+
+
 
                         penetrationNum--;
                         if (penetrationNum <= 0)

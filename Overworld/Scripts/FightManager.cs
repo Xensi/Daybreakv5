@@ -139,14 +139,28 @@ public class FightManager : MonoBehaviour
         float newRadius = 200;
         foreach (FormationPosition formPos in aiFormations)
         {
-            formPos.engageEnemyRadius = newRadius;
+            if (formPos.soldierBlock.melee)
+            { 
+                formPos.engageEnemyRadius = newRadius;
+            }
+            else
+            { 
+                formPos.engageEnemyRadius = formPos.soldierBlock.modelAttackRange;
+            }
         }
     }
     private void AISetDefaultPursueRadius()
     {
         foreach (FormationPosition formPos in aiFormations)
         {
-            formPos.engageEnemyRadius = formPos.startingPursueRadius;
+            if (formPos.soldierBlock.melee)
+            {
+                formPos.engageEnemyRadius = formPos.startingPursueRadius;
+            }
+            else
+            {
+                formPos.engageEnemyRadius = formPos.soldierBlock.modelAttackRange;
+            }
         }
     }
     private void AIAllMagesPickTargetsAndFire()

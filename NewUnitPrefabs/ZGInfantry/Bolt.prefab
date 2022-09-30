@@ -30,6 +30,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 382391263811580011}
   - {fileID: 2741586137240003322}
@@ -60,7 +61,8 @@ MonoBehaviour:
   explosionEffect: {fileID: 0}
   isModelProj: 0
   startingPos: {x: 0, y: 0, z: 0}
-  blood: {fileID: 391419766968761899, guid: abd561fe7477c0b42865b82a76206f70, type: 3}
+  blood: {fileID: 8400456648272025703, guid: fb2c3621f7f85fc44a3e9d67e06be1fc, type: 3}
+  shouldAlwaysSpawnExplosion: 0
 --- !u!136 &6003265907274017126
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -268,6 +270,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 1.007}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7514213114595233917}
   m_RootOrder: 1
@@ -284,6 +287,7 @@ TrailRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 0
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
@@ -460,13 +464,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c5f04afe466adf64da624459dc7dd29f, type: 3}
---- !u!1 &1010308767193230033 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: c5f04afe466adf64da624459dc7dd29f, type: 3}
-  m_PrefabInstance: {fileID: 199354280372524928}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &382391263811580011 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c5f04afe466adf64da624459dc7dd29f, type: 3}
+  m_PrefabInstance: {fileID: 199354280372524928}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1010308767193230033 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: c5f04afe466adf64da624459dc7dd29f, type: 3}
   m_PrefabInstance: {fileID: 199354280372524928}
   m_PrefabAsset: {fileID: 0}

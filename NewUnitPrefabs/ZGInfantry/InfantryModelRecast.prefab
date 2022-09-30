@@ -692,7 +692,7 @@ MonoBehaviour:
   traversableTags: -1
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
-    value: -1
+    value: 1
 --- !u!114 &5827362390270535189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -718,6 +718,7 @@ MonoBehaviour:
   - {fileID: 3064606093387055564}
   - {fileID: 5221263736931883912}
   - {fileID: 6899055817630910839}
+  maxFiringAngle: 45
   isMagic: 0
   projectileSpawn: {fileID: 0}
   projectile: {fileID: 0}
@@ -729,6 +730,8 @@ MonoBehaviour:
   projectileDeviationAmount: 5
   projectileDeviationAmountVertical: 5
   attackBox: {fileID: 5735511218097740638}
+  spine: {fileID: 7464701473027703165}
+  head: {fileID: 7816833113569948339}
   startingMaxSpeed: 6
   adjustWalkSpeedVisually: 0.5
   playIdleAnims: 0
@@ -1188,6 +1191,16 @@ CapsuleCollider:
 --- !u!137 &6899055817630910839 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 625423117876751549, guid: 8de224ef566183041ab2c56424e1363f, type: 3}
+  m_PrefabInstance: {fileID: 6274549701042234826}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7464701473027703165 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3496024511231370423, guid: 8de224ef566183041ab2c56424e1363f, type: 3}
+  m_PrefabInstance: {fileID: 6274549701042234826}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7816833113569948339 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4281047447167244153, guid: 8de224ef566183041ab2c56424e1363f, type: 3}
   m_PrefabInstance: {fileID: 6274549701042234826}
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &8743151444816694034 stripped

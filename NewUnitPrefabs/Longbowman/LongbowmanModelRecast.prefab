@@ -692,7 +692,7 @@ MonoBehaviour:
   traversableTags: -1
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
-    value: -1
+    value: 1
 --- !u!114 &2286667199278184226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -718,6 +718,7 @@ MonoBehaviour:
   - {fileID: 3819089584907609487}
   - {fileID: 5041979054681886629}
   - {fileID: 5207736942756355212}
+  maxFiringAngle: 45
   isMagic: 0
   projectileSpawn: {fileID: 2316999527040409997}
   projectile: {fileID: 8333262704199657843, guid: 1e1eb2ce0b65ee24cbb6d00700ef8278, type: 3}
@@ -729,6 +730,8 @@ MonoBehaviour:
   projectileDeviationAmount: 15
   projectileDeviationAmountVertical: 5
   attackBox: {fileID: 0}
+  spine: {fileID: 6995905977414515302}
+  head: {fileID: 5999993609894343954}
   startingMaxSpeed: 0
   adjustWalkSpeedVisually: 1
   playIdleAnims: 0
@@ -1180,9 +1183,19 @@ SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 5369188117545010173, guid: 0aed8b0a47b84404e900236a202f4621, type: 3}
   m_PrefabInstance: {fileID: 200033107069312881}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &5999993609894343954 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5873515709080971875, guid: 0aed8b0a47b84404e900236a202f4621, type: 3}
+  m_PrefabInstance: {fileID: 200033107069312881}
+  m_PrefabAsset: {fileID: 0}
 --- !u!137 &6289457300616995794 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 6164879347844676771, guid: 0aed8b0a47b84404e900236a202f4621, type: 3}
+  m_PrefabInstance: {fileID: 200033107069312881}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6995905977414515302 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7192488739686180119, guid: 0aed8b0a47b84404e900236a202f4621, type: 3}
   m_PrefabInstance: {fileID: 200033107069312881}
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &9211102524227596297 stripped

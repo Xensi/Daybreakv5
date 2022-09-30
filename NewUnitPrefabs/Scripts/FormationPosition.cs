@@ -203,8 +203,8 @@ public class FormationPosition : MonoBehaviour
         }
         else
         {
-            float defaultRangedRadius = 160;
-            engageEnemyRadius = defaultRangedRadius;
+            //float defaultRangedRadius = 160;
+            engageEnemyRadius = soldierBlock.modelAttackRange;
         }
         startingPursueRadius = engageEnemyRadius;
     }
@@ -403,7 +403,8 @@ public class FormationPosition : MonoBehaviour
         CheckForEmptyPositionsToFill();
 
         movingSpeed = Mathf.Sqrt(Mathf.Pow(aiPath.velocity.x, 2) + Mathf.Pow(aiPath.velocity.z, 2)); //calculate speed vector
-        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 0, 10), transform.position.z);
+        float magic = 15;
+        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, magic, magic+1), transform.position.z);
         FixRotation();
         UpdateLineRenderer();
         FastSoldierUpdate();
@@ -678,9 +679,9 @@ public class FormationPosition : MonoBehaviour
 
         height = height / num;
         float offset = .5f;
-        height += offset;
-        farAwayIcon.transform.localPosition = new Vector3(farAwayIcon.transform.localPosition.x, height, farAwayIcon.transform.localPosition.z); //set to average height
-        farAwayIconMask.transform.localPosition = new Vector3(farAwayIconMask.transform.localPosition.x, height, farAwayIconMask.transform.localPosition.z);
+        height += offset; 
+        farAwayIcon.transform.position = new Vector3(farAwayIcon.transform.position.x, height, farAwayIcon.transform.position.z); //set to average height
+        farAwayIconMask.transform.position = new Vector3(farAwayIconMask.transform.position.x, height, farAwayIconMask.transform.position.z);
     }
     private void UpdateSpeed()
     {
@@ -895,8 +896,8 @@ public class FormationPosition : MonoBehaviour
             { 
                 charController.radius = Mathf.Clamp(charRadius - (num * 0.5f), .5f, 4.5f);
             }
-
-            posParentTransform.localPosition = new Vector3(-4.5f, 0, 3.5f - num * .5f);
+            float offset = 0;
+            posParentTransform.localPosition = new Vector3(-4.5f, offset, 3.5f - num * .5f);
             int x = 10;
             int y = 4;
             int math = z - num;

@@ -16,6 +16,7 @@ public class SoldierModel : MonoBehaviour
     public CapsuleCollider hurtbox;
     public List<SkinnedMeshRenderer> renderers;
     [Header("Assign these if ranged")]
+    [Range(0.0f, 45.0f)] [SerializeField] private float maxFiringAngle = 45; 
     [SerializeField] private bool isMagic = false;
     [SerializeField] private Transform projectileSpawn;
     [SerializeField] private ProjectileFromSoldier projectile;
@@ -30,6 +31,8 @@ public class SoldierModel : MonoBehaviour
     [Header("Assign this if needed (cavalry, braced inf)")]
     [SerializeField] private AttackBox attackBox;
     [Header("Change these per unit")]
+    public Transform spine;
+    public Transform head;
 
     [SerializeField] private float startingMaxSpeed = 0; //defined by richai starting maxspeed settings, typically walk speed
     [SerializeField] private float adjustWalkSpeedVisually = 1;
@@ -1270,7 +1273,7 @@ public class SoldierModel : MonoBehaviour
             angle = dist * 0.5f;  
 
 
-            float clamped = Mathf.Clamp(angle, 0, 45);
+            float clamped = Mathf.Clamp(angle, 0, maxFiringAngle);
             float deviation = projectileDeviationAmount * dist * 0.01f;
 
             float clampedDeviation = Mathf.Clamp(deviation, 2, 999);

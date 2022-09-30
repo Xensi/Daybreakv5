@@ -116,7 +116,7 @@ MonoBehaviour:
   traversableTags: -1
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
-    value: -1
+    value: 1
 --- !u!114 &1164813293295783821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,6 +142,7 @@ MonoBehaviour:
   - {fileID: 2834965373750718285}
   - {fileID: 227168425816925057}
   - {fileID: 5385963459824893354}
+  maxFiringAngle: 45
   isMagic: 0
   projectileSpawn: {fileID: 0}
   projectile: {fileID: 0}
@@ -153,6 +154,8 @@ MonoBehaviour:
   projectileDeviationAmount: 5
   projectileDeviationAmountVertical: 5
   attackBox: {fileID: 0}
+  spine: {fileID: 0}
+  head: {fileID: 0}
   startingMaxSpeed: 0
   adjustWalkSpeedVisually: 1
   playIdleAnims: 0
