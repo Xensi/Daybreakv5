@@ -719,6 +719,7 @@ MonoBehaviour:
   - {fileID: 5041979054681886629}
   - {fileID: 5207736942756355212}
   maxFiringAngle: 45
+  minFiringAngle: 45
   isMagic: 0
   projectileSpawn: {fileID: 2316999527040409997}
   projectile: {fileID: 8333262704199657843, guid: 1e1eb2ce0b65ee24cbb6d00700ef8278, type: 3}

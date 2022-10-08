@@ -6,6 +6,7 @@ using TMPro;
 
 public class FightManager : MonoBehaviour
 {
+    [SerializeField] private GameObject destPrefab;
     private Vector3 clickPosition;
 
     public List<FormationPosition> allFormations;
@@ -23,7 +24,7 @@ public class FightManager : MonoBehaviour
     [SerializeField] private Vector2 endPos;
     [SerializeField] private bool started = false;
 
-    [SerializeField] private Camera cam;
+    public Camera cam;
 
     [SerializeField] private Transform rotationTarget;
     [SerializeField] private Vector3 heldPosition;
@@ -69,6 +70,10 @@ public class FightManager : MonoBehaviour
     [SerializeField] private int abilityNumber = 0;
     [SerializeField] private bool drawingLine = false;
 
+    [SerializeField] private Slider lodSlider;
+
+    [SerializeField] private List<Vector3> destinations;
+
      
     private enum combatStrategy
     {
@@ -81,6 +86,10 @@ public class FightManager : MonoBehaviour
     {
     } 
 
+    public void ModifyLOD()
+    {
+        QualitySettings.lodBias = lodSlider.value;
+    }
     private void Start()
     {
         allArray = new FormationPosition[30];
@@ -103,6 +112,7 @@ public class FightManager : MonoBehaviour
             {
                 aiFormations.Add(item);
             }
+            //item.ClearOrders(); //resets targets
         }
     }
 
@@ -1242,7 +1252,7 @@ public class FightManager : MonoBehaviour
 
         if (Input.GetMouseButtonUp(1) && !wasFocusFiring && !wasMagicTargeting) //set rotation and confirm movement
         { 
-            if (selectedFormations.Count == 1 || lineFormationPosList.Count == 1)
+            if (selectedFormations.Count == 1)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -1294,27 +1304,108 @@ public class FightManager : MonoBehaviour
                 {
                     formList.Add(selForm);
                 }
-                foreach (Vector3 pos in lineFormationPosList) //for each point
+                if (lineFormationPosList.Count > 1)
                 {
-                    FormationPosition tempFormPos = null;
-                    float currentDistance = 99999;
-                    foreach (FormationPosition item in formList) //get closest formation
+                    foreach (Vector3 pos in lineFormationPosList) //for each point
                     {
-                        float newDistance = Vector3.Distance(item.transform.position, pos);
-                        if (newDistance < currentDistance)
+                        FormationPosition tempFormPos = null;
+                        float currentDistance = 99999;
+                        foreach (FormationPosition item in formList) //get closest formation
                         {
-                            currentDistance = newDistance;
-                            tempFormPos = item;
+                            float newDistance = Vector3.Distance(item.transform.position, pos);
+                            if (newDistance < currentDistance)
+                            {
+                                currentDistance = newDistance;
+                                tempFormPos = item;
+                            }
                         }
+                        tempFormPos.aiTarget.transform.position = pos; //tell closest formation to go there 
+                        tempFormPos.destinationsList.Clear();
+                        tempFormPos.destinationsList.Add(pos);
+                        tempFormPos.pathSet = true;
+                        tempFormPos.obeyingMovementOrder = true;
+                        tempFormPos.shouldRotateToward = false;
+                        formList.Remove(tempFormPos); //so it can't be chosen again //if this becomes a problem then make another list
                     }
-                    tempFormPos.aiTarget.transform.position = pos; //tell closest formation to go there 
-                    tempFormPos.destinationsList.Clear();
-                    tempFormPos.destinationsList.Add(pos);
-                    tempFormPos.pathSet = true;
-                    tempFormPos.obeyingMovementOrder = true;
-                    tempFormPos.shouldRotateToward = false;
-                    formList.Remove(tempFormPos); //so it can't be chosen again //if this becomes a problem then make another list
-                } 
+                }
+                else if (lineFormationPosList.Count == 1)
+                { 
+                    //get avg pos
+                    float x = 0;
+                    float y = 0;
+                    float z = 0;
+                    for (int i = 0; i < selectedFormations.Count; i++)
+                    {
+                        x += selectedFormations[i].transform.position.x;
+                        y += selectedFormations[i].transform.position.y;
+                        z += selectedFormations[i].transform.position.z;
+                    }
+                    x /= selectedFormations.Count;
+                    y /= selectedFormations.Count;
+                    z /= selectedFormations.Count;
+                    Vector3 avg = new Vector3(x, y, z);
+
+                    GameObject parent = Instantiate(destPrefab, avg, Quaternion.identity);
+                    //make gameobjects to represent our destination, starting at our position
+                    List<GameObject> dests = new List<GameObject>();
+                    foreach (FormationPosition form in selectedFormations)
+                    {
+                        GameObject child = Instantiate(forceFireTargetPrefab, form.transform.position, Quaternion.identity, parent.transform);
+                        dests.Add(child);
+                    }
+                    //parent gameobjects to big one
+
+                    Vector3 heading = lineFormationPosList[0] - avg;
+                    //rotate parent to face destination
+                    /*if (Vector3.Angle(heading, -transform.forward) <= threshold)
+                    { 
+                    }
+                    else
+                    {
+                         
+                    }*/
+                    parent.transform.rotation = Quaternion.LookRotation(heading, Vector3.up);
+
+                    //move parent to destination
+                    parent.transform.position = lineFormationPosList[0];
+
+                    for (int i = 0; i < selectedFormations.Count; i++)
+                    {
+                        FormationPosition form = selectedFormations[i];
+                        Vector3 pos = dests[i].transform.position;
+
+                        form.aiTarget.transform.position = pos; //tell closest formation to go there 
+                        form.destinationsList.Clear();
+                        form.destinationsList.Add(pos);
+                        form.pathSet = true;
+                        form.obeyingMovementOrder = true;
+                        form.shouldRotateToward = false;
+                    }
+
+                    //Destroy(parent);
+                    /*//Debug.Log("yesir");
+                   
+                    //Debug.Log(avg); //avg good
+
+                    destinations.Clear();
+                    for (int i = 0; i < selectedFormations.Count; i++)
+                    {
+                        FormationPosition selForm = selectedFormations[i]; 
+                        *//*float distance = Vector3.Distance(selectedFormations[i].transform.position, lineFormationPosList[0]);
+                        Debug.Log(distance);*//*
+                        Vector3 pos = selectedFormations[i].transform.position + (heading); //push forwards
+                        destinations.Add(pos);
+
+                        selForm.aiTarget.transform.position = destinations[i]; //tell closest formation to go there 
+                        selForm.destinationsList.Clear();
+                        selForm.destinationsList.Add(destinations[i]);
+                        selForm.pathSet = true;
+                        selForm.obeyingMovementOrder = true;
+                        selForm.shouldRotateToward = false;
+                        //Debug.Log(destinations[i]);
+                    } */
+                }
+
             }
         }
     }

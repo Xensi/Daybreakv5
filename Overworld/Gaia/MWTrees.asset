@@ -94,14 +94,14 @@ MonoBehaviour:
   m_height: 10
   m_rotation: 0
   m_isWorldmapSpawner: 0
-  m_spawnRange: 512
+  m_spawnRange: 128
   m_generateRandomSeed: 0
   m_randomSeed: 0
-  m_spawnDensity: 0.8
+  m_spawnDensity: 1
   m_resourcesPath: 
   m_spawnerRules:
   - m_name: SpawnTree
-    m_guid: 0d72b328-daa3-4277-941d-50b92adc51fc
+    m_guid: 8b7bba0f-a35f-4a64-a394-8c9345d92656
     m_useExtendedSpawn: 0
     m_minRequiredFitness: 0.25
     m_minInstanceRequiredFitness: 0
@@ -128,13 +128,13 @@ MonoBehaviour:
     m_noiseStrength: 1
     m_noiseInvert: 0
     m_isActive: 1
-    m_isFoldedOut: 0
+    m_isFoldedOut: 1
     m_currInstanceCnt: 0
     m_activeInstanceCnt: 0
     m_inactiveInstanceCnt: 0
     m_resourceSettingsFoldedOut: 0
     m_isHelpActive: 0
-    m_spawnedInstances: 0
+    m_spawnedInstances: 107
     m_goSpawnTargetMode: 0
     m_goSpawnTarget: {fileID: 0}
     m_terrainGOSpawnTargetName: Gaia Game Object Spawns

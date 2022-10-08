@@ -1,0 +1,483 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1d61257710f55f478816040e1d1dfc9, type: 3}
+  m_Name: MWBIOME-GrassDetail
+  m_EditorClassIdentifier: 
+  m_resources:
+    m_resourcesID: b5a9c1d7-983e-43c4-b0b6-bd6fd25f76b1
+    m_name: NewResources
+    m_beachHeight: 5
+    m_terrainHeight: 1000
+    m_texturePrototypes: []
+    m_detailPrototypes: []
+    m_treePrototypes:
+    - m_name: Prefab_Grass_Group_02
+      m_desktopPrefab: {fileID: 4443322738932377894, guid: bc5b42b028de0d147b9ff044c717abab, type: 3}
+      m_desktopPrefabFileName: 
+      m_mobilePrefabFileName: 
+      m_bendFactor: 0
+      m_healthyColour: {r: 1, g: 1, b: 1, a: 1}
+      m_dryColour: {r: 1, g: 1, b: 1, a: 1}
+      m_snapToTerrain: 1
+      m_customOffset: 0
+      m_minYOffset: -2
+      m_maxYOffset: 2
+      m_yOffsetBasedOn: 0
+      m_spawnScale: 1
+      m_minWidth: 0.75
+      m_maxWidth: 1.5
+      m_minHeight: 0.75
+      m_maxHeight: 1.5
+      m_widthRandomPercentage: 0.5
+      m_heightRandomPercentage: 0.5
+      m_lastUsedSpawnScale: 1
+      m_lastUsedMinWidth: 0.75
+      m_lastUsedMaxWidth: 1.5
+      m_lastUsedMinHeight: 0.75
+      m_lastUsedMaxHeight: 1.5
+      m_lastUsedWidthRandomPercentage: 0.5
+      m_lastUsedHeightRandomPercentage: 0.5
+      m_spawnCriteria: []
+      m_spawnExtensions: []
+      m_instancesFoldOut: 0
+      m_dnaFoldedOut: 0
+      m_useFlora: 0
+      m_floraLODs: []
+      m_detailerSettingsObjectAssetGUID: 
+      m_detailerSettingsObjectInstanceID: 0
+    - m_name: Prefab_Grass_Group_01
+      m_desktopPrefab: {fileID: 7658452977839805270, guid: 7bfc69592d8bf2a4e9e5fa6842e93043, type: 3}
+      m_desktopPrefabFileName: 
+      m_mobilePrefabFileName: 
+      m_bendFactor: 0
+      m_healthyColour: {r: 1, g: 1, b: 1, a: 1}
+      m_dryColour: {r: 1, g: 1, b: 1, a: 1}
+      m_snapToTerrain: 1
+      m_customOffset: 0
+      m_minYOffset: -2
+      m_maxYOffset: 2
+      m_yOffsetBasedOn: 0
+      m_spawnScale: 1
+      m_minWidth: 0.75
+      m_maxWidth: 1.5
+      m_minHeight: 0.75
+      m_maxHeight: 1.5
+      m_widthRandomPercentage: 0.5
+      m_heightRandomPercentage: 0.5
+      m_lastUsedSpawnScale: 1
+      m_lastUsedMinWidth: 0.75
+      m_lastUsedMaxWidth: 1.5
+      m_lastUsedMinHeight: 0.75
+      m_lastUsedMaxHeight: 1.5
+      m_lastUsedWidthRandomPercentage: 0.5
+      m_lastUsedHeightRandomPercentage: 0.5
+      m_spawnCriteria: []
+      m_spawnExtensions: []
+      m_instancesFoldOut: 0
+      m_dnaFoldedOut: 0
+      m_useFlora: 0
+      m_floraLODs: []
+      m_detailerSettingsObjectAssetGUID: 
+      m_detailerSettingsObjectInstanceID: 0
+    - m_name: Prefab_Grass_03
+      m_desktopPrefab: {fileID: 3494242108322356216, guid: 0705a288beaec634f9c86420f3aa893a, type: 3}
+      m_desktopPrefabFileName: 
+      m_mobilePrefabFileName: 
+      m_bendFactor: 0
+      m_healthyColour: {r: 1, g: 1, b: 1, a: 1}
+      m_dryColour: {r: 1, g: 1, b: 1, a: 1}
+      m_snapToTerrain: 1
+      m_customOffset: 0
+      m_minYOffset: -2
+      m_maxYOffset: 2
+      m_yOffsetBasedOn: 0
+      m_spawnScale: 1
+      m_minWidth: 0.75
+      m_maxWidth: 1.5
+      m_minHeight: 0.75
+      m_maxHeight: 1.5
+      m_widthRandomPercentage: 0.5
+      m_heightRandomPercentage: 0.5
+      m_lastUsedSpawnScale: 1
+      m_lastUsedMinWidth: 0.75
+      m_lastUsedMaxWidth: 1.5
+      m_lastUsedMinHeight: 0.75
+      m_lastUsedMaxHeight: 1.5
+      m_lastUsedWidthRandomPercentage: 0.5
+      m_lastUsedHeightRandomPercentage: 0.5
+      m_spawnCriteria: []
+      m_spawnExtensions: []
+      m_instancesFoldOut: 0
+      m_dnaFoldedOut: 0
+      m_useFlora: 0
+      m_floraLODs: []
+      m_detailerSettingsObjectAssetGUID: 
+      m_detailerSettingsObjectInstanceID: 0
+    - m_name: Prefab_Grass_02
+      m_desktopPrefab: {fileID: 6949468860331343610, guid: 1f8b97ef7181ef145a4563be5cae4437, type: 3}
+      m_desktopPrefabFileName: 
+      m_mobilePrefabFileName: 
+      m_bendFactor: 0
+      m_healthyColour: {r: 1, g: 1, b: 1, a: 1}
+      m_dryColour: {r: 1, g: 1, b: 1, a: 1}
+      m_snapToTerrain: 1
+      m_customOffset: 0
+      m_minYOffset: -2
+      m_maxYOffset: 2
+      m_yOffsetBasedOn: 0
+      m_spawnScale: 1
+      m_minWidth: 0.75
+      m_maxWidth: 1.5
+      m_minHeight: 0.75
+      m_maxHeight: 1.5
+      m_widthRandomPercentage: 0.5
+      m_heightRandomPercentage: 0.5
+      m_lastUsedSpawnScale: 1
+      m_lastUsedMinWidth: 0.75
+      m_lastUsedMaxWidth: 1.5
+      m_lastUsedMinHeight: 0.75
+      m_lastUsedMaxHeight: 1.5
+      m_lastUsedWidthRandomPercentage: 0.5
+      m_lastUsedHeightRandomPercentage: 0.5
+      m_spawnCriteria: []
+      m_spawnExtensions: []
+      m_instancesFoldOut: 0
+      m_dnaFoldedOut: 0
+      m_useFlora: 0
+      m_floraLODs: []
+      m_detailerSettingsObjectAssetGUID: 
+      m_detailerSettingsObjectInstanceID: 0
+    - m_name: Prefab_Grass_01
+      m_desktopPrefab: {fileID: 843049207190869251, guid: 03070ba6403d29542b5be52960ab6214, type: 3}
+      m_desktopPrefabFileName: 
+      m_mobilePrefabFileName: 
+      m_bendFactor: 0
+      m_healthyColour: {r: 1, g: 1, b: 1, a: 1}
+      m_dryColour: {r: 1, g: 1, b: 1, a: 1}
+      m_snapToTerrain: 1
+      m_customOffset: 0
+      m_minYOffset: -2
+      m_maxYOffset: 2
+      m_yOffsetBasedOn: 0
+      m_spawnScale: 1
+      m_minWidth: 0.75
+      m_maxWidth: 1.5
+      m_minHeight: 0.75
+      m_maxHeight: 1.5
+      m_widthRandomPercentage: 0.5
+      m_heightRandomPercentage: 0.5
+      m_lastUsedSpawnScale: 1
+      m_lastUsedMinWidth: 0.75
+      m_lastUsedMaxWidth: 1.5
+      m_lastUsedMinHeight: 0.75
+      m_lastUsedMaxHeight: 1.5
+      m_lastUsedWidthRandomPercentage: 0.5
+      m_lastUsedHeightRandomPercentage: 0.5
+      m_spawnCriteria: []
+      m_spawnExtensions: []
+      m_instancesFoldOut: 0
+      m_dnaFoldedOut: 0
+      m_useFlora: 0
+      m_floraLODs: []
+      m_detailerSettingsObjectAssetGUID: 
+      m_detailerSettingsObjectInstanceID: 0
+    m_gameObjectPrototypes: []
+    m_spawnExtensionPrototypes: []
+    m_stampDistributionPrototypes: []
+    m_worldBiomeMaskPrototypes: []
+    m_probePrototypes: []
+    m_terrainModifierStampPrototypes: []
+  m_x: 0
+  m_y: 50
+  m_z: 0
+  m_width: 10
+  m_height: 10
+  m_rotation: 0
+  m_isWorldmapSpawner: 0
+  m_spawnRange: 128
+  m_generateRandomSeed: 0
+  m_randomSeed: 0
+  m_spawnDensity: 1
+  m_resourcesPath: 
+  m_spawnerRules:
+  - m_name: New Tree 1
+    m_guid: 2d230152-8a45-41bf-8335-8810a8330c17
+    m_useExtendedSpawn: 0
+    m_minRequiredFitness: 0.25
+    m_minInstanceRequiredFitness: 0
+    m_failureRate: 0
+    m_maxInstances: 40000000
+    m_ignoreMaxInstances: 0
+    m_minDirection: 0
+    m_maxDirection: 359.9
+    m_locationIncrementMin: 5
+    m_locationIncrementMax: 45
+    m_jitterPercent: 1
+    m_boundsCheckQuality: 25
+    m_resourceType: 2
+    m_resourceIdx: 0
+    m_imageMasks: []
+    m_visualisationColor: {r: 0.9842865, g: 0, b: 1, a: 1}
+    m_noiseMask: 0
+    m_noiseMaskSeed: 0
+    m_noiseMaskOctaves: 8
+    m_noiseMaskPersistence: 0.25
+    m_noiseMaskFrequency: 1
+    m_noiseMaskLacunarity: 1.5
+    m_noiseZoom: 50
+    m_noiseStrength: 1
+    m_noiseInvert: 0
+    m_isActive: 1
+    m_isFoldedOut: 0
+    m_currInstanceCnt: 0
+    m_activeInstanceCnt: 0
+    m_inactiveInstanceCnt: 0
+    m_resourceSettingsFoldedOut: 0
+    m_isHelpActive: 0
+    m_spawnedInstances: 0
+    m_goSpawnTargetMode: 0
+    m_goSpawnTarget: {fileID: 0}
+    m_terrainGOSpawnTargetName: Gaia Game Object Spawns
+    m_terrainDetailDensity: 15
+    m_terrainDetailMinFitness: 0.5
+    m_terrainDetailFitnessBeginFadeOut: 0.6
+    m_createdBiomeController: {fileID: 0}
+    m_visibleInSceneHierarchy: 1
+    m_usesBoxStandIn: 0
+    m_boundsCollisionCheck: 0
+    m_changesHeightmap: 0
+    m_startOffsetX: 0
+    m_startOffsetZ: 0
+    m_collisionLayersToClear:
+      serializedVersion: 2
+      m_Bits: 0
+  - m_name: Prefab_Grass_Group_01
+    m_guid: 419e570f-f619-4756-a2f8-86e9e823dae3
+    m_useExtendedSpawn: 0
+    m_minRequiredFitness: 0.25
+    m_minInstanceRequiredFitness: 0
+    m_failureRate: 0
+    m_maxInstances: 40000000
+    m_ignoreMaxInstances: 0
+    m_minDirection: 0
+    m_maxDirection: 359.9
+    m_locationIncrementMin: 5
+    m_locationIncrementMax: 45
+    m_jitterPercent: 1
+    m_boundsCheckQuality: 25
+    m_resourceType: 2
+    m_resourceIdx: 1
+    m_imageMasks: []
+    m_visualisationColor: {r: 1, g: 0.5951564, b: 0, a: 1}
+    m_noiseMask: 0
+    m_noiseMaskSeed: 0
+    m_noiseMaskOctaves: 8
+    m_noiseMaskPersistence: 0.25
+    m_noiseMaskFrequency: 1
+    m_noiseMaskLacunarity: 1.5
+    m_noiseZoom: 50
+    m_noiseStrength: 1
+    m_noiseInvert: 0
+    m_isActive: 1
+    m_isFoldedOut: 0
+    m_currInstanceCnt: 0
+    m_activeInstanceCnt: 0
+    m_inactiveInstanceCnt: 0
+    m_resourceSettingsFoldedOut: 1
+    m_isHelpActive: 0
+    m_spawnedInstances: 0
+    m_goSpawnTargetMode: 0
+    m_goSpawnTarget: {fileID: 0}
+    m_terrainGOSpawnTargetName: Gaia Game Object Spawns
+    m_terrainDetailDensity: 15
+    m_terrainDetailMinFitness: 0.5
+    m_terrainDetailFitnessBeginFadeOut: 0.6
+    m_createdBiomeController: {fileID: 0}
+    m_visibleInSceneHierarchy: 1
+    m_usesBoxStandIn: 0
+    m_boundsCollisionCheck: 0
+    m_changesHeightmap: 0
+    m_startOffsetX: 0
+    m_startOffsetZ: 0
+    m_collisionLayersToClear:
+      serializedVersion: 2
+      m_Bits: 0
+  - m_name: Prefab_Grass_03
+    m_guid: 9d6d21b6-3169-4dac-a71f-cf2f6f484c14
+    m_useExtendedSpawn: 0
+    m_minRequiredFitness: 0.25
+    m_minInstanceRequiredFitness: 0
+    m_failureRate: 0
+    m_maxInstances: 40000000
+    m_ignoreMaxInstances: 0
+    m_minDirection: 0
+    m_maxDirection: 359.9
+    m_locationIncrementMin: 5
+    m_locationIncrementMax: 45
+    m_jitterPercent: 1
+    m_boundsCheckQuality: 25
+    m_resourceType: 2
+    m_resourceIdx: 2
+    m_imageMasks: []
+    m_visualisationColor: {r: 0.4248103, g: 1, b: 0.056948043, a: 1}
+    m_noiseMask: 0
+    m_noiseMaskSeed: 0
+    m_noiseMaskOctaves: 8
+    m_noiseMaskPersistence: 0.25
+    m_noiseMaskFrequency: 1
+    m_noiseMaskLacunarity: 1.5
+    m_noiseZoom: 50
+    m_noiseStrength: 1
+    m_noiseInvert: 0
+    m_isActive: 1
+    m_isFoldedOut: 0
+    m_currInstanceCnt: 0
+    m_activeInstanceCnt: 0
+    m_inactiveInstanceCnt: 0
+    m_resourceSettingsFoldedOut: 0
+    m_isHelpActive: 0
+    m_spawnedInstances: 0
+    m_goSpawnTargetMode: 0
+    m_goSpawnTarget: {fileID: 0}
+    m_terrainGOSpawnTargetName: Gaia Game Object Spawns
+    m_terrainDetailDensity: 15
+    m_terrainDetailMinFitness: 0.5
+    m_terrainDetailFitnessBeginFadeOut: 0.6
+    m_createdBiomeController: {fileID: 0}
+    m_visibleInSceneHierarchy: 1
+    m_usesBoxStandIn: 0
+    m_boundsCollisionCheck: 0
+    m_changesHeightmap: 0
+    m_startOffsetX: 0
+    m_startOffsetZ: 0
+    m_collisionLayersToClear:
+      serializedVersion: 2
+      m_Bits: 0
+  - m_name: Prefab_Grass_03
+    m_guid: 94873bbb-c3a8-49dc-b010-31b0adc17db3
+    m_useExtendedSpawn: 0
+    m_minRequiredFitness: 0.25
+    m_minInstanceRequiredFitness: 0
+    m_failureRate: 0
+    m_maxInstances: 40000000
+    m_ignoreMaxInstances: 0
+    m_minDirection: 0
+    m_maxDirection: 359.9
+    m_locationIncrementMin: 5
+    m_locationIncrementMax: 45
+    m_jitterPercent: 1
+    m_boundsCheckQuality: 25
+    m_resourceType: 2
+    m_resourceIdx: 3
+    m_imageMasks: []
+    m_visualisationColor: {r: 0.09702945, g: 1, b: 0.08940075, a: 1}
+    m_noiseMask: 0
+    m_noiseMaskSeed: 0
+    m_noiseMaskOctaves: 8
+    m_noiseMaskPersistence: 0.25
+    m_noiseMaskFrequency: 1
+    m_noiseMaskLacunarity: 1.5
+    m_noiseZoom: 50
+    m_noiseStrength: 1
+    m_noiseInvert: 0
+    m_isActive: 1
+    m_isFoldedOut: 0
+    m_currInstanceCnt: 0
+    m_activeInstanceCnt: 0
+    m_inactiveInstanceCnt: 0
+    m_resourceSettingsFoldedOut: 0
+    m_isHelpActive: 0
+    m_spawnedInstances: 0
+    m_goSpawnTargetMode: 0
+    m_goSpawnTarget: {fileID: 0}
+    m_terrainGOSpawnTargetName: Gaia Game Object Spawns
+    m_terrainDetailDensity: 15
+    m_terrainDetailMinFitness: 0.5
+    m_terrainDetailFitnessBeginFadeOut: 0.6
+    m_createdBiomeController: {fileID: 0}
+    m_visibleInSceneHierarchy: 1
+    m_usesBoxStandIn: 0
+    m_boundsCollisionCheck: 0
+    m_changesHeightmap: 0
+    m_startOffsetX: 0
+    m_startOffsetZ: 0
+    m_collisionLayersToClear:
+      serializedVersion: 2
+      m_Bits: 0
+  - m_name: Prefab_Grass_02
+    m_guid: 59550e63-41a8-4742-aa22-989612be07aa
+    m_useExtendedSpawn: 0
+    m_minRequiredFitness: 0.25
+    m_minInstanceRequiredFitness: 0
+    m_failureRate: 0
+    m_maxInstances: 40000000
+    m_ignoreMaxInstances: 0
+    m_minDirection: 0
+    m_maxDirection: 359.9
+    m_locationIncrementMin: 5
+    m_locationIncrementMax: 45
+    m_jitterPercent: 1
+    m_boundsCheckQuality: 25
+    m_resourceType: 2
+    m_resourceIdx: 4
+    m_imageMasks: []
+    m_visualisationColor: {r: 1, g: 0.9499521, b: 0, a: 1}
+    m_noiseMask: 0
+    m_noiseMaskSeed: 0
+    m_noiseMaskOctaves: 8
+    m_noiseMaskPersistence: 0.25
+    m_noiseMaskFrequency: 1
+    m_noiseMaskLacunarity: 1.5
+    m_noiseZoom: 50
+    m_noiseStrength: 1
+    m_noiseInvert: 0
+    m_isActive: 1
+    m_isFoldedOut: 0
+    m_currInstanceCnt: 0
+    m_activeInstanceCnt: 0
+    m_inactiveInstanceCnt: 0
+    m_resourceSettingsFoldedOut: 0
+    m_isHelpActive: 0
+    m_spawnedInstances: 0
+    m_goSpawnTargetMode: 0
+    m_goSpawnTarget: {fileID: 0}
+    m_terrainGOSpawnTargetName: Gaia Game Object Spawns
+    m_terrainDetailDensity: 15
+    m_terrainDetailMinFitness: 0.5
+    m_terrainDetailFitnessBeginFadeOut: 0.6
+    m_createdBiomeController: {fileID: 0}
+    m_visibleInSceneHierarchy: 1
+    m_usesBoxStandIn: 0
+    m_boundsCollisionCheck: 0
+    m_changesHeightmap: 0
+    m_startOffsetX: 0
+    m_startOffsetZ: 0
+    m_collisionLayersToClear:
+      serializedVersion: 2
+      m_Bits: 0
+  m_showGizmos: 1
+  m_showDebug: 0
+  m_showTerrainHelper: 1
+  m_spawnMode: 0
+  imageMasks: []
+  m_clearSpawnsToggleTrees: 1
+  m_clearSpawnsToggleDetails: 0
+  m_clearSpawnsToggleGOs: 0
+  m_clearSpawnsToggleSpawnExtensions: 0
+  m_clearSpawnsToggleProbes: 0
+  m_clearSpawnsFor: 1
+  m_clearSpawnsFrom: 1
+  m_lastGUIDSaved: 6f117ee64b868e24f969193d3785642d
+  m_stampDensity: 0
+  m_stampJitter: 0.25
+  m_stampWidth: 100
+  m_stampHeight: 100

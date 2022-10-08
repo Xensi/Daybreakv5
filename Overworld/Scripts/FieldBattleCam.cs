@@ -18,6 +18,7 @@ public class FieldBattleCam : MonoBehaviour
     private void Start()
     {
         InvokeRepeating("FindFormationsNearMe", 1f, 1f);
+        //InvokeRepeating("UpdateFarAwayIcons", 0.1f, 0.1f);
     }
     private void Update()
     {
@@ -110,9 +111,12 @@ public class FieldBattleCam : MonoBehaviour
     }
     private void FindFormationsNearMe()
     {
-        foreach (FormationPosition item in fightManager.allFormations)
-        {
-            item.enableAnimations = false;
+        if (fightManager.allFormations.Count > 0)
+        { 
+            foreach (FormationPosition item in fightManager.allArray)
+            {
+                item.enableAnimations = false;
+            }
         }
         int layerMask = 1 << 23; //layer 23 formations
         int maxColliders = 10;
@@ -127,6 +131,6 @@ public class FieldBattleCam : MonoBehaviour
             { 
                 form.enableAnimations = true;
             }
-        }
+        } 
     } 
 }

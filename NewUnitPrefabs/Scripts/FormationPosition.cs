@@ -4,6 +4,8 @@ using UnityEngine;
 using Pathfinding;
 public class FormationPosition : MonoBehaviour
 {
+    private FightManager fightManager;
+    public int shotsHit = 0;
     public bool showSoldierModels = true;
     public SpriteRenderer farAwayIcon;
     public GameObject farAwayIconMask;
@@ -24,7 +26,7 @@ public class FormationPosition : MonoBehaviour
     public bool braced = false;
     public string team = "Altgard"; //Whose team are we on?
     public RichAI aiPath;
-    [SerializeField] private float threshold = .5f;
+    private float threshold = .5f;
     public List<FormationPosition> listOfNearbyEnemies;
     [SerializeField] private AIDestinationSetter aiDesSet;
     public Transform aiTarget;
@@ -165,18 +167,36 @@ public class FormationPosition : MonoBehaviour
 
     [SerializeField] private List<SoldierModel> modelsInFrontRowThatFired;
 
-    public bool fleeing = false; 
+    public bool fleeing = false;
+
+    public float averagePositionBasedOnSoldierModels = 0;
+
+    public Vector3 formationPositionBasedOnSoldierModels;
+
+    public GameObject missileTarget;
 
     private void Start()
     {
 
-        if (forwardControlZone != null)
+        int FormIcon = LayerMask.NameToLayer("FormIcon");
+        lineRenderer.gameObject.layer = FormIcon;
+        lineRenderer2.gameObject.layer = FormIcon;
+
+
+        float starting = 15;
+        transform.position = new Vector3(transform.position.x, starting, transform.position.z);
+        aiTarget.position = transform.position;
+        PlaceAITargetOnTerrain();
+
+
+        threshold = 1;
+        /*if (forwardControlZone != null)
         {
             if (type == FormationType.Infantry)
             {
                 forwardControlZone.enabled = true;
             }
-        }
+        }*/
 
         SetStandardEngagementRanges();
 
@@ -193,6 +213,19 @@ public class FormationPosition : MonoBehaviour
         }
         BeginUpdates();
 
+        //PlaceAITargetOnTerrain();
+    }
+
+    private void PlaceAITargetOnTerrain()
+    {
+        //aiTarget.transform.position
+        LayerMask layerMask = LayerMask.GetMask("Terrain");
+        RaycastHit hit;
+        Vector3 vec = new Vector3(aiTarget.position.x, 100, aiTarget.position.z);
+        if (Physics.Raycast(vec, Vector3.down, out hit, Mathf.Infinity, layerMask))
+        {
+            aiTarget.position = hit.point;
+        } 
     }
     private void SetStandardEngagementRanges()
     { 
@@ -330,16 +363,16 @@ public class FormationPosition : MonoBehaviour
         InvokeRepeating("VerySlowUpdate", 0f, 1f);
     } 
     public void CheckForEmptyPositionsToFill()
-    {
-        if (numberOfAliveSoldiers >= maxSoldiers)
+    { 
+        /*if (numberOfAliveSoldiers >= maxSoldiers)
         {
             return; 
-        }
+        }*/
         //also add a check to see if all spots are filled based on how many soldiers we have left
 
         Position position = soldierBlock.formationPositions[positionToCheck];
-
         positionToCheck++;
+        //PlacePositionOnGround(position);
         int cap = soldierBlock.formationPositions.Length;
         if (positionToCheck >= cap) //reset on 80 + 2
         {
@@ -348,6 +381,7 @@ public class FormationPosition : MonoBehaviour
 
         if (position != null) //found
         {
+            position.PlaceOnGround();
             if (position.assignedSoldierModel == null) //if null, then dead
             {
                 position.SeekReplacement();
@@ -404,7 +438,7 @@ public class FormationPosition : MonoBehaviour
 
         movingSpeed = Mathf.Sqrt(Mathf.Pow(aiPath.velocity.x, 2) + Mathf.Pow(aiPath.velocity.z, 2)); //calculate speed vector
         float magic = 15;
-        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, magic, magic+1), transform.position.z);
+        transform.position = new Vector3(transform.position.x, magic, transform.position.z);
         FixRotation();
         UpdateLineRenderer();
         FastSoldierUpdate();
@@ -514,6 +548,8 @@ public class FormationPosition : MonoBehaviour
     }
     private void UpdateFormationMovementStatus()
     {
+        float remainingDistance = Vector3.Distance(formationPositionBasedOnSoldierModels, aiTarget.transform.position);
+
         if (movementManuallyStopped)
         {
             SetMoving(false);
@@ -527,18 +563,18 @@ public class FormationPosition : MonoBehaviour
             }   
             else
             {
-                if (modelAttacking && soldierBlock.canBeRanged) //if ranged and attacking, freeze formation
+                if (modelAttacking && !soldierBlock.melee) //if ranged and attacking, freeze formation
                 {
                     SetMoving(false);
                     obeyingMovementOrder = false;
                 }
                 else
                 {
-                    if (aiPath.remainingDistance > threshold) // if there's still path to traverse
+                    if (remainingDistance > threshold) // if there's still path to traverse
                     {
                         SetMoving(true);
                     }
-                    else if (aiPath.reachedDestination && aiPath.reachedEndOfPath && aiPath.remainingDistance <= threshold)
+                    else if (aiPath.reachedEndOfPath && remainingDistance <= threshold) //aiPath.reachedDestination && 
                     {
                         if (destinationsList.Count <= 1)
                         {
@@ -568,8 +604,16 @@ public class FormationPosition : MonoBehaviour
             if (model != null)
             {
                 if (model.alive)
-                {
+                { 
                 }
+            }
+        }*/
+        /*for (int i = 0; i < soldierBlock.formationPositions.Length; i++)
+        {
+            Position pos = soldierBlock.formationPositions[i];
+            if (pos != null)
+            { 
+                PlacePositionOnGround(pos);
             }
         }*/
         //FixRotation();
@@ -577,14 +621,31 @@ public class FormationPosition : MonoBehaviour
         { 
             CheckIfInMeleeRange();
         }
+
+    }
+    public void PlacePositionOnGround(Position itemPos)
+    {
+        LayerMask layerMask = LayerMask.GetMask("Terrain");
+        RaycastHit hit;
+        Vector3 vec = new Vector3(itemPos.transform.position.x, 100, itemPos.transform.position.z);
+        if (Physics.Raycast(vec, Vector3.down, out hit, Mathf.Infinity, layerMask))
+        {
+            itemPos.transform.position = hit.point;
+        }
+        //Debug.DrawRay(transform.position, Vector3.down*100, Color.yellow, 1);
     }
     private void VerySlowUpdate()
     {
+        /*for (int i = 0; i < soldierBlock.formationPositions.Length; i++)
+        {
+            soldierBlock.formationPositions[i].PlaceOnGround();
+        }*/
         if (numberOfAliveSoldiers <= 0) //if all soldiers dead, then goodbye
         {
             foreach (FormationPosition item in listOfNearbyEnemies)
             {
                 item.listOfNearbyEnemies.Remove(this);
+                
             }
             gameObject.SetActive(false);
             return;
@@ -605,8 +666,12 @@ public class FormationPosition : MonoBehaviour
             if (timeUntilAllowedToCastMagicAgain <= 0)
             {
                 allowedToCastMagic = true;
-                FightManager obj = FindObjectOfType<FightManager>();
-                obj.UpdateGUI();
+
+                if (fightManager == null)
+                {
+                    fightManager = FindObjectOfType<FightManager>();
+                }
+                fightManager.UpdateGUI();
             }
         }
 
@@ -617,8 +682,12 @@ public class FormationPosition : MonoBehaviour
             if (currentAbilityRechargeTime >= abilityRechargeTime)
             {
                 abilityCharged = true;
-                FightManager obj = FindObjectOfType<FightManager>();
-                obj.UpdateGUI();
+
+                if (fightManager == null)
+                {
+                    fightManager = FindObjectOfType<FightManager>();
+                }
+                fightManager.UpdateGUI();
                 currentAbilityRechargeTime = 0;
             }
         } 
@@ -646,6 +715,33 @@ public class FormationPosition : MonoBehaviour
         UpdateSpeed(); // 
         UpdateCollider(); // 
     }
+    void LateUpdate()
+    {
+        if (selected)
+        { 
+            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+            {
+                SoldierModel model = soldierBlock.modelsArray[i];
+                if (model != null)
+                {
+                    if (model.alive)
+                    {
+                        if (!model.melee)
+                        {
+                            if (fightManager == null)
+                            {
+                                fightManager = FindObjectOfType<FightManager>();
+                            }
+                            if (model.lineOfSightIndicator != null)
+                            {
+                                model.lineOfSightIndicator.transform.LookAt(model.lineOfSightIndicator.transform.position + fightManager.cam.transform.forward);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
     private void UpdateSoldiers()
     {
         float height = 0;
@@ -670,6 +766,7 @@ public class FormationPosition : MonoBehaviour
                     model.CheckIfIdle(); 
                     model.CheckIfAlive();
                     model.UpdateCharController();
+                    
 
                     height += model.transform.position.y;
                     num++;
@@ -678,10 +775,15 @@ public class FormationPosition : MonoBehaviour
         }
 
         height = height / num;
-        float offset = .5f;
-        height += offset; 
-        farAwayIcon.transform.position = new Vector3(farAwayIcon.transform.position.x, height, farAwayIcon.transform.position.z); //set to average height
-        farAwayIconMask.transform.position = new Vector3(farAwayIconMask.transform.position.x, height, farAwayIconMask.transform.position.z);
+        float avgHeight = height;
+        /*float offset = 5f;
+        height += offset;*/
+        averagePositionBasedOnSoldierModels = height;
+
+        formationPositionBasedOnSoldierModels = new Vector3(transform.position.x, averagePositionBasedOnSoldierModels, transform.position.z);
+
+        farAwayIcon.transform.position = new Vector3(farAwayIcon.transform.position.x, avgHeight, farAwayIcon.transform.position.z); //set to average height
+        farAwayIconMask.transform.position = new Vector3(farAwayIconMask.transform.position.x, avgHeight, farAwayIconMask.transform.position.z);
     }
     private void UpdateSpeed()
     {
@@ -766,17 +868,20 @@ public class FormationPosition : MonoBehaviour
         farAwayIcon.enabled = false;
         farAwayIconMask.SetActive(false);
 
-        FightManager obj = FindObjectOfType<FightManager>();
-        obj.DeselectFormation(this);
+        if (fightManager == null)
+        {
+            fightManager = FindObjectOfType<FightManager>();
+        }
+        fightManager.DeselectFormation(this);
 
         Vector3 pos = transform.position + (-transform.forward * 200);
         //Vector3 randomPosition = new Vector3(UnityEngine.Random.Range(-999, 999), 0, UnityEngine.Random.Range(-999, 999));
         aiTarget.transform.position = pos;
         CheckIfRotateOrNot();
          
-        if (obj.selectedFormations.Contains(this))
+        if (fightManager.selectedFormations.Contains(this))
         {
-            obj.selectedFormations.Remove(this);
+            fightManager.selectedFormations.Remove(this);
         }
         for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
         {
@@ -958,7 +1063,8 @@ public class FormationPosition : MonoBehaviour
 
             if (lineRenderer.enabled)
             {
-                lineRenderer.SetPosition(0, new Vector3(transform.position.x, transform.position.y+1.5f, transform.position.z)); //offsetting pos4 +0.585001f
+
+                lineRenderer.SetPosition(0, new Vector3(formationPositionBasedOnSoldierModels.x, formationPositionBasedOnSoldierModels.y, formationPositionBasedOnSoldierModels.z)); //offsetting pos4 +0.585001f
                 int count = 1;
                 lineRenderer.positionCount = destinationsList.Count + 1; 
                 foreach (Vector3 item in destinationsList)

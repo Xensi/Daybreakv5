@@ -15,7 +15,24 @@ public class Position : MonoBehaviour
     public string team = "Altgard";
     public FormationPosition formPos;
 
-    public bool activeController = false; 
+    public bool activeController = false;
+
+    private void Start()
+    {
+        PlaceOnGround();
+    }
+
+    public void PlaceOnGround()
+    {
+        Vector3 vec = new Vector3(transform.position.x, 100, transform.position.z);
+        LayerMask layerMask = LayerMask.GetMask("Terrain");
+        RaycastHit hit;
+        if (Physics.Raycast(vec, Vector3.down, out hit, Mathf.Infinity, layerMask))
+        {
+            transform.position = hit.point;
+        } 
+    }
+
     public void SeekReplacement(float range = 5f)
     {
         if (assignedSoldierModel != null)

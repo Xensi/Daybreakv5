@@ -6,6 +6,7 @@ using Pathfinding;
 public class SoldierModel : MonoBehaviour
 {
     [Header("Assign these! If null then something will break")]
+    public SpriteRenderer lineOfSightIndicator;
     public RichAI richAI;
     public Animator animator;
     public Transform target;
@@ -13,10 +14,11 @@ public class SoldierModel : MonoBehaviour
     public CharacterController characterController;
     [SerializeField] private GameObject modelProj;
     public GameObject selectionCircle; 
-    public CapsuleCollider hurtbox;
+    private CapsuleCollider hurtbox; //deprecated
     public List<SkinnedMeshRenderer> renderers;
     [Header("Assign these if ranged")]
-    [Range(0.0f, 45.0f)] [SerializeField] private float maxFiringAngle = 45; 
+    [Range(0.0f, 45.0f)] [SerializeField] private float maxFiringAngle = 45;
+    [Range(0.0f, 45)] [SerializeField] private float minFiringAngle = 10;
     [SerializeField] private bool isMagic = false;
     [SerializeField] private Transform projectileSpawn;
     [SerializeField] private ProjectileFromSoldier projectile;
@@ -187,9 +189,24 @@ public class SoldierModel : MonoBehaviour
     public bool routing = false;
 
     public Transform pendingDamageSource;
-
+    public void PlaceOnGround()
+    {
+        LayerMask layerMask = LayerMask.GetMask("Terrain");
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, layerMask))
+        { 
+            transform.position = hit.point; 
+        }
+        else if (Physics.Raycast(transform.position, Vector3.up, out hit, Mathf.Infinity, layerMask))
+        {
+            transform.position = hit.point;
+        }
+        //Debug.DrawRay(transform.position, Vector3.down*100, Color.yellow, 1);
+    }
     private void Start()
     {
+        lineOfSightIndicator.enabled = false;
+        PlaceOnGround();
         startingMaxSpeed = richAI.maxSpeed;
         /*if (startingMaxSpeed <= 0)
         {
@@ -613,7 +630,7 @@ public class SoldierModel : MonoBehaviour
         } 
         if (!melee && HasTarget())
         {
-            if (ObstructedByTeamMate(GetTarget()))
+            if (LineOfSightObstructed(GetTarget()))
             {
                 SetAttacking(false); 
                 return;
@@ -750,7 +767,7 @@ public class SoldierModel : MonoBehaviour
         }
         if (!melee && HasTarget())
         {
-            if (ObstructedByTeamMate(GetTarget()))
+            if (LineOfSightObstructed(GetTarget()))
             {
                 SetAttacking(false);
                 return;
@@ -832,30 +849,12 @@ public class SoldierModel : MonoBehaviour
     { 
         Vector3 targetPos = new Vector3(999, 999, 999);
         FormationPosition formToFireAt = null;
-        if (formPos.focusFire)
-        {
-            if (formPos.formationToFocusFire != null) //if we have a formation to focus on
-            {
-                targetPos = formPos.formationToFocusFire.transform.position;
-                formToFireAt = formPos.formationToFocusFire;
-            }
-            else //otherwise use the terrain position.
-            {
-                targetPos = formPos.focusFirePos;
-            }
-        }
-        else
-        { 
-            if (formPos.enemyFormationToTarget != null)
-            { 
-                targetPos = formPos.enemyFormationToTarget.transform.position;
-                formToFireAt = formPos.enemyFormationToTarget;
-            } 
-        }
+        Vector3 spawn = projectileSpawn.transform.position;
+
         if (directFire)
         {
             //get unit reference height
-            float referenceHeight = 0;
+           /* float referenceHeight = 0;
             if (formToFireAt != null)
             { 
                 for (int i = 0; i < formToFireAt.soldierBlock.modelsArray.Length; i++)
@@ -874,9 +873,62 @@ public class SoldierModel : MonoBehaviour
             {
                 referenceHeight = formPos.focusFirePos.y;
             }
-            targetPos = new Vector3(targetPos.x, referenceHeight + projectileSpawn.transform.position.y, targetPos.z); // 
+            targetPos = new Vector3(targetPos.x, referenceHeight + projectileSpawn.transform.position.y, targetPos.z); // */
             //Debug.Log(targetPos);
-        }  
+
+            if (formPos.focusFire)
+            { 
+                if (formPos.formationToFocusFire != null)
+                {
+                    Vector3 vecFocus = formPos.formationToFocusFire.formationPositionBasedOnSoldierModels;
+                    targetPos = new Vector3(vecFocus.x, vecFocus.y, vecFocus.z);
+                }
+                else //otherwise use the terrain position.
+                {
+                    targetPos = new Vector3(formPos.focusFirePos.x, formPos.focusFirePos.y, formPos.focusFirePos.z);
+                }
+            }
+            else
+            {
+                if (formPos.enemyFormationToTarget != null)
+                {
+                    Vector3 vec = formPos.enemyFormationToTarget.formationPositionBasedOnSoldierModels;
+                    targetPos = new Vector3(vec.x, vec.y, vec.z);
+                }
+            }
+        }
+        else //arc
+        {
+            if (formPos.focusFire)
+            {
+                if (formPos.formationToFocusFire != null) //if we have a formation to focus on
+                {
+                    //targetPos = formPos.formationToFocusFire.transform.position;
+                    targetPos = new Vector3(formPos.formationToFocusFire.transform.position.x, formPos.formationToFocusFire.averagePositionBasedOnSoldierModels, formPos.formationToFocusFire.transform.position.z);
+                     
+                }
+                else //otherwise use the terrain position.
+                {
+                    targetPos = new Vector3(formPos.focusFirePos.x, formPos.focusFirePos.y + 5, formPos.focusFirePos.z);
+                }
+            }
+            else
+            {
+                if (formPos.enemyFormationToTarget != null)
+                {
+                    //targetPos = formPos.enemyFormationToTarget.transform.position;
+                    targetPos = new Vector3(formPos.enemyFormationToTarget.transform.position.x, formPos.enemyFormationToTarget.averagePositionBasedOnSoldierModels, formPos.enemyFormationToTarget.transform.position.z);
+                     
+                }
+            }
+        }
+
+
+
+        if (formPos.missileTarget != null)
+        { 
+            formPos.missileTarget.transform.position = targetPos;
+        }
         return targetPos;
     }
     private bool HasTarget()
@@ -898,7 +950,7 @@ public class SoldierModel : MonoBehaviour
         }
         if (!melee && HasTarget())
         {
-            if (ObstructedByTeamMate(GetTarget()))
+            if (LineOfSightObstructed(GetTarget()))
             {
                 SetAttacking(false);
                 return;
@@ -1136,23 +1188,23 @@ public class SoldierModel : MonoBehaviour
 
         return missile;
     }
-    private bool ObstructedByTeamMate(Vector3 target)
+    private bool LineOfSightObstructed(Vector3 target)
     {
         LayerMask layerMask = LayerMask.GetMask("Model");
 
         RaycastHit hit;
         Vector3 heading = target - transform.position;
-        float nearRange = 20;
-
+        //float nearRange = 20;
+        float range = Vector3.Distance(transform.position, target);
         Vector3 sightLine = transform.position;
 
         if (eyeline != null)
         { 
             sightLine = eyeline.position;
         } 
-        //Debug.DrawRay(sightLine, heading, Color.white, 3);
-        if (Physics.Raycast(sightLine, heading, out hit, nearRange, layerMask))
+        if (Physics.Raycast(sightLine, heading, out hit, range, layerMask))
         {
+            Debug.DrawRay(sightLine, heading * Vector3.Distance(sightLine,hit.point), Color.white, Time.deltaTime, true);
             if (hit.collider.gameObject.tag == "Hurtbox")
             {
                 SoldierModel model = hit.collider.gameObject.GetComponentInParent<SoldierModel>();
@@ -1160,11 +1212,35 @@ public class SoldierModel : MonoBehaviour
                 {
                     if (model.team == team)
                     {
+                        if (lineOfSightIndicator != null && formPos.selected)
+                        {
+                            lineOfSightIndicator.enabled = true;
+                        }
+                        else
+                        {
+                            lineOfSightIndicator.enabled = false;
+                        }
                         return true;
                     } 
                 } 
             }
+            else if (hit.collider.gameObject.tag == "Terrain") //terrain blocks shots
+            {
+                if (lineOfSightIndicator != null && formPos.selected)
+                {
+                    lineOfSightIndicator.enabled = true;
+                }
+                else
+                { 
+                    lineOfSightIndicator.enabled = false;
+                }
+                return true;
+            }
         }
+        if (lineOfSightIndicator != null)
+        {
+            lineOfSightIndicator.enabled = false;
+        } 
         return false;
     }
     private void LaunchBullet() //let's fire raycasts
@@ -1176,7 +1252,7 @@ public class SoldierModel : MonoBehaviour
                 Reload();
             }
             return;
-        }
+        } 
         if (targetEnemy != null || formPos.focusFire || formPos.enemyFormationToTarget != null)
         {
             Vector3 targetPos = GetTarget();
@@ -1207,7 +1283,7 @@ public class SoldierModel : MonoBehaviour
             if (fireEffect != null)
             { 
                 GameObject effect = Instantiate(fireEffect, projectileSpawn.position, Quaternion.identity);
-                effect.transform.rotation = Quaternion.LookRotation(transform.forward);
+                effect.transform.rotation = Quaternion.LookRotation(heading);
             }
 
             if (rangedNeedsLoading) //if we need reloading and we're out
@@ -1273,7 +1349,7 @@ public class SoldierModel : MonoBehaviour
             angle = dist * 0.5f;  
 
 
-            float clamped = Mathf.Clamp(angle, 0, maxFiringAngle);
+            float clamped = Mathf.Clamp(angle, minFiringAngle, maxFiringAngle);
             float deviation = projectileDeviationAmount * dist * 0.01f;
 
             float clampedDeviation = Mathf.Clamp(deviation, 2, 999);
@@ -1288,8 +1364,8 @@ public class SoldierModel : MonoBehaviour
 
             
             animator.SetFloat("angle", adjusted);
-             
-            missile.LaunchProjectile(targetPos, clamped, clampedDeviation); //fire at the position of the target with a clamped angle and deviation based on distance
+            //Debug.Log(targetPos + "angle" + clamped);
+            missile.LaunchProjectile(formPos.missileTarget.transform.position, clamped, clampedDeviation); //fire at the position of the target with a clamped angle and deviation based on distance
             if (fireEffect != null)
             {
                 GameObject effect = Instantiate(fireEffect, projectileSpawn.position, Quaternion.identity);
@@ -1304,8 +1380,7 @@ public class SoldierModel : MonoBehaviour
                 }
             }
             formPos.modelAttacked = true;
-        }
-
+        } 
     }
 
 
