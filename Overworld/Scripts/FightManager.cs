@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class FightManager : MonoBehaviour
 {
@@ -92,9 +93,14 @@ public class FightManager : MonoBehaviour
     }
     private void Start()
     {
+    }
+
+    public void FinishedLoading()
+    {
+
         allArray = new FormationPosition[30];
 
-        battleUI.SetActive(false); 
+        battleUI.SetActive(false);
         InvokeRepeating("AIBrain", 0f, 1f);
         InvokeRepeating("AIBrainMage", 5f, 5f); //don't do immediately, not urgent
 
@@ -144,9 +150,13 @@ public class FightManager : MonoBehaviour
                 break;
         }
     }
+    public void ReturnToMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
     private void AIRaisePursueRadius()
     {
-        float newRadius = 200;
+        float newRadius = 999;
         foreach (FormationPosition formPos in aiFormations)
         {
             if (formPos.soldierBlock.melee)
@@ -154,8 +164,9 @@ public class FightManager : MonoBehaviour
                 formPos.engageEnemyRadius = newRadius;
             }
             else
-            { 
-                formPos.engageEnemyRadius = formPos.soldierBlock.modelAttackRange;
+            {
+                formPos.engageEnemyRadius = newRadius;
+                //formPos.engageEnemyRadius = formPos.soldierBlock.modelAttackRange;
             }
         }
     }

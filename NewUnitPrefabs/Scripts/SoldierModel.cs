@@ -193,11 +193,8 @@ public class SoldierModel : MonoBehaviour
     {
         LayerMask layerMask = LayerMask.GetMask("Terrain");
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, layerMask))
-        { 
-            transform.position = hit.point; 
-        }
-        else if (Physics.Raycast(transform.position, Vector3.up, out hit, Mathf.Infinity, layerMask))
+        Vector3 vec = new Vector3(transform.position.x, 100, transform.position.z);
+        if (Physics.Raycast(vec, Vector3.down, out hit, Mathf.Infinity, layerMask))
         {
             transform.position = hit.point;
         }
@@ -205,7 +202,10 @@ public class SoldierModel : MonoBehaviour
     }
     private void Start()
     {
-        lineOfSightIndicator.enabled = false;
+        if (lineOfSightIndicator != null)
+        { 
+            lineOfSightIndicator.enabled = false;
+        }
         PlaceOnGround();
         startingMaxSpeed = richAI.maxSpeed;
         /*if (startingMaxSpeed <= 0)
@@ -1212,27 +1212,33 @@ public class SoldierModel : MonoBehaviour
                 {
                     if (model.team == team)
                     {
-                        if (lineOfSightIndicator != null && formPos.selected)
+                        if (lineOfSightIndicator != null)
                         {
-                            lineOfSightIndicator.enabled = true;
-                        }
-                        else
-                        {
-                            lineOfSightIndicator.enabled = false;
-                        }
+                            if (formPos.selected)
+                            {
+                                lineOfSightIndicator.enabled = true;
+                            }
+                            else
+                            {
+                                lineOfSightIndicator.enabled = false;
+                            }
+                        } 
                         return true;
                     } 
                 } 
             }
             else if (hit.collider.gameObject.tag == "Terrain") //terrain blocks shots
             {
-                if (lineOfSightIndicator != null && formPos.selected)
+                if (lineOfSightIndicator != null)
                 {
-                    lineOfSightIndicator.enabled = true;
-                }
-                else
-                { 
-                    lineOfSightIndicator.enabled = false;
+                    if (formPos.selected)
+                    {
+                        lineOfSightIndicator.enabled = true;
+                    }
+                    else
+                    {
+                        lineOfSightIndicator.enabled = false;
+                    }
                 }
                 return true;
             }
@@ -1511,7 +1517,10 @@ public class SoldierModel : MonoBehaviour
         }
         richAI.enabled = false;
         aiDesSet.enabled = false;
-        hurtbox.enabled = false;
+        if (hurtbox != null)
+        { 
+            hurtbox.enabled = false;
+        }
         //Invoke("DelayedDisable", 2);
         if (renderers.Count > 0)
         { 

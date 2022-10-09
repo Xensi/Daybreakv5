@@ -821,7 +821,7 @@ MonoBehaviour:
   spine: {fileID: 7219251137590844722}
   head: {fileID: 1005929495644433151}
   startingMaxSpeed: 0
-  adjustWalkSpeedVisually: 0.5
+  adjustWalkSpeedVisually: 1
   playIdleAnims: 0
   health: 20
   damage: 0

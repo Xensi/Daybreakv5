@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2921132140310353296}
   - component: {fileID: 2921132140311451472}
   - component: {fileID: 2921132140315748144}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Cliff_04_LOD1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,6 +55,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -79,6 +81,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!64 &2921132140315748144
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -89,9 +92,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 0
-  m_CookingOptions: 14
+  m_CookingOptions: 30
   m_Mesh: {fileID: 4300004, guid: ba53360b4195cb542922626d94e36105, type: 3}
 --- !u!1 &2921132140309449106
 GameObject:
@@ -105,7 +108,7 @@ GameObject:
   - component: {fileID: 2921132140310353298}
   - component: {fileID: 2921132140311451474}
   - component: {fileID: 2921132140315748146}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Cliff_04_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -148,6 +151,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -172,6 +177,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!64 &2921132140315748146
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -182,9 +188,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 0
-  m_CookingOptions: 14
+  m_CookingOptions: 30
   m_Mesh: {fileID: 4300004, guid: ba53360b4195cb542922626d94e36105, type: 3}
 --- !u!1 &2921132140309449108
 GameObject:
@@ -196,7 +202,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2921132140309026228}
   - component: {fileID: 2921132140293144850}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Prefab_RockFormation_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -259,7 +265,7 @@ GameObject:
   - component: {fileID: 2921132140310353302}
   - component: {fileID: 2921132140311451478}
   - component: {fileID: 2921132140315748150}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Cliff_04_LOD2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -302,6 +308,8 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -326,6 +334,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!64 &2921132140315748150
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -336,7 +345,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 0
-  m_CookingOptions: 14
+  m_CookingOptions: 30
   m_Mesh: {fileID: 4300004, guid: ba53360b4195cb542922626d94e36105, type: 3}

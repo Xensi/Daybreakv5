@@ -127,6 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c23e0c2eb0ccd54594e51e55db8c15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lineOfSightIndicator: {fileID: 0}
   richAI: {fileID: 5255507575147437489}
   animator: {fileID: 1494414879792607161}
   target: {fileID: 344633261419014168}
@@ -134,10 +135,11 @@ MonoBehaviour:
   characterController: {fileID: 6195138401729923258}
   modelProj: {fileID: 3616627480558307331, guid: 281ad1397c9e19d4f9456537da0d28b6, type: 3}
   selectionCircle: {fileID: 5733960279720619429}
-  hurtbox: {fileID: 7562278576444467049}
   renderers:
   - {fileID: 7933375137621753564}
   - {fileID: 8638995889115672484}
+  maxFiringAngle: 45
+  minFiringAngle: 10
   isMagic: 0
   projectileSpawn: {fileID: 0}
   projectile: {fileID: 0}
@@ -149,12 +151,15 @@ MonoBehaviour:
   projectileDeviationAmount: 5
   projectileDeviationAmountVertical: 5
   attackBox: {fileID: 0}
+  spine: {fileID: 0}
+  head: {fileID: 0}
+  startingMaxSpeed: 0
   adjustWalkSpeedVisually: 0.5
   playIdleAnims: 0
   health: 35
   damage: 0
   armorPiercingDamage: 9
-  armor: 4
+  armor: 20
   timeUntilDamage: 0.5
   currentDamageTime: 0
   timeUntilFinishedAttacking: 1
@@ -168,6 +173,7 @@ MonoBehaviour:
   magicCharged: 1
   chargeDamage: 0
   stopWhenAttacking: 1
+  stopWhenDamaged: 1
   stopWhenLoading: 1
   attacksCanLaunchEnemies: 0
   canOnlyAttackWhileMoving: 0
@@ -186,9 +192,9 @@ MonoBehaviour:
   currentFinishedLoadingTime: 0
   timeUntilFinishedLoading: 1
   justFired: 0
+  braced: 0
   allowedToDealDamage: 1
   modelPosition: {fileID: 0}
-  braced: 0
   movingSpeed: 0
   alive: 1
   attacking: 0
@@ -199,6 +205,7 @@ MonoBehaviour:
   knockedDown: 0
   airborne: 0
   targetEnemy: {fileID: 0}
+  pendingLaunched: 0
   walkSpeed: 3
   runSpeed: 6
   team: Altgard
@@ -342,12 +349,13 @@ MonoBehaviour:
   pendingDamage: 0
   pendingArmorPiercingDamage: 0
   speedSlow: 0
-  startingMaxSpeed: 0
   ignoreAsNearby: 0
   getUpTime: 0
   getUpTimeCap: 8
   useOldWalkCalculations: 1
   normalizedSpeed: 0
+  routing: 0
+  pendingDamageSource: {fileID: 0}
 --- !u!114 &5255507575147437489
 MonoBehaviour:
   m_ObjectHideFlags: 0

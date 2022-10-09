@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8504847292478183986}
   - component: {fileID: 2041572944350779044}
   - component: {fileID: 8181040110198888959}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SM_Stone_05_LOD1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28,7 +28,6 @@ Transform:
   m_LocalRotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9014691044368834174}
   m_RootOrder: 1
@@ -52,7 +51,6 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -95,7 +93,7 @@ GameObject:
   - component: {fileID: 4831296522898921647}
   - component: {fileID: 442490639100696365}
   - component: {fileID: 8413269964037506622}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SM_Stone_05_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -112,7 +110,6 @@ Transform:
   m_LocalRotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9014691044368834174}
   m_RootOrder: 0
@@ -136,7 +133,6 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -192,7 +188,7 @@ GameObject:
   - component: {fileID: 9014691044368834174}
   - component: {fileID: 8460296846927317178}
   - component: {fileID: 450902175780102633}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Prefab_StoneSmall_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -209,7 +205,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5581272473197580867}
   - {fileID: 8504847292478183986}
@@ -262,7 +257,7 @@ MonoBehaviour:
   type: 1
   mesh: {fileID: 0}
   rectangleSize: {x: 1, y: 1}
-  circleRadius: 1
+  circleRadius: 1.65
   circleResolution: 6
   height: 10
   meshScale: 1
@@ -283,7 +278,7 @@ GameObject:
   - component: {fileID: 8093865426756311849}
   - component: {fileID: 8699319328922272322}
   - component: {fileID: 1226833378664373730}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: SM_Stone_05_LOD2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -300,7 +295,6 @@ Transform:
   m_LocalRotation: {x: 0.000000021855694, y: 0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9014691044368834174}
   m_RootOrder: 2
@@ -324,7 +318,6 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1

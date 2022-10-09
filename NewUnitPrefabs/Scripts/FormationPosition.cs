@@ -160,7 +160,7 @@ public class FormationPosition : MonoBehaviour
 
     //swapping rows vars
 
-    [SerializeField] private int requiredModelsThatFiredInRow = 10; //all of them
+    [SerializeField] private int requiredModelsThatFiredInRow = 5; //all of them
     [SerializeField] private int matched = 0;
     [SerializeField] private int lowerRow = 0;
     [SerializeField] private int upperRow = 9;
@@ -178,6 +178,7 @@ public class FormationPosition : MonoBehaviour
     private void Start()
     {
 
+        PlaceThisOnGround();
         int FormIcon = LayerMask.NameToLayer("FormIcon");
         lineRenderer.gameObject.layer = FormIcon;
         lineRenderer2.gameObject.layer = FormIcon;
@@ -215,7 +216,17 @@ public class FormationPosition : MonoBehaviour
 
         //PlaceAITargetOnTerrain();
     }
-
+    private void PlaceThisOnGround()
+    { 
+        //aiTarget.transform.position
+        LayerMask layerMask = LayerMask.GetMask("GroundForm");
+        RaycastHit hit;
+        Vector3 vec = new Vector3(transform.position.x, 100, transform.position.z);
+        if (Physics.Raycast(vec, Vector3.down, out hit, Mathf.Infinity, layerMask))
+        {
+            transform.position = hit.point;
+        }
+    }
     private void PlaceAITargetOnTerrain()
     {
         //aiTarget.transform.position

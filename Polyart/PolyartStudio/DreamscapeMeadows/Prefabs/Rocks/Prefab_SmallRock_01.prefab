@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7901056077792958688}
   - component: {fileID: 7901056077792958695}
   - component: {fileID: 2040271208311508889}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Prefab_SmallRock_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28,7 +28,6 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2944373851038531400}
   m_Father: {fileID: 0}
@@ -136,15 +135,19 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_SmallRock_01
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: d37de66df8aa5f44a8840086fab36006, type: 3}
+      propertyPath: m_Layer
+      value: 13
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d37de66df8aa5f44a8840086fab36006, type: 3}
---- !u!23 &484994298750531975 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: -1504981713932161579, guid: d37de66df8aa5f44a8840086fab36006, type: 3}
-  m_PrefabInstance: {fileID: 7901056078886999122}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2944373851038531400 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: d37de66df8aa5f44a8840086fab36006, type: 3}
+  m_PrefabInstance: {fileID: 7901056078886999122}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &484994298750531975 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -1504981713932161579, guid: d37de66df8aa5f44a8840086fab36006, type: 3}
   m_PrefabInstance: {fileID: 7901056078886999122}
   m_PrefabAsset: {fileID: 0}

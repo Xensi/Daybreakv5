@@ -17,12 +17,12 @@ public class FieldBattleManager : MonoBehaviour
         Menu,
         Game
     }
-    private gameState state = gameState.Menu;
+    private gameState state = gameState.Game;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        UnpauseGame();
     }
 
     private void Update()
