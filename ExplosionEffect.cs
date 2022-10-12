@@ -9,8 +9,7 @@ public class ExplosionEffect : MonoBehaviour
     [SerializeField] private float fadeOutTime = 1;
     [SerializeField] private float endTime = 5;
     [SerializeField] private float FXFadeOutTime = 1;
-    [SerializeField] private AudioSource audioSource;
-    private float internalClock = 0;
+    [SerializeField] private AudioSource audioSource; 
     private float setter = 0;
     [SerializeField] private bool ShouldFadeOut = true;
     [SerializeField] private DamageZone damageZone;
@@ -48,8 +47,7 @@ public class ExplosionEffect : MonoBehaviour
             mod.rateOverTime = startingEm - setter; 
 
             yield return null;
-        }
-        internalClock = 0;
+        } 
         particles.Stop();
         Invoke("End", endTime);
     }

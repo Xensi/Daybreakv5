@@ -45,7 +45,7 @@ public class Position : MonoBehaviour
         //safety check
         //first get a row behind us
         int behindUs = row.rowPositionInList + 1 + numTimesSought;
-        if (behindUs == 8)
+        if (behindUs == formPos.soldierBlock.rows.Count)
         {
             //out of bounds 
             return;

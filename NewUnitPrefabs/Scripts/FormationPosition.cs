@@ -34,6 +34,7 @@ public class FormationPosition : MonoBehaviour
     [SerializeField] private float velThreshold = .1f;
     [Tooltip("Checks nearby formations. Nearby formations can be moved towards automatically.")]
     public float engageEnemyRadius = 10;
+    public float rangedRadius = 100;
 
     [HideInInspector] public float startingPursueRadius = 0; //do not modify manually
 
@@ -72,9 +73,7 @@ public class FormationPosition : MonoBehaviour
     [SerializeField] private Vector3 offsetAmount;
     [SerializeField] private Vector3 deployedOffsetAmount;
     [SerializeField] private float requiredVelocity = 2;
-    [SerializeField] private float deployedRequiredVelocity = 4;
-    [SerializeField] private Transform compass;
-    [SerializeField] private Transform highParent;
+    [SerializeField] private float deployedRequiredVelocity = 4;  
     [SerializeField] private float finishedPathRotSpeed = 1;
     public bool pathSet = false;
 
@@ -174,10 +173,12 @@ public class FormationPosition : MonoBehaviour
     public Vector3 formationPositionBasedOnSoldierModels;
 
     public GameObject missileTarget;
+    [SerializeField] private bool alwaysRotateTowardMovementPos = false;
+    public SpriteRenderer selectedSprite;
 
     private void Start()
     {
-
+        ShowSelected(false);
         PlaceThisOnGround();
         int FormIcon = LayerMask.NameToLayer("FormIcon");
         lineRenderer.gameObject.layer = FormIcon;
@@ -227,6 +228,16 @@ public class FormationPosition : MonoBehaviour
             transform.position = hit.point;
         }
     }
+    public void FixPositions()
+    {
+        for (int i = 0; i < soldierBlock.formationPositions.Length; i++)
+        {
+            if (soldierBlock.formationPositions[i] != null)
+            { 
+                soldierBlock.formationPositions[i].PlaceOnGround();
+            }
+        }
+    }
     private void PlaceAITargetOnTerrain()
     {
         //aiTarget.transform.position
@@ -273,7 +284,7 @@ public class FormationPosition : MonoBehaviour
         if (fleeing)
         {
             FullUnfreeze();
-            farAwayIcon.enabled = false;
+            ShowFormIcon(false);
             Color color = farAwayIcon.color;
             color.a = 0;
             farAwayIcon.color = color;
@@ -411,6 +422,7 @@ public class FormationPosition : MonoBehaviour
     private void Update()
     {
         //FixRotationModel();
+        UpdateLineRenderer();
     }
     private void FixRotationModel()
     {
@@ -442,6 +454,7 @@ public class FormationPosition : MonoBehaviour
                 soldierModelToCheck = 0;
             }
         }
+
     }
     private void FastUpdate()
     {
@@ -451,7 +464,7 @@ public class FormationPosition : MonoBehaviour
         float magic = 15;
         transform.position = new Vector3(transform.position.x, magic, transform.position.z);
         FixRotation();
-        UpdateLineRenderer();
+        //UpdateLineRenderer();
         FastSoldierUpdate();
         UpdateFormationMovementStatus();
 
@@ -525,6 +538,7 @@ public class FormationPosition : MonoBehaviour
             {
                 checkingModel.CheckIfEnemyModelsNearby();
             }
+            checkingModel.SaveFromFallingInfinitely();
         }
     }
     private void FastSoldierUpdate()
@@ -795,6 +809,7 @@ public class FormationPosition : MonoBehaviour
 
         farAwayIcon.transform.position = new Vector3(farAwayIcon.transform.position.x, avgHeight, farAwayIcon.transform.position.z); //set to average height
         farAwayIconMask.transform.position = new Vector3(farAwayIconMask.transform.position.x, avgHeight, farAwayIconMask.transform.position.z);
+        selectedSprite.transform.position = new Vector3(farAwayIconMask.transform.position.x, avgHeight, farAwayIconMask.transform.position.z);
     }
     private void UpdateSpeed()
     {
@@ -810,11 +825,12 @@ public class FormationPosition : MonoBehaviour
         if (tangledUp)
         {
             currentSpeed = walkingSpeed;
-            float current = numberOfAliveSoldiers;
+            /*float current = numberOfAliveSoldiers;
             float maxSol = maxSoldiers;
             float ratio = current / maxSol;
 
-            currentSpeed *= ratio;
+            //currentSpeed *= ratio;
+            currentSpeed /= ratio; //get faster when less soldiers, lol*/
             aiPath.rotationSpeed = slowRotate;
         }
         else
@@ -871,13 +887,16 @@ public class FormationPosition : MonoBehaviour
             BeginFleeing();  
         }
     }
-
+    private void ShowFormIcon(bool val)
+    {
+        farAwayIcon.enabled = val;
+        farAwayIconMask.SetActive(val);
+        selectedSprite.enabled = val;
+    }
     private void BeginFleeing()
     {
         fleeing = true;
-
-        farAwayIcon.enabled = false;
-        farAwayIconMask.SetActive(false);
+        ShowFormIcon(false);
 
         if (fightManager == null)
         {
@@ -1026,7 +1045,11 @@ public class FormationPosition : MonoBehaviour
             float calc = math * remedy;
 
             farAwayIconMask.gameObject.transform.localScale = new Vector3(defSize, calc, 1);
+            farAwayIcon.gameObject.transform.localScale = new Vector3(defSize, calc, 1);
+            selectedSprite.gameObject.transform.localScale = new Vector3(defSize+1, calc+1, 1);
+            farAwayIconMask.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
             farAwayIcon.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
+            selectedSprite.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
 
             /*if (!soldierBlock.canBeRanged)
             { 
@@ -1108,15 +1131,18 @@ public class FormationPosition : MonoBehaviour
     } 
     public void CheckIfRotateOrNot()
     {
-        Vector3 heading = aiTarget.transform.position - transform.position;
-        float threshold = 50;
-        if (Vector3.Angle(heading, -transform.forward) <= threshold)
+        if (!alwaysRotateTowardMovementPos)
         { 
-            aiPath.enableRotation = false;
-        }
-        else
-        {
-            aiPath.enableRotation = true;
+            Vector3 heading = aiTarget.transform.position - transform.position;
+            float threshold = 50;
+            if (Vector3.Angle(heading, -transform.forward) <= threshold)
+            {
+                aiPath.enableRotation = false;
+            }
+            else
+            {
+                aiPath.enableRotation = true;
+            }
         }
     } 
 
@@ -1186,9 +1212,17 @@ public class FormationPosition : MonoBehaviour
     }
     public void SetSelected(bool val)
     {
-        selected = val; 
+        selected = val;
+        ShowSelected(val);
     }
-     
+
+    private void ShowSelected(bool val)
+    {
+        if (selectedSprite != null)
+        {
+            selectedSprite.enabled = val;
+        }
+    }
 
     private void FindClosestFormation()
     {
@@ -1213,23 +1247,18 @@ public class FormationPosition : MonoBehaviour
                 enemyFormationToTarget = item;
                 compareDist = dist;
             }
-            
-        } 
-        if (!soldierBlock.melee)
-        { 
-        } 
-        else
-        { 
-            if (chaseDetectedEnemies)
-            {
-                EngageFoe();
-            }
+
         }
+        if (chaseDetectedEnemies)
+        {
+            EngageFoe();
+        } 
 
     }
 
     public void ClearOrders()
-    { 
+    {
+        SetMoving(false); 
         destinationsList.Clear();
         obeyingMovementOrder = false;
         enemyFormationToTarget = null; 
@@ -1249,20 +1278,39 @@ public class FormationPosition : MonoBehaviour
         {
             return;
         }
-        float dist = GetDistance(transform, enemyFormationToTarget.gameObject.transform);
-        if (dist <= stoppingDistance)
+        float distance = Vector3.Distance(transform.position, enemyFormationToTarget.transform.position); 
+        if (!soldierBlock.melee && distance <= rangedRadius)
+        {
+            StopInPlace();
+        }
+        else if (distance <= stoppingDistance)
         { //stop
             //Debug.Log("stopping");
             ResetAITarget();
         }
         else if (enemyFormationToTarget != null)
-        { //chase
-            //Debug.Log("chasing foe");
-            aiTarget.transform.position = enemyFormationToTarget.gameObject.transform.position;
-            rotTarget.transform.position = enemyFormationToTarget.gameObject.transform.position;
-            CheckIfRotateOrNot();
-        }
+        {   //chase
+            ChaseFoe();
+        } 
+    }
 
+    private void StopInPlace()
+    {
+        ResetAITarget(); 
+        obeyingMovementOrder = false;
+        SetMoving(false);
+    }
+
+    private void ChaseFoe()
+    {  
+        if (enemyFormationToTarget == null)
+        {
+            return;
+        }
+        //Debug.Log("chasing foe");
+        aiTarget.transform.position = enemyFormationToTarget.transform.position;
+        rotTarget.transform.position = enemyFormationToTarget.transform.position;
+        CheckIfRotateOrNot(); 
     }
     public void StopCommand()
     {
@@ -1309,5 +1357,7 @@ public class FormationPosition : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, engageEnemyRadius);
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, stoppingDistance);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, rangedRadius); 
     }
 }

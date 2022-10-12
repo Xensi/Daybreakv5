@@ -28,6 +28,7 @@ public class LoadScreen : MonoBehaviour
             //loadingOperation = SceneManager.LoadSceneAsync(sceneToLoad); //load overworld, of course 
             loadOp2 = SceneManager.LoadSceneAsync("Level" + levelLoad, LoadSceneMode.Additive);
             menu.ui.SetActive(false);
+            SceneManager.UnloadSceneAsync("MainMenu");
         }
     }
     IEnumerator FadeLoadingScreen(float duration, float startValue = 0, float endValue = 1)

@@ -705,7 +705,7 @@ MonoBehaviour:
   target: {fileID: 7641013089631126903}
   aiDesSet: {fileID: 953635112972668832}
   characterController: {fileID: 2898911470201899859}
-  modelProj: {fileID: 0}
+  modelProj: {fileID: 3616627480558307331, guid: 281ad1397c9e19d4f9456537da0d28b6, type: 3}
   selectionCircle: {fileID: 6761720837378773304}
   renderers:
   - {fileID: 3940350487650335784}
@@ -713,7 +713,7 @@ MonoBehaviour:
   - {fileID: 6484654289031379952}
   - {fileID: 5635665277290162447}
   maxFiringAngle: 45
-  minFiringAngle: 45
+  minFiringAngle: 0
   isMagic: 0
   projectileSpawn: {fileID: 982202589084974697}
   projectile: {fileID: 8333262704199657843, guid: 271be5a4804644c448122b73d5e8fe0a, type: 3}

@@ -13,7 +13,10 @@ public class FieldBattleCam : MonoBehaviour
     [SerializeField] private Transform panCorner2;
     [SerializeField] private Transform maxYPos;
     [SerializeField] private float radiusToEnableAnimations = 20;
-    [SerializeField] private FightManager fightManager;  
+    [SerializeField] private FightManager fightManager;
+    private float modifier = 100;
+
+    private float terrainHeightBelowUs = 0;
 
     private void Start()
     {
@@ -22,14 +25,36 @@ public class FieldBattleCam : MonoBehaviour
     }
     private void Update()
     {
+        UpdateTerrainHeightValue();
+        if (Input.GetKey("left"))
+        {
+            turn.x -= modifier*sensitivity * Time.deltaTime; //multipying by delta time keeps movement consistent
+            transform.localRotation = Quaternion.Euler(0, turn.x, 0);
+        }
+        if (Input.GetKey("right"))
+        {
+            turn.x += modifier*sensitivity * Time.deltaTime; //multipying by delta time keeps movement consistent
+            transform.localRotation = Quaternion.Euler(0, turn.x, 0);
+        }
         if (Input.GetMouseButton(2))
         {
 
             turn.x += Input.GetAxis("Mouse X") * sensitivity;
+
             transform.localRotation = Quaternion.Euler(0, turn.x, 0);
         }
         Strafe();
         UpdateFarAwayIcons();
+    }
+    private void UpdateTerrainHeightValue()
+    { 
+        LayerMask layerMask = LayerMask.GetMask("Terrain");
+        RaycastHit hit;
+        Vector3 vec = new Vector3(transform.position.x, 100, transform.position.z);
+        if (Physics.Raycast(vec, Vector3.down, out hit, Mathf.Infinity, layerMask))
+        {
+            terrainHeightBelowUs = hit.point.y;
+        }
     }
     private void UpdateFarAwayIcons()
     {
@@ -57,6 +82,10 @@ public class FieldBattleCam : MonoBehaviour
                     color.a = 0;
                 }
                 form.farAwayIcon.color = color;
+                if (form.selectedSprite != null)
+                { 
+                    form.selectedSprite.color = color;
+                }
             }
         }
     }
@@ -93,11 +122,22 @@ public class FieldBattleCam : MonoBehaviour
 
 
         float scroll = Input.GetAxis("Mouse ScrollWheel");
-        var speed = scroll * scrollSpeed * 1f * Time.deltaTime * Mathf.Sqrt(pos.y + defaultSpeed) / 2;
+        
+        var speed = scroll * scrollSpeed * Time.deltaTime * Mathf.Sqrt(pos.y + defaultSpeed) / 2;
+
+        float modifier = .5f;
+        if (Input.GetKey(KeyCode.Space))
+        {
+            speed -= Time.deltaTime * scrollSpeed * modifier;
+        }
+        if (Input.GetKey(KeyCode.LeftControl))
+        {
+            speed += Time.deltaTime * scrollSpeed * modifier;
+        }
         pos.y -= speed;
 
         pos.x = Mathf.Clamp(pos.x, panCorner1.position.x, panCorner2.position.x);
-        pos.y = Mathf.Clamp(pos.y, minY, maxYPos.position.y);
+        pos.y = Mathf.Clamp(pos.y, terrainHeightBelowUs+1, maxYPos.position.y);
         pos.z = Mathf.Clamp(pos.z, panCorner1.position.z, panCorner2.position.z);
 
         //if close to ground lower scroll speed?

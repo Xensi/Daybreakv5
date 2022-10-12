@@ -93,6 +93,7 @@ public class FightManager : MonoBehaviour
     }
     private void Start()
     {
+        //FinishedLoading();
     }
 
     public void FinishedLoading()
@@ -118,6 +119,7 @@ public class FightManager : MonoBehaviour
             {
                 aiFormations.Add(item);
             }
+            item.FixPositions();
             //item.ClearOrders(); //resets targets
         }
     }
@@ -897,17 +899,8 @@ public class FightManager : MonoBehaviour
         bool formationHitFound = false;
         foreach (RaycastHit hit in hits)
         {
-            if (hit.collider.tag == "Terrain") 
+            if (hit.collider.tag == "SelectableObject")
             {
-                if (hit.distance < distanceSoFar) //used to get closest result
-                {
-                    pos = hit.point;
-                    candidateHit = hit;
-                    distanceSoFar = hit.distance;
-                }
-            }
-            else if (hit.collider.tag == "SelectableObject")
-            { 
                 if (hit.distance <= distanceSoFar) //used to get closest result
                 {
                     pos = hit.point;
@@ -916,6 +909,16 @@ public class FightManager : MonoBehaviour
                     formationHitFound = true;
                 }
             }
+            else if (hit.collider.tag == "Terrain") 
+            {
+                if (hit.distance < distanceSoFar) //used to get closest result
+                {
+                    pos = hit.point;
+                    candidateHit = hit;
+                    distanceSoFar = hit.distance;
+                }
+            }
+            
         }
         if (formationHitFound && candidateHit.collider.tag == "SelectableObject")
         {

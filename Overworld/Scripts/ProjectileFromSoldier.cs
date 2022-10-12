@@ -60,6 +60,14 @@ public class ProjectileFromSoldier : MonoBehaviour
         rigid.AddForce(direction * power);
         isFlying = true;
     }
+    public void LaunchBullet(Vector3 direction, float velocity)
+    {   
+        
+        float reqForce = rigid.mass * (velocity / Time.fixedDeltaTime);
+
+        rigid.AddForce(direction.normalized * reqForce);
+        isFlying = true;
+    }
     public void LaunchProjectile(Vector3 targetPos, float LaunchAngle, float deviationAmount)
     {
         Vector3 projectileXZPos = new Vector3(transform.position.x, 0.0f, transform.position.z);
@@ -95,10 +103,22 @@ public class ProjectileFromSoldier : MonoBehaviour
         // create the velocity vector in local space and get it in global space
         Vector3 localVelocity = new Vector3(0f, Vy, Vz);
         Vector3 globalVelocity = transform.TransformDirection(localVelocity);
+        //Debug.Log(globalVelocity);
 
         // launch the object by setting its initial velocity and flipping its state
         rigid.velocity = globalVelocity;
-        isFlying = true;
+
+
+        /*float distance = Vector3.Distance(targetPos, soldierParent.transform.position);
+        float angle = distance;
+        float clampedAngle = Mathf.Clamp(angle, soldierParent.minFiringAngle, soldierParent.maxFiringAngle);
+
+        float xDev = Random.Range(-deviationAmount, deviationAmount);
+        float zDev = Random.Range(-deviationAmount, deviationAmount);
+        Vector3 modifiedTargetPos = new Vector3(targetPos.x + xDev, targetPos.y + clampedAngle, targetPos.z + zDev);
+        Vector3 direction = modifiedTargetPos - soldierParent.transform.position;
+        rigid.AddForce(direction * soldierParent.power);
+        isFlying = true;*/
     }
 
     public void UpdateRotation()
@@ -117,7 +137,21 @@ public class ProjectileFromSoldier : MonoBehaviour
     private void Update()
     {
         UpdateRotation();
-        CheckIfCanDamage(10);
+        CheckIfCanDamage(1);
+        MakeSureAboveTerrain();
+    }
+    private void MakeSureAboveTerrain()
+    { 
+        LayerMask layerMask = LayerMask.GetMask("Terrain");
+        RaycastHit hit;
+        Vector3 vec = new Vector3(transform.position.x, 1000, transform.position.z);
+        if (Physics.Raycast(vec, Vector3.down, out hit, Mathf.Infinity, layerMask))
+        {
+            if (transform.position.y < hit.point.y)
+            {
+                transform.position = hit.point;
+            }
+        }
     }
     private void CheckIfCanDamage(float req)
     {
@@ -140,12 +174,12 @@ public class ProjectileFromSoldier : MonoBehaviour
     {
         if (isModelProj)
         {
-             
+
             if (other.gameObject.tag == "Terrain" || other.gameObject.tag == "BufferTerrain")
-            { 
+            {
                 isFlying = false;
                 finalRotation = transform.rotation;
-                transform.rotation = finalRotation; 
+                transform.rotation = finalRotation;
                 soldierParent.richAI.enabled = true;
                 soldierParent.transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 0, 999), transform.position.z);
                 Vector3 heading = startingPos - transform.position;
@@ -161,7 +195,7 @@ public class ProjectileFromSoldier : MonoBehaviour
                 if (canDamage)
                 {
                     SoldierModel hitModel = other.GetComponentInParent<SoldierModel>();
-                    if (hitModel != null && hitModel.alive)
+                    if (hitModel != null && hitModel.alive && hitModel.formPos != soldierParent.formPos) //can't hit our own formation, but can hit any others
                     {
                         //canDamage = false;
 
@@ -197,7 +231,7 @@ public class ProjectileFromSoldier : MonoBehaviour
                                 spawnVec = hitModel.spine.position;
                                 heading = hitModel.spine.position - transform.position;
                             }
-                            GameObject decal = Instantiate(blood, spawnVec + newVec, Quaternion.identity);
+                            /*GameObject decal = Instantiate(blood, spawnVec + newVec, Quaternion.identity);
 
                             if (bodyPart.type == BodyPart.BodyType.Head)
                             {
@@ -208,7 +242,7 @@ public class ProjectileFromSoldier : MonoBehaviour
                                 decal.transform.parent = hitModel.spine;
                             }
                             decal.transform.rotation = Quaternion.LookRotation(heading);
-                            decal.transform.localScale = new Vector3(modDamage, modDamage, modDamage);
+                            decal.transform.localScale = new Vector3(modDamage, modDamage, modDamage);*/
                         }
                         hitModel.SufferDamage(damage, armorPiercingDamage, soldierParent, damageMult);
 

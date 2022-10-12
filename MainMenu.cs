@@ -11,7 +11,7 @@ public class MainMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     { 
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
     }
     public void StartGame()
     {
@@ -21,5 +21,9 @@ public class MainMenu : MonoBehaviour
     { 
         SceneManager.LoadScene(sceneToLoad, LoadSceneMode.Additive);
         levelLoad = level; 
+    }
+    public void ExitGame()
+    { 
+        Application.Quit();
     }
 }

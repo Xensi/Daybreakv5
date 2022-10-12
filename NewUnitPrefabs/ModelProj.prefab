@@ -54,9 +54,13 @@ MonoBehaviour:
   model: {fileID: 0}
   audioSource: {fileID: 3643499196720698354}
   damage: 1
+  armorPiercingDamage: 1
   penetrationNum: 1
   explosionEffect: {fileID: 0}
   isModelProj: 1
+  startingPos: {x: 0, y: 0, z: 0}
+  blood: {fileID: 0}
+  shouldAlwaysSpawnExplosion: 0
 --- !u!136 &6003265907274017126
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -68,9 +72,9 @@ CapsuleCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.1
-  m_Height: 2.71
+  m_Height: 0.1
   m_Direction: 2
-  m_Center: {x: 0, y: 0, z: 1.55}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &2306342533462963146
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -86,7 +90,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!82 &3643499196720698354
 AudioSource:
   m_ObjectHideFlags: 0

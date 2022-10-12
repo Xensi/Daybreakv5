@@ -17,14 +17,14 @@ public class SoldierModel : MonoBehaviour
     private CapsuleCollider hurtbox; //deprecated
     public List<SkinnedMeshRenderer> renderers;
     [Header("Assign these if ranged")]
-    [Range(0.0f, 45.0f)] [SerializeField] private float maxFiringAngle = 45;
-    [Range(0.0f, 45)] [SerializeField] private float minFiringAngle = 10;
+    [Range(0.0f, 45.0f)] [SerializeField] public float maxFiringAngle = 45;
+    [Range(0.0f, 45)] [SerializeField] public float minFiringAngle = 10;
     [SerializeField] private bool isMagic = false;
     [SerializeField] private Transform projectileSpawn;
     [SerializeField] private ProjectileFromSoldier projectile;
     [SerializeField] private bool directFire = false;
     [SerializeField] private GameObject fireEffect;
-    [SerializeField] private float power = 100;
+    [Range(0.0f, 100)] [SerializeField] public float power = 100;
 
     [SerializeField] private bool volleyFireAndRetreat = false; 
     [SerializeField] private Transform eyeline;
@@ -189,6 +189,9 @@ public class SoldierModel : MonoBehaviour
     public bool routing = false;
 
     public Transform pendingDamageSource;
+
+
+    [SerializeField] private float directFireRadius = 80;
     public void PlaceOnGround()
     {
         LayerMask layerMask = LayerMask.GetMask("Terrain");
@@ -246,6 +249,14 @@ public class SoldierModel : MonoBehaviour
         if (!rangedNeedsLoading && ammo == 0) //give ammo if we dont use it at all
         {
             ModifyAmmo(1);
+        }
+    }
+
+    public void SaveFromFallingInfinitely()
+    {
+        if (transform.position.y <= 0)
+        {
+            PlaceOnGround();
         }
     }
     public void SetBrace(bool val)
@@ -318,9 +329,9 @@ public class SoldierModel : MonoBehaviour
             if (pendingLaunched)
             { 
                 float maxDistance = 0.01f;
-                Vector3 heading = pendingDamageSource.position - transform.position;
-                Vector3 pos = transform.position + (-heading * maxDistance); //launch them in the opposite direction please
-                LaunchModel(pos, 1, pendingDamageSource.position);
+                Vector3 heading = (pendingDamageSource.position - transform.position).normalized;
+                //Vector3 pos = transform.position + (-heading * maxDistance); //launch them in the opposite direction please
+                LaunchModel(heading, 1, pendingDamageSource.position);
                 pendingLaunched = false;
             }  
         } 
@@ -629,10 +640,10 @@ public class SoldierModel : MonoBehaviour
             return;
         } 
         if (!melee && HasTarget())
-        {
+        { 
             if (LineOfSightObstructed(GetTarget()))
             {
-                SetAttacking(false); 
+                SetAttacking(false);
                 return;
             }
         }
@@ -788,8 +799,9 @@ public class SoldierModel : MonoBehaviour
         }
     }
     private bool CanRangedHitWithAngle()
-    { 
-        Vector3 targetPos = new Vector3(0, 0, 0);
+    {
+        return true;
+        /*Vector3 targetPos = new Vector3(0, 0, 0);
         if (formPos.focusFire)
         {
             if (formPos.formationToFocusFire != null) //if we have a formation to focus on
@@ -811,9 +823,9 @@ public class SoldierModel : MonoBehaviour
         float dist = Vector3.Distance(transform.position, targetPos);
         float angle = 0; 
         angle = dist * 0.5f;
-       /* if (formPos.soldierBlock.arcingProjectiles)
+       *//* if (formPos.soldierBlock.arcingProjectiles)
         {
-        }*/
+        }*//*
         float clamped = Mathf.Clamp(angle, 0, 45);
         float angleTester = clamped / 5;
         //angle consideration; the lower the angle, the lower your row must be to fire. otherwise it cancels 
@@ -824,7 +836,7 @@ public class SoldierModel : MonoBehaviour
         else
         {
             return false;
-        }
+        }*/
     }
     private void SetMelee(bool val)
     {
@@ -847,35 +859,11 @@ public class SoldierModel : MonoBehaviour
     }
     private Vector3 GetTarget()
     { 
-        Vector3 targetPos = new Vector3(999, 999, 999);
-        FormationPosition formToFireAt = null;
+        Vector3 targetPos = new Vector3(999, 999, 999); 
         Vector3 spawn = projectileSpawn.transform.position;
 
-        if (directFire)
-        {
-            //get unit reference height
-           /* float referenceHeight = 0;
-            if (formToFireAt != null)
-            { 
-                for (int i = 0; i < formToFireAt.soldierBlock.modelsArray.Length; i++)
-                {
-                    if (formToFireAt.soldierBlock.modelsArray[i] != null)
-                    {
-                        if (formToFireAt.soldierBlock.modelsArray[i].alive)
-                        {
-                            referenceHeight = formToFireAt.soldierBlock.modelsArray[i].transform.position.y;
-                            break;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                referenceHeight = formPos.focusFirePos.y;
-            }
-            targetPos = new Vector3(targetPos.x, referenceHeight + projectileSpawn.transform.position.y, targetPos.z); // */
-            //Debug.Log(targetPos);
-
+        if (directFire) //muskets
+        {  
             if (formPos.focusFire)
             { 
                 if (formPos.formationToFocusFire != null)
@@ -909,7 +897,7 @@ public class SoldierModel : MonoBehaviour
                 }
                 else //otherwise use the terrain position.
                 {
-                    targetPos = new Vector3(formPos.focusFirePos.x, formPos.focusFirePos.y + 5, formPos.focusFirePos.z);
+                    targetPos = new Vector3(formPos.focusFirePos.x, formPos.focusFirePos.y + 1, formPos.focusFirePos.z);
                 }
             }
             else
@@ -921,9 +909,7 @@ public class SoldierModel : MonoBehaviour
                      
                 }
             }
-        }
-
-
+        } 
 
         if (formPos.missileTarget != null)
         { 
@@ -1023,12 +1009,15 @@ public class SoldierModel : MonoBehaviour
                     force = normalizedSpeed;
                 } 
                 if (launchEnemy) //attacksCanLaunchEnemies && launchEnemy
-                {  
+                {
+                    //Debug.Log("attempting to launch enemy");
                     force = Mathf.Clamp(force, 0, 1);
-                    float maxDistance = 5; 
-                    Vector3 pos = enemy.transform.position + (transform.forward * force * maxDistance); 
-                    SlowDown(1-force);  
-                    enemy.LaunchModel(pos, force, transform.position); 
+                    float maxDistance = 10; 
+                    //Vector3 pos = enemy.transform.position + (transform.forward * force * maxDistance);
+                    Vector3 heading = transform.forward;
+                    SlowDown(1-force);
+                    Vector3 startPos = new Vector3(enemy.transform.position.x, enemy.transform.position.y + 1, enemy.transform.position.z); 
+                    enemy.LaunchModel(heading, force* maxDistance, enemy.transform.position); 
                 }
                 if (melee)
                 { 
@@ -1123,21 +1112,27 @@ public class SoldierModel : MonoBehaviour
     {
         speedSlow += slowAmount;
     }
-    private void LaunchModel(Vector3 targetPos, float force, Vector3 startingPos)
+    private void LaunchModel(Vector3 direction, float power, Vector3 startingPos)
     {
         airborne = true;
         //higher force means higher angle and greater deviation. ideally decided by movement speed at time of attack
         //calculations 
-        float angle = force * 45;
+        float angle = power; // * 45
         angle = Mathf.Clamp(angle, 0, 45);
-        float deviation = 0;
+        //float deviation = 0;
+
+        var a = angle * Mathf.Deg2Rad; 
+        Vector3 dir = (direction * Mathf.Cos(a) + transform.up * Mathf.Sin(a)).normalized;  
+
         GameObject proj = Instantiate(modelProj, new Vector3(transform.position.x, transform.position.y+0.2f, transform.position.z), Quaternion.identity); //spawn the projectile
+        proj.transform.rotation = transform.rotation;
         ProjectileFromSoldier missile = proj.GetComponent<ProjectileFromSoldier>();
         missile.formPosParent = formPos; //communicate some info to the missile
         missile.soldierParent = this;
         missile.startingPos = startingPos;
         richAI.enabled = false; //disable pathing for now 
-        missile.LaunchProjectile(targetPos, angle, deviation); //fire at the position of the target with a clamped angle and deviation based on distance
+        //missile.LaunchProjectile(targetPos, angle, deviation); //fire at the position of the target with a clamped angle and deviation based on distance 
+        missile.LaunchBullet(dir, power);
     }
     public void MageCastProjectile(Vector3 targetPos, int abilityNum, string mageType) //let's fire projectiles at a target
     { 
@@ -1188,23 +1183,126 @@ public class SoldierModel : MonoBehaviour
 
         return missile;
     }
-    private bool LineOfSightObstructed(Vector3 target)
-    {
+    /*private void AngledSightObstructed(Vector3 target)
+    {   
+        //calculations
+        float dist = Vector3.Distance(transform.position, target);
+        float angle = 10;
+        angle = dist * 0.5f; //theta
+        float clampedAngle = Mathf.Clamp(angle, minFiringAngle, maxFiringAngle);
+
+        Vector3 vector = target - transform.position;
+
+        float x = vector.x; //x plane
+        float y = vector.z; //y plane
+        float z = vector.y; //up (z)
+        //note, y in unity is z in coords and vice versa
+        float r = Mathf.Sqrt(Mathf.Pow(x,2) + Mathf.Pow(y, 2) + Mathf.Pow(z, 2));
+        float polarX = r * Mathf.Cos(clampedAngle);
+        float polarY = r * Mathf.Sin(clampedAngle);
+        float polarZ = z;
+
+        Vector3 polarVector = new Vector3(polarX, polarZ, polarY); //switch polar y and z because unity
+        Debug.Log(polarVector);
+        *//*Vector3 heading = polarVector - transform.position;
+
+        //
         LayerMask layerMask = LayerMask.GetMask("Model");
 
         RaycastHit hit;
-        Vector3 heading = target - transform.position;
         //float nearRange = 20;
         float range = Vector3.Distance(transform.position, target);
         Vector3 sightLine = transform.position;
 
         if (eyeline != null)
-        { 
+        {
             sightLine = eyeline.position;
-        } 
+        }
         if (Physics.Raycast(sightLine, heading, out hit, range, layerMask))
         {
-            Debug.DrawRay(sightLine, heading * Vector3.Distance(sightLine,hit.point), Color.white, Time.deltaTime, true);
+            Debug.DrawRay(sightLine, heading * Vector3.Distance(sightLine, hit.point), Color.white, Time.deltaTime, true);
+            if (hit.collider.gameObject.tag == "Hurtbox")
+            {
+                SoldierModel model = hit.collider.gameObject.GetComponentInParent<SoldierModel>();
+                if (model != null)
+                {
+                    if (model.team == team)
+                    {
+                        if (lineOfSightIndicator != null)
+                        {
+                            if (formPos.selected)
+                            {
+                                lineOfSightIndicator.enabled = true;
+                            }
+                            else
+                            {
+                                lineOfSightIndicator.enabled = false;
+                            }
+                        }
+                        return true;
+                    }
+                }
+            }
+            else if (hit.collider.gameObject.tag == "Terrain") //terrain blocks shots
+            {
+                if (lineOfSightIndicator != null)
+                {
+                    if (formPos.selected)
+                    {
+                        lineOfSightIndicator.enabled = true;
+                    }
+                    else
+                    {
+                        lineOfSightIndicator.enabled = false;
+                    }
+                }
+                return true;
+            }
+        }
+        if (lineOfSightIndicator != null)
+        {
+            lineOfSightIndicator.enabled = false;
+        }
+        return false;*//*
+
+    }*/
+    private bool LineOfSightObstructed(Vector3 target)
+    {
+        float distance = Vector3.Distance(target, transform.position);
+        bool treatAsDirectFire = directFire;
+        if (distance <= directFireRadius && !directFire)
+        {
+            treatAsDirectFire = true; //if arcing and enemy is within radius, then direct fire
+        }
+        Vector3 heading = (target - transform.position).normalized; //vector from here to there 
+        LayerMask layerMask;
+        float range;
+        if (treatAsDirectFire)
+        {
+            layerMask = LayerMask.GetMask("Model", "Terrain");
+            range = Vector3.Distance(transform.position, target);
+        }
+        else
+        {
+            layerMask = LayerMask.GetMask("Model", "Terrain");
+            range = 20;
+            float angle = AngleCalculation(target);
+            var a = angle * Mathf.Deg2Rad;
+            //Vector3 dir = (transform.forward * Mathf.Cos(a) + transform.right * Mathf.Sin(a)).normalized;
+            Vector3 dir = (heading * Mathf.Cos(a) + transform.up * Mathf.Sin(a)).normalized;
+            heading = dir;
+        }
+        Vector3 sightLine = transform.position;
+
+        if (eyeline != null)
+        {
+            sightLine = eyeline.position;
+        }
+
+        RaycastHit hit;
+        if (Physics.Raycast(sightLine, heading, out hit, range, layerMask))
+        {
+            Debug.DrawRay(sightLine, heading*range, Color.white, Time.deltaTime, true);
             if (hit.collider.gameObject.tag == "Hurtbox")
             {
                 SoldierModel model = hit.collider.gameObject.GetComponentInParent<SoldierModel>();
@@ -1242,6 +1340,11 @@ public class SoldierModel : MonoBehaviour
                 }
                 return true;
             }
+        }
+        else
+        {
+
+            Debug.DrawRay(sightLine, heading*range, Color.red, Time.deltaTime, true);
         }
         if (lineOfSightIndicator != null)
         {
@@ -1328,7 +1431,7 @@ public class SoldierModel : MonoBehaviour
         }
         return 0;
     }
-    private void MoveToRetreatRank()
+    /*private void MoveToRetreatRank()
     {
         formPos.soldierBlock.retreatPositions.Sort(SortByDistance);
         foreach (Position item in formPos.soldierBlock.retreatPositions)
@@ -1341,6 +1444,14 @@ public class SoldierModel : MonoBehaviour
                 break;
             }
         }
+    }*/
+    private float AngleCalculation(Vector3 targetPos)
+    {
+        float dist = Vector3.Distance(transform.position, targetPos);
+        float angle = 10;
+        angle = dist * 0.5f;  
+        float clamped = Mathf.Clamp(angle, minFiringAngle, maxFiringAngle);
+        return clamped;
     }
     private void FireProjectile() //let's fire projectiles at a target
     {
@@ -1350,12 +1461,8 @@ public class SoldierModel : MonoBehaviour
             Vector3 targetPos = GetTarget();
 
             //calculations
-            float dist = Vector3.Distance(transform.position, targetPos);
-            float angle = 10;
-            angle = dist * 0.5f;  
-
-
-            float clamped = Mathf.Clamp(angle, minFiringAngle, maxFiringAngle);
+            float dist = Vector3.Distance(transform.position, targetPos);  
+            float clamped = AngleCalculation(targetPos);
             float deviation = projectileDeviationAmount * dist * 0.01f;
 
             float clampedDeviation = Mathf.Clamp(deviation, 2, 999);
@@ -1369,9 +1476,25 @@ public class SoldierModel : MonoBehaviour
             ProjectileFromSoldier missile = SpawnMissile();
 
             
-            animator.SetFloat("angle", adjusted);
-            //Debug.Log(targetPos + "angle" + clamped);
-            missile.LaunchProjectile(formPos.missileTarget.transform.position, clamped, clampedDeviation); //fire at the position of the target with a clamped angle and deviation based on distance
+            animator.SetFloat("angle", adjusted); 
+            if (dist <= directFireRadius && !directFire) //if enemy is close
+            {
+                Vector3 heading = targetPos - transform.position;
+                float newDeviation = UnityEngine.Random.Range(-projectileDeviationAmount, projectileDeviationAmount);
+                float deviationUp = UnityEngine.Random.Range(-projectileDeviationAmountVertical, projectileDeviationAmountVertical);
+                //Debug.Log(deviationUp);
+
+                heading = Quaternion.AngleAxis(newDeviation, Vector3.up) * heading;
+                heading = Quaternion.AngleAxis(deviationUp, Vector3.forward) * heading;
+
+                float velocity = 37.5f;
+                //missile.FireBullet(heading, power);
+                missile.LaunchBullet(heading, velocity);
+            }
+            else
+            {
+                missile.LaunchProjectile(formPos.missileTarget.transform.position, clamped, clampedDeviation); //fire at the position of the target with a clamped angle and deviation based on distance
+            }
             if (fireEffect != null)
             {
                 GameObject effect = Instantiate(fireEffect, projectileSpawn.position, Quaternion.identity);
