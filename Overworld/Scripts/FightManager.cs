@@ -38,6 +38,7 @@ public class FightManager : MonoBehaviour
     [SerializeField] private GameObject magicUI;
     [SerializeField] private GameObject braceUI;
     [SerializeField] private GameObject chaffBombUI;
+    [SerializeField] private Button setChargeButton;
     [SerializeField] private Button setBraceButton;
     [SerializeField] private Button setUnbraceButton;
     [SerializeField] private Button setHoldButton;
@@ -108,6 +109,7 @@ public class FightManager : MonoBehaviour
         allFormations.Clear();
         FormationPosition[] array = FindObjectsOfType<FormationPosition>();
         allArray = array;
+        int id = 0;
         foreach (FormationPosition item in array)
         {
             allFormations.Add(item);
@@ -120,7 +122,12 @@ public class FightManager : MonoBehaviour
                 aiFormations.Add(item);
             }
             item.FixPositions();
+            if (item.shaker != null)
+            {
+                item.shaker.id = id;
+            }
             //item.ClearOrders(); //resets targets
+            id++;
         }
     }
 
@@ -309,7 +316,7 @@ public class FightManager : MonoBehaviour
         UpdateGUI();
     }
     public void UpdateGUI()
-    {
+    { 
         bool isSelectedRanged = false;
         bool isSelectedMelee = false;
         int numberOfRanged = 0;
@@ -329,8 +336,20 @@ public class FightManager : MonoBehaviour
         mageAbility2.gameObject.SetActive(true); 
         mageAbility1.interactable = false;
         mageAbility2.interactable = false;
+        setChargeButton.interactable = false;
+
+        int numActuallySelected = 0;
+
         foreach (FormationPosition formation in selectedFormations)
         { 
+            if (formation.chargeRecharged)
+            {
+                setChargeButton.interactable = true;
+            }
+            if (formation.selected)
+            {
+                numActuallySelected++;
+            }
             if (formation.canBrace)
             {
                 braceUI.SetActive(true);
@@ -451,73 +470,85 @@ public class FightManager : MonoBehaviour
                 numStopped++;
             }
         }
-        if (numBraced == selectedFormations.Count)
+        if (numActuallySelected <= 0)
         {
-            setBraceButton.interactable = false;
-            setUnbraceButton.interactable = true;
+            /*rangedUI.SetActive(false); //if at least one is ranged or melee, then we activate
+            meleeUI.SetActive(false);
+            braceUI.SetActive(false);
+            magicUI.SetActive(false);*/
+            battleUI.SetActive(false);
         }
         else
         {
-            setBraceButton.interactable = true;
-            setUnbraceButton.interactable = false;
-        }
-        if (numberHoldingFire == selectedFormations.Count)
-        {
-            setHoldButton.interactable = false;
-            setCeaseButton.interactable = false;
-        }
-        else
-        {
-            setHoldButton.interactable = true;
-            setCeaseButton.interactable = true;
-        }
-        if (numberHoldingFire == 0)
-        {
-            setFireButton.interactable = false;
-            setAllowFightButton.interactable = false;
-        }
-        else
-        {
-            setFireButton.interactable = true;
-            setAllowFightButton.interactable = true;
-        } 
+            if (numBraced == selectedFormations.Count)
+            {
+                setBraceButton.interactable = false;
+                setUnbraceButton.interactable = true;
+            }
+            else
+            {
+                setBraceButton.interactable = true;
+                setUnbraceButton.interactable = false;
+            }
+            if (numberHoldingFire == selectedFormations.Count)
+            {
+                setHoldButton.interactable = false;
+                setCeaseButton.interactable = false;
+            }
+            else
+            {
+                setHoldButton.interactable = true;
+                setCeaseButton.interactable = true;
+            }
+            if (numberHoldingFire == 0)
+            {
+                setFireButton.interactable = false;
+                setAllowFightButton.interactable = false;
+            }
+            else
+            {
+                setFireButton.interactable = true;
+                setAllowFightButton.interactable = true;
+            }
 
-        if (numberFreeFiring == 0)
-        {
-            setFreeFireButton.interactable = true;
-        }
-        else
-        {
-            setFreeFireButton.interactable = false;
-        }
+            if (numberFreeFiring == 0)
+            {
+                setFreeFireButton.interactable = true;
+            }
+            else
+            {
+                setFreeFireButton.interactable = false;
+            }
 
-        setMarchButton.interactable = true;
-        setHaltButton.interactable = true;
-        if (numStopped == 0) //all moving
-        { 
-            setMarchButton.interactable = false;
-            setHaltButton.interactable = true;
-        }
-        if (numStopped == selectedFormations.Count) //all stopped
-        {
             setMarchButton.interactable = true;
-            setHaltButton.interactable = false;
-        }
+            setHaltButton.interactable = true;
+            if (numStopped == 0) //all moving
+            {
+                setMarchButton.interactable = false;
+                setHaltButton.interactable = true;
+            }
+            if (numStopped == selectedFormations.Count) //all stopped
+            {
+                setMarchButton.interactable = true;
+                setHaltButton.interactable = false;
+            }
 
-        setHoldPositionButton.interactable = true;
-        setPursueButton.interactable = true;
-        if (numChasing== 0) //all moving
-        {
-            setHoldPositionButton.interactable = false;
-            setPursueButton.interactable = true;
-        }
-        if (numChasing == selectedFormations.Count) //all stopped
-        {
             setHoldPositionButton.interactable = true;
-            setPursueButton.interactable = false;
+            setPursueButton.interactable = true;
+            if (numChasing == 0) //all moving
+            {
+                setHoldPositionButton.interactable = false;
+                setPursueButton.interactable = true;
+            }
+            if (numChasing == selectedFormations.Count) //all stopped
+            {
+                setHoldPositionButton.interactable = true;
+                setPursueButton.interactable = false;
+            }
+            rangedUI.SetActive(isSelectedRanged); //if at least one is ranged or melee, then we activate
+            meleeUI.SetActive(isSelectedMelee); 
         }
-        rangedUI.SetActive(isSelectedRanged); //if at least one is ranged or melee, then we activate
-        meleeUI.SetActive(isSelectedMelee); 
+        
     }
 
     public void ClearOrders()
@@ -736,6 +767,10 @@ public class FightManager : MonoBehaviour
                     {
                         item.formationToFocusFire = formationToFocusFire;
                     }
+                    if (item.soldierBlock.melee)
+                    {
+                        item.StartCharging();
+                    }
                 }
                 UpdateGUI();
                 forceFiring = false;
@@ -812,6 +847,10 @@ public class FightManager : MonoBehaviour
                         {
                             item.focusFirePos = pos;
                         }
+                        if (item.soldierBlock.melee)
+                        {
+                            item.StartCharging();
+                        }
                     }
                     UpdateGUI();
                     forceFiring = false;
@@ -858,6 +897,10 @@ public class FightManager : MonoBehaviour
                         else
                         {
                             tempFormPos.focusFirePos = pos;
+                        }
+                        if (tempFormPos.soldierBlock.melee)
+                        {
+                            tempFormPos.StartCharging();
                         }
                         formList.Remove(tempFormPos); //so it can't be chosen again //if this becomes a problem then make another list
                     }
@@ -975,7 +1018,7 @@ public class FightManager : MonoBehaviour
 
             if (screenPos.x > min.x && screenPos.x < max.x && screenPos.y > min.y && screenPos.y < max.y)
             {
-                if (form.alive && form.team == team)
+                if (form.alive && form.team == team && form.selectable)
                 {   
 
                     if (!Input.GetKey(KeyCode.LeftShift))

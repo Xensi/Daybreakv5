@@ -618,7 +618,6 @@ GameObject:
   - component: {fileID: 953635112972668834}
   - component: {fileID: 5827362390270535189}
   - component: {fileID: 2750967650358227166}
-  - component: {fileID: 2898911470201899859}
   m_Layer: 24
   m_Name: Model
   m_TagString: ZhanguoModel
@@ -704,7 +703,6 @@ MonoBehaviour:
   animator: {fileID: 7556566186551913322}
   target: {fileID: 7641013089631126903}
   aiDesSet: {fileID: 953635112972668832}
-  characterController: {fileID: 2898911470201899859}
   modelProj: {fileID: 3616627480558307331, guid: 281ad1397c9e19d4f9456537da0d28b6, type: 3}
   selectionCircle: {fileID: 6761720837378773304}
   renderers:
@@ -933,6 +931,7 @@ MonoBehaviour:
   normalizedSpeed: 0
   routing: 0
   pendingDamageSource: {fileID: 0}
+  directFireRadius: 80
 --- !u!114 &2750967650358227166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -975,24 +974,6 @@ MonoBehaviour:
   funnelSimplification: 0
   slowWhenNotFacingTarget: 0
   animCompatibility: {fileID: 0}
---- !u!143 &2898911470201899859
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5872376448162512804}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Height: 1.25
-  m_Radius: 0.35
-  m_SlopeLimit: 45
-  m_StepOffset: 0.5
-  m_SkinWidth: 0.02
-  m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 0.64, z: 0}
 --- !u!1 &6761720837378773304
 GameObject:
   m_ObjectHideFlags: 0

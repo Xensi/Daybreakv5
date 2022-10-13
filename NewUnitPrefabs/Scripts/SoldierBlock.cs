@@ -46,9 +46,7 @@ public class SoldierBlock : MonoBehaviour
 
     [SerializeField] private bool manuallyAssignRows = false;
 
-    private bool initialized = false;
-
-
+    private bool initialized = false; 
     void OnEnable()
     {
         if (initialized)

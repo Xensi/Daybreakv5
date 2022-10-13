@@ -45,7 +45,6 @@ GameObject:
   - component: {fileID: 5606755766205998650}
   - component: {fileID: 1164813293295783821}
   - component: {fileID: 5255507575147437489}
-  - component: {fileID: 6195138401729923258}
   m_Layer: 24
   m_Name: SoldnerModel
   m_TagString: AltgardModel
@@ -128,14 +127,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c23e0c2eb0ccd54594e51e55db8c15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lineOfSightIndicator: {fileID: 0}
   richAI: {fileID: 5255507575147437489}
   animator: {fileID: 2865970864648779631}
   target: {fileID: 344633261419014168}
   aiDesSet: {fileID: 5606755766205998648}
-  characterController: {fileID: 6195138401729923258}
   modelProj: {fileID: 3616627480558307331, guid: 281ad1397c9e19d4f9456537da0d28b6, type: 3}
   selectionCircle: {fileID: 5733960279720619429}
-  hurtbox: {fileID: 7562278576444467049}
   renderers:
   - {fileID: 7608805534314942185}
   - {fileID: 8198139176796210451}
@@ -177,6 +175,8 @@ MonoBehaviour:
   - {fileID: 8985722902883242454}
   - {fileID: 3578411043755036811}
   - {fileID: 2904833500614756079}
+  maxFiringAngle: 45
+  minFiringAngle: 10
   isMagic: 0
   projectileSpawn: {fileID: 7828973743558373536}
   projectile: {fileID: 8333262704199657843, guid: eabbea967cb3d3b4ca41216766f6bd8a, type: 3}
@@ -188,6 +188,8 @@ MonoBehaviour:
   projectileDeviationAmount: 5
   projectileDeviationAmountVertical: 5
   attackBox: {fileID: 0}
+  spine: {fileID: 0}
+  head: {fileID: 0}
   startingMaxSpeed: 0
   adjustWalkSpeedVisually: 1
   playIdleAnims: 0
@@ -240,6 +242,7 @@ MonoBehaviour:
   knockedDown: 0
   airborne: 0
   targetEnemy: {fileID: 0}
+  pendingLaunched: 0
   walkSpeed: 3
   runSpeed: 6
   team: Altgard
@@ -389,6 +392,8 @@ MonoBehaviour:
   useOldWalkCalculations: 1
   normalizedSpeed: 0
   routing: 0
+  pendingDamageSource: {fileID: 0}
+  directFireRadius: 80
 --- !u!114 &5255507575147437489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -431,24 +436,6 @@ MonoBehaviour:
   funnelSimplification: 0
   slowWhenNotFacingTarget: 0
   animCompatibility: {fileID: 0}
---- !u!143 &6195138401729923258
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1263844604610811452}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Height: 1.25
-  m_Radius: 0.3
-  m_SlopeLimit: 45
-  m_StepOffset: 0.5
-  m_SkinWidth: 0.02
-  m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 0.64, z: 0}
 --- !u!1 &2403593525043562362
 GameObject:
   m_ObjectHideFlags: 0
@@ -1350,9 +1337,9 @@ SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 6642336603567755430, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
   m_PrefabInstance: {fileID: 2483939898950230404}
   m_PrefabAsset: {fileID: 0}
---- !u!137 &401700809961916314 stripped
+--- !u!137 &8669871455927283590 stripped
 SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 2876563139831096862, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
+  m_CorrespondingSourceObject: {fileID: 6496767960915447298, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
   m_PrefabInstance: {fileID: 2483939898950230404}
   m_PrefabAsset: {fileID: 0}
 --- !u!137 &8985722902883242454 stripped
@@ -1360,9 +1347,9 @@ SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 6830563646480560210, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
   m_PrefabInstance: {fileID: 2483939898950230404}
   m_PrefabAsset: {fileID: 0}
---- !u!137 &3578411043755036811 stripped
+--- !u!137 &401700809961916314 stripped
 SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 1428111466342625551, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
+  m_CorrespondingSourceObject: {fileID: 2876563139831096862, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
   m_PrefabInstance: {fileID: 2483939898950230404}
   m_PrefabAsset: {fileID: 0}
 --- !u!137 &2904833500614756079 stripped
@@ -1395,14 +1382,14 @@ SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 8188981596490611137, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
   m_PrefabInstance: {fileID: 2483939898950230404}
   m_PrefabAsset: {fileID: 0}
---- !u!137 &6138449927126781097 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 8595293074428734765, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
-  m_PrefabInstance: {fileID: 2483939898950230404}
-  m_PrefabAsset: {fileID: 0}
 --- !u!137 &8547630512966350053 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 6118125282403489121, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
+  m_PrefabInstance: {fileID: 2483939898950230404}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &6138449927126781097 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8595293074428734765, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
   m_PrefabInstance: {fileID: 2483939898950230404}
   m_PrefabAsset: {fileID: 0}
 --- !u!137 &7421624283935208933 stripped
@@ -1440,8 +1427,8 @@ SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 5972430139213016851, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
   m_PrefabInstance: {fileID: 2483939898950230404}
   m_PrefabAsset: {fileID: 0}
---- !u!137 &8669871455927283590 stripped
+--- !u!137 &3578411043755036811 stripped
 SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 6496767960915447298, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
+  m_CorrespondingSourceObject: {fileID: 1428111466342625551, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
   m_PrefabInstance: {fileID: 2483939898950230404}
   m_PrefabAsset: {fileID: 0}

@@ -136,9 +136,12 @@ public class ProjectileFromSoldier : MonoBehaviour
     }
     private void Update()
     {
-        UpdateRotation();
-        CheckIfCanDamage(1);
-        MakeSureAboveTerrain();
+        if (isFlying)
+        { 
+            UpdateRotation();
+            CheckIfCanDamage(1);
+            MakeSureAboveTerrain();
+        }
     }
     private void MakeSureAboveTerrain()
     { 
@@ -169,6 +172,7 @@ public class ProjectileFromSoldier : MonoBehaviour
         CapsuleCollider capsule = GetComponent<CapsuleCollider>();
         capsule.enabled = false;
         audioSource.enabled = false;
+        SelfDestruct();
     }
     void OnTriggerEnter(Collider other)
     {

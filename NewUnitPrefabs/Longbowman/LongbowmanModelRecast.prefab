@@ -618,7 +618,6 @@ GameObject:
   - component: {fileID: 4782491434103856789}
   - component: {fileID: 2286667199278184226}
   - component: {fileID: 7586394984505008617}
-  - component: {fileID: 6071910612669868933}
   m_Layer: 24
   m_Name: Model
   m_TagString: ZhanguoModel
@@ -706,7 +705,6 @@ MonoBehaviour:
   animator: {fileID: 9211102524227596297}
   target: {fileID: 2697507056178058304}
   aiDesSet: {fileID: 4782491434103856791}
-  characterController: {fileID: 6071910612669868933}
   modelProj: {fileID: 3616627480558307331, guid: 281ad1397c9e19d4f9456537da0d28b6, type: 3}
   selectionCircle: {fileID: 3185494639271716655}
   renderers:
@@ -977,24 +975,6 @@ MonoBehaviour:
   funnelSimplification: 0
   slowWhenNotFacingTarget: 0
   animCompatibility: {fileID: 0}
---- !u!143 &6071910612669868933
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2169595719131868819}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Height: 1.25
-  m_Radius: 0.35
-  m_SlopeLimit: 45
-  m_StepOffset: 0.5
-  m_SkinWidth: 0.02
-  m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 0.64, z: 0}
 --- !u!1 &2673477246392282184
 GameObject:
   m_ObjectHideFlags: 0
@@ -1271,6 +1251,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7192488739686180119, guid: 0aed8b0a47b84404e900236a202f4621, type: 3}
   m_PrefabInstance: {fileID: 200033107069312881}
   m_PrefabAsset: {fileID: 0}
+--- !u!137 &5041979054681886629 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5133571624266174676, guid: 0aed8b0a47b84404e900236a202f4621, type: 3}
+  m_PrefabInstance: {fileID: 200033107069312881}
+  m_PrefabAsset: {fileID: 0}
 --- !u!137 &3819089584907609487 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 4019050020591434494, guid: 0aed8b0a47b84404e900236a202f4621, type: 3}
@@ -1291,18 +1276,13 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3166854248027190530, guid: 0aed8b0a47b84404e900236a202f4621, type: 3}
   m_PrefabInstance: {fileID: 200033107069312881}
   m_PrefabAsset: {fileID: 0}
---- !u!137 &5207736942756355212 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 5369188117545010173, guid: 0aed8b0a47b84404e900236a202f4621, type: 3}
-  m_PrefabInstance: {fileID: 200033107069312881}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2316999527040409997 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2513303012816125692, guid: 0aed8b0a47b84404e900236a202f4621, type: 3}
   m_PrefabInstance: {fileID: 200033107069312881}
   m_PrefabAsset: {fileID: 0}
---- !u!137 &5041979054681886629 stripped
+--- !u!137 &5207736942756355212 stripped
 SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 5133571624266174676, guid: 0aed8b0a47b84404e900236a202f4621, type: 3}
+  m_CorrespondingSourceObject: {fileID: 5369188117545010173, guid: 0aed8b0a47b84404e900236a202f4621, type: 3}
   m_PrefabInstance: {fileID: 200033107069312881}
   m_PrefabAsset: {fileID: 0}

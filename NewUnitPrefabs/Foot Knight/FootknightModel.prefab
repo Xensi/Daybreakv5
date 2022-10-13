@@ -45,7 +45,6 @@ GameObject:
   - component: {fileID: 5606755766205998650}
   - component: {fileID: 1164813293295783821}
   - component: {fileID: 5255507575147437489}
-  - component: {fileID: 6195138401729923258}
   m_Layer: 24
   m_Name: SoldnerModel
   m_TagString: AltgardModel
@@ -132,7 +131,6 @@ MonoBehaviour:
   animator: {fileID: 1494414879792607161}
   target: {fileID: 344633261419014168}
   aiDesSet: {fileID: 5606755766205998648}
-  characterController: {fileID: 6195138401729923258}
   modelProj: {fileID: 3616627480558307331, guid: 281ad1397c9e19d4f9456537da0d28b6, type: 3}
   selectionCircle: {fileID: 5733960279720619429}
   renderers:
@@ -399,24 +397,6 @@ MonoBehaviour:
   funnelSimplification: 0
   slowWhenNotFacingTarget: 0
   animCompatibility: {fileID: 0}
---- !u!143 &6195138401729923258
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1263844604610811452}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Height: 1.25
-  m_Radius: 0.3
-  m_SlopeLimit: 45
-  m_StepOffset: 0.5
-  m_SkinWidth: 0.02
-  m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 0.64, z: 0}
 --- !u!1 &2403593525043562362
 GameObject:
   m_ObjectHideFlags: 0

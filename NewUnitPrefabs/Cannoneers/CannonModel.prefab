@@ -618,7 +618,6 @@ GameObject:
   - component: {fileID: 4782491434103856789}
   - component: {fileID: 2286667199278184226}
   - component: {fileID: 7586394984505008617}
-  - component: {fileID: 6071910612669868933}
   m_Layer: 24
   m_Name: Model
   m_TagString: ZhanguoModel
@@ -701,24 +700,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c23e0c2eb0ccd54594e51e55db8c15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lineOfSightIndicator: {fileID: 0}
   richAI: {fileID: 7586394984505008617}
   animator: {fileID: 4345119137584588076}
   target: {fileID: 2697507056178058304}
   aiDesSet: {fileID: 4782491434103856791}
-  characterController: {fileID: 6071910612669868933}
   modelProj: {fileID: 3616627480558307331, guid: 281ad1397c9e19d4f9456537da0d28b6, type: 3}
   selectionCircle: {fileID: 3185494639271716655}
-  hurtbox: {fileID: 2408882275481971699}
   renderers: []
+  maxFiringAngle: 45
+  minFiringAngle: 10
   isMagic: 0
   projectileSpawn: {fileID: 6392316433958010215}
   projectile: {fileID: 8333262704199657843, guid: 0f192832c85cdef4b9574f358a4acd84, type: 3}
   directFire: 1
   fireEffect: {fileID: 0}
   power: 200
+  volleyFireAndRetreat: 0
+  eyeline: {fileID: 0}
+  projectileDeviationAmount: 10
+  projectileDeviationAmountVertical: 5
   attackBox: {fileID: 0}
+  spine: {fileID: 0}
+  head: {fileID: 0}
+  startingMaxSpeed: 0
+  adjustWalkSpeedVisually: 1
+  playIdleAnims: 0
   health: 80
   damage: 100
+  armorPiercingDamage: 0
   armor: 2
   timeUntilDamage: 0.8
   currentDamageTime: 0
@@ -726,9 +736,24 @@ MonoBehaviour:
   currentFinishedAttackingTime: 0
   timeUntilRecovery: 0.5
   currentRecoveryTime: 0
+  reqAttackTime: 0.1
+  currentAttackTime: 0.1
   magicRechargeTime: 60
   currentMagicRecharge: 0
   magicCharged: 1
+  chargeDamage: 0
+  stopWhenAttacking: 1
+  stopWhenDamaged: 1
+  stopWhenLoading: 1
+  attacksCanLaunchEnemies: 0
+  canOnlyAttackWhileMoving: 0
+  attacksBreakEnemyCohesion: 0
+  directionalAttacks: 0
+  angleOfAttack: 20
+  attacksDontFaceEnemy: 0
+  impactAttacks: 0
+  defaultStoppingDistance: 0.1
+  combatStoppingDistance: 0.001
   rangedNeedsLoading: 1
   ammo: 0
   maxAmmo: 1
@@ -736,7 +761,10 @@ MonoBehaviour:
   loadingRightNow: 0
   currentFinishedLoadingTime: 0
   timeUntilFinishedLoading: 20
+  justFired: 0
   braced: 0
+  allowedToDealDamage: 1
+  modelPosition: {fileID: 0}
   movingSpeed: 0
   alive: 1
   attacking: 0
@@ -747,6 +775,7 @@ MonoBehaviour:
   knockedDown: 0
   airborne: 0
   targetEnemy: {fileID: 0}
+  pendingLaunched: 0
   walkSpeed: 3
   runSpeed: 6
   team: Altgard
@@ -764,13 +793,9 @@ MonoBehaviour:
   defaultAccel: 25
   sprintAccel: 25
   self: {fileID: 2169595719131868819}
-  finishedPathRotSpeed: 20
   nearbyEnemyModels: []
-  reqAttackTime: 0.1
-  currentAttackTime: 0.1
   currentIdleTimer: 0
   reqIdleTimer: 20
-  position: {fileID: 0}
   deathSounds:
   - {fileID: 8300000, guid: a9ed4e62be7a3bc48b39657eccfa95ca, type: 3}
   - {fileID: 8300000, guid: 4245bafa826caac43b14f33d47e8f95d, type: 3}
@@ -875,8 +900,6 @@ MonoBehaviour:
   voiceSource: {fileID: 6880501607377708057}
   impactSource: {fileID: 4013500636507265404}
   hurtSource: {fileID: 5019969114610797930}
-  defaultStoppingDistance: 0.1
-  combatStoppingDistance: 0.001
   numRandIdleAnims: 0
   numRandAttackAnims: 1
   waitForAttackChatterTime: 5
@@ -890,26 +913,17 @@ MonoBehaviour:
   numKills: 0
   melee: 0
   LaunchAngle: 45
-  allowedToDealDamage: 1
-  projectileDeviationAmount: 10
-  projectileDeviationAmountVertical: 5
   pendingDamage: 0
   pendingArmorPiercingDamage: 0
-  stopWhenAttacking: 1
-  attacksCanLaunchEnemies: 0
-  canOnlyAttackWhileMoving: 0
-  attacksBreakEnemyCohesion: 0
-  directionalAttacks: 0
-  angleOfAttack: 20
-  attacksDontFaceEnemy: 0
-  impactAttacks: 0
   speedSlow: 0
-  startingMaxSpeed: 0
   ignoreAsNearby: 0
   getUpTime: 0
   getUpTimeCap: 8
   useOldWalkCalculations: 1
   normalizedSpeed: 0
+  routing: 0
+  pendingDamageSource: {fileID: 0}
+  directFireRadius: 80
 --- !u!114 &7586394984505008617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -952,24 +966,6 @@ MonoBehaviour:
   funnelSimplification: 0
   slowWhenNotFacingTarget: 0
   animCompatibility: {fileID: 0}
---- !u!143 &6071910612669868933
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2169595719131868819}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Height: 1.25
-  m_Radius: 0.35
-  m_SlopeLimit: 45
-  m_StepOffset: 0.5
-  m_SkinWidth: 0.02
-  m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 0.64, z: 0}
 --- !u!1 &3171561541954152508
 GameObject:
   m_ObjectHideFlags: 0
