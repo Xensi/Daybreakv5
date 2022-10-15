@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    public int team = 0; //altgard, zhanguo
     public string sceneToLoad = "LoadGame";
     public int levelLoad = 1;
     public GameObject ui;

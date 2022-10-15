@@ -4,11 +4,27 @@ using UnityEngine;
 
 public class AttackBox : MonoBehaviour
 {
-
+    public List<Collider> colliders;
     public bool canDamage = true;
     public bool isCavalry = true;
 
-    [SerializeField] private SoldierModel parentModel;  
+    [SerializeField] private SoldierModel parentModel;
+    private void Start()
+    {
+        if (!isCavalry)
+        { 
+            ToggleAttackBox(false);
+        }
+        Collider[] array = GetComponents<Collider>();
+        colliders.AddRange(array);
+    }
+    public void ToggleAttackBox(bool val)
+    {
+        foreach (Collider col in colliders)
+        {
+            col.enabled = val;
+        }
+    }
     public void Rearm()
     {
         canDamage = true;

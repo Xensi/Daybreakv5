@@ -36,6 +36,45 @@ public class CamRotate : MonoBehaviour
     }
     private void Update()
     {
+        #region ExperimentalCamera
+        /*if (Input.GetKey(KeyCode.Equals))
+        {
+            CinemachineShake.Instance.cineVirCam.LookAt = null;
+            CinemachineShake.Instance.cineVirCam.transform.rotation = Quaternion.identity;
+
+            if (CinemachineShake.Instance.cineVirCam.Follow == null)
+            {
+                if (FightManager.Instance.selectedFormations.Count == 1)
+                {
+                    CinemachineShake.Instance.cineVirCam.Follow = FightManager.Instance.selectedFormations[0].transform;
+                }
+            }
+            else
+            {
+                CinemachineShake.Instance.cineVirCam.Follow = null;
+                CinemachineShake.Instance.cineVirCam.transform.position = Vector3.zero;
+            }
+        }
+        if (Input.GetKey(KeyCode.Minus))
+        {
+            CinemachineShake.Instance.cineVirCam.Follow = null;
+            CinemachineShake.Instance.cineVirCam.transform.position = Vector3.zero;
+
+            if (CinemachineShake.Instance.cineVirCam.LookAt == null)
+            {
+                if (FightManager.Instance.selectedFormations.Count == 1)
+                {
+                    CinemachineShake.Instance.cineVirCam.LookAt = FightManager.Instance.selectedFormations[0].transform;
+                }
+            }
+            else
+            {
+                CinemachineShake.Instance.cineVirCam.LookAt = null;
+                CinemachineShake.Instance.cineVirCam.transform.rotation = Quaternion.identity;
+            }
+        }*/
+        #endregion
+
         UpdateTerrainHeightValue();
         if (Input.GetKey("left"))
         {

@@ -32,7 +32,7 @@ public class SoldierBlock : MonoBehaviour
 
     public float modelAttackRange = 4.5f;
 
-    [SerializeField] private float desiredWalkingSpeed = 3;
+    public float desiredWalkingSpeed = 3;
     public bool melee = true;
 
     public bool canBeRanged = false; 
@@ -66,6 +66,7 @@ public class SoldierBlock : MonoBehaviour
         int arrayInc = 0;
 
         //
+        formPos.numberOfAliveSoldiers = 0;
         if (rows.Count > 0)
         {
             foreach (Row rowItem in rows)
@@ -79,6 +80,8 @@ public class SoldierBlock : MonoBehaviour
                     num++;
                     //spawn soldier
                     GameObject soldier = Instantiate(soldierPrefab, position.transform.position, angleToFace, modelParent);
+                    formPos.numberOfAliveSoldiers++;
+
                     AIDestinationSetter aiDesSet = soldier.GetComponentInChildren<AIDestinationSetter>();
                     aiDesSet.target = position.transform;
                     //getmodel

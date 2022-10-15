@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class FightManager : MonoBehaviour
 {
+    public static FightManager Instance { get; private set; }
     [SerializeField] private GameObject destPrefab;
     private Vector3 clickPosition;
 
@@ -76,13 +77,16 @@ public class FightManager : MonoBehaviour
 
     [SerializeField] private List<Vector3> destinations;
 
-     
+    [SerializeField] private bool testing = false;
+
+    
     private enum combatStrategy
     {
         Attack,
         Defend
     } 
     private combatStrategy aiState = combatStrategy.Attack;
+     
 
     void OnEnable()
     {
@@ -94,7 +98,11 @@ public class FightManager : MonoBehaviour
     }
     private void Start()
     {
-        //FinishedLoading();
+        Instance = this;
+        if (testing)
+        { 
+            FinishedLoading();
+        }
     }
 
     public void FinishedLoading()
@@ -137,6 +145,7 @@ public class FightManager : MonoBehaviour
         {
             case combatStrategy.Attack:
                 AIRaisePursueRadius();
+                AICheckIfBraceNeeded();
                 break;
             case combatStrategy.Defend:
                 AISetDefaultPursueRadius();
@@ -162,6 +171,16 @@ public class FightManager : MonoBehaviour
     public void ReturnToMainMenu()
     {
         SceneManager.LoadScene("MainMenu");
+    }
+    private void AICheckIfBraceNeeded()
+    {
+        foreach (FormationPosition formPos in aiFormations)
+        {
+            if (formPos.soldierBlock.melee && formPos.usesSpears)
+            {
+                formPos.AICheckIfNeedToBrace();
+            } 
+        }
     }
     private void AIRaisePursueRadius()
     {
@@ -720,7 +739,7 @@ public class FightManager : MonoBehaviour
 
         foreach (FormationPosition item in formList) //Selects closest formation
         {
-            float newDistance = Vector3.Distance(item.transform.position, point);
+            float newDistance = Helper.Instance.GetSquaredMagnitude(item.transform.position, point);
             if (newDistance < currentDistance)
             {
                 currentDistance = newDistance;
@@ -871,7 +890,8 @@ public class FightManager : MonoBehaviour
                         float currentDistance = 99999;
                         foreach (FormationPosition item in formList) //get closest formation
                         {
-                            float newDistance = Vector3.Distance(item.transform.position, pos);
+                            //float newDistance = Vector3.Distance(item.transform.position, pos);
+                            float newDistance = Helper.Instance.GetSquaredMagnitude(item.transform.position, pos);
                             if (newDistance < currentDistance)
                             {
                                 currentDistance = newDistance;
@@ -931,51 +951,29 @@ public class FightManager : MonoBehaviour
     }
     private void UpdateTargeter()
     { 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        float distanceSoFar = 9999;
-        var hits = Physics.RaycastAll(ray, distanceSoFar);
-        Vector3 pos = new Vector3(0, 0, 0);
-
-        //check to see if we are clicking on a formation or just on terrain
-
-        RaycastHit candidateHit = new RaycastHit();
-        bool formationHitFound = false;
-        foreach (RaycastHit hit in hits)
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);  
+        LayerMask layerMask = LayerMask.GetMask("Terrain");
+        RaycastHit hit; 
+        if (Physics.Raycast(ray.origin, ray.direction, out hit, Mathf.Infinity, layerMask))
         {
-            if (hit.collider.tag == "SelectableObject")
+            forceFireTarget.transform.position = hit.point;
+            //hit terrain, now check if formation here
+            LayerMask formMask = LayerMask.GetMask("Formation");
+            RaycastHit formHit;
+            Vector3 vec = new Vector3(hit.point.x, 100, hit.point.z);
+            if (Physics.Raycast(vec, Vector3.down, out formHit, Mathf.Infinity, formMask))
             {
-                if (hit.distance <= distanceSoFar) //used to get closest result
-                {
-                    pos = hit.point;
-                    candidateHit = hit;
-                    distanceSoFar = hit.distance;
-                    formationHitFound = true;
-                }
+                formationToFocusFire = formHit.transform.gameObject.GetComponentInParent<FormationPosition>();
             }
-            else if (hit.collider.tag == "Terrain") 
+            else
             {
-                if (hit.distance < distanceSoFar) //used to get closest result
-                {
-                    pos = hit.point;
-                    candidateHit = hit;
-                    distanceSoFar = hit.distance;
-                }
+                formationToFocusFire = null;
             }
-            
-        }
-        if (formationHitFound && candidateHit.collider.tag == "SelectableObject")
-        {
-            formationToFocusFire = candidateHit.transform.gameObject.GetComponentInParent<FormationPosition>();
-        }
-        else
-        {
-            formationToFocusFire = null;
-        }
-        forceFireTarget.transform.position = pos;
+        }  
         float distanceBetween = Vector3.Distance(forceFireTarget.transform.position, GetClosestSelectedFormationToPoint(forceFireTarget.transform.position).transform.position);
         distanceBetween *= 0.25f;
         distanceBetween = Mathf.Clamp(distanceBetween, 5, 999);
-        forceFireTarget.transform.localScale = new Vector3(distanceBetween, distanceBetween, 100);
+        forceFireTarget.transform.localScale = new Vector3(distanceBetween, distanceBetween, .1f*distanceBetween);
     }
     private void LeftClickCheck()
     {  
@@ -1194,7 +1192,16 @@ public class FightManager : MonoBehaviour
         }
         placementMarkers.Clear();
     }
-
+    private void SetTransformOnGround(Transform transform, string layer)
+    {
+        Vector3 vec = new Vector3(transform.position.x, 100, transform.position.z);
+        LayerMask layerMask = LayerMask.GetMask(layer);
+        RaycastHit hit;
+        if (Physics.Raycast(vec, Vector3.down, out hit, Mathf.Infinity, layerMask))
+        {
+            transform.position = hit.point;
+        }
+    }
     private void RightClickCheck()
     {
         if (Input.GetMouseButtonDown(1)) //set movepos
@@ -1204,9 +1211,7 @@ public class FightManager : MonoBehaviour
             wasMagicTargeting = false;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             float distanceSoFar = 9999;
-            var hits = Physics.RaycastAll(ray, distanceSoFar);
-            //bool formationHitFound = false;
-            //RaycastHit candidateHit = new RaycastHit();
+            var hits = Physics.RaycastAll(ray, distanceSoFar); 
             foreach (RaycastHit hit in hits)
             {
                 if (hit.collider.tag == "Terrain")  
@@ -1347,6 +1352,7 @@ public class FightManager : MonoBehaviour
                             item.shouldRotateToward = false;
                         } 
                         item.aiTarget.transform.position = item.destinationsList[0];
+                        SetTransformOnGround(item.aiTarget.transform, "GroundForm");
 
                         item.CheckIfRotateOrNot();
 
@@ -1369,7 +1375,7 @@ public class FightManager : MonoBehaviour
                         float currentDistance = 99999;
                         foreach (FormationPosition item in formList) //get closest formation
                         {
-                            float newDistance = Vector3.Distance(item.transform.position, pos);
+                            float newDistance = Helper.Instance.GetSquaredMagnitude(item.transform.position, pos);
                             if (newDistance < currentDistance)
                             {
                                 currentDistance = newDistance;
@@ -1377,6 +1383,7 @@ public class FightManager : MonoBehaviour
                             }
                         }
                         tempFormPos.aiTarget.transform.position = pos; //tell closest formation to go there 
+                        SetTransformOnGround(tempFormPos.aiTarget.transform, "GroundForm");
                         tempFormPos.destinationsList.Clear();
                         tempFormPos.destinationsList.Add(pos);
                         tempFormPos.pathSet = true;
@@ -1413,14 +1420,7 @@ public class FightManager : MonoBehaviour
                     //parent gameobjects to big one
 
                     Vector3 heading = lineFormationPosList[0] - avg;
-                    //rotate parent to face destination
-                    /*if (Vector3.Angle(heading, -transform.forward) <= threshold)
-                    { 
-                    }
-                    else
-                    {
-                         
-                    }*/
+                    //rotate parent to face destination 
                     parent.transform.rotation = Quaternion.LookRotation(heading, Vector3.up);
 
                     //move parent to destination
@@ -1432,35 +1432,13 @@ public class FightManager : MonoBehaviour
                         Vector3 pos = dests[i].transform.position;
 
                         form.aiTarget.transform.position = pos; //tell closest formation to go there 
+                        SetTransformOnGround(form.aiTarget.transform, "GroundForm");
                         form.destinationsList.Clear();
                         form.destinationsList.Add(pos);
                         form.pathSet = true;
                         form.obeyingMovementOrder = true;
                         form.shouldRotateToward = false;
-                    }
-
-                    //Destroy(parent);
-                    /*//Debug.Log("yesir");
-                   
-                    //Debug.Log(avg); //avg good
-
-                    destinations.Clear();
-                    for (int i = 0; i < selectedFormations.Count; i++)
-                    {
-                        FormationPosition selForm = selectedFormations[i]; 
-                        *//*float distance = Vector3.Distance(selectedFormations[i].transform.position, lineFormationPosList[0]);
-                        Debug.Log(distance);*//*
-                        Vector3 pos = selectedFormations[i].transform.position + (heading); //push forwards
-                        destinations.Add(pos);
-
-                        selForm.aiTarget.transform.position = destinations[i]; //tell closest formation to go there 
-                        selForm.destinationsList.Clear();
-                        selForm.destinationsList.Add(destinations[i]);
-                        selForm.pathSet = true;
-                        selForm.obeyingMovementOrder = true;
-                        selForm.shouldRotateToward = false;
-                        //Debug.Log(destinations[i]);
-                    } */
+                    } 
                 }
 
             }

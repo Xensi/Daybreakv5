@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5194611686949468344}
   - component: {fileID: 5194611686963276830}
   - component: {fileID: 5104170281567577751}
-  m_Layer: 13
+  m_Layer: 29
   m_Name: Prefab_Birch_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 5194611686949468346}
   - component: {fileID: 5194611686946076826}
   - component: {fileID: 5194611686947043930}
-  m_Layer: 13
+  m_Layer: 29
   m_Name: Birch_06_LOD2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,7 +183,7 @@ GameObject:
   - component: {fileID: 5194611686949468348}
   - component: {fileID: 5194611686946076828}
   - component: {fileID: 5194611686947043932}
-  m_Layer: 13
+  m_Layer: 29
   m_Name: Birch_06_LOD1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -266,7 +266,7 @@ GameObject:
   - component: {fileID: 5194611686946076830}
   - component: {fileID: 5194611686947043934}
   - component: {fileID: 3220241587609800421}
-  m_Layer: 13
+  m_Layer: 29
   m_Name: Birch_06_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}

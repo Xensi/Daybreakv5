@@ -13,7 +13,7 @@ public class SoldierModel : MonoBehaviour
     [SerializeField] private AIDestinationSetter aiDesSet; 
     [SerializeField] private GameObject modelProj;
     public GameObject selectionCircle; 
-    private CapsuleCollider hurtbox; //deprecated
+    private CapsuleCollider hurtbox; 
     public List<SkinnedMeshRenderer> renderers;
     [Header("Assign these if ranged")]
     [Range(0.0f, 45.0f)] [SerializeField] public float maxFiringAngle = 45;
@@ -205,11 +205,13 @@ public class SoldierModel : MonoBehaviour
     }
     private void Start()
     {
+
         if (lineOfSightIndicator != null)
         { 
             lineOfSightIndicator.enabled = false;
         }
         startingMaxSpeed = richAI.maxSpeed;
+        //Debug.Log(startingMaxSpeed);
         /*if (startingMaxSpeed <= 0)
         {
             startingMaxSpeed = 3;
@@ -245,7 +247,7 @@ public class SoldierModel : MonoBehaviour
         {
             ModifyAmmo(1);
         }
-        PlaceOnGround();
+        PlaceOnGround(); 
     }
 
     public void SaveFromFallingInfinitely()
@@ -584,13 +586,19 @@ public class SoldierModel : MonoBehaviour
         else if (loadingRightNow)
         {   //should we stop reloading? 
             //increment timer  
-            currentFinishedLoadingTime += .1f;
+            currentFinishedLoadingTime += 1f;
             if (currentFinishedLoadingTime >= timeUntilFinishedLoading)
             {
                 FinishReload();
             }
         }
-
+    }
+    public void ToggleAttackBox(bool val)
+    {
+        if (attackBox != null)
+        {
+            attackBox.ToggleAttackBox(val);
+        }
     }
     private void Reload()
     {
@@ -669,7 +677,7 @@ public class SoldierModel : MonoBehaviour
             {
                 //Debug.Log("timer reached");
                 
-                if (impactAttacks) //cavalry/braced inf
+                if (impactAttacks || formPos.charging) //cavalry/braced inf
                 {
                     if (!attackBox.canDamage)
                     { 
@@ -714,7 +722,8 @@ public class SoldierModel : MonoBehaviour
     }
     private bool CheckIfInAttackRange() //slow
     {
-        return (Vector3.Distance(transform.position, targetEnemy.transform.position) <= attackRange);
+        //return (Vector3.Distance(transform.position, targetEnemy.transform.position) <= attackRange);
+        return Helper.Instance.GetSquaredMagnitude(transform.position, targetEnemy.transform.position) <= Mathf.Pow(attackRange, 2);
     }
     private void AttackCodeChecks() //called to see if we can make an attack
     { 
@@ -768,23 +777,18 @@ public class SoldierModel : MonoBehaviour
             
         allowedToDealDamage = true;
 
-        if (impactAttacks)
+        if (impactAttacks || formPos.charging)
         {
             if (attackBox != null)
             {
                 attackBox.Rearm();
             }
         }
-    }
-    private bool CanRangedHitWithAngle()
-    {
-        return true; 
-    }
+    } 
     private void SetMelee(bool val)
     {
         melee = val;
-        animator.SetBool("melee", val);
-
+        animator.SetBool("melee", val); 
     }
     public void UpdateMeleeEngagement()
     {
@@ -955,14 +959,16 @@ public class SoldierModel : MonoBehaviour
                     force = normalizedSpeed * 2;
                     Debug.Log(damage * force);
                 }
-                if (launchEnemy) //attacksCanLaunchEnemies && launchEnemy
+                if (launchEnemy && !enemy.formPos.braced) //attacksCanLaunchEnemies && launchEnemy
                 {
                     //Debug.Log("attempting to launch enemy");
                     force = Mathf.Clamp(force, 0, 1);
                     float maxDistance = 5; 
                     //Vector3 pos = enemy.transform.position + (transform.forward * force * maxDistance);
                     Vector3 heading = transform.forward;
-                    SlowDown(1-force);
+                    float slowMax = startingMaxSpeed * 0.9f;
+                    float minSlow = 0.1f;
+                    SlowDown(slowMax-force, minSlow);
                     Vector3 startPos = new Vector3(enemy.transform.position.x, enemy.transform.position.y + 1, enemy.transform.position.z); 
                     enemy.LaunchModel(heading, force* maxDistance, enemy.transform.position); 
                 }
@@ -977,15 +983,28 @@ public class SoldierModel : MonoBehaviour
                 {
                     enemy.formPos.BreakCohesion();
                 }
-                if (knockDown)
-                {
+                if (knockDown && !enemy.formPos.braced) //can't knock down braced units
+                { 
+                    float getUpTime = 4;
                     enemy.KnockDown();
+                    enemy.getUpTimeCap = getUpTime * force; 
                 }
                 if (trampling)
                 {
                     float trampleDebuff = .25f;
                     force = normalizedSpeed * trampleDebuff;
+                    float slowMax = startingMaxSpeed * 0.1f;
+                    float minSlow = 0.1f;
+                    SlowDown(slowMax - force, minSlow);
                 }
+                /*if (braced) //if we're braced, and they're charging
+                { 
+                    if (enemy.formPos.charging || enemy.formPos.isCavalry)
+                    {
+                        float stunTime = 3;
+                        enemy.formPos.FreezeMovement(stunTime);
+                    }
+                }*/
                 enemy.SufferDamage(damage * force, armorPiercingDamage * force, this, 1); 
             } 
         }
@@ -1054,8 +1073,9 @@ public class SoldierModel : MonoBehaviour
     {
         SetKnockedDown(true);
     }
-    private void SlowDown(float slowAmount)
+    private void SlowDown(float slowAmount, float minSlow)
     {
+        slowAmount = Mathf.Clamp(slowAmount, minSlow, 100);
         speedSlow += slowAmount;
     }
     private void LaunchModel(Vector3 direction, float power, Vector3 startingPos)
@@ -1437,33 +1457,6 @@ public class SoldierModel : MonoBehaviour
                 voiceSource.PlayOneShot(deathSounds[UnityEngine.Random.Range(0, deathSounds.Count)]);
             }
         }
-        //simplify
-        /*if (!formPos.playingDeathReactionChatter)
-        {
-            formPos.playingDeathReactionChatter = true;
-            formPos.DisableDeathReactionForSeconds(10);
-
-            LayerMask layerMask = LayerMask.GetMask("Model");
-            int maxColliders = 5;
-            Collider[] colliders = new Collider[maxColliders];
-            int numColliders = Physics.OverlapSphereNonAlloc(transform.position, attackRange, colliders, layerMask, QueryTriggerInteraction.Ignore);
-            for (int i = 0; i < numColliders; i++)
-            {
-                if (colliders[i].gameObject == self) //if our own hitbox, ignore
-                {
-                    continue;
-                }
-                SoldierModel model = colliders[i].GetComponentInParent<SoldierModel>(); //find someone who will say something about their death
-                if (model != null)
-                {
-                    if (model.team == team && model.alive && deathReactionSounds.Count > 0)
-                    {
-                        model.voiceSource.PlayOneShot(deathReactionSounds[UnityEngine.Random.Range(0, deathReactionSounds.Count)]);
-                        break;
-                    } 
-                }
-            } 
-        } */
         if (formPos.numberOfAliveSoldiers <= 0)
         {
             formPos.soldierBlock.SelfDestruct();
@@ -1483,7 +1476,11 @@ public class SoldierModel : MonoBehaviour
                 item.material.color = Color.gray;
             } 
         }
-        DelayedDisable();
+        if (lineOfSightIndicator != null)
+        {
+            lineOfSightIndicator.enabled = false;
+        }
+        Invoke("DelayedDisable", 2);
     }
     private void DelayedDisable()
     {
@@ -1556,7 +1553,8 @@ public class SoldierModel : MonoBehaviour
         targetEnemy = nearbyEnemyModels[0];
 
         //float initDist = GetDistance(transform, nearbyEnemyModels[0].transform);
-        float initDist = GetSquaredMagnitude(transform.position, nearbyEnemyModels[0].transform.position);
+        //float initDist = GetSquaredMagnitude(transform.position, nearbyEnemyModels[0].transform.position);
+        float initDist = Helper.Instance.GetSquaredMagnitude(transform.position, nearbyEnemyModels[0].transform.position);
         float compareDist = initDist;
         targetEnemy = nearbyEnemyModels[0];
         foreach (SoldierModel item in nearbyEnemyModels) 
@@ -1564,7 +1562,8 @@ public class SoldierModel : MonoBehaviour
             if (!item.ignoreAsNearby)
             {
                 //float dist = GetDistance(transform, item.gameObject.transform);
-                float dist = GetSquaredMagnitude(transform.position, item.gameObject.transform.position);
+                //float dist = GetSquaredMagnitude(transform.position, item.gameObject.transform.position);
+                float dist = Helper.Instance.GetSquaredMagnitude(transform.position, item.transform.position);
                 if (dist < compareDist)
                 {
                     targetEnemy = item;
@@ -1572,13 +1571,7 @@ public class SoldierModel : MonoBehaviour
                 }
             }
         }
-    }  
-
-    private float GetSquaredMagnitude(Vector3 a, Vector3 b)
-    {
-        Vector3 diff = a - b;
-        return diff.sqrMagnitude;
-    }
+    }   
     public void CheckIfIdle()
     {
         if (!richAI.canMove && formPos.listOfNearbyEnemies.Count == 0)
@@ -1650,10 +1643,11 @@ public class SoldierModel : MonoBehaviour
 
     private void PointTowards(Vector3 targetDirection)
     {
-        richAI.enableRotation = false; 
+        richAI.enableRotation = false;
         Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, Time.deltaTime, 0.0f);
         newDirection.y = 0; //keep level
         transform.rotation = Quaternion.LookRotation(newDirection);
+        //transform.rotation = Quaternion.LookRotation(targetDirection);
     }
     public void FixRotation()
     {
@@ -1684,7 +1678,7 @@ public class SoldierModel : MonoBehaviour
                 Vector3 targetDirection = formPos.enemyFormationToTarget.transform.position - transform.position; 
                 PointTowards(targetDirection);
             }
-        } 
+        }  
         /*if (formPos.listOfNearbyEnemies.Count > 0) //makes guys face forward
         {
             richAI.enableRotation = false;

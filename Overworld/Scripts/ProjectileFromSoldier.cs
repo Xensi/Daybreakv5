@@ -172,14 +172,14 @@ public class ProjectileFromSoldier : MonoBehaviour
         CapsuleCollider capsule = GetComponent<CapsuleCollider>();
         capsule.enabled = false;
         audioSource.enabled = false;
-        SelfDestruct();
+        Invoke("SelfDestruct", 5);
     }
     void OnTriggerEnter(Collider other)
     {
         if (isModelProj)
         {
 
-            if (other.gameObject.tag == "Terrain" || other.gameObject.tag == "BufferTerrain")
+            if (other.gameObject.tag == "Terrain" || other.gameObject.tag == "TreeTerrain")
             {
                 isFlying = false;
                 finalRotation = transform.rotation;
@@ -277,7 +277,7 @@ public class ProjectileFromSoldier : MonoBehaviour
                     }
                 }
             }
-            if (other.gameObject.tag == "Terrain" || other.gameObject.tag == "BufferTerrain" )
+            if (other.gameObject.tag == "Terrain" || other.gameObject.tag == "TreeTerrain" )
             {
                 canDamage = false;
                 //Debug.Log("collided w terrain");
