@@ -3017,7 +3017,6 @@ MonoBehaviour:
   magePositions: []
   FormationTransform: {fileID: 5955700111539829869}
   angleToFace: {x: 0, y: -0.70710677, z: 0, w: 0.70710677}
-  target: {fileID: 5955700111234879877}
   team: Altgard
   formPos: {fileID: 29422916108755641}
   listSoldierModels: []
@@ -3027,7 +3026,7 @@ MonoBehaviour:
   reinforceablePositions: []
   retreatPositions: []
   modelAttackRange: 4.5
-  desiredWalkingSpeed: 32
+  desiredWalkingSpeed: 16
   melee: 1
   canBeRanged: 0
   hasSpecialVeterans: 1
@@ -3320,6 +3319,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee583770c7429a54c9bea6d01465e513, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AIIntelligence: 50
   usesSpears: 1
   shaker: {fileID: 6634925206132345977}
   shotsHit: 0
@@ -3455,7 +3455,7 @@ MonoBehaviour:
   traversableTags: -1
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
-    value: 2
+    value: 8
 --- !u!114 &5955700111539829868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3483,7 +3483,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 5
-  radius: 19.55
+  radius: 16.85
   height: 2
   canMove: 1
   maxSpeed: 3
@@ -3539,8 +3539,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 12.63, y: 8, z: 33.03}
-  m_Center: {x: 0, y: 4, z: 2.57}
+  m_Size: {x: 1.33, y: 8, z: 1.63}
+  m_Center: {x: 0, y: 23.58, z: -10.18}
 --- !u!1 &5955700111557707647
 GameObject:
   m_ObjectHideFlags: 0

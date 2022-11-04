@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using Pathfinding;
 
 public class FightManager : MonoBehaviour
 {
@@ -78,7 +79,8 @@ public class FightManager : MonoBehaviour
     [SerializeField] private List<Vector3> destinations;
 
     [SerializeField] private bool testing = false;
-
+     
+     
     
     private enum combatStrategy
     {
@@ -86,25 +88,20 @@ public class FightManager : MonoBehaviour
         Defend
     } 
     private combatStrategy aiState = combatStrategy.Attack;
-     
-
-    void OnEnable()
-    {
-    } 
-
+      
     public void ModifyLOD()
     {
         QualitySettings.lodBias = lodSlider.value;
     }
     private void Start()
     {
+
         Instance = this;
         if (testing)
-        { 
+        {
             FinishedLoading();
         }
-    }
-
+    } 
     public void FinishedLoading()
     {
 
@@ -1056,52 +1053,36 @@ public class FightManager : MonoBehaviour
     }
 
     private void AttemptToSelectUnit()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
-        float distanceSoFar = 9999;
-        var hits = Physics.RaycastAll(ray, distanceSoFar);
+    { 
 
-        
-        RaycastHit candidateHit = new RaycastHit();
-        bool hitFound = false;
-        foreach (RaycastHit hit in hits)
-        { 
-            if (hit.collider.tag == "Terrain") //we only want to hit selectable
-            {
-                if (hit.distance < distanceSoFar) //get closest only
-                {
-                    distanceSoFar = hit.distance;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-                    candidateHit = hit;
-                    hitFound = true;
-                }
-            }
-        } 
-        if (hitFound)
+        LayerMask layerMask = LayerMask.GetMask("Terrain");
+        RaycastHit hit; 
+
+        if (Physics.Raycast(ray.origin, ray.direction, out hit, Mathf.Infinity, layerMask))
         {
-            LayerMask layerMask = LayerMask.GetMask("Model");
-            int maxColliders = 1;
-            Collider[] hitColliders = new Collider[maxColliders];
-            float radius = 2f;
-            int numColliders = Physics.OverlapSphereNonAlloc(candidateHit.point, radius, hitColliders, layerMask, QueryTriggerInteraction.Ignore); //nonalloc generates no garbage 
-
-            if (numColliders > 0) //at least 1
+            clickPosition = hit.point;
+            //hit terrain, now check if formation here
+            LayerMask formMask = LayerMask.GetMask("Formation");
+            RaycastHit formHit;
+            Vector3 vec = new Vector3(hit.point.x, 100, hit.point.z);
+            if (Physics.Raycast(vec, Vector3.down, out formHit, Mathf.Infinity, formMask))
             {
-                SoldierModel model = hitColliders[0].gameObject.GetComponentInParent<SoldierModel>();
+                FormationPosition form = formHit.transform.gameObject.GetComponentInParent<FormationPosition>();  
 
-                FormationPosition form = model.formPos;
                 if (form.fleeing)
                 {
                     return;
                 }
-                if (!Input.GetKey(KeyCode.LeftShift)) 
+                if (!Input.GetKey(KeyCode.LeftShift))
                 {
                     DeselectOtherUnits(form);
                 }
-                 
-                if (form.alive && model.alive && form.team == team)
-                {  
-                    form.SetSelected(!form.selected); 
+
+                if (form.alive && form.team == team)
+                {
+                    form.SetSelected(!form.selected);
                     if (form.selected)
                     {
                         selectedFormations.Add(form);
@@ -1117,16 +1098,17 @@ public class FightManager : MonoBehaviour
                         SelectSimilar(form);
                     }
                     checkingDoubleClick = true;
-                }
+                } 
             }
             else
             {
                 if (!Input.GetKey(KeyCode.LeftShift))
-                { 
+                {
                     DeselectUnits();
-                } 
+                }
             }
-        }  
+        }
+         
     }
     private void SelectSimilar(FormationPosition ogForm)
     {
@@ -1206,23 +1188,30 @@ public class FightManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1)) //set movepos
         {
+            MarchCommand();
             lineFormationPosList.Clear();
             wasFocusFiring = false;
             wasMagicTargeting = false;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            float distanceSoFar = 9999;
-            var hits = Physics.RaycastAll(ray, distanceSoFar); 
-            foreach (RaycastHit hit in hits)
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
+             
+            LayerMask layerMask = LayerMask.GetMask("Terrain");
+            RaycastHit hit;
+
+            FormationPosition formToFollow = null;
+
+            if (Physics.Raycast(ray.origin, ray.direction, out hit, Mathf.Infinity, layerMask))
             {
-                if (hit.collider.tag == "Terrain")  
+                clickPosition = hit.point;
+                //hit terrain, now check if formation here
+                LayerMask formMask = LayerMask.GetMask("Formation");
+                RaycastHit formHit;
+                Vector3 vec = new Vector3(hit.point.x, 100, hit.point.z);
+                if (Physics.Raycast(vec, Vector3.down, out formHit, Mathf.Infinity, formMask))
                 {
-                    if (hit.distance < distanceSoFar)
-                    { 
-                        clickPosition = hit.point;  
-                        distanceSoFar = hit.distance;
-                    }
+                    formToFollow = formHit.transform.gameObject.GetComponentInParent<FormationPosition>();
                 } 
-            }   
+            } 
+
             foreach (FormationPosition item in selectedFormations) //selected formations, go there plox
             {
                 Vector3 pos = item.transform.position;
@@ -1235,7 +1224,8 @@ public class FightManager : MonoBehaviour
                 {
                     item.destinationsList.Clear();
                 } 
-                item.destinationsList.Add(clickPosition); 
+                item.destinationsList.Add(clickPosition);
+                item.formationToFollow = formToFollow;
             }
              
             UpdateGUI();

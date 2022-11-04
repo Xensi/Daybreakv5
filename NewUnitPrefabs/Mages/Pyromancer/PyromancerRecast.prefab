@@ -745,11 +745,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c23e0c2eb0ccd54594e51e55db8c15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lineOfSightIndicator: {fileID: 0}
   richAI: {fileID: 7586394984505008617}
   animator: {fileID: 8461274006514283832}
-  target: {fileID: 2697507056178058304}
-  aiDesSet: {fileID: 4782491434103856791}
+  formPos: {fileID: 0}
+  lineOfSightIndicator: {fileID: 0}
+  reloadingIndicator: {fileID: 0}
+  walkSpeed: 3
+  runSpeed: 6
+  melee: 1
   modelProj: {fileID: 3616627480558307331, guid: 281ad1397c9e19d4f9456537da0d28b6, type: 3}
   selectionCircle: {fileID: 3811729922713892476}
   renderers:
@@ -758,22 +761,13 @@ MonoBehaviour:
   - {fileID: 4780490561717340351}
   - {fileID: 8040605930369869436}
   - {fileID: 1784568274192247947}
-  maxFiringAngle: 45
-  minFiringAngle: 10
-  isMagic: 1
-  projectileSpawn: {fileID: 811959319155645061}
-  projectile: {fileID: 8333262704199657843, guid: fbd1a6bf1af3b9f4abe2a537db07bfec, type: 3}
-  directFire: 0
-  fireEffect: {fileID: 0}
-  power: 100
-  volleyFireAndRetreat: 0
-  eyeline: {fileID: 0}
-  projectileDeviationAmount: 10
-  projectileDeviationAmountVertical: 5
+  renderersArray: []
+  voiceSource: {fileID: 6880501607377708057}
+  impactSource: {fileID: 4013500636507265404}
+  hurtSource: {fileID: 5019969114610797930}
   attackBox: {fileID: 0}
-  spine: {fileID: 0}
-  head: {fileID: 0}
-  startingMaxSpeed: 0
+  knockDownForSecondsMax: 6
+  startingMaxSpeed: 3
   adjustWalkSpeedVisually: 1
   playIdleAnims: 0
   health: 40
@@ -781,71 +775,61 @@ MonoBehaviour:
   armorPiercingDamage: 0
   armor: 0
   timeUntilDamage: 0.4
-  currentDamageTime: 0
   timeUntilFinishedAttacking: 1
-  currentFinishedAttackingTime: 0
   timeUntilRecovery: 0.1
-  currentRecoveryTime: 0
   reqAttackTime: 2
   currentAttackTime: 2
-  magicRechargeTime: 45
-  currentMagicRecharge: 0
-  magicCharged: 1
   chargeDamage: 0
   stopWhenAttacking: 1
   stopWhenDamaged: 1
   stopWhenLoading: 1
-  attacksCanLaunchEnemies: 0
   canOnlyAttackWhileMoving: 0
   attacksBreakEnemyCohesion: 0
   directionalAttacks: 0
   angleOfAttack: 20
-  attacksDontFaceEnemy: 0
+  attacksFaceEnemies: 1
   impactAttacks: 0
   defaultStoppingDistance: 0.1
-  combatStoppingDistance: 0.001
+  meleeAttackRange: 1
+  rangedAttackRange: 160
+  documentedMaxSpeed: 5
+  eyeline: {fileID: 0}
+  directFire: 0
+  directFireRadius: 80
+  maxFiringAngle: 45
+  minFiringAngle: 10
+  projectileSpawn: {fileID: 811959319155645061}
+  projectile: {fileID: 8333262704199657843, guid: fbd1a6bf1af3b9f4abe2a537db07bfec, type: 3}
+  power: 100
+  volleyFireAndRetreat: 0
+  projectileDeviationAmount: 10
+  projectileDeviationAmountVertical: 5
+  fireEffect: {fileID: 0}
   rangedNeedsLoading: 0
   ammo: 0
   maxAmmo: 1
   internalAmmoCapacity: 100
   loadingRightNow: 0
-  currentFinishedLoadingTime: 0
   timeUntilFinishedLoading: 1
-  justFired: 0
+  isMagic: 1
+  magicRechargeTime: 45
+  magicCharged: 1
   braced: 0
-  allowedToDealDamage: 1
   modelPosition: {fileID: 0}
   movingSpeed: 0
   alive: 1
   attacking: 0
   moving: 0
-  damaged: 0
-  deployed: 0
-  idle: 0
   knockedDown: 0
   airborne: 0
   targetEnemy: {fileID: 0}
   pendingLaunched: 0
-  walkSpeed: 3
-  runSpeed: 6
+  clearLineOfSight: 0
   team: Zhanguo
   attackRange: 160
-  meleeAttackRange: 1
-  rangedAttackRange: 160
-  formPos: {fileID: 0}
   animate: 0
   currentSpeed: 0
-  documentedMaxSpeed: 5
-  sprintSpeed: 6
-  settledRotationSpeed: 2.5
-  threshold: 0.5
-  catchUpThreshold: 4
-  defaultAccel: 25
-  sprintAccel: 25
-  self: {fileID: 2169595719131868819}
   nearbyEnemyModels: []
-  currentIdleTimer: 0
-  reqIdleTimer: 20
   deathSounds:
   - {fileID: 8300000, guid: a9ed4e62be7a3bc48b39657eccfa95ca, type: 3}
   - {fileID: 8300000, guid: 4245bafa826caac43b14f33d47e8f95d, type: 3}
@@ -936,33 +920,25 @@ MonoBehaviour:
   - {fileID: 8300000, guid: f4c786f94e1fa0e40bbc1d8b911c629c, type: 3}
   - {fileID: 8300000, guid: cbd95ed1dddd184459215eebf7d2ea56, type: 3}
   movingVoiceLines: []
-  voiceSource: {fileID: 6880501607377708057}
-  impactSource: {fileID: 4013500636507265404}
-  hurtSource: {fileID: 5019969114610797930}
+  reqIdleTimer: 20
+  useOldWalkCalculations: 1
   numRandIdleAnims: 0
   numRandAttackAnims: 1
-  waitForAttackChatterTime: 5
-  waitForMarchChatterTime: 10
-  waitForDeathReactionChatterTime: 5
-  waitForIdleChatterTime: 10
-  exhausted: 0
   normalMeshes: []
   veteranMeshes: []
-  isVeteran: 0
-  numKills: 0
-  melee: 1
-  LaunchAngle: 0
+  self: {fileID: 2169595719131868819}
+  getUpTimeCap: 8
   pendingDamage: 0
   pendingArmorPiercingDamage: 0
-  speedSlow: 0
-  ignoreAsNearby: 0
-  getUpTime: 0
-  getUpTimeCap: 8
-  useOldWalkCalculations: 1
   normalizedSpeed: 0
   routing: 0
   pendingDamageSource: {fileID: 0}
-  directFireRadius: 80
+  isVeteran: 0
+  ignoreAsNearby: 0
+  getUpTime: 0
+  previousLocation: {x: 0, y: 0, z: 0}
+  newMaxSpeed: 0
+  farAway: 0
 --- !u!114 &7586394984505008617
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1123,6 +1099,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2169595719131868828}
     m_Modifications:
+    - target: {fileID: 601094420353379187, guid: 1b6f0dbe79f1481459b321aeccc60b5a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2148899308618284982, guid: 1b6f0dbe79f1481459b321aeccc60b5a, type: 3}
       propertyPath: m_Enabled
       value: 1

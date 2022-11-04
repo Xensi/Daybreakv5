@@ -10,12 +10,11 @@ public class SoldierBlock : MonoBehaviour
     [SerializeField] private GameObject soldierPrefab;
     [SerializeField] private GameObject magePrefab; 
     public string mageType = ""; //Pyromancer, Gallowglass
-    [SerializeField] private Transform modelParent; 
+    public Transform modelParent; 
     public Position[] formationPositions; //all, max 80
     public List<Position> magePositions;
     [SerializeField] private Transform FormationTransform;
-    [SerializeField] private Quaternion angleToFace;
-    public Transform target;
+    [SerializeField] private Quaternion angleToFace; 
     [SerializeField] private string team = "Altgard";
     [SerializeField] private FormationPosition formPos;
     public List<SoldierModel> listSoldierModels;
@@ -46,11 +45,13 @@ public class SoldierBlock : MonoBehaviour
 
     [SerializeField] private bool manuallyAssignRows = false;
 
-    private bool initialized = false; 
-    void OnEnable()
+    private bool initialized = false;
+
+    public FightManager manager;
+    private void OnEnable()
     {
         if (initialized)
-        {
+        {    
             return;
         }
         initialized = true;
@@ -61,7 +62,15 @@ public class SoldierBlock : MonoBehaviour
         formPos.team = team;
         int num = 0;
         int increment = 0; 
-        formPos.walkingSpeed = desiredWalkingSpeed / 2;
+        if (formPos.isCavalry)
+        { 
+            formPos.walkingSpeed = desiredWalkingSpeed *.75f;
+        }
+        else
+        {
+
+            formPos.walkingSpeed = desiredWalkingSpeed / 2;
+        }
         formPos.sprintSpeed = desiredWalkingSpeed; 
         int arrayInc = 0;
 
@@ -91,33 +100,18 @@ public class SoldierBlock : MonoBehaviour
                     modelsArray[arrayInc] = model;
                     model.walkSpeed = desiredWalkingSpeed;
                     model.runSpeed = desiredWalkingSpeed * 2;
-                    model.richAI.maxSpeed = desiredWalkingSpeed;
-                    model.target = target;
+                    model.richAI.maxSpeed = desiredWalkingSpeed; 
                     model.team = team;
                     model.formPos = formPos;
-                    model.self.tag = team + "Model";
-                    listSoldierModels.Add(model);
-                    /*if (num >= 71 && hasSpecialVeterans)
-                    {
-                        model.isVeteran = true;
-                        foreach (SkinnedMeshRenderer mesh in model.normalMeshes)
-                        {
-                            mesh.enabled = false;
-                        }
-                        foreach (SkinnedMeshRenderer mesh in model.veteranMeshes)
-                        {
-                            mesh.enabled = true;
-                        }
-                    }*/
-                    //position info
+                    model.melee = melee; 
+                    listSoldierModels.Add(model);  
                     position.formPos = formPos;
                     position.assignedSoldierModel = model;
                     position.row = rowItem;
-                    position.team = team;
-                    //
-                    formationPositions[arrayInc] = position;
-                    //inc
+                    position.team = team; 
+                    formationPositions[arrayInc] = position; 
                     arrayInc++;
+
                 }
             }
         }
@@ -134,20 +128,17 @@ public class SoldierBlock : MonoBehaviour
                 modelsArray[arrayInc] = model;
                 model.walkSpeed = desiredWalkingSpeed;
                 model.runSpeed = desiredWalkingSpeed * 2;
-                model.richAI.maxSpeed = desiredWalkingSpeed;
-                model.target = target;
+                model.richAI.maxSpeed = desiredWalkingSpeed; 
                 model.team = team;
                 model.formPos = formPos;
-                model.self.tag = team + "Model";
-
+                model.melee = melee; 
                 listSoldierModels.Add(model);
                 listMageModels.Add(model);
                 position.formPos = formPos;
                 position.assignedSoldierModel = model;
                 model.modelPosition = position; 
-                position.team = team;
-
-                arrayInc++;
+                position.team = team; 
+                arrayInc++; 
             }
         } 
     }

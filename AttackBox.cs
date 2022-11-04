@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AttackBox : MonoBehaviour
 {
-    public List<Collider> colliders;
+    public List<SphereCollider> colliders;
     public bool canDamage = true;
     public bool isCavalry = true;
 
@@ -15,12 +15,12 @@ public class AttackBox : MonoBehaviour
         { 
             ToggleAttackBox(false);
         }
-        Collider[] array = GetComponents<Collider>();
+        SphereCollider[] array = GetComponents<SphereCollider>();
         colliders.AddRange(array);
     }
     public void ToggleAttackBox(bool val)
     {
-        foreach (Collider col in colliders)
+        foreach (SphereCollider col in colliders)
         {
             col.enabled = val;
         }
@@ -29,14 +29,43 @@ public class AttackBox : MonoBehaviour
     {
         canDamage = true;
     }
-    void OnTriggerEnter(Collider other)
+
+    public void ApproximateCharge()
+    {
+        LayerMask layerMask = LayerMask.GetMask("Model");
+        int maxColliders = 10;
+        Collider[] hitCols = new Collider[maxColliders];
+        float radius = 0.5f;
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, radius, hitCols, layerMask, QueryTriggerInteraction.Ignore);
+        if (numColliders > 0)
+        { 
+            for (int i = 0; i < numColliders; i++) //go for hurtboxes
+            {
+                if (hitCols[i].gameObject.tag == "Hurtbox") //if is hurtbox
+                {
+                    SoldierModel model = hitCols[i].GetComponentInParent<SoldierModel>();
+                    if (model != null)
+                    {
+                        if (model.alive && model.team != parentModel.team) //alive and enemy
+                        {
+                            Impact(hitCols[i]);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void Impact(Collider other)
     {
         if (isCavalry)
         {
+            float unitSpeed = parentModel.normalizedSpeed;
             float speedThreshold = 0.5f;
             if (other.gameObject.tag == "Hurtbox") //
             {
-                if (canDamage && parentModel.moving && parentModel.normalizedSpeed > speedThreshold)
+                if (canDamage && parentModel.moving && unitSpeed > speedThreshold)
                 {
                     float toleranceForKnockDown = 2;
                     SoldierModel hitModel = other.GetComponentInParent<SoldierModel>();
@@ -47,7 +76,7 @@ public class AttackBox : MonoBehaviour
                         parentModel.currentAttackTime = 0;
                     }
                 }
-                else if (!canDamage && parentModel.moving && parentModel.normalizedSpeed > speedThreshold) //trample
+                else if (!canDamage && parentModel.moving && unitSpeed > speedThreshold) //trample
                 {
                     SoldierModel hitModel = other.GetComponentInParent<SoldierModel>();
                     if (hitModel != null && hitModel.alive && hitModel.team != parentModel.team && !hitModel.airborne && !hitModel.knockedDown)
@@ -64,7 +93,7 @@ public class AttackBox : MonoBehaviour
             if (other.gameObject.tag == "Hurtbox") //
             {
                 if (parentModel.braced)
-                { 
+                {
                     if (canDamage)
                     {
                         float speedThreshold = 0.5f;
@@ -73,7 +102,7 @@ public class AttackBox : MonoBehaviour
                         if (hitModel != null && hitModel.alive && hitModel.team != parentModel.team && hitModel.normalizedSpeed > speedThreshold && !hitModel.airborne && hitModel.getUpTime <= toleranceForKnockDown)
                         {
                             canDamage = false;
-                            parentModel.DealDamage(hitModel, true, false);
+                            parentModel.DealDamage(hitModel, false, false);
                             parentModel.currentAttackTime = 0;
                         }
                     }
@@ -81,7 +110,7 @@ public class AttackBox : MonoBehaviour
                 else if (parentModel.formPos.charging)
                 {
                     if (canDamage)
-                    { 
+                    {
                         float toleranceForKnockDown = 2;
                         SoldierModel hitModel = other.GetComponentInParent<SoldierModel>();
                         if (hitModel != null && hitModel.alive && hitModel.team != parentModel.team && !hitModel.airborne && hitModel.getUpTime <= toleranceForKnockDown)
@@ -94,6 +123,9 @@ public class AttackBox : MonoBehaviour
                 }
             }
         }
-        
+    }
+    void OnTriggerEnter(Collider other)
+    {
+        Impact(other); 
     }
 }

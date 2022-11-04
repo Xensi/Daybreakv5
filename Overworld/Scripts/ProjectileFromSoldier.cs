@@ -212,7 +212,7 @@ public class ProjectileFromSoldier : MonoBehaviour
                         }
                         float damageMult = 1;
                         BodyPart bodyPart = other.GetComponent<BodyPart>();
-                        if (bodyPart != null) //blood
+                        /*if (bodyPart != null) //blood
                         {
                             damageMult = bodyPart.multiplierDamage;
                             float randomX = UnityEngine.Random.Range(-360, 360);
@@ -232,10 +232,10 @@ public class ProjectileFromSoldier : MonoBehaviour
                             }
                             else
                             {
-                                spawnVec = hitModel.spine.position;
-                                heading = hitModel.spine.position - transform.position;
+                                spawnVec = hitModel.body.position;
+                                heading = hitModel.body.position - transform.position;
                             }
-                            /*GameObject decal = Instantiate(blood, spawnVec + newVec, Quaternion.identity);
+                            *//*GameObject decal = Instantiate(blood, spawnVec + newVec, Quaternion.identity);
 
                             if (bodyPart.type == BodyPart.BodyType.Head)
                             {
@@ -246,8 +246,8 @@ public class ProjectileFromSoldier : MonoBehaviour
                                 decal.transform.parent = hitModel.spine;
                             }
                             decal.transform.rotation = Quaternion.LookRotation(heading);
-                            decal.transform.localScale = new Vector3(modDamage, modDamage, modDamage);*/
-                        }
+                            decal.transform.localScale = new Vector3(modDamage, modDamage, modDamage);*//*
+                        }*/
                         hitModel.SufferDamage(damage, armorPiercingDamage, soldierParent, damageMult);
 
                         formPosParent.shotsHit++;

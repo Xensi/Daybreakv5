@@ -21,19 +21,108 @@ public class CamRotate : MonoBehaviour
     [SerializeField] private Vector2 turn;
     [SerializeField] private float sensitivity = 1;
     [SerializeField] private float radiusToEnableAnimations = 20;
-    [SerializeField] private FightManager fightManager; 
+    [SerializeField] private FightManager fightManager;
 
 
+    Plane[] planes;
+    [SerializeField] private Camera cam;
     private void Start()
-    {
+    { 
         fightManager = FindObjectOfType<FightManager>().GetComponent<FightManager>();
-        InvokeRepeating("FindFormationsNearMe", 1f, 1f);
+        InvokeRepeating("FindFormationsNearMe", 0f, 1f);
         //InvokeRepeating("UpdateFarAwayIcons", 0.1f, 0.1f);
 
         Cursor.lockState = CursorLockMode.Confined;
 
-        cameraTransform.localRotation = Quaternion.Euler(originalRotation, 0, 0);
+        cameraTransform.localRotation = Quaternion.Euler(originalRotation, 0, 0); 
     }
+    private void FindFormationsNearMe()
+    {
+        if (fightManager.allFormations.Count > 0)
+        {
+            for (int i = 0; i < fightManager.allArray.Length; i++)
+            {
+                float distance = Vector3.Distance(transform.position, fightManager.allArray[i].formationPositionBasedOnSoldierModels);
+                /*if (distance <= radiusToEnableAnimations)
+                { 
+                    fightManager.allArray[i].enableAnimations = true;
+                }
+                else
+                { 
+                    fightManager.allArray[i].enableAnimations = false;
+                }*/
+            }
+        }
+        /*LayerMask layerMask = LayerMask.GetMask("Formation");
+        //int layerMask = 1 << 23; //layer 23 formations
+        int maxColliders = 10;
+
+        Collider[] hitColliders = new Collider[maxColliders];
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, radiusToEnableAnimations, hitColliders, layerMask, QueryTriggerInteraction.Ignore);
+
+        for (int i = 0; i < numColliders; i++)
+        {
+            FormationPosition form = hitColliders[i].gameObject.GetComponentInParent<FormationPosition>();
+            if (form != null)
+            {
+                form.enableAnimations = true;
+            }
+        }*/
+    }
+
+    private void CheckVisibilityOfModelsInVisibleForms()
+    {
+        planes = GeometryUtility.CalculateFrustumPlanes(cam);
+        FormationPosition[] allForms = fightManager.allArray;
+        for (int i = 0; i < allForms.Length; i++) //determine if formation is in our view frustum
+        {
+            FormationPosition form = allForms[i];
+            if (GeometryUtility.TestPlanesAABB(planes, form.cameraCollider.bounds)) //in bounds, check distance
+            { 
+                float distance = Vector3.Distance(transform.position, form.transform.position);
+                float reqDistance = QualitySettings.lodBias * 25;
+                Color color = form.farAwayIcon.color;
+                float gradual = 1000;
+                //form.showSoldierModels = true;
+                if (distance > reqDistance)
+                {
+                    float math = Mathf.Clamp((Mathf.Exp(distance - reqDistance) - 1) / gradual, 0, 1);
+                    color.a = math;
+                    if (math >= 1)
+                    {
+                        form.ShowHideSoldiers(false);
+                    }
+                    else if (math > 0)
+                    { 
+                        form.ShowHideSoldiers(true);
+                    }
+                }
+                else
+                {
+                    color.a = 0;
+                    form.ShowHideSoldiers(true);
+                }
+                form.farAwayIcon.color = color;
+                form.frontIcon.color = color;
+                if (form.selectedSprite != null)
+                {
+                    form.selectedSprite.color = color;
+                }
+            }
+            else //out of bounds, show form icon and hide soldiers
+            {
+                Color color = form.farAwayIcon.color;
+                color.a = 1;
+                form.ShowHideSoldiers(false);
+                form.farAwayIcon.color = color;
+                form.frontIcon.color = color;
+                if (form.selectedSprite != null)
+                {
+                    form.selectedSprite.color = color;
+                }
+            }
+        } 
+    } 
     private void Update()
     {
         #region ExperimentalCamera
@@ -75,6 +164,8 @@ public class CamRotate : MonoBehaviour
         }*/
         #endregion
 
+        CheckVisibilityOfModelsInVisibleForms(); 
+
         UpdateTerrainHeightValue();
         if (Input.GetKey("left"))
         {
@@ -86,7 +177,7 @@ public class CamRotate : MonoBehaviour
             turn.x += modifier * sensitivity * Time.deltaTime; //multipying by delta time keeps movement consistent
             cameraTransform.localRotation = Quaternion.Euler(0, turn.x, 0);
         } 
-        UpdateFarAwayIcons();
+        //UpdateFarAwayIcons();
         Strafe();
         if (Input.GetKey("up"))
         {
@@ -133,20 +224,22 @@ public class CamRotate : MonoBehaviour
                 float reqDistance = 75;
                 Color color = form.farAwayIcon.color;
                 float gradual = 1000;
-                form.showSoldierModels = true;
+                //form.showSoldierModels = true;
                 if (distance > reqDistance)
                 {
                     float math = Mathf.Clamp((Mathf.Exp(distance - reqDistance) - 1) / gradual, 0, 1);
                     color.a = math;
                     if (math >= 1)
                     {
-                        form.showSoldierModels = false;
+                        form.ShowHideSoldiers(false);
+                        //form.showSoldierModels = false;
                     }
 
                 }
                 else
                 {
                     color.a = 0;
+                    form.ShowHideSoldiers(true);
                 }
                 form.farAwayIcon.color = color;
                 if (form.selectedSprite != null)
@@ -160,31 +253,6 @@ public class CamRotate : MonoBehaviour
     {
         Gizmos.DrawWireSphere(transform.position, radiusToEnableAnimations);
     }
-    private void FindFormationsNearMe()
-    {
-        if (fightManager.allFormations.Count > 0)
-        {
-            foreach (FormationPosition item in fightManager.allArray)
-            {
-                item.enableAnimations = false;
-            }
-        }
-        LayerMask layerMask = LayerMask.GetMask("Formation");
-        //int layerMask = 1 << 23; //layer 23 formations
-        int maxColliders = 10;
-
-        Collider[] hitColliders = new Collider[maxColliders];
-        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, radiusToEnableAnimations, hitColliders, layerMask, QueryTriggerInteraction.Ignore);
-
-        for (int i = 0; i < numColliders; i++)
-        {
-            FormationPosition form = hitColliders[i].gameObject.GetComponentInParent<FormationPosition>();
-            if (form != null)
-            {
-                form.enableAnimations = true;
-            }
-        }
-    } 
     private void Strafe()
     {
         Vector3 pos = parentTransform.position;

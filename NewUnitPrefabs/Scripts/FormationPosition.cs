@@ -4,61 +4,110 @@ using UnityEngine;
 using Pathfinding;
 public class FormationPosition : MonoBehaviour
 {
-    [SerializeField] private float AIIntelligence = 50;
-    public bool usesSpears = true;
-    public ShakeSource shaker;
-    private FightManager fightManager;
-    public int shotsHit = 0;
-    public bool showSoldierModels = true;
-    public SpriteRenderer farAwayIcon;
-    public GameObject farAwayIconMask;
-    public enum FormationType
+
+    public FormationPosition formationToFollow;
+
+
+    #region Generic 
+    [HideInInspector] public enum FormationType
     {
         Infantry,
         RangedInfantry,
         Cavalry
     }
-    public FormationType type = FormationType.Infantry; //just by default
+    #endregion
 
-    public bool abilityCharged = true; 
+    #region MustBeSet 
+
+    [SerializeField] private Rigidbody rigid;
+    [SerializeField] private NavmeshCut navCutter; 
+    [SerializeField] private bool simultaneousPositionCheck = false; 
+    public SoldierBlock soldierBlock; 
+    [Tooltip("Checks nearby formations. Nearby formations can be moved towards automatically.")]
+    public float engageEnemyRadius = 10;
+    public float rangedRadius = 100; 
+    public SpriteRenderer farAwayIcon;
+    public Collider cameraCollider;
+    public SpriteRenderer routingIcon;
+    public SpriteRenderer shatteredIcon;
+    public GameObject farAwayIconMask; 
+    public bool usesSpears = true;
+    public FormationType type = FormationType.Infantry; //just by default
+    #endregion
+
+    #region AutoSet
+    public ShakeSource shaker;
+    private FightManager fightManager; 
+
+    #endregion
+
+    #region AISetters
+    [SerializeField] private float AIIntelligence = 50;
+    [SerializeField] private float aiBraceRadius = 75;
+    #endregion
+
+    #region Status 
+    [HideInInspector] public bool fleeing = false;
+    [HideInInspector] public bool chargeRecharged = true;
+    [HideInInspector] public bool alive = true; 
+    [HideInInspector] public bool abilityCharged = true;
+    [HideInInspector] public int shotsHit = 0;
+    public bool showSoldierModels = true;
+    [HideInInspector] public string team = "Altgard"; //Whose team are we on?
+    [HideInInspector] public List<FormationPosition> listOfNearbyEnemies;
+    [HideInInspector] public float startingPursueRadius = 0; //do not modify manually
+    public FormationPosition enemyFormationToTarget;
+    [Tooltip("Should we try to attack nearby enemies?")]
+    [HideInInspector] public bool holdFire = false;
+    [HideInInspector] public bool chaseDetectedEnemies = true;
+    [HideInInspector] public bool engagedInMelee = false;
+    [HideInInspector] public bool focusFire = false; //should we pick targets automatically or fire on a specific place/unit
+    [HideInInspector] public bool deployedPikes = false;
+    [HideInInspector] public bool modelAttacked = false;
+    [HideInInspector] public bool modelTookDamage = false;
+    [HideInInspector] public bool inCombat = false;
+    [HideInInspector] public bool modelAttacking = false;
+    [HideInInspector] public bool playingIdleChatter = false;
+    [HideInInspector] public bool playingAttackChatter = false;
+    [HideInInspector] public bool playingDeathReactionChatter = false;
+    [HideInInspector] public bool playingMarchChatter = false;
+    [HideInInspector] public Vector3 focusFirePos = new Vector3(0, 0, 0);
+    [HideInInspector] public FormationPosition formationToFocusFire;
+    [HideInInspector] public bool movementManuallyStopped = false;
+    [HideInInspector] public List<Vector3> destinationsList = new List<Vector3>();
+    [HideInInspector] public bool finishedChangedFacing = true;
+    [HideInInspector] public float averagePositionBasedOnSoldierModels = 0;
+    [HideInInspector] public Vector3 formationPositionBasedOnSoldierModels;
+    [HideInInspector] public bool charging = false;
+    [HideInInspector] public bool selectable = true;
+    [HideInInspector] public bool braced = false;
+    [HideInInspector] public bool enableAnimations = false;
+    [HideInInspector] public float walkingSpeed = 3.5f;
+    [HideInInspector] public float sprintSpeed = 6.5f;
+    [HideInInspector] public bool selected = false;
+    #endregion
+
+    #region AAA
     [SerializeField] private float abilityRechargeTime = 60f;
     [SerializeField] private float currentAbilityRechargeTime = 0;
     public bool allowedToCastMagic = true;
     public float timeUntilAllowedToCastMagicAgain = 0;
     public bool canBrace = false;
-    public bool braced = false;
-    public string team = "Altgard"; //Whose team are we on?
     public RichAI aiPath;
     private float threshold = .5f;
-    public List<FormationPosition> listOfNearbyEnemies; 
     public Transform aiTarget;
-    public Transform rotTarget; 
-    [Tooltip("Checks nearby formations. Nearby formations can be moved towards automatically.")]
-    public float engageEnemyRadius = 10;
-    public float rangedRadius = 100;
+    public Transform rotTarget;
+    #endregion
 
-    [HideInInspector] public float startingPursueRadius = 0; //do not modify manually
-
+    #region EEE
     [Tooltip("When to stop moving when auto-engaging.")]
     [SerializeField] private float stoppingDistance = 10;
     [SerializeField] private float moveStopDistance = 1; 
-    //
-    public FormationPosition enemyFormationToTarget;
-    public SoldierBlock soldierBlock;
-    private bool resetTarget = true;
-    public bool enableAnimations = false;
-    private bool oldEnableAnimations = false;
-    //
-
+    private bool oldEnableAnimations = false;  
     public float movingSpeed = 0;
     [SerializeField] private float currentSpeed = 0; 
-    public float walkingSpeed = 3.5f;
-    public float sprintSpeed = 6.5f;
-
-    public bool selected = false; 
     public LineRenderer lineRenderer;
-    public LineRenderer lineRenderer2;
-
+    public LineRenderer lineRenderer2; 
     [SerializeField] private bool weaponsDeployed = false;
     private bool oldWeaponsDeployed = false;
     [SerializeField] private float waitThreshold = 1;
@@ -70,117 +119,64 @@ public class FormationPosition : MonoBehaviour
     [SerializeField] private float requiredVelocity = 2;
     [SerializeField] private float deployedRequiredVelocity = 4;  
     [SerializeField] private float finishedPathRotSpeed = 1;
-    public bool pathSet = false;
-
-    public List<Position> frontlinePositions;
-
-    public bool modelAttacking = false;
-
-    public bool obeyingMovementOrder;
-
-    public int numberOfAliveSoldiers = 80;
-    private int oldNumAlive = 80;
-    public int maxSoldiers = 80;
-
+    public bool pathSet = false; 
+    public List<Position> frontlinePositions; 
+    public bool obeyingMovementOrder; 
+    public int numberOfAliveSoldiers = 80; 
+    public int maxSoldiers = 80; 
     public bool tangledUp = false;
-    [SerializeField] private float slowRotate = 15;
-
+    [SerializeField] private float slowRotate = 15; 
     [SerializeField] private float normRotate = 30; 
-
-    public bool playingIdleChatter = false;
-    public bool playingAttackChatter = false;
-    public bool playingDeathReactionChatter = false;
-    public bool playingMarchChatter = false;
-
-    public bool deployedPikes = false;
-
-    public List<SoldierModel> firstLineModels;
-    public bool modelAttacked = false;
-    public bool modelTookDamage = false;
-    public bool inCombat = false;
-
-
-    [SerializeField] private float secondRowOffsetAmount = 0f;
-
-    [Tooltip("Should we try to attack nearby enemies?")]
-    public bool holdFire = false;
-    public bool chaseDetectedEnemies = true;
-
-    public bool engagedInMelee = false;
-
-    public bool focusFire = false; //should we pick targets automatically or fire on a specific place/unit
-    public Vector3 focusFirePos = new Vector3(0, 0, 0);
-
-    public FormationPosition formationToFocusFire;
-
-    public bool movementManuallyStopped = false;
-
-    public List<Vector3> destinationsList = new List<Vector3>();
-
-    public bool finishedChangedFacing = true;
-    [SerializeField] private CharacterController charController;
-    [SerializeField] private BoxCollider charCollider;
-    [SerializeField] private BoxCollider forwardControlZone;
-    [SerializeField] private float charRadius = 4.5f;
-
+    [SerializeField] private float secondRowOffsetAmount = 0f;  
+    public BoxCollider charCollider;  
     public bool isCavalry = false;
-    [SerializeField] private bool freezeFormPos = false;
-
+    [SerializeField] private bool freezeFormPos = false; 
     [SerializeField] private float freezeTimer = 0;
-    [SerializeField] private float cohesionTimer = 0;
-
-    public bool shouldRotateToward = false;
-
-    public bool alive = true;
-
-
+    [SerializeField] private float cohesionTimer = 0; 
+    public bool shouldRotateToward = false; 
     [SerializeField] private int soldierModelToCheck = 0;
-    [SerializeField] private bool checkForNearbyEnemies = true;
-
-    [SerializeField] private bool swapRowsAfterFiring = false;
-
-    //swapping rows vars
-
+    [SerializeField] private bool checkForNearbyEnemies = true; 
+    [SerializeField] private bool swapRowsAfterFiring = false; 
     [SerializeField] private int requiredModelsThatFiredInRow = 5; //all of them
     [SerializeField] private int matched = 0;
     [SerializeField] private int lowerRow = 0;
-    [SerializeField] private int upperRow = 9;
-
+    [SerializeField] private int upperRow = 9; 
     [SerializeField] private List<SoldierModel> modelsInFrontRowThatFired;
-
-    public bool fleeing = false;
-
-    public float averagePositionBasedOnSoldierModels = 0;
-
-    public Vector3 formationPositionBasedOnSoldierModels;
-
     public GameObject missileTarget;
     [SerializeField] private bool alwaysRotateTowardMovementPos = false;
     public SpriteRenderer selectedSprite;
     [SerializeField] private float chargeSpeed = 7;
-    public bool charging = false;
-    public bool selectable = true;
     [SerializeField] private float maxChargeTime = 10;
     [SerializeField] private float currentChargeTime = 0;
     [SerializeField] private float chargeRechargeTime = 30;
     private float currentChargeRechargeTime = 0;
-    public bool chargeRecharged = true;
+    #endregion
 
-    [SerializeField] private Rigidbody rigid;
 
-    [SerializeField] private bool simultaneousPositionCheck = false;
+    [SerializeField] private int maxToleratedDeaths = 20;
+    [SerializeField] private int deathsThisTimeFrame = 0;
+    private float timeFrame = 30;
+    [SerializeField] private int extremeRoutThreshold = 15;
+    [SerializeField] private int hardRoutOnSoftRoutThreshold = 40;
 
-    [SerializeField] private float aiBraceRadius = 75;
-
-    [SerializeField] private NavmeshCut navCutter;
 
     private void Start()
     {
-        //set collision mode
-        rigid = GetComponent<Rigidbody>();
+
+        if (fightManager == null)
+        {
+            fightManager = FindObjectOfType<FightManager>();
+        }
+        if (shaker == null)
+        {
+            shaker = GetComponentInChildren<ShakeSource>();
+        }
+        if (rigid == null)
+        { 
+            rigid = GetComponent<Rigidbody>();
+        } 
         rigid.collisionDetectionMode = CollisionDetectionMode.Discrete;
-        rigid.drag = 50;
-        //
+        rigid.drag = 50; 
         
 
         ShowSelected(false);
@@ -196,34 +192,33 @@ public class FormationPosition : MonoBehaviour
         PlaceAITargetOnTerrain();
 
 
-        threshold = 1;
-        /*if (forwardControlZone != null)
-        {
-            if (type == FormationType.Infantry)
-            {
-                forwardControlZone.enabled = true;
-            }
-        }*/
+        threshold = 1; 
 
         SetStandardEngagementRanges();
 
-        requiredModelsThatFiredInRow = 10;
+        requiredModelsThatFiredInRow = 5;
 
         lineRenderer2.SetPosition(0, new Vector3(transform.position.x, -100, transform.position.z));
         lineRenderer2.SetPosition(1, new Vector3(transform.position.x, -100, transform.position.z));
         currentSpeed = walkingSpeed;
         chargeSpeed = walkingSpeed * 3;
-        aiPath.maxSpeed = currentSpeed;
+        aiPath.maxSpeed = currentSpeed; 
          
-        BeginUpdates();
 
         //PlaceAITargetOnTerrain();
-        if (shaker == null)
-        {
-            shaker = GetComponentInChildren<ShakeSource>();
-        }
+        InvokeRepeating("TimeFrameAdvance", 0, timeFrame);
+
+        BeginUpdates();
+        InvokeRepeating("AnimationModelCuller", 0, 1);
+        InvokeRepeating("LockSoldiers", 0, lockTime);
+        InvokeRepeating("LockSoldiersToTerrain", 0, terrainLockTime);
+        InvokeRepeating("UpdateFarAwayIconPos", 0, .1f);
+        
     }
     #region Updates
+
+    private float lockTime = 0.1f;
+    private float terrainLockTime = 0.1f;
     public void BeginUpdates()
     {
         InvokeRepeating("RapidUpdate", 0f, .01f);
@@ -234,23 +229,30 @@ public class FormationPosition : MonoBehaviour
 
     private void RapidUpdate()
     {
-        FixRotationModel();
+        //FixRotationModel();
         AsynchronousSoldierUpdate();
     }
     private void FixRotationModel()
     {
-        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
-        {
-            SoldierModel model = soldierBlock.modelsArray[i];
-            if (model != null)
+        if (showSoldierModels)
+        { 
+            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
             {
-                if (model.alive)
+                SoldierModel model = soldierBlock.modelsArray[i];
+                if (model != null)
                 {
-                    model.FixRotation();
+                    if (model.alive)
+                    {
+                        model.FixRotation();
+                    }
                 }
             }
         }
     }
+    /*private void FixedUpdate()
+    {
+        transform.position = new Vector3 (transform.position.x, groundY, transform.position.z);
+    }*/
     void LateUpdate()
     {
         UpdateLineRenderer();
@@ -265,18 +267,47 @@ public class FormationPosition : MonoBehaviour
                     {
                         if (!model.melee)
                         {
-                            if (fightManager == null)
-                            {
-                                fightManager = FindObjectOfType<FightManager>();
-                            }
                             if (model.lineOfSightIndicator != null)
                             {
                                 model.lineOfSightIndicator.transform.LookAt(model.lineOfSightIndicator.transform.position + fightManager.cam.transform.forward);
                             }
+                            if (model.reloadingIndicator != null)
+                            {
+                                model.reloadingIndicator.transform.LookAt(model.reloadingIndicator.transform.position + fightManager.cam.transform.forward);
+                            }
+                            model.reloadingIndicator.enabled = model.rangedModule.loadingRightNow;
                         }
                     }
                 }
             }
+        }
+        //ExtremeAsyncUpdate();
+    }
+    private int fastModelCheck = 0;
+    private void ExtremeAsyncUpdate()
+    {
+        SoldierModel checkingModel = soldierBlock.modelsArray[fastModelCheck];
+        if (checkingModel == null)
+        {
+            while (checkingModel == null) //let us skip over those that have died
+            {
+                fastModelCheck++;
+                if (fastModelCheck >= maxSoldiers) //reset on 80
+                {
+                    fastModelCheck = 0;
+                }
+                checkingModel = soldierBlock.modelsArray[fastModelCheck];
+            }
+        } 
+        if (checkingModel.alive)
+        { 
+            checkingModel.FixRotation();
+        }
+        fastModelCheck++;
+        int max = maxSoldiers;
+        if (fastModelCheck >= max) //reset on 80 + 2
+        {
+            fastModelCheck = 0;
         }
     }
     private void AsynchronousSoldierUpdate()
@@ -306,7 +337,7 @@ public class FormationPosition : MonoBehaviour
             {
                 if (checkingModel.alive)
                 {
-                    if (checkingModel.melee && listOfNearbyEnemies.Count > 0)
+                    if (checkingModel.melee && enemyFormationToTarget != null) // && listOfNearbyEnemies.Count > 0
                     {
                         checkingModel.CheckIfEnemyModelsNearby();
                     }
@@ -317,7 +348,7 @@ public class FormationPosition : MonoBehaviour
         {
             if (checkingModel.alive)
             {
-                checkingModel.LineOfSightUpdate();
+                checkingModel.rangedModule.LineOfSightUpdate();
             }
         }
         soldierModelToCheck++;
@@ -328,26 +359,254 @@ public class FormationPosition : MonoBehaviour
         }
 
     }
+
+    public void ShowHideSoldiers(bool val) 
+    { 
+        if (showSoldierModels == false && val)
+        { 
+            TeleportSoldiers();
+        }
+        showSoldierModels = val;
+        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+        {
+            SoldierModel soldier =  soldierBlock.modelsArray[i];
+            if (soldier != null && soldier.alive)
+            { 
+                soldier.UpdateVisibility(val);
+                /*if (val)
+                { 
+                    soldier.animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
+                }
+                else
+                { 
+                    soldier.animator.cullingMode = AnimatorCullingMode.CullCompletely;
+                }*/
+            } 
+            else if (soldier != null)
+            { 
+                soldier.UpdateVisibility(true);
+            }
+        }
+    }
+    private void TeleportSoldiers()
+    {
+        if (!isCavalry && !charging) //nfantry that is not charging gets teleported
+        { 
+            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+            {
+                SoldierModel soldier = soldierBlock.modelsArray[i];
+                if (soldier != null && soldier.alive && soldier.modelPosition != null) //terrain check but don't teleport to position
+                { 
+                    soldier.PlaceOnGround(); 
+                    soldier.richAI.enabled = true;
+                }
+            }
+        } 
+    } 
+    private void LockSoldiersToTerrain() //called periodically
+    {
+        if (showSoldierModels)
+        { 
+            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+            {
+                SoldierModel soldier = soldierBlock.modelsArray[i];
+                if (soldier != null && soldier.alive && !soldier.richAI.enabled)
+                {
+                    soldier.modelPosition.PlaceOnGround();
+                }
+            }
+        }
+    }
+    private void LockSoldiers() //soldiers should use performant mode if not visible
+    { 
+        //float distanceFromCameraThreshold = QualitySettings.lodBias * 25;
+        //float dist = Vector3.Distance(transform.position, fightManager.cam.transform.position);
+        //bool farAway = dist > distanceFromCameraThreshold;
+        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+        {
+            SoldierModel soldier = soldierBlock.modelsArray[i];
+            if (soldier != null && soldier.alive && soldier.modelPosition != null)
+            {
+                //soldier.farAway = farAway;
+                if (soldier.formPos.showSoldierModels) //use rich ai
+                {
+                    soldier.richAI.enabled = true;
+                    soldier.animator.enabled = true;
+                    /*if (farAway)
+                    {
+                        soldier.richAI.enabled = false;
+                        soldier.animator.enabled = true; 
+                        if (soldier.moving)
+                        {
+                            var step = soldier.newMaxSpeed * lockTime; // calculate distance to move
+                            soldier.transform.position = Vector3.MoveTowards(soldier.transform.position, soldier.modelPosition.transform.position, step);
+                        }
+                    }
+                    else
+                    { 
+                        soldier.richAI.enabled = true;
+                        soldier.animator.enabled = true;
+                    }*/
+                }
+                else //performant
+                {
+                    soldier.richAI.enabled = false;
+                    soldier.animator.enabled = false;
+                    if (soldier.moving)
+                    {
+                        var step = soldier.newMaxSpeed * lockTime; // calculate distance to move
+                        soldier.transform.position = Vector3.MoveTowards(soldier.transform.position, soldier.modelPosition.transform.position, step);
+                    } 
+                } 
+            }
+        }
+        /*if (showSoldierModels == false) //only lock soldiers when they are invisible
+        { 
+            if (!isCavalry && !charging ) //if we are infantry and not chargingdisable ai and tp
+            {
+                PerformantMovement();
+            }
+            else if (!isCavalry && charging) // infantry charging
+            {
+                PathfindingMovement();
+            } 
+            else //if we are cavalry
+            {
+                PathfindingMovement();
+            }
+        }*/
+    }
+    private void UpdateFarAwayIconPos()
+    { 
+        float height = 0;
+        float num = 0;
+        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+        {
+            SoldierModel soldier = soldierBlock.modelsArray[i];
+            if (soldier != null && soldier.alive)
+            {
+                height += soldier.transform.position.y;
+                num++;
+            }
+        }
+        if (num == 0) //prevent NaN
+        {
+            num = 1;
+        }
+        height = height / num;
+        float avgHeight = height; 
+        
+        averagePositionBasedOnSoldierModels = height;
+
+        formationPositionBasedOnSoldierModels = new Vector3(transform.position.x, averagePositionBasedOnSoldierModels, transform.position.z);
+
+        farAwayIcon.transform.position = new Vector3(farAwayIcon.transform.position.x, avgHeight, farAwayIcon.transform.position.z); //set to average height
+        if (shatteredIcon != null)
+        {
+
+            shatteredIcon.transform.position = new Vector3(farAwayIconMask.transform.position.x, avgHeight + 0.01f, farAwayIconMask.transform.position.z);
+        }
+        if (farAwayIconMask != null)
+        {
+
+            farAwayIconMask.transform.position = new Vector3(farAwayIconMask.transform.position.x, avgHeight, farAwayIconMask.transform.position.z);
+        }
+        if (routingIcon != null)
+        {
+
+            routingIcon.transform.position = new Vector3(farAwayIconMask.transform.position.x, avgHeight + 0.01f, farAwayIconMask.transform.position.z);
+        }
+        if (selectedSprite != null)
+        {
+            selectedSprite.transform.position = new Vector3(farAwayIconMask.transform.position.x, avgHeight, farAwayIconMask.transform.position.z);
+        }
+    }
+    private void AnimationModelCuller()
+    {
+
+        /*if (showSoldierModels)
+        { 
+            SetAnimationsModels(false);
+        }
+        else if (enableAnimations != oldEnableAnimations) //interrogate purpose
+        {
+            oldEnableAnimations = enableAnimations;
+            SetAnimationsModels(enableAnimations);
+        }
+
+
+        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+        {
+            SoldierModel model = soldierBlock.modelsArray[i];
+            if (model != null)
+            {
+                if (model.alive)
+                { 
+                }
+            }
+        }*/ 
+    }
+    private void SetAnimationsModels(bool val)
+    { 
+        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+        {
+            if (soldierBlock.modelsArray[i] != null)
+            {
+                soldierBlock.modelsArray[i].animate = val; 
+            }
+        }
+    }
+
     private void FastUpdate()
     {
         FixRotation();
         UpdateFormationMovementStatus();
-        CheckForEmptyPositionsToFill(); 
-        SimultaneousPositionCheck();
+        CheckForEmptyPositionsToFill();
+        //SimultaneousPositionCheck();
 
         movingSpeed = Mathf.Sqrt(Mathf.Pow(aiPath.velocity.x, 2) + Mathf.Pow(aiPath.velocity.z, 2)); //calculate speed vector
         float magic = 15;
-        transform.position = new Vector3(transform.position.x, magic, transform.position.z);
-        //UpdateLineRenderer();
+        transform.position = new Vector3(transform.position.x, magic, transform.position.z); 
         FastSoldierUpdate();
-
-        if (enableAnimations != oldEnableAnimations) //interrogate purpose
-        { 
-            oldEnableAnimations = enableAnimations;
-            foreach (SoldierModel item in soldierBlock.listSoldierModels)
-            {
-                item.animate = enableAnimations;
-            }
+        FollowFormation();
+    }
+    public bool modelHasAShot = false;
+    private void FollowFormation()
+    {
+        if (formationToFollow != null)
+        {
+            aiTarget.transform.position = formationToFollow.transform.position;
+            PlaceAITargetOnTerrain();
+            /* if (!soldierBlock.melee) //if ranged, then we need to stop when someone has a shot
+             {
+                 bool validShot = false;
+                 var array = soldierBlock.modelsArray;
+                 for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+                 {
+                     if (array[i] != null)
+                     { 
+                         if (array[i].clearLineOfSight)
+                         {
+                             validShot = true;
+                             break;
+                         }
+                     }
+                 }
+                 if (validShot)
+                 { 
+                     aiTarget.transform.position = formationPositionBasedOnSoldierModels;
+                     SetMoving(false);
+                     formationToFollow = null;
+                 }
+                 else
+                 { 
+                     aiTarget.transform.position = formationToFollow.transform.position;
+                     PlaceAITargetOnTerrain();
+                 }
+             }
+             else
+             { 
+             }*/
         }
     }
     private void FastSoldierUpdate()
@@ -368,7 +627,7 @@ public class FormationPosition : MonoBehaviour
                     model.UpdateMovementStatus();
                     model.UpdateRecoveryTimer();
                     model.UpdateSpeed();
-                    model.UpdateVisibility();
+                    //model.UpdateVisibility();
                 }
             }
         }
@@ -395,13 +654,17 @@ public class FormationPosition : MonoBehaviour
     }
     private void VerySlowUpdate()
     {
+        if (swapRowsAfterFiring)
+        {
+            GeneralCheckIfSwapRows();
+        } 
         if (numberOfAliveSoldiers <= 0) //if all soldiers dead, then goodbye
         {
-            foreach (FormationPosition item in listOfNearbyEnemies)
+            /*foreach (FormationPosition item in listOfNearbyEnemies)
             {
                 item.listOfNearbyEnemies.Remove(this);
 
-            }
+            }*/
             gameObject.SetActive(false);
             return;
         }
@@ -416,7 +679,7 @@ public class FormationPosition : MonoBehaviour
         {
             float mod = 0.1f;
             if (shaker != null)
-            { 
+            {
                 shaker.shakeIntensity = movingSpeed * mod * shaker.shakeModifier;
             }
         }
@@ -441,11 +704,6 @@ public class FormationPosition : MonoBehaviour
             if (timeUntilAllowedToCastMagicAgain <= 0)
             {
                 allowedToCastMagic = true;
-
-                if (fightManager == null)
-                {
-                    fightManager = FindObjectOfType<FightManager>();
-                }
                 fightManager.UpdateGUI();
             }
         }
@@ -455,10 +713,6 @@ public class FormationPosition : MonoBehaviour
             if (currentChargeRechargeTime >= chargeRechargeTime)
             {
                 chargeRecharged = true;
-                if (fightManager == null)
-                {
-                    fightManager = FindObjectOfType<FightManager>();
-                }
                 fightManager.UpdateGUI();
                 currentAbilityRechargeTime = 0;
             }
@@ -480,11 +734,6 @@ public class FormationPosition : MonoBehaviour
             if (currentAbilityRechargeTime >= abilityRechargeTime)
             {
                 abilityCharged = true;
-
-                if (fightManager == null)
-                {
-                    fightManager = FindObjectOfType<FightManager>();
-                }
                 fightManager.UpdateGUI();
                 currentAbilityRechargeTime = 0;
             }
@@ -493,6 +742,7 @@ public class FormationPosition : MonoBehaviour
         {
             FullUnfreeze();
             BreakCohesion();
+            GetMeOutOfHere();
         }
         else //default
         {
@@ -517,8 +767,6 @@ public class FormationPosition : MonoBehaviour
     }
     private void UpdateSoldiers()
     {
-        float height = 0;
-        float num = 0;
         for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
         {
             SoldierModel model = soldierBlock.modelsArray[i];
@@ -530,58 +778,45 @@ public class FormationPosition : MonoBehaviour
                     model.UpdateLoadTimer();
                     if (model.melee)
                     {
-                        if (listOfNearbyEnemies.Count > 0) //only check if enemies are nearby and we're melee
+                        /*if (listOfNearbyEnemies.Count > 0) //only check if enemies are nearby and we're melee
                         {
                             //model.CheckIfEnemyModelsNearby();
-                        }
-                        model.StopAttackingWhenNoEnemiesNearby();
+                        }*/
+                        //model.StopAttackingWhenNoEnemiesNearby();
                         model.UpdateDeploymentStatus();
                     }
-                    model.CullAnimations();
+                    model.UpdateAndCullAnimations();
                     model.CheckIfIdle();
                     model.CheckIfAlive();
-
-                    height += model.transform.position.y;
-                    num++;
                 }
             }
-        }
-
-        height = height / num;
-        float avgHeight = height;
-        /*float offset = 5f;
-        height += offset;*/
-        averagePositionBasedOnSoldierModels = height;
-
-        formationPositionBasedOnSoldierModels = new Vector3(transform.position.x, averagePositionBasedOnSoldierModels, transform.position.z);
-
-        farAwayIcon.transform.position = new Vector3(farAwayIcon.transform.position.x, avgHeight, farAwayIcon.transform.position.z); //set to average height
-        farAwayIconMask.transform.position = new Vector3(farAwayIconMask.transform.position.x, avgHeight, farAwayIconMask.transform.position.z);
-        if (selectedSprite != null)
-        { 
-            selectedSprite.transform.position = new Vector3(farAwayIconMask.transform.position.x, avgHeight, farAwayIconMask.transform.position.z);
-        }
+        } 
     }
     private void UpdateDeployment()
     {
-        if (listOfNearbyEnemies.Count == 0) //no enemy
+        /*if (listOfNearbyEnemies.Count == 0) //no enemy
         {
             weaponsDeployed = false;
-        }
-        else //yes enemy
+        }*/
+        if (1 == 1) //yes enemy
         {
             weaponsDeployed = true;
         }
     }
     private void UpdateSpeed()
-    { 
-        if (frozen)
+    {
+        if (fleeing)
+        {
+            currentSpeed = chargeSpeed;
+        }
+        else if (frozen)
         {
             currentSpeed = 0;
         }
-        else if (tangledUp)
+        else if (tangledUp && soldierBlock.melee)
         {
-            currentSpeed = walkingSpeed * .75f; //reduce speed by 25%
+            float slowAmount = .25f;
+            currentSpeed = walkingSpeed * slowAmount; //reduce speed by 25%
             float current = numberOfAliveSoldiers;
             float maxSol = maxSoldiers;
             float ratio = current / maxSol;
@@ -606,20 +841,21 @@ public class FormationPosition : MonoBehaviour
         float max = 100f;
         currentSpeed = Mathf.Clamp(currentSpeed, min, max);
 
-        aiPath.maxSpeed = currentSpeed; 
+        aiPath.maxSpeed = currentSpeed;
     }
     private bool frozen = false;
     private bool canBeFrozenAgain = true;
     public void FreezeMovement(float time)
     {
         if (canBeFrozenAgain)
-        { 
+        {
             frozen = true;
             canBeFrozenAgain = false;
             Invoke("UnfreezeMovement", time);
         }
     }
-    private void UnfreezeMovement() {
+    private void UnfreezeMovement()
+    {
         frozen = false;
         float time = 3;
         Invoke("AllowFreezing", time);
@@ -630,8 +866,8 @@ public class FormationPosition : MonoBehaviour
     }
     private void CheckForNearbyEnemyFormations()
     {
-        listOfNearbyEnemies.Clear();
-        LayerMask layerMask = LayerMask.GetMask("Formation");
+        //listOfNearbyEnemies.Clear();
+        /*LayerMask layerMask = LayerMask.GetMask("Formation");
         int maxColliders = 40;
         Collider[] hitColliders = new Collider[maxColliders];
         int numColliders = Physics.OverlapSphereNonAlloc(transform.position, engageEnemyRadius, hitColliders, layerMask, QueryTriggerInteraction.Ignore); //nonalloc generates no garbage
@@ -655,7 +891,7 @@ public class FormationPosition : MonoBehaviour
                 }
                 listOfNearbyEnemies.Add(form);
             }
-        }
+        }*/
 
         if (obeyingMovementOrder)
         {
@@ -663,7 +899,207 @@ public class FormationPosition : MonoBehaviour
         }
         FindClosestFormation();
     }
+    private void FindClosestFormation()
+    { 
+        enemyFormationToTarget = GetClosestFormationWithinRange(1, team, true, engageEnemyRadius);
+        if (chaseDetectedEnemies && enemyFormationToTarget != null)
+        {
+            EngageFoe();
+        }
+
+    }
+    private void EngageFoe()
+    {
+        if (fleeing)
+        {
+            return;
+        }
+        float distance = Vector3.Distance(transform.position, enemyFormationToTarget.transform.position);
+        if (!soldierBlock.melee && distance <= rangedRadius)
+        {
+            StopInPlace();
+        }
+        else if (distance <= stoppingDistance)
+        { //stop
+            //Debug.Log("stopping");
+            ResetAITarget();
+        }
+        else if (enemyFormationToTarget != null)
+        {   //chase
+            ChaseFoe();
+        }
+    }
+
     #endregion
+
+
+    public void LoseMorale()
+    {
+        if (numberOfAliveSoldiers <= extremeRoutThreshold)
+        {
+            HardRout();
+        }
+        else
+        { 
+            deathsThisTimeFrame++;
+            if (deathsThisTimeFrame > maxToleratedDeaths)
+            {
+                if (numberOfAliveSoldiers <= hardRoutOnSoftRoutThreshold)
+
+                SoftRout();
+            }
+        }
+    }
+    private void HardRout()
+    {
+        shatteredIcon.gameObject.SetActive(true);
+        routingIcon.gameObject.SetActive(false);
+        BeginFleeing();
+        float disappearTime = 30;
+        Invoke("SelfDestruct", disappearTime);
+    }
+    private void TimeFrameAdvance()
+    {
+        deathsThisTimeFrame = 0;
+    }
+    private FormationPosition GetClosestFormationWithinRange(int targetType = 1, string ourTeam = "Altgard", bool targetRouting = false, float range = 100) //targettype 0: any, targettype 1: enemy, targettype 2: ally
+    {
+        FormationPosition closest = null;
+
+        if (targetType == 0)
+        {
+            closest = fightManager.allArray[0];
+        }
+        else if (targetType == 1 || targetType == 2)
+        { 
+            for (int i = 0; i < fightManager.allArray.Length; i++) //go through until we get one that matches criteria
+            {
+                if (targetType == 1  && fightManager.allArray[i].team != team)
+                {
+                    closest = fightManager.allArray[i];
+                }
+                else if (targetType == 2 && fightManager.allArray[i].team == team)
+                {
+                    closest = fightManager.allArray[i];
+                }
+            }
+        }
+        if (closest == null)
+        {
+            return null;
+        }
+        float initDist = Helper.Instance.GetSquaredMagnitude(transform.position, closest.transform.position);
+        float compareDist = initDist;
+
+        for (int i = 0; i < fightManager.allArray.Length; i++)
+        {
+            FormationPosition item = fightManager.allArray[i]; 
+            if (targetType == 1 && item.team == ourTeam) //finding enemies but on ally
+            {
+                continue;
+            }
+            else if (targetType == 2 && item.team != ourTeam) //finding allies but on enemy
+            {
+                continue;
+            }
+            if (!targetRouting && item.fleeing)
+            {
+                continue;
+            }
+            float dist = Vector3.Distance(transform.position, item.transform.position);
+            if (dist > range)
+            {
+                continue;
+            }
+
+            //float dist = Helper.Instance.GetSquaredMagnitude(transform.position, item.transform.position);
+            if (dist < compareDist)
+            {
+                closest = item;
+                compareDist = dist;
+            } 
+        }
+        return closest; 
+    }
+    private void SoftRout() //rout in a direction for some time. after time, check if no enemies melee attacking us. if so, then become controllable again
+    {
+        shatteredIcon.gameObject.SetActive(false);
+        routingIcon.gameObject.SetActive(true);
+        BeginFleeing();
+        float timeToStopFleeing = 30;
+        Invoke("StopFleeing", timeToStopFleeing);
+    }
+    private void StopFleeing()
+    {
+        if (numberOfAliveSoldiers <= extremeRoutThreshold)
+        {
+            HardRout();
+        }
+        else
+        {
+            shatteredIcon.gameObject.SetActive(false);
+            routingIcon.gameObject.SetActive(false);
+            selectable = true;
+            fleeing = false;
+            ShowFormIcon(true);
+
+            aiTarget.transform.position = transform.position;
+            PlaceAITargetOnTerrain();
+
+
+            CheckIfRotateOrNot();
+            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+            {
+                SoldierModel model = soldierBlock.modelsArray[i];
+                if (model != null)
+                {
+                    if (model.alive)
+                    {
+                        model.StopRout();
+                    }
+                }
+            }
+        } 
+    } 
+    private void BeginFleeing()
+    { 
+        fightManager.DeselectFormation(this);
+        selectable = false;
+        fleeing = true;
+        ShowFormIcon(true);
+
+        GetMeOutOfHere();
+
+        CheckIfRotateOrNot(); 
+        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+        {
+            SoldierModel model = soldierBlock.modelsArray[i];
+            if (model != null)
+            {
+                if (model.alive)
+                {
+                    model.Rout();
+                }
+            }
+        }
+    }
+    private void SelfDestruct()
+    {
+        soldierBlock.SelfDestruct();
+    }
+
+    private void GetMeOutOfHere()
+    {
+        float detectionRange = 50;
+        FormationPosition closestEnemy = GetClosestFormationWithinRange(1, team, false, detectionRange);
+        Vector3 heading = transform.position - closestEnemy.transform.position;
+        heading = heading.normalized;
+        float distanceToTravel = 100;
+        Vector3 pos = transform.position + (heading * distanceToTravel);
+        aiTarget.transform.position = pos;
+        PlaceAITargetOnTerrain();
+    }
+    
     public void StartCharging()
     {
         if (!isCavalry)
@@ -712,6 +1148,7 @@ public class FormationPosition : MonoBehaviour
         }
     }
     #region Fixers
+    private float groundY = 0;
     private void PlaceThisOnGround()
     { 
         //aiTarget.transform.position
@@ -721,6 +1158,7 @@ public class FormationPosition : MonoBehaviour
         if (Physics.Raycast(vec, Vector3.down, out hit, Mathf.Infinity, layerMask))
         {
             transform.position = hit.point;
+            groundY = hit.point.y;
         }
     }
     public void FixPositions()
@@ -732,10 +1170,16 @@ public class FormationPosition : MonoBehaviour
                 soldierBlock.formationPositions[i].PlaceOnGround();
             }
         }
+        if (soldierBlock.mageType != "") //if we have mages
+        {
+            foreach (Position item in soldierBlock.magePositions)
+            {
+                item.PlaceOnGround();
+            }
+        }
     }
     private void PlaceAITargetOnTerrain()
-    {
-        //aiTarget.transform.position
+    { 
         LayerMask layerMask = LayerMask.GetMask("Terrain");
         RaycastHit hit;
         Vector3 vec = new Vector3(aiTarget.position.x, 100, aiTarget.position.z);
@@ -761,45 +1205,55 @@ public class FormationPosition : MonoBehaviour
     }
     #region SetStates
     private void SetDefaultRigidConstraints()
-    { 
-        rigid.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+    {
+        //rigid.constraints = RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        rigid.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
     } 
     public void SetBrace(bool val)
-    {
-        if (val)
+    { 
+        if (formationCohesive)
         {
-            rigid.constraints = RigidbodyConstraints.FreezeAll;
-            rigid.collisionDetectionMode = CollisionDetectionMode.Continuous;
-            navCutter.enabled = true;
-        }
-        else
-        {
-            SetDefaultRigidConstraints();
-            rigid.collisionDetectionMode = CollisionDetectionMode.Discrete;
-            navCutter.enabled = false;
-        }
-
-        braced = val;
-        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
-        {
-            SoldierModel model = soldierBlock.modelsArray[i];
-            if (model != null)
+            if (val)
             {
-                if (model.alive)
+                rigid.constraints = RigidbodyConstraints.FreezeAll;
+                rigid.collisionDetectionMode = CollisionDetectionMode.Continuous;
+                navCutter.enabled = true;
+            }
+            else
+            {
+                SetDefaultRigidConstraints();
+                rigid.collisionDetectionMode = CollisionDetectionMode.Discrete;
+                navCutter.enabled = false;
+            }
+
+            AstarPath.active.navmeshUpdates.ForceUpdate();
+            AstarPath.active.FlushGraphUpdates();
+            braced = val;
+            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+            {
+                SoldierModel model = soldierBlock.modelsArray[i];
+                if (model != null)
                 {
-                    model.SetBrace(val);
+                    if (model.alive)
+                    {
+                        model.SetBrace(val);
+                    }
                 }
             }
-        }
-        movementManuallyStopped = val;
+            movementManuallyStopped = val;
+        } 
     }
     #endregion
     public void AICheckIfNeedToBrace()
     {
-        bool enemyInBraceRadius = false;
+        /*bool enemyInBraceRadius = false;
         float dist = 0;
         for (int i = 0; i < listOfNearbyEnemies.Count; i++)
         {
+            if (!listOfNearbyEnemies[i].isCavalry)
+            {
+                continue;
+            }
             float distance = Vector3.Distance(listOfNearbyEnemies[i].transform.position, transform.position);
             if (distance <= aiBraceRadius)
             {
@@ -823,17 +1277,17 @@ public class FormationPosition : MonoBehaviour
         if (rand <= chance)
         { 
             SetBrace(enemyInBraceRadius);
-        } 
+        } */
     }
     public void GetTangledUp()
     {
         if (fleeing)
         {
             FullUnfreeze();
-            ShowFormIcon(false);
+            /*ShowFormIcon(false);
             Color color = farAwayIcon.color;
             color.a = 0;
-            farAwayIcon.color = color;
+            farAwayIcon.color = color;*/
             return;
         }
         freezeFormPos = true;
@@ -859,12 +1313,10 @@ public class FormationPosition : MonoBehaviour
             freezeTimer = 0;
         }
     }
+    private bool formationCohesive = true;
     public void BreakCohesion()
     {
-        if (charController != null)
-        { 
-            charController.enabled = false;
-        }
+        formationCohesive = false; 
         if (charCollider != null)
         {
             charCollider.enabled = false;
@@ -878,11 +1330,7 @@ public class FormationPosition : MonoBehaviour
         if (cohesionTimer <= 0)
         {
             cohesionTimer = 0;
-
-            if (charController != null)
-            {
-                //charController.enabled = true;
-            }
+            formationCohesive = true; 
             if (charCollider != null)
             {
                 charCollider.enabled = true;
@@ -959,6 +1407,16 @@ public class FormationPosition : MonoBehaviour
             {
                 position.SeekReplacement();
             } 
+        }
+    }
+    private void GeneralCheckIfSwapRows()
+    {
+        if (modelsInFrontRowThatFired.Count >= requiredModelsThatFiredInRow)
+        {
+            modelsInFrontRowThatFired.Clear();
+            SwapRows();
+            RedefineFrontRow();
+            ApplyRowTransforms();
         }
     }
     public void CheckIfSwapRows(SoldierModel model)
@@ -1065,57 +1523,19 @@ public class FormationPosition : MonoBehaviour
             BeginFleeing();  
         }
     }
+    public SpriteRenderer frontIcon;
     private void ShowFormIcon(bool val)
     {
         farAwayIcon.enabled = val;
+        frontIcon.enabled = val;
         farAwayIconMask.SetActive(val);
         selectedSprite.enabled = val;
-    }
-    private void BeginFleeing()
-    {
-        fleeing = true;
-        ShowFormIcon(false);
-
-        if (fightManager == null)
-        {
-            fightManager = FindObjectOfType<FightManager>();
-        }
-        fightManager.DeselectFormation(this);
-
-        Vector3 pos = transform.position + (-transform.forward * 200);
-        //Vector3 randomPosition = new Vector3(UnityEngine.Random.Range(-999, 999), 0, UnityEngine.Random.Range(-999, 999));
-        aiTarget.transform.position = pos;
-        CheckIfRotateOrNot();
-         
-        if (fightManager.selectedFormations.Contains(this))
-        {
-            fightManager.selectedFormations.Remove(this);
-        }
-        if (fightManager.aiFormations.Contains(this))
-        {
-            fightManager.aiFormations.Remove(this);
-        } 
-        if (fightManager.allFormations.Contains(this))
-        {
-            fightManager.allFormations.Remove(this);
-        }
-        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
-        {
-            SoldierModel model = soldierBlock.modelsArray[i];
-            if (model != null)
-            {
-                if (model.alive)
-                {
-                    model.Rout();
-                }
-            }
-        }
     }
 
     private void CheckIfInCombat()
     {
-        if (listOfNearbyEnemies.Count > 0)
-        { 
+        //if (listOfNearbyEnemies.Count > 0)
+        //{ 
             if (modelAttacked || modelTookDamage)
             {
                 inCombat = true;
@@ -1126,7 +1546,7 @@ public class FormationPosition : MonoBehaviour
             {
                 inCombat = false;
             }
-        } 
+        //} 
     }
     
     public void TriggerSelectionCircles(bool on)
@@ -1160,41 +1580,62 @@ public class FormationPosition : MonoBehaviour
 
     private void UpdateCollider()
     {
-        int num = 0;
-        int z = 8; 
-        /*Vector3[] array = new Vector3[5];
-        array[0] = new Vector3(-5, 0, -zSelLine);
-        array[1] = new Vector3(5, 0, -zSelLine);
-        array[2] = new Vector3(5, 0, 4);
-        array[3] = new Vector3(-5, 0, 4);
-        array[4] = new Vector3(-5, 0, -zSelLine);
-*/
+        float z = 8f;
+
+        float soldiers = numberOfAliveSoldiers;
+        float max = maxSoldiers;
+
+        float ratio = soldiers / max;
+
+        float num = 8f - (8f*ratio); //8 -7 = 1 
         if (!isCavalry)
         {
-            //float centerOffset = 16.24f;
-            if (charController != null)
-            { 
-                charController.radius = Mathf.Clamp(charRadius - (num * 0.5f), .5f, 4.5f);
-            }
+            //float centerOffset = 16.24f; 
             float offset = 0;
             posParentTransform.localPosition = new Vector3(-4.5f, offset, 3.5f - num * .5f);
             int x = 10;
             int y = 4;
-            int math = z - num;
+            float math = z - num;
             if (charCollider != null)
             {
                 charCollider.size = new Vector3(x, y, math); 
             }
-            int defSize = 10;
+            float defSize = 10;
             float remedy = 1.25f;
             float calc = math * remedy;
 
-            farAwayIconMask.gameObject.transform.localScale = new Vector3(defSize, calc, 1);
-            farAwayIcon.gameObject.transform.localScale = new Vector3(defSize, calc, 1);
-            selectedSprite.gameObject.transform.localScale = new Vector3(defSize+1, calc+1, 1);
-            farAwayIconMask.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
-            farAwayIcon.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
-            selectedSprite.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
+            if (farAwayIconMask != null)
+            {
+                farAwayIconMask.gameObject.transform.localScale = new Vector3(defSize, calc, 1);
+                farAwayIconMask.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
+
+            }
+            if (farAwayIcon != null)
+            {
+
+                farAwayIcon.gameObject.transform.localScale = new Vector3(defSize, calc, 1);
+                farAwayIcon.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
+            }
+            if (selectedSprite != null)
+            {
+                selectedSprite.gameObject.transform.localScale = new Vector3(defSize + 1, calc + 1, 1);
+
+                selectedSprite.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
+            }
+            if (routingIcon != null)
+            {
+
+                routingIcon.gameObject.transform.localScale = new Vector3(defSize + 1, calc + 1, 1);
+                routingIcon.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
+            }
+            if (shatteredIcon != null)
+            {
+
+                shatteredIcon.gameObject.transform.localScale = new Vector3(defSize + 1, calc + 1, 1);
+
+                shatteredIcon.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
+            }
+
 
             /*if (!soldierBlock.canBeRanged)
             { 
@@ -1240,13 +1681,23 @@ public class FormationPosition : MonoBehaviour
             {
 
                 lineRenderer.SetPosition(0, new Vector3(formationPositionBasedOnSoldierModels.x, formationPositionBasedOnSoldierModels.y, formationPositionBasedOnSoldierModels.z)); //offsetting pos4 +0.585001f
-                int count = 1;
-                lineRenderer.positionCount = destinationsList.Count + 1; 
-                foreach (Vector3 item in destinationsList)
-                { 
-                    lineRenderer.SetPosition(count, item);
-                    count++;
+                
+                if (formationToFollow == null)
+                {
+                    int count = 1;
+                    lineRenderer.positionCount = destinationsList.Count + 1;
+                    foreach (Vector3 item in destinationsList)
+                    {
+                        lineRenderer.SetPosition(count, item);
+                        count++;
+                    }
                 }
+                else
+                {
+                    lineRenderer.positionCount = 2;
+                    lineRenderer.SetPosition(1, aiTarget.transform.position);
+                }
+                
             }
             if (lineRenderer2.enabled)
             {
@@ -1329,7 +1780,7 @@ public class FormationPosition : MonoBehaviour
                 {
                     if (mage.magicCharged && mage.alive)
                     { 
-                        mage.MageCastProjectile(targetPos, abilityNum, soldierBlock.mageType); //magic charged equals false
+                        mage.rangedModule.MageCastProjectile(targetPos, abilityNum, soldierBlock.mageType); //magic charged equals false
                         break;
                     }
                 }
@@ -1343,7 +1794,7 @@ public class FormationPosition : MonoBehaviour
                 {
                     if (abilityCharged && model.alive)
                     {
-                        model.MageCastProjectile(targetPos, abilityNum, soldierBlock.mageType); //magic charged equals false
+                        model.rangedModule.MageCastProjectile(targetPos, abilityNum, soldierBlock.mageType); //magic charged equals false
                         abilityCharged = false;
                         break;
                     }
@@ -1369,6 +1820,28 @@ public class FormationPosition : MonoBehaviour
             } 
             fightManager.UpdateGUI();
         }
+        if (val == false)
+        {
+            OnDeselected();
+        }
+    }
+    private void OnDeselected()
+    {
+        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+        {
+            SoldierModel model = soldierBlock.modelsArray[i];
+            if (model != null)
+            {
+                if (model.alive)
+                {
+                    if (!model.melee)
+                    {
+                        model.lineOfSightIndicator.enabled = false;
+                        model.reloadingIndicator.enabled = false;
+                    }
+                }
+            }
+        }
     }
 
     private void ShowSelected(bool val)
@@ -1379,39 +1852,6 @@ public class FormationPosition : MonoBehaviour
         }
     }
 
-    private void FindClosestFormation()
-    {
-        if (listOfNearbyEnemies.Count <= 0)
-        {
-            enemyFormationToTarget = null;
-            aiPath.endReachedDistance = moveStopDistance;
-            aiPath.maxSpeed = currentSpeed;
-            weaponsDeployed = false;
-            tangledUp = false;
-            return;
-        }
-        enemyFormationToTarget = listOfNearbyEnemies[0];
-        //float initDist = Vector3.Distance(transform.position, listOfNearbyEnemies[0].transform.position);
-        float initDist = Helper.Instance.GetSquaredMagnitude(transform.position, listOfNearbyEnemies[0].transform.position);
-        float compareDist = initDist;
-        foreach (FormationPosition item in listOfNearbyEnemies) //doesn't work yet
-        {
-            //float dist = GetDistance(transform, item.gameObject.transform);
-            float dist = Helper.Instance.GetSquaredMagnitude(transform.position, item.transform.position);
-            //Debug.LogError(dist);
-            if (dist < compareDist)
-            {
-                enemyFormationToTarget = item;
-                compareDist = dist;
-            }
-
-        }
-        if (chaseDetectedEnemies)
-        {
-            EngageFoe();
-        } 
-
-    }
 
     public void ClearOrders()
     {
@@ -1429,28 +1869,6 @@ public class FormationPosition : MonoBehaviour
         aiTarget.transform.position = transform.position;
         rotTarget.transform.position = transform.position;
     }
-    private void EngageFoe()
-    {
-        if (fleeing)
-        {
-            return;
-        }
-        float distance = Vector3.Distance(transform.position, enemyFormationToTarget.transform.position); 
-        if (!soldierBlock.melee && distance <= rangedRadius)
-        {
-            StopInPlace();
-        }
-        else if (distance <= stoppingDistance)
-        { //stop
-            //Debug.Log("stopping");
-            ResetAITarget();
-        }
-        else if (enemyFormationToTarget != null)
-        {   //chase
-            ChaseFoe();
-        } 
-    }
-
     private void StopInPlace()
     {
         ResetAITarget(); 
