@@ -6,6 +6,13 @@ public class RangedModule : MonoBehaviour
 {
     #region RangedUnits
 
+    public enum RangedBehavior
+    {
+        FireAndRepeat,
+        FireAndReload
+    }
+    public RangedBehavior behavior = RangedBehavior.FireAndRepeat;
+
     [Header("Assign these if ranged")]
     [SerializeField] private Transform eyeline;
     [SerializeField] private bool directFire = false;
@@ -31,7 +38,7 @@ public class RangedModule : MonoBehaviour
     public bool loadingRightNow = false;
     private float currentFinishedLoadingTime = 0;
     [SerializeField] private float timeUntilFinishedLoading = 1f;
-    public SoldierModel model;
+    [HideInInspector] public SoldierModel model;
     #endregion
 
 

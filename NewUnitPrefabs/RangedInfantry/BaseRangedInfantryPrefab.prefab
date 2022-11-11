@@ -12,6 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eda3dea4b05762146b86949b41351a74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eyeline: {fileID: 263644038749723861}
+  directFire: 0
+  directFireRadius: 80
+  maxFiringAngle: 45
+  minFiringAngle: 10
+  projectileSpawn: {fileID: 263644038749723861}
+  projectile: {fileID: 8333262704199657843, guid: 1e1eb2ce0b65ee24cbb6d00700ef8278, type: 3}
+  power: 100
+  volleyFireAndRetreat: 0
+  projectileDeviationAmount: 5
+  projectileDeviationAmountVertical: 5
+  fireEffect: {fileID: 0}
+  rangedNeedsLoading: 0
+  ammo: 0
+  maxAmmo: 1
+  internalAmmoCapacity: 100
+  loadingRightNow: 0
+  timeUntilFinishedLoading: 1
+  model: {fileID: 0}
 --- !u!1001 &7791023671330243469
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -131,5 +150,10 @@ PrefabInstance:
 --- !u!1 &3995079770724174760 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6588230940471953445, guid: ea9127458b64e3645923071d64961f81, type: 3}
+  m_PrefabInstance: {fileID: 7791023671330243469}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &263644038749723861 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8050149266097643352, guid: ea9127458b64e3645923071d64961f81, type: 3}
   m_PrefabInstance: {fileID: 7791023671330243469}
   m_PrefabAsset: {fileID: 0}

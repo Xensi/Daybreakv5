@@ -53,6 +53,7 @@ public class FormationPosition : MonoBehaviour
     [HideInInspector] public bool abilityCharged = true;
     [HideInInspector] public int shotsHit = 0;
     public bool showSoldierModels = true;
+    public GlobalDefines.Team teamType = GlobalDefines.Team.Altgard;
     [HideInInspector] public string team = "Altgard"; //Whose team are we on?
     [HideInInspector] public List<FormationPosition> listOfNearbyEnemies;
     [HideInInspector] public float startingPursueRadius = 0; //do not modify manually
@@ -275,7 +276,10 @@ public class FormationPosition : MonoBehaviour
                             {
                                 model.reloadingIndicator.transform.LookAt(model.reloadingIndicator.transform.position + fightManager.cam.transform.forward);
                             }
-                            model.reloadingIndicator.enabled = model.rangedModule.loadingRightNow;
+                            if (model.rangedModule != null)
+                            { 
+                                model.reloadingIndicator.enabled = model.rangedModule.loadingRightNow;
+                            }
                         }
                     }
                 }
@@ -348,7 +352,10 @@ public class FormationPosition : MonoBehaviour
         {
             if (checkingModel.alive)
             {
-                checkingModel.rangedModule.LineOfSightUpdate();
+                if (checkingModel.rangedModule != null)
+                { 
+                    checkingModel.rangedModule.LineOfSightUpdate();
+                }
             }
         }
         soldierModelToCheck++;
@@ -1778,7 +1785,7 @@ public class FormationPosition : MonoBehaviour
             {
                 foreach(SoldierModel mage in soldierBlock.listMageModels)
                 {
-                    if (mage.magicCharged && mage.alive)
+                    if (mage.magicCharged && mage.alive && mage.rangedModule != null)
                     { 
                         mage.rangedModule.MageCastProjectile(targetPos, abilityNum, soldierBlock.mageType); //magic charged equals false
                         break;
@@ -1792,7 +1799,7 @@ public class FormationPosition : MonoBehaviour
             {
                 foreach (SoldierModel model in soldierBlock.listSoldierModels)
                 {
-                    if (abilityCharged && model.alive)
+                    if (abilityCharged && model.alive && model.rangedModule != null)
                     {
                         model.rangedModule.MageCastProjectile(targetPos, abilityNum, soldierBlock.mageType); //magic charged equals false
                         abilityCharged = false;

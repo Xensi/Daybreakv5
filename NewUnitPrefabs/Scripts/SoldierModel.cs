@@ -105,6 +105,7 @@ public class SoldierModel : MonoBehaviour
     [HideInInspector] public bool pendingLaunched = false;
     public bool clearLineOfSight = false;
     public string team = "Altgard";
+    public GlobalDefines.Team teamType = GlobalDefines.Team.Altgard;
     [HideInInspector] public float attackRange = 1;
     [HideInInspector] public bool animate = false;
     [HideInInspector] public float currentSpeed = 0;
@@ -131,8 +132,8 @@ public class SoldierModel : MonoBehaviour
     [SerializeField] private bool useOldWalkCalculations = false;
     [SerializeField] private int numRandIdleAnims = 1;
     [SerializeField] private int numRandAttackAnims = 1; 
-    public List<SkinnedMeshRenderer> normalMeshes;
-    public List<SkinnedMeshRenderer> veteranMeshes;
+    //public List<SkinnedMeshRenderer> normalMeshes;
+    //public List<SkinnedMeshRenderer> veteranMeshes;
     #endregion
 
     #region ShouldNotSet
@@ -180,6 +181,9 @@ public class SoldierModel : MonoBehaviour
         if (rangedModule == null)
         {
             rangedModule = GetComponent<RangedModule>();
+        }
+        if (rangedModule != null)
+        { 
             rangedModule.model = this;
         }
 
@@ -259,8 +263,8 @@ public class SoldierModel : MonoBehaviour
         animator.SetFloat(AnimatorDefines.angleID, 0);  
         PlaceOnGround();
 
-        animator.cullingMode = AnimatorCullingMode.CullCompletely;
-        //animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
+        //animator.cullingMode = AnimatorCullingMode.CullCompletely;
+        animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
         richAI.enableRotation = true;
     }
 
@@ -351,6 +355,14 @@ public class SoldierModel : MonoBehaviour
         for (int i = 0; i < renderersArray.Length; i++)
         {
             renderersArray[i].enabled = val;
+        }
+        if (val)
+        {
+            animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
+        }
+        else
+        { 
+            animator.cullingMode = AnimatorCullingMode.CullCompletely;
         }
         //animator.enabled = val; 
 
@@ -562,26 +574,34 @@ public class SoldierModel : MonoBehaviour
         }
         if (damaged && stopWhenDamaged)
         {
+            //Debug.Log("damaged");
             SetMoving(false);
             return;
         }
         if (braced)
         {
+            //Debug.Log("braced");
             SetMoving(false);
             return;
         }
-        if (rangedModule.loadingRightNow && stopWhenLoading && richAI.remainingDistance <= remainingDistanceThreshold) //if attacking, and needs to stop when attacking, and in formation position
+        if (rangedModule != null && rangedModule.rangedNeedsLoading)
         {
-            SetMoving(false);
-            return;
+            if (rangedModule.loadingRightNow && stopWhenLoading && richAI.remainingDistance <= remainingDistanceThreshold) //if attacking, and needs to stop when attacking, and in formation position
+            {
+                //Debug.Log("ranged module");
+                SetMoving(false);
+                return;
+            }
         }
         else if (attacking && stopWhenAttacking && richAI.remainingDistance <= remainingDistanceThreshold) //if attacking, and needs to stop when attacking, and in formation position
         {
+            //Debug.Log("attacking and stop");
             SetMoving(false);
             return;
         }
         else if (knockedDown || airborne)
         {
+            //Debug.Log("knocked down");
             SetMoving(false);
             return;
         }
@@ -592,15 +612,20 @@ public class SoldierModel : MonoBehaviour
                 SetMoving(true);
 
             }
-            if (richAI.reachedDestination) //if we've reached destination
+            else
             {
+                //Debug.Log("reached destination");
                 SetMoving(false);
             }
         }
+        
     }
     public void UpdateLoadTimer()
     {
-        rangedModule.UpdateLoadTimer();
+        if (rangedModule != null)
+        { 
+            rangedModule.UpdateLoadTimer();
+        }
     }
     public void ToggleAttackBox(bool val)
     {
@@ -642,19 +667,23 @@ public class SoldierModel : MonoBehaviour
         {
             return;
         } 
-        if (attackType == AttackType.Ranged && HasTarget())
+        if (airborne || knockedDown)
         { 
+            return;
+        }
+        if (rangedModule != null && rangedModule.loadingRightNow)
+        {
+            return;
+        }
+        if (rangedModule != null && HasTarget())
+        {
             if (!clearLineOfSight)
             {
                 SetAttacking(false);
                 return;
             }
         }
-        if (airborne || knockedDown)
-        { 
-            return;
-        }
-        if (!attacking && !damaged && !rangedModule.loadingRightNow && !isMagic) //increment if not attacking and not damaged not reloading not magic
+        if (!attacking && !damaged && !isMagic) //increment if not attacking and not damaged not reloading not magic
         { 
             if (currentAttackTime < reqAttackTime) //timer goes up
             {
@@ -832,7 +861,11 @@ public class SoldierModel : MonoBehaviour
         {
             return;
         }
-        if (attacking && !rangedModule.loadingRightNow) //increment only if attacking and not reloading
+        if (rangedModule != null && rangedModule.loadingRightNow)
+        {
+            return;
+        }
+        if (attacking) //increment only if attacking and not reloading
         {
             currentDamageTime += .1f;
 
@@ -855,7 +888,7 @@ public class SoldierModel : MonoBehaviour
                 {   
                     DealDamage(targetEnemy, formPos.charging);
                 }
-                else //ranged
+                else if (rangedModule != null)
                 {
                     rangedModule.TriggerRangedAttack();
                 } 

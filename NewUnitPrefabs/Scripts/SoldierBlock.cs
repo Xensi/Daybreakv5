@@ -14,7 +14,8 @@ public class SoldierBlock : MonoBehaviour
     public Position[] formationPositions; //all, max 80
     public List<Position> magePositions;
     [SerializeField] private Transform FormationTransform;
-    [SerializeField] private Quaternion angleToFace; 
+    [SerializeField] private Quaternion angleToFace;
+    public GlobalDefines.Team teamType = GlobalDefines.Team.Altgard;
     [SerializeField] private string team = "Altgard";
     [SerializeField] private FormationPosition formPos;
     public List<SoldierModel> listSoldierModels;

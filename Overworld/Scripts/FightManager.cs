@@ -19,6 +19,7 @@ public class FightManager : MonoBehaviour
     public List<FormationPosition> aiFormations;
 
     public List<FormationPosition> selectedFormations;
+    public GlobalDefines.Team teamType = GlobalDefines.Team.Altgard;
     [SerializeField] private string team = "Altgard"; //teams are Altgard, Zhanguo
 
 
