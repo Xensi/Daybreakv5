@@ -49,8 +49,8 @@ public class LoadScreen : MonoBehaviour
         {
             finishedLoad = true;
 
-            FightManager fightmanager = FindObjectOfType<FightManager>();
-            fightmanager.FinishedLoading();
+            //FightManager fightmanager = FindObjectOfType<FightManager>();
+            FightManager.Instance.UpdateAllFormArrayAndStartAIToBeginBattle();
             SceneManager.UnloadSceneAsync("LoadGame");
         }
     }

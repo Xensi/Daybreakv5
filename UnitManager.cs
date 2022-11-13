@@ -4,13 +4,38 @@ using UnityEngine;
 
 public class UnitManager : MonoBehaviour
 {
-    public List<ArmyCardScriptableObj> units;
+    public static UnitManager Instance { get; private set; } 
 
-    private void Start()
+    public List<GlobalDefines.SoldierTypes> unitTypes;
+    public List<SoldierBlock> formationsToInstantiateBasedOnUnitType;
+
+    public List<UnitInfoClass> unitsInMainArmyList;
+    public List<UnitInfoClass> unitsInTestArmyList;
+
+
+    private void Awake()
     {
-        /*foreach (var item in units)
+        Instance = this;
+
+        DontDestroyOnLoad(gameObject);
+    } 
+    public void UpdateArmy()
+    {
+        unitsInMainArmyList.Clear();
+        for (int i = 0; i < FightManager.Instance.yourFormations.Count; i++)
         {
-            Debug.Log(item.cardName);
-        }*/
+            if (FightManager.Instance.yourFormations[i] != null){ 
+                unitsInMainArmyList.Add(ConvertFormationToUnitInfoClass(FightManager.Instance.yourFormations[i]));
+            }
+        } 
+    }
+    private UnitInfoClass ConvertFormationToUnitInfoClass(FormationPosition form)
+    {
+        UnitInfoClass unit = new UnitInfoClass();
+        unit.type = form.soldierType;
+        unit.team = form.team;
+        unit.troops = form.numberOfAliveSoldiers;
+        unit.maxTroops = form.maxSoldiers;
+        return unit;
     }
 }

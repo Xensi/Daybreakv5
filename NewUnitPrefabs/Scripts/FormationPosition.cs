@@ -15,6 +15,7 @@ public class FormationPosition : MonoBehaviour
         RangedInfantry,
         Cavalry
     }
+    public GlobalDefines.SoldierTypes soldierType = GlobalDefines.SoldierTypes.conscript;
     #endregion
 
     #region MustBeSet 
@@ -32,7 +33,7 @@ public class FormationPosition : MonoBehaviour
     public SpriteRenderer shatteredIcon;
     public GameObject farAwayIconMask; 
     public bool usesSpears = true;
-    public FormationType type = FormationType.Infantry; //just by default
+    public FormationType formationType = FormationType.Infantry; //just by default
     #endregion
 
     #region AutoSet
@@ -53,8 +54,7 @@ public class FormationPosition : MonoBehaviour
     [HideInInspector] public bool abilityCharged = true;
     [HideInInspector] public int shotsHit = 0;
     public bool showSoldierModels = true;
-    public GlobalDefines.Team teamType = GlobalDefines.Team.Altgard;
-    [HideInInspector] public string team = "Altgard"; //Whose team are we on?
+    public GlobalDefines.Team team = GlobalDefines.Team.Altgard; 
     [HideInInspector] public List<FormationPosition> listOfNearbyEnemies;
     [HideInInspector] public float startingPursueRadius = 0; //do not modify manually
     public FormationPosition enemyFormationToTarget;
@@ -129,7 +129,7 @@ public class FormationPosition : MonoBehaviour
     [SerializeField] private float slowRotate = 15; 
     [SerializeField] private float normRotate = 30; 
     [SerializeField] private float secondRowOffsetAmount = 0f;  
-    public BoxCollider charCollider;  
+    public BoxCollider formationCollider;  
     public bool isCavalry = false;
     [SerializeField] private bool freezeFormPos = false; 
     [SerializeField] private float freezeTimer = 0;
@@ -147,7 +147,7 @@ public class FormationPosition : MonoBehaviour
     [SerializeField] private bool alwaysRotateTowardMovementPos = false;
     public SpriteRenderer selectedSprite;
     [SerializeField] private float chargeSpeed = 7;
-    [SerializeField] private float maxChargeTime = 10;
+    [SerializeField] private float maxChargeTime = 15;
     [SerializeField] private float currentChargeTime = 0;
     [SerializeField] private float chargeRechargeTime = 30;
     private float currentChargeRechargeTime = 0;
@@ -164,6 +164,10 @@ public class FormationPosition : MonoBehaviour
     private void Start()
     {
 
+        Color color = farAwayIcon.color;
+        color.a = 0;
+        farAwayIcon.color = color;
+        frontIcon.color = color;
         if (fightManager == null)
         {
             fightManager = FindObjectOfType<FightManager>();
@@ -410,6 +414,29 @@ public class FormationPosition : MonoBehaviour
             }
         } 
     } 
+    public void ResetFormationPositionsAndSoldiers()
+    {
+        FixPositions();
+        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+        {
+            SoldierModel soldier = soldierBlock.modelsArray[i];
+            if (soldier != null && soldier.modelPosition != null) //terrain check but don't teleport to position
+            {
+                soldier.PlaceOnGround(); 
+            }
+        }
+    }
+    public void ToggleFormationSoldiersPathfinding(bool val)
+    {
+        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+        {
+            SoldierModel soldier = soldierBlock.modelsArray[i];
+            if (soldier != null) //terrain check but don't teleport to position
+            {
+                soldier.richAI.enabled = val;
+            }
+        }
+    }
     private void LockSoldiersToTerrain() //called periodically
     {
         if (showSoldierModels)
@@ -574,6 +601,7 @@ public class FormationPosition : MonoBehaviour
         movingSpeed = Mathf.Sqrt(Mathf.Pow(aiPath.velocity.x, 2) + Mathf.Pow(aiPath.velocity.z, 2)); //calculate speed vector
         float magic = 15;
         transform.position = new Vector3(transform.position.x, magic, transform.position.z); 
+        //PlaceThisOnGround();
         FastSoldierUpdate();
         FollowFormation();
     }
@@ -969,7 +997,7 @@ public class FormationPosition : MonoBehaviour
     {
         deathsThisTimeFrame = 0;
     }
-    private FormationPosition GetClosestFormationWithinRange(int targetType = 1, string ourTeam = "Altgard", bool targetRouting = false, float range = 100) //targettype 0: any, targettype 1: enemy, targettype 2: ally
+    private FormationPosition GetClosestFormationWithinRange(int targetType = 1, GlobalDefines.Team ourTeam = GlobalDefines.Team.Altgard, bool targetRouting = false, float range = 100) //targettype 0: any, targettype 1: enemy, targettype 2: ally
     {
         FormationPosition closest = null;
 
@@ -981,11 +1009,11 @@ public class FormationPosition : MonoBehaviour
         { 
             for (int i = 0; i < fightManager.allArray.Length; i++) //go through until we get one that matches criteria
             {
-                if (targetType == 1  && fightManager.allArray[i].team != team)
+                if (targetType == 1  && fightManager.allArray[i].team != ourTeam)
                 {
                     closest = fightManager.allArray[i];
                 }
-                else if (targetType == 2 && fightManager.allArray[i].team == team)
+                else if (targetType == 2 && fightManager.allArray[i].team == ourTeam)
                 {
                     closest = fightManager.allArray[i];
                 }
@@ -1099,12 +1127,15 @@ public class FormationPosition : MonoBehaviour
     {
         float detectionRange = 50;
         FormationPosition closestEnemy = GetClosestFormationWithinRange(1, team, false, detectionRange);
-        Vector3 heading = transform.position - closestEnemy.transform.position;
-        heading = heading.normalized;
-        float distanceToTravel = 100;
-        Vector3 pos = transform.position + (heading * distanceToTravel);
-        aiTarget.transform.position = pos;
-        PlaceAITargetOnTerrain();
+        if (closestEnemy != null)
+        { 
+            Vector3 heading = transform.position - closestEnemy.transform.position;
+            heading = heading.normalized;
+            float distanceToTravel = 100;
+            Vector3 pos = transform.position + (heading * distanceToTravel);
+            aiTarget.transform.position = pos;
+            PlaceAITargetOnTerrain();
+        }
     }
     
     public void StartCharging()
@@ -1324,9 +1355,9 @@ public class FormationPosition : MonoBehaviour
     public void BreakCohesion()
     {
         formationCohesive = false; 
-        if (charCollider != null)
+        if (formationCollider != null)
         {
-            charCollider.enabled = false;
+            formationCollider.enabled = false;
         }
         cohesionTimer++;
         cohesionTimer = Mathf.Clamp(cohesionTimer, 0, 3);
@@ -1338,9 +1369,9 @@ public class FormationPosition : MonoBehaviour
         {
             cohesionTimer = 0;
             formationCohesive = true; 
-            if (charCollider != null)
+            if (formationCollider != null)
             {
-                charCollider.enabled = true;
+                formationCollider.enabled = true;
             }
         }
     } 
@@ -1584,7 +1615,8 @@ public class FormationPosition : MonoBehaviour
     {
         chaseDetectedEnemies = false;
     }
-
+    public float ratioOfAliveToMax = 1;
+    public float math = 8;
     private void UpdateCollider()
     {
         float z = 8f;
@@ -1592,9 +1624,9 @@ public class FormationPosition : MonoBehaviour
         float soldiers = numberOfAliveSoldiers;
         float max = maxSoldiers;
 
-        float ratio = soldiers / max;
+        ratioOfAliveToMax = soldiers / max;
 
-        float num = 8f - (8f*ratio); //8 -7 = 1 
+        float num = 8f - (8f*ratioOfAliveToMax); //8 -7 = 1 
         if (!isCavalry)
         {
             //float centerOffset = 16.24f; 
@@ -1602,10 +1634,10 @@ public class FormationPosition : MonoBehaviour
             posParentTransform.localPosition = new Vector3(-4.5f, offset, 3.5f - num * .5f);
             int x = 10;
             int y = 4;
-            float math = z - num;
-            if (charCollider != null)
+            math = z - num;
+            if (formationCollider != null)
             {
-                charCollider.size = new Vector3(x, y, math); 
+                formationCollider.size = new Vector3(x, y, math); 
             }
             float defSize = 10;
             float remedy = 1.25f;

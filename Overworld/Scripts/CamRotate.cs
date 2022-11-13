@@ -38,40 +38,18 @@ public class CamRotate : MonoBehaviour
     }
     private void FindFormationsNearMe()
     {
-        if (fightManager.allFormations.Count > 0)
+        if (fightManager.allFormationsList.Count > 0)
         {
             for (int i = 0; i < fightManager.allArray.Length; i++)
             {
-                float distance = Vector3.Distance(transform.position, fightManager.allArray[i].formationPositionBasedOnSoldierModels);
-                /*if (distance <= radiusToEnableAnimations)
-                { 
-                    fightManager.allArray[i].enableAnimations = true;
-                }
-                else
-                { 
-                    fightManager.allArray[i].enableAnimations = false;
-                }*/
+                float distance = Vector3.Distance(transform.position, fightManager.allArray[i].formationPositionBasedOnSoldierModels); 
             }
-        }
-        /*LayerMask layerMask = LayerMask.GetMask("Formation");
-        //int layerMask = 1 << 23; //layer 23 formations
-        int maxColliders = 10;
-
-        Collider[] hitColliders = new Collider[maxColliders];
-        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, radiusToEnableAnimations, hitColliders, layerMask, QueryTriggerInteraction.Ignore);
-
-        for (int i = 0; i < numColliders; i++)
-        {
-            FormationPosition form = hitColliders[i].gameObject.GetComponentInParent<FormationPosition>();
-            if (form != null)
-            {
-                form.enableAnimations = true;
-            }
-        }*/
+        } 
     }
 
     private void CheckVisibilityOfModelsInVisibleForms()
     {
+        //Debug.Log("checking");
         planes = GeometryUtility.CalculateFrustumPlanes(cam);
         FormationPosition[] allForms = fightManager.allArray;
         for (int i = 0; i < allForms.Length; i++) //determine if formation is in our view frustum
@@ -124,45 +102,7 @@ public class CamRotate : MonoBehaviour
         } 
     } 
     private void Update()
-    {
-        #region ExperimentalCamera
-        /*if (Input.GetKey(KeyCode.Equals))
-        {
-            CinemachineShake.Instance.cineVirCam.LookAt = null;
-            CinemachineShake.Instance.cineVirCam.transform.rotation = Quaternion.identity;
-
-            if (CinemachineShake.Instance.cineVirCam.Follow == null)
-            {
-                if (FightManager.Instance.selectedFormations.Count == 1)
-                {
-                    CinemachineShake.Instance.cineVirCam.Follow = FightManager.Instance.selectedFormations[0].transform;
-                }
-            }
-            else
-            {
-                CinemachineShake.Instance.cineVirCam.Follow = null;
-                CinemachineShake.Instance.cineVirCam.transform.position = Vector3.zero;
-            }
-        }
-        if (Input.GetKey(KeyCode.Minus))
-        {
-            CinemachineShake.Instance.cineVirCam.Follow = null;
-            CinemachineShake.Instance.cineVirCam.transform.position = Vector3.zero;
-
-            if (CinemachineShake.Instance.cineVirCam.LookAt == null)
-            {
-                if (FightManager.Instance.selectedFormations.Count == 1)
-                {
-                    CinemachineShake.Instance.cineVirCam.LookAt = FightManager.Instance.selectedFormations[0].transform;
-                }
-            }
-            else
-            {
-                CinemachineShake.Instance.cineVirCam.LookAt = null;
-                CinemachineShake.Instance.cineVirCam.transform.rotation = Quaternion.identity;
-            }
-        }*/
-        #endregion
+    { 
 
         CheckVisibilityOfModelsInVisibleForms(); 
 
@@ -216,7 +156,7 @@ public class CamRotate : MonoBehaviour
     }
     private void UpdateFarAwayIcons()
     {
-        if (fightManager.allFormations.Count > 0)
+        if (fightManager.allFormationsList.Count > 0)
         {
             foreach (FormationPosition form in fightManager.allArray)
             {

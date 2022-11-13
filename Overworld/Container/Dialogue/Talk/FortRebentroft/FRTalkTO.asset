@@ -15,18 +15,26 @@ MonoBehaviour:
   speaker: 'Talk to:'
   speakerImage: {fileID: 21300000, guid: 22ae0104a986d6846ac9f4641fd12164, type: 3}
   speakerSpeed: 0.025
-  sentences:
-  - Quartermaster Protz
-  - Recruiter Beitel
-  sentenceAudio: []
-  nextDialogue: {fileID: 0}
-  isChoices: 1
   speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
   speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
-  choicePaths:
-  - {fileID: 11400000, guid: ea3ded103d4fef64bbb15d74da32fb81, type: 2}
-  - {fileID: 11400000, guid: ff129126f161ca942b5ca151afae3edd, type: 2}
   commandToExecuteStart: 
   commandToExecuteEnd: 
   commandVar: 0
+  commandString: 
+  dialogueIfConditionTrue: {fileID: 0}
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  isChoices: 1
   forceChangeSpeaker: 1
+  italicizedSentences: 
+  speakerSentences: []
+  sentenceAudio: []
+  sentences:
+  - Quartermaster Protz
+  - Recruiter Beitel
+  - Test battle
+  nextDialogue: {fileID: 0}
+  choicePaths:
+  - {fileID: 11400000, guid: ea3ded103d4fef64bbb15d74da32fb81, type: 2}
+  - {fileID: 11400000, guid: ff129126f161ca942b5ca151afae3edd, type: 2}
+  - {fileID: 11400000, guid: 8f08dc753d88bfe4499febad9eec52ed, type: 2}

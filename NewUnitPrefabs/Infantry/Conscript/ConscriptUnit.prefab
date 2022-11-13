@@ -47,7 +47,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &41314774549650705
@@ -97,7 +97,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &143150802444946537
@@ -147,7 +147,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &167089800344549953
@@ -197,7 +197,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &239317925156612703
@@ -247,7 +247,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &436454117761585913
@@ -358,7 +358,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &585476214757239449
@@ -408,7 +408,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &594217265679205744
@@ -561,7 +561,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &807910195881875656
@@ -611,7 +611,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &858197534285544911
@@ -661,7 +661,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &931682229134666059
@@ -711,7 +711,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1018139903329666817
@@ -761,7 +761,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1028218914654632144
@@ -811,7 +811,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1156019196409976369
@@ -861,7 +861,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1191562344218880030
@@ -941,7 +941,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1286720135026831425
@@ -991,7 +991,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1317728925993677095
@@ -1041,7 +1041,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1479338911165045476
@@ -1091,7 +1091,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1512017424180771740
@@ -1141,7 +1141,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1819868194223810548
@@ -1191,7 +1191,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1833775634946714052
@@ -1241,7 +1241,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &2091063686971879274
@@ -1291,7 +1291,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &2140637141674666393
@@ -1341,7 +1341,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &2287886161322646545
@@ -1391,7 +1391,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &2311548504768818927
@@ -1441,7 +1441,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &2338409074365021086
@@ -1491,7 +1491,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &2450721201302715650
@@ -1541,7 +1541,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &2507161279666956196
@@ -1591,7 +1591,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &2552856276682495943
@@ -1641,7 +1641,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &2637690567074652069
@@ -1691,7 +1691,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &2683802026964791269
@@ -1741,7 +1741,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &2746781270374011979
@@ -1859,7 +1859,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &2774689752978082961
@@ -1909,7 +1909,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &2813189710038701698
@@ -1959,7 +1959,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &2981207002143562103
@@ -2009,7 +2009,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &2993517376498761596
@@ -2119,7 +2119,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &3168598161138510881
@@ -2169,7 +2169,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &3215289905441637044
@@ -2219,7 +2219,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &3260469567837570024
@@ -2269,7 +2269,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &3270032199468716453
@@ -2319,7 +2319,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &3287339634248696980
@@ -2463,7 +2463,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &3342799586582145623
@@ -2513,7 +2513,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &3629697245364622863
@@ -2563,7 +2563,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &3647453195601716962
@@ -2613,7 +2613,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &3678657682887375533
@@ -2750,7 +2750,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &3764827107105640190
@@ -2800,7 +2800,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &3803145736412245045
@@ -2850,7 +2850,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &4024344578494282720
@@ -2900,7 +2900,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &4028385192289717614
@@ -2950,7 +2950,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &4089684566812740463
@@ -3000,7 +3000,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &4188406407867825174
@@ -3050,7 +3050,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &4294267584638574094
@@ -3168,7 +3168,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &4397383472006998351
@@ -3218,7 +3218,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &4437520505822803843
@@ -3268,7 +3268,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &4538845295667029587
@@ -3318,7 +3318,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &4569063764781674514
@@ -3368,7 +3368,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &4622117635252406440
@@ -3418,7 +3418,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &4648856914797140406
@@ -3468,7 +3468,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &4690850069598752807
@@ -3518,7 +3518,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &4769235135950766887
@@ -3568,7 +3568,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &4787997070702227798
@@ -3618,7 +3618,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &4957958213198820853
@@ -3668,7 +3668,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &4968754695534229128
@@ -3718,7 +3718,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5007067524050808424
@@ -3768,7 +3768,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5010918089522584063
@@ -3818,7 +3818,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5023461474265560742
@@ -3868,7 +3868,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5120978747237783653
@@ -4004,7 +4004,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5209219716326416334
@@ -4054,7 +4054,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5266334001062037533
@@ -4104,7 +4104,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5330235305763875704
@@ -4222,7 +4222,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5380148917297153004
@@ -4272,7 +4272,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5410898836257599145
@@ -4322,7 +4322,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5428955209333827395
@@ -4372,7 +4372,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5506639300509062230
@@ -4422,7 +4422,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5507344761910350341
@@ -4472,7 +4472,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5604210817365437856
@@ -4522,7 +4522,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5663080981487833157
@@ -4572,7 +4572,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5728362157154032120
@@ -4622,7 +4622,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5829535142617243826
@@ -4672,7 +4672,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110728819744
@@ -4803,7 +4803,7 @@ MonoBehaviour:
   - {fileID: 6994063664777802149}
   FormationTransform: {fileID: 0}
   angleToFace: {x: 0, y: -0.70710677, z: 0, w: 0.70710677}
-  team: Altgard
+  teamType: 0
   formPos: {fileID: 29422916108755641}
   listSoldierModels: []
   listMageModels: []
@@ -4821,6 +4821,7 @@ MonoBehaviour:
   forcedMaxSpeed: 0
   manuallyAssignRows: 0
   manager: {fileID: 0}
+  soldiersToCreate: 80
 --- !u!1 &5955700111421230610
 GameObject:
   m_ObjectHideFlags: 0
@@ -4912,6 +4913,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   formationToFollow: {fileID: 0}
+  soldierType: 1
   rigid: {fileID: 0}
   navCutter: {fileID: 5268160359136011892}
   simultaneousPositionCheck: 0
@@ -4924,7 +4926,7 @@ MonoBehaviour:
   shatteredIcon: {fileID: 3487017875655869845}
   farAwayIconMask: {fileID: 5120978747237783653}
   usesSpears: 1
-  type: 0
+  formationType: 0
   shaker: {fileID: 0}
   AIIntelligence: 50
   aiBraceRadius: 75
@@ -4934,7 +4936,7 @@ MonoBehaviour:
   abilityCharged: 1
   shotsHit: 0
   showSoldierModels: 1
-  team: Altgard
+  team: 0
   listOfNearbyEnemies: []
   startingPursueRadius: 0
   enemyFormationToTarget: {fileID: 0}
@@ -4998,7 +5000,7 @@ MonoBehaviour:
   slowRotate: 5
   normRotate: 30
   secondRowOffsetAmount: 0
-  charCollider: {fileID: 7099927655301527777}
+  formationCollider: {fileID: 7099927655301527777}
   isCavalry: 0
   freezeFormPos: 0
   freezeTimer: 0
@@ -5016,7 +5018,7 @@ MonoBehaviour:
   alwaysRotateTowardMovementPos: 0
   selectedSprite: {fileID: 7688406265225657642}
   chargeSpeed: 7
-  maxChargeTime: 10
+  maxChargeTime: 15
   currentChargeTime: 0
   chargeRechargeTime: 30
   maxToleratedDeaths: 20
@@ -5026,6 +5028,8 @@ MonoBehaviour:
   modelHasAShot: 0
   positionToCheck: 0
   frontIcon: {fileID: 8784098199558271929}
+  ratioOfAliveToMax: 1
+  math: 8
 --- !u!114 &5955700111539829870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5214,7 +5218,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &6012341522631292028
@@ -5264,7 +5268,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &6165027595210219881
@@ -5638,7 +5642,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &6507118024848468320
@@ -5688,7 +5692,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &6544055408770310857
@@ -5806,7 +5810,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &6578738478544978949
@@ -5856,7 +5860,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &6583245932614204218
@@ -5993,7 +5997,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &6658161429300947564
@@ -6043,7 +6047,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &6661714649353309336
@@ -6093,7 +6097,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &6801506475904547346
@@ -6143,7 +6147,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &6813162598734142520
@@ -6193,7 +6197,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &6862304186296634048
@@ -6243,7 +6247,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &6936303646350246306
@@ -6293,7 +6297,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &7014271660595282288
@@ -6343,7 +6347,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &7064905807694135569
@@ -6393,7 +6397,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &7200011319820296848
@@ -6511,7 +6515,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &7340777312051581344
@@ -6648,7 +6652,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &7424270717410930568
@@ -6698,7 +6702,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &7469229611066922380
@@ -6748,7 +6752,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &7558222351278568794
@@ -6798,7 +6802,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &7645768798732259442
@@ -6848,7 +6852,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &7694873887092821692
@@ -6898,7 +6902,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &7730716359417643520
@@ -6948,7 +6952,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &7797065095365740020
@@ -6998,7 +7002,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &7835917158327733594
@@ -7048,7 +7052,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &8220745525437937177
@@ -7098,7 +7102,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &8323342805583496996
@@ -7148,7 +7152,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &8477885016052535198
@@ -7198,7 +7202,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &8522086801609944005
@@ -7248,7 +7252,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &8534583088683080639
@@ -7328,7 +7332,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &8560913051341930828
@@ -7378,7 +7382,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &8624805930731593846
@@ -7693,7 +7697,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &8986545426472926608
@@ -7743,6 +7747,6 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0

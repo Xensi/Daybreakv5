@@ -43,8 +43,7 @@ public class OverworldManager : MonoBehaviour
     public GameObject splittingIndicator;
     public Button splitOffButtonTemplate;
     public int tempStrengthHolder = 0;
-    public GameObject uiSplitOffParent;
-    public DialogueManager dialogueManager;
+    public GameObject uiSplitOffParent; 
 
     public Army localeArmy;
     public string currentFaction = "Altgard";
@@ -596,7 +595,7 @@ public class OverworldManager : MonoBehaviour
 
     private Army SelectArmy()
     {
-        if (dialogueManager.readingDialogue)
+        if (DialogueManager.Instance.readingDialogue)
         {
             return null;
         }
@@ -804,8 +803,8 @@ public class OverworldManager : MonoBehaviour
         localeArmy = selectedArmy;
         DialogueScriptableObject dialogue = selectedArmy.currentLocale.localeInvestigationDialogue;
         selectedArmy.currentLocale.investigated = true;
-        dialogueManager.loadedDialogue = dialogue;
-        dialogueManager.StartDialogue();
+        DialogueManager.Instance.loadedDialogue = dialogue;
+        DialogueManager.Instance.StartDialogue();
         localeParent.SetActive(false);
         armyOptionsParent.SetActive(false);
     }
@@ -815,20 +814,29 @@ public class OverworldManager : MonoBehaviour
         localeArmy = selectedArmy;
 
         if (localeArmy == null)
+        {
+            Debug.Log("1");
             return;
+        }
         SupplyGiver supply = localeArmy.currentSupplyPoint;
         if (supply == null)
+        {
+            Debug.Log("2");
             return;
+        }
         DialogueScriptableObject dialogue = supply.talkToDialogue;
         if (dialogue == null)
+        {
+            Debug.Log("3");
             return;
-        if (supply.talkDescriptionRead)
+        }
+        if (supply.talkDescriptionRead && selectedArmy.currentSupplyPoint.afterReadTalkToDialogue != null)
         {
             dialogue = selectedArmy.currentSupplyPoint.afterReadTalkToDialogue;
         }
         supply.talkDescriptionRead = true;
-        dialogueManager.loadedDialogue = dialogue;
-        dialogueManager.StartDialogue();
+        DialogueManager.Instance.loadedDialogue = dialogue;
+        DialogueManager.Instance.StartDialogue();
         townOptionsParent.SetActive(false);
         armyOptionsParent.SetActive(false);
     }
@@ -868,7 +876,7 @@ public class OverworldManager : MonoBehaviour
         {
             return;
         }
-        if (dialogueManager.readingDialogue)
+        if (DialogueManager.Instance.readingDialogue)
         {
             return;
         }

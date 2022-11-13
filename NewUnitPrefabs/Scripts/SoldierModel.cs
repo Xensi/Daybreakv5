@@ -103,9 +103,8 @@ public class SoldierModel : MonoBehaviour
     [HideInInspector] public bool airborne = false;
     public SoldierModel targetEnemy;
     [HideInInspector] public bool pendingLaunched = false;
-    public bool clearLineOfSight = false;
-    public string team = "Altgard";
-    public GlobalDefines.Team teamType = GlobalDefines.Team.Altgard;
+    public bool clearLineOfSight = false; 
+    public GlobalDefines.Team team = GlobalDefines.Team.Altgard;
     [HideInInspector] public float attackRange = 1;
     [HideInInspector] public bool animate = false;
     [HideInInspector] public float currentSpeed = 0;

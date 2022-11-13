@@ -7,6 +7,7 @@ using DG.Tweening;
 
 public class DialogueManager : MonoBehaviour
 {
+    public static DialogueManager Instance { get; private set; }
     [Header("Needs to be accessible to to other files")]
     public DialogueScriptableObject loadedDialogue; //needs to be changed whenever you want to swap dialogues
     public bool readingDialogue = false;
@@ -53,6 +54,10 @@ public class DialogueManager : MonoBehaviour
 
     [SerializeField] private char currentChar;
 
+    private void Awake()
+    {
+        Instance = this;
+    }
     private void Start()
     {
         //define text speeds algorithmically
@@ -80,8 +85,8 @@ public class DialogueManager : MonoBehaviour
     }
     private void UpdateTextSpeeds()
     {
-        slowTextSpeed = textspeed * 8;
-        slowerTextSpeed = textspeed * 12;
+        slowTextSpeed = textspeed * 2;
+        slowerTextSpeed = textspeed * 4;
     }
     public void SelectDialogue(string dialogue) //used in tutorial to load then read dialogue
     {
@@ -108,24 +113,26 @@ public class DialogueManager : MonoBehaviour
     }
     public void StartDialogue() //used to raise loaded dialogue and read it (assuming that dialogue screen is lowered)
     {
-        readingDialogue = true;
-        ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
-        dialogueText.text = "";
-        speakerText.text = loadedDialogue.speaker;
-
-        Tween tween = dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad); //tweens dialogue up
-
-        if (loadedDialogue.isChoices)
+        if (loadedDialogue != null)
         {
-            choicesParent.SetActive(true);
-            PresentChoices();
-        }
-        else
-        {
-            tween.OnComplete(ReadDialogue);
+            readingDialogue = true;
+            ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
+            dialogueText.text = "";
+            speakerText.text = loadedDialogue.speaker;
 
-        }
+            Tween tween = dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad); //tweens dialogue up
 
+            if (loadedDialogue.isChoices)
+            {
+                choicesParent.SetActive(true);
+                PresentChoices();
+            }
+            else
+            {
+                tween.OnComplete(ReadDialogue);
+
+            }
+        }
     }
     private void ReadDialogue() //begins actually reading dialogue
     {
@@ -400,13 +407,13 @@ public class DialogueManager : MonoBehaviour
             {
                 for (int i = 0; i < loadedDialogue.commandVar; i++)
                 {
-                    foreach (ArmyCardScriptableObj card in unitManager.units)
+                    /*foreach (ArmyCardScriptableObj card in unitManager.units)
                     {
                         if (card.cardName == loadedDialogue.commandString)
                         {
                             overworldManager.localeArmy.AddArmyCard(card);
                         }
-                    }
+                    }*/
                 }
             }
         }
@@ -475,7 +482,10 @@ public class DialogueManager : MonoBehaviour
         {
             overworldManager.sutlerParent.SetActive(true);
         }
-
+        if (commandEnd == "testBattle")
+        { 
+            OverworldToFieldBattleManager.Instance.StartFieldBattle();
+        }
     }
     private void EndDialogue()
     {
@@ -660,7 +670,8 @@ public class DialogueManager : MonoBehaviour
             Destroy(item);
         }
 
-        gameInit.board.GenerateButtonsFromSavedUnits();*/
+        */
+        //gameInit.board.GenerateButtonsFromSavedUnits();
     }
     private void DestroyAndLoadLevelUnitList(string level) // will destroy saved units list. useful if a level doesn't require units from a previous level
     {
@@ -887,11 +898,5 @@ public class DialogueManager : MonoBehaviour
         Tween tween = fadeToBlack.DOFade(0, 1).SetEase(Ease.InOutQuad);//dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
         tween.OnComplete(IgnoreTutorial3);*/
     }
-
-    private void IgnoreTutorial3()
-    {
-        //gameInit.chessController.AllowInput = true;
-        //Debug.Log("tutorial ignored");
-    }
-
+     
 }

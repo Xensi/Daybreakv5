@@ -9,4 +9,11 @@ public static class GlobalDefines
         Altgard,
         Zhanguo
     }
+    public enum SoldierTypes
+    {
+        none,
+        conscript,
+        soldner,
+        longbowman
+    }
 }

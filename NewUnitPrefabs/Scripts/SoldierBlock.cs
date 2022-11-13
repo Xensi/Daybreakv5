@@ -15,8 +15,7 @@ public class SoldierBlock : MonoBehaviour
     public List<Position> magePositions;
     [SerializeField] private Transform FormationTransform;
     [SerializeField] private Quaternion angleToFace;
-    public GlobalDefines.Team teamType = GlobalDefines.Team.Altgard;
-    [SerializeField] private string team = "Altgard";
+    public GlobalDefines.Team teamType = GlobalDefines.Team.Altgard; 
     [SerializeField] private FormationPosition formPos;
     public List<SoldierModel> listSoldierModels;
     public List<SoldierModel> listMageModels;
@@ -49,30 +48,38 @@ public class SoldierBlock : MonoBehaviour
     private bool initialized = false;
 
     public FightManager manager;
+
+    public int soldiersToCreate = 80;
+
     private void OnEnable()
     {
+        //SetUpSoldiers();
+    }
+    
+    public void SetUpSoldiers()
+    { 
         if (initialized)
-        {    
+        {
             return;
         }
         initialized = true;
         modelsArray = new SoldierModel[82];
         formationPositions = new Position[80];
 
-        formPos = GetComponentInChildren<FormationPosition>();
-        formPos.team = team;
+        formPos = GetComponentInChildren<FormationPosition>(); 
+        formPos.team = teamType;
         int num = 0;
-        int increment = 0; 
+        int increment = 0;
         if (formPos.isCavalry)
-        { 
-            formPos.walkingSpeed = desiredWalkingSpeed *.75f;
+        {
+            formPos.walkingSpeed = desiredWalkingSpeed * .75f;
         }
         else
         {
 
             formPos.walkingSpeed = desiredWalkingSpeed / 2;
         }
-        formPos.sprintSpeed = desiredWalkingSpeed; 
+        formPos.sprintSpeed = desiredWalkingSpeed;
         int arrayInc = 0;
 
         //
@@ -102,23 +109,31 @@ public class SoldierBlock : MonoBehaviour
                     model.walkSpeed = desiredWalkingSpeed;
                     model.runSpeed = desiredWalkingSpeed * 2;
                     model.richAI.maxSpeed = desiredWalkingSpeed; 
-                    model.team = team;
+                    model.team = teamType;
                     model.formPos = formPos;
-                    model.melee = melee; 
-                    listSoldierModels.Add(model);  
+                    model.melee = melee;
+                    listSoldierModels.Add(model);
                     position.formPos = formPos;
                     position.assignedSoldierModel = model;
-                    position.row = rowItem;
-                    position.team = team; 
-                    formationPositions[arrayInc] = position; 
+                    position.row = rowItem; 
+                    position.team = teamType;
+                    formationPositions[arrayInc] = position;
                     arrayInc++;
 
+                    if (formPos.numberOfAliveSoldiers >= soldiersToCreate)
+                    {
+                        break;
+                    }
+                }
+                if (formPos.numberOfAliveSoldiers >= soldiersToCreate)
+                {
+                    break;
                 }
             }
         }
-        
+
         if (magePrefab != null)
-        { 
+        {
             foreach (Position position in magePositions)
             {
                 increment++;
@@ -130,18 +145,18 @@ public class SoldierBlock : MonoBehaviour
                 model.walkSpeed = desiredWalkingSpeed;
                 model.runSpeed = desiredWalkingSpeed * 2;
                 model.richAI.maxSpeed = desiredWalkingSpeed; 
-                model.team = team;
+                model.team = teamType;
                 model.formPos = formPos;
-                model.melee = melee; 
+                model.melee = melee;
                 listSoldierModels.Add(model);
                 listMageModels.Add(model);
                 position.formPos = formPos;
                 position.assignedSoldierModel = model;
                 model.modelPosition = position; 
-                position.team = team; 
-                arrayInc++; 
+                position.team = teamType;
+                arrayInc++;
             }
-        } 
+        }
     }
 
     public void SelfDestruct()

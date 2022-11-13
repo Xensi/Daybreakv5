@@ -9,18 +9,18 @@ using Pathfinding;
 public class FightManager : MonoBehaviour
 {
     public static FightManager Instance { get; private set; }
+
     [SerializeField] private GameObject destPrefab;
     private Vector3 clickPosition;
 
-    public List<FormationPosition> allFormations;
+    public List<FormationPosition> allFormationsList;
     public FormationPosition[] allArray;
 
     public List<FormationPosition> yourFormations;
     public List<FormationPosition> aiFormations;
 
     public List<FormationPosition> selectedFormations;
-    public GlobalDefines.Team teamType = GlobalDefines.Team.Altgard;
-    [SerializeField] private string team = "Altgard"; //teams are Altgard, Zhanguo
+    public GlobalDefines.Team team = GlobalDefines.Team.Altgard; 
 
 
     [SerializeField] private RectTransform selectionBox;
@@ -80,9 +80,18 @@ public class FightManager : MonoBehaviour
     [SerializeField] private List<Vector3> destinations;
 
     [SerializeField] private bool testing = false;
-     
-     
-    
+
+
+    public bool placingSoldiers = true;
+
+    [SerializeField] private Collider friendlyPlacementZone;
+    [SerializeField] private Collider enemyPlacementZone;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     private enum combatStrategy
     {
         Attack,
@@ -100,25 +109,153 @@ public class FightManager : MonoBehaviour
         Instance = this;
         if (testing)
         {
-            FinishedLoading();
+            UpdateAllFormArrayAndStartAIToBeginBattle();
+        }
+        finishedPlacingButton.interactable = false;
+        
+    }
+    #region SoldierPlacements 
+    public void StartPlacingSoldiers()
+    {
+        GenerateSoldierButtons();
+        placerUI.SetActive(true);
+        if (friendlyPlacementZone != null)
+        {
+            friendlyPlacementZone.gameObject.SetActive(true);
+        }
+        placingSoldiers = true;
+    }
+    private void GenerateSoldierButtons()
+    {
+        PurgeSoldierButtons();
+        int i = 0;
+        foreach (UnitInfoClass unit in UnitManager.Instance.unitsInMainArmyList)
+        {
+            Button soldierButton = Instantiate(soldierButtonPrefab, Vector3.zero, Quaternion.identity, placerUI.transform);
+            TMP_Text text = soldierButton.GetComponentInChildren<TMP_Text>();
+            text.text = unit.type.ToString() + ": " + unit.troops.ToString();
+            soldierButton.transform.localPosition = new Vector3(-890, 460 - 45 * i, 0);
+            soldierButton.onClick.AddListener(() => ChooseSoldierToPlace(unit.type.ToString()));
+            int tempID = i;
+            soldierButton.onClick.AddListener(() => UpdateButtonID(tempID));
+            soldierButton.onClick.AddListener(() => UpdateSoldierCount(unit.troops));
+            soldierButtonsList.Add(soldierButton);
+            i++;
+        }
+    }
+    public void FindPlacementAreasAndUpdate()
+    { 
+        friendlyPlacementZone = GameObject.FindWithTag("FriendlyPlacementZone").GetComponent<Collider>();
+        enemyPlacementZone = GameObject.FindWithTag("EnemyPlacementZone").GetComponent<Collider>();
+    }
+    public void LoadScenario()
+    {
+        FindPlacementAreasAndUpdate();
+        UpdateGUI();
+    }
+    private void UpdateSoldierCount(int num)
+    {
+        soldiersToCreateNum = num;
+    }
+    private void PurgeSoldierButtons()
+    {
+        foreach (Button button in soldierButtonsList)
+        {
+            Destroy(button.gameObject);
+        }
+        soldierButtonsList.Clear();
+    }
+    [SerializeField] private Button soldierButtonPrefab;
+
+    [SerializeField] private List<Button> soldierButtonsList;
+    [SerializeField] private GameObject placerUI;
+    private void StopPlacingSoldiers()
+    {
+        placerUI.SetActive(false);
+
+        if (friendlyPlacementZone != null)
+        {
+            friendlyPlacementZone.gameObject.SetActive(false);
+        }
+        placingSoldiers = false;
+        formationPlacerIndicator.SetActive(false);
+    }
+    private GlobalDefines.SoldierTypes soldierToPlace = GlobalDefines.SoldierTypes.none;
+    public void ChooseSoldierToPlace(string soldierType)
+    {
+        System.Enum.TryParse(soldierType, true, out GlobalDefines.SoldierTypes convertedToEnum); //convert to enum
+        soldierToPlace = convertedToEnum;
+        /*if (formationPlacerIndicator != null)
+        {
+            formationPlacerIndicator.SetActive(true);
+        }*/
+    }
+    [SerializeField] private int soldierButtonID = 0;
+    public void UpdateButtonID(int id)
+    {
+        //Debug.Log(id);
+        soldierButtonID = id;
+    }
+    [SerializeField] private GameObject formationPlacerIndicator;
+    [SerializeField] private FormationPosition formPosToReposition;
+    public void ConfirmFinishedPlacingSoldiers()
+    {
+        StopPlacingSoldiers();
+        UpdateGUI();
+        PlaceEnemySoldiers();
+        HidePlacementZones(); 
+        UpdateAllFormArrayAndStartAIToBeginBattle(); 
+    }
+    private void HidePlacementZones()
+    {
+        enemyPlacementZone.gameObject.SetActive(false); 
+        friendlyPlacementZone.gameObject.SetActive(false);
+    }
+    private void PlaceEnemySoldiers() //places soldiers randomly within the placement zone and gives them to zhanguo
+    {
+        foreach (UnitInfoClass unit in UnitManager.Instance.unitsInTestArmyList)
+        {
+            Vector3 randomPoint = Helper.Instance.RandomPointInBounds(enemyPlacementZone.bounds);
+            Vector3 vec = new Vector3(randomPoint.x, 100, randomPoint.z);
+            LayerMask layerMask = LayerMask.GetMask("Terrain");
+            RaycastHit hit;
+            if (Physics.Raycast(vec, Vector3.down, out hit, Mathf.Infinity, layerMask))
+            {
+                randomPoint.y = hit.point.y;
+            }
+            PlaceFormationAtPositionOfType(unit.type, unit.troops, randomPoint, GlobalDefines.Team.Zhanguo);
         }
     } 
-    public void FinishedLoading()
+    private bool CheckIfAllAvailableSoldiersPlaced()
     {
-
+        foreach (Button item in soldierButtonsList)
+        {
+            if (item.interactable)
+            {
+                return false;
+            }
+        }
+        return true;
+    } 
+    [SerializeField] private Button finishedPlacingButton;
+    #endregion 
+    public void UpdateAllFormArrayAndStartAIToBeginBattle()
+    { 
         allArray = new FormationPosition[30];
 
         battleUI.SetActive(false);
         InvokeRepeating("AIBrain", 0f, 1f);
         InvokeRepeating("AIBrainMage", 5f, 5f); //don't do immediately, not urgent
 
-        allFormations.Clear();
+        allFormationsList.Clear();
         FormationPosition[] array = FindObjectsOfType<FormationPosition>();
         allArray = array;
         int id = 0;
+        yourFormations.Clear();
+        aiFormations.Clear();
         foreach (FormationPosition item in array)
         {
-            allFormations.Add(item);
+            allFormationsList.Add(item);
             if (item.team == team)
             {
                 yourFormations.Add(item);
@@ -135,8 +272,8 @@ public class FightManager : MonoBehaviour
             //item.ClearOrders(); //resets targets
             id++;
         }
-    }
-
+        InvokeRepeating("CheckIfFieldBattleOver", 2, 2);
+    } 
     private void AIBrain()
     {
         switch (aiState)
@@ -255,6 +392,77 @@ public class FightManager : MonoBehaviour
         } 
     }
 
+    private void CheckIfFieldBattleOver()
+    {
+        bool gameIsOver = false;
+        int victoryStatus = 0; //0 is undecided, 1 is player, 2 is ai 
+        int numberOfLostFormations = 0;
+        int numberOfAILostFormations = 0;
+        foreach (FormationPosition form in yourFormations)
+        {
+            if (form.numberOfAliveSoldiers <= 0 || form.fleeing || form == null) //if all dead, or fleeing
+            {
+                numberOfLostFormations++;
+            } 
+        } 
+        foreach (FormationPosition form in aiFormations)
+        {
+            if (form.numberOfAliveSoldiers <= 0 || form.fleeing || form == null) //if all dead, or fleeing
+            {
+                numberOfAILostFormations++;
+            } 
+        }
+        if (numberOfAILostFormations >= aiFormations.Count)
+        {
+            gameIsOver = true;
+            victoryStatus = 1;
+        }
+        if (numberOfLostFormations >= yourFormations.Count)
+        {
+            gameIsOver = true;
+            victoryStatus = 2;
+        }
+        if (gameIsOver)
+        {
+            if (victoryStatus == 1)
+            { 
+                DisplayVictory();
+            }
+            else if (victoryStatus == 2)
+            { 
+                DisplayDefeat();
+            }
+            OverworldToFieldBattleManager.Instance.UpdateUnitManagerArmies();
+            Invoke("BattleOver", 5);
+        }
+    }
+    [SerializeField] private GameObject victoryDisplay;
+    [SerializeField] private GameObject defeatDisplay;
+    private void DisplayVictory()
+    {
+        victoryDisplay.SetActive(true);
+    }
+    private void DisplayDefeat()
+    { 
+        defeatDisplay.SetActive(true);
+    }
+    private void HideOutcomeDisplays()
+    { 
+        victoryDisplay.SetActive(false);
+        defeatDisplay.SetActive(false);
+    }
+    private void BattleOver()
+    { 
+        AfterBattleCleanup();
+        CancelInvoke("CheckIfFieldBattleOver");
+        HideOutcomeDisplays();
+        OverworldToFieldBattleManager.Instance.EndFieldBattle();
+    }
+    private void AfterBattleCleanup()
+    { 
+        enemyPlacementZone.gameObject.SetActive(true);
+        friendlyPlacementZone.gameObject.SetActive(true);
+    }
     public void HoldPositionCommand()
     { 
         foreach (FormationPosition item in selectedFormations)
@@ -593,37 +801,231 @@ public class FightManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (forceFiring)
+        if (OverworldToFieldBattleManager.Instance.state == OverworldToFieldBattleManager.possibleGameStates.FieldBattle)
         {
-            UpdateTargeter(); //update forcefire targeter
-            ForceFireLeftClickCheck();
-            ForceFireRightClickCheck();
+            if (placingSoldiers)
+            {
+                if (!hoveringUI)
+                {
+                    CheckIfCursorInPlacementBounds();
+                    if (soldierToPlace != GlobalDefines.SoldierTypes.none && formPosToReposition == null)
+                    {
+                        PlacerLeftClickCheck();
+                    }
+                    else
+                    {
+                        GrabberLeftClickCheck();
+                    }
+                }
+                else
+                {
+                    formationPlacerIndicator.SetActive(false);
+                }
+            }
+            else
+            {
+                if (forceFiring)
+                {
+                    UpdateTargeter(); //update forcefire targeter
+                    ForceFireLeftClickCheck();
+                    ForceFireRightClickCheck();
+                }
+                else if (magicTargeting)
+                {
+                    UpdateTargeter();
+                    TargetMagicLeftClickCheck();
+                    TargetMagicRightClickCheck();
+                }
+                else
+                {
+                    LeftClickCheck();
+                    RightClickCheck();
+                }
+
+                if (checkingDoubleClick)
+                {
+                    doubleClickTime += Time.deltaTime;
+                    if (doubleClickTime >= doubleClickTimeOut)
+                    {
+                        checkingDoubleClick = false;
+                        doubleClickTime = 0;
+                    }
+                }
+            }
+        } 
+    }
+    #region PlacingSoldiers
+    private void CheckIfCursorInPlacementBounds()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        LayerMask layerMask = LayerMask.GetMask("Terrain");
+        RaycastHit hit;
+        if (Physics.Raycast(ray.origin, ray.direction, out hit, Mathf.Infinity, layerMask))
+        {
+            cursorWithinTroopPlacementBounds = friendlyPlacementZone.bounds.Contains(hit.point);
         }
-        else if (magicTargeting)
-        { 
-            UpdateTargeter(); 
-            TargetMagicLeftClickCheck();
-            TargetMagicRightClickCheck();
+        if (cursorWithinTroopPlacementBounds)
+        {
+            if (soldierToPlace != GlobalDefines.SoldierTypes.none && formPosToReposition == null)
+            { 
+                formationPlacerIndicator.transform.position = hit.point;
+                formationPlacerIndicator.SetActive(true);
+            } 
+            else if (formPosToReposition != null)
+            { 
+                UpdateGrabbedFormPosPosition();
+                formationPlacerIndicator.SetActive(false);
+            }
         }
         else
         { 
-            LeftClickCheck();
-            RightClickCheck();
+            formationPlacerIndicator.SetActive(false);
         }
-
-        if (checkingDoubleClick)
+    }
+    private bool cursorWithinTroopPlacementBounds = false;
+    private int soldiersToCreateNum = 80;
+    private void GrabberLeftClickCheck()
+    { 
+        if (!hoveringUI)
         {
-            doubleClickTime += Time.deltaTime;
-            if (doubleClickTime >= doubleClickTimeOut)
+            if (Input.GetMouseButtonDown(0))
             {
-                checkingDoubleClick = false;
-                doubleClickTime = 0;
+                if (formPosToReposition == null)
+                {
+                    AttemptToGrabUnit();
+                }
+                else if (cursorWithinTroopPlacementBounds)
+                { 
+                    PlaceUnitDownAtMousePoint(soldierToPlace, soldiersToCreateNum, GlobalDefines.Team.Altgard);
+                }
             }
         }
-
     }
-     
+    private void UpdateGrabbedFormPosPosition()
+    { 
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
+        LayerMask layerMask = LayerMask.GetMask("Terrain");
+        RaycastHit hit;
 
+        if (Physics.Raycast(ray.origin, ray.direction, out hit, Mathf.Infinity, layerMask))
+        {  
+            formPosToReposition.soldierBlock.gameObject.transform.position = hit.point;
+        }
+    }
+    private void AttemptToGrabUnit()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        LayerMask layerMask = LayerMask.GetMask("Terrain");
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray.origin, ray.direction, out hit, Mathf.Infinity, layerMask))
+        {
+            clickPosition = hit.point; 
+            LayerMask formMask = LayerMask.GetMask("Formation");
+            RaycastHit formHit;
+            Vector3 vec = new Vector3(hit.point.x, 100, hit.point.z);
+            if (Physics.Raycast(vec, Vector3.down, out formHit, Mathf.Infinity, formMask))
+            {
+                formPosToReposition = formHit.transform.gameObject.GetComponentInParent<FormationPosition>();
+
+                soldierToPlace = formPosToReposition.soldierType;
+                soldiersToCreateNum = formPosToReposition.numberOfAliveSoldiers;
+                Destroy(formPosToReposition.soldierBlock.gameObject);
+                formPosToReposition = null;
+                /*formPosToReposition.aiPath.enabled = false;
+                formPosToReposition.ToggleFormationSoldiersPathfinding(false); */
+                finishedPlacingButton.interactable = false;
+            } 
+        }
+    }
+    private GlobalDefines.Team soldierTeam = GlobalDefines.Team.Altgard;
+    private void PlaceUnitDownAtMousePoint(GlobalDefines.SoldierTypes soldierType, int numberOfSoldiers, GlobalDefines.Team team = GlobalDefines.Team.Altgard)
+    { 
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        LayerMask layerMask = LayerMask.GetMask("Terrain");
+        RaycastHit hit;
+        if (Physics.Raycast(ray.origin, ray.direction, out hit, Mathf.Infinity, layerMask))
+        { 
+            PlaceFormationAtPositionOfType(soldierToPlace, soldiersToCreateNum, hit.point, team); 
+        }
+    }
+    private void PlacerLeftClickCheck()
+    {
+        if (!hoveringUI)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                if (cursorWithinTroopPlacementBounds)
+                { 
+                    PlaceUnitDownAtMousePoint(soldierToPlace, soldiersToCreateNum);
+                }
+            }
+        } 
+    }
+    private void PlaceFormationAtPositionOfType(GlobalDefines.SoldierTypes soldierType, int numberOfSoldiers, Vector3 pos, GlobalDefines.Team placementTeam = GlobalDefines.Team.Altgard)
+    {
+        SoldierBlock toPlace = GoThroughUnitManagerFindUnitOfType(soldierType);
+        if (toPlace != null)
+        {  
+            SoldierBlock createdBlock = Instantiate(toPlace, pos, Quaternion.identity);
+            createdBlock.soldiersToCreate = numberOfSoldiers; //set how many soldiers to create
+            createdBlock.teamType = placementTeam;
+            createdBlock.SetUpSoldiers(); // create soldiers  
+            if (placementTeam == team) //if we're placing stuff, do some clean up
+            { 
+                soldierToPlace = GlobalDefines.SoldierTypes.none;
+                soldierButtonsList[soldierButtonID].interactable = false;
+                formationPlacerIndicator.SetActive(false);
+                finishedPlacingButton.interactable = CheckIfAllAvailableSoldiersPlaced();
+            }               
+        }
+        else
+        {
+            Debug.LogError("No formation found");
+        }
+    } 
+    private SoldierBlock GoThroughUnitManagerFindUnitOfType(GlobalDefines.SoldierTypes soldierType)
+    {
+        int i = 0;
+        foreach (GlobalDefines.SoldierTypes item in UnitManager.Instance.unitTypes)
+        {
+            if (item == soldierType)
+            {
+                return UnitManager.Instance.formationsToInstantiateBasedOnUnitType[i];
+            }
+            i++;
+        }
+        return null;
+    }
+
+    #endregion
+    private void UpdateTargeter()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        LayerMask layerMask = LayerMask.GetMask("Terrain");
+        RaycastHit hit;
+        if (Physics.Raycast(ray.origin, ray.direction, out hit, Mathf.Infinity, layerMask))
+        {
+            forceFireTarget.transform.position = hit.point;
+            //hit terrain, now check if formation here
+            LayerMask formMask = LayerMask.GetMask("Formation");
+            RaycastHit formHit;
+            Vector3 vec = new Vector3(hit.point.x, 100, hit.point.z);
+            if (Physics.Raycast(vec, Vector3.down, out formHit, Mathf.Infinity, formMask))
+            {
+                formationToFocusFire = formHit.transform.gameObject.GetComponentInParent<FormationPosition>();
+            }
+            else
+            {
+                formationToFocusFire = null;
+            }
+        }
+        float distanceBetween = Vector3.Distance(forceFireTarget.transform.position, GetClosestSelectedFormationToPoint(forceFireTarget.transform.position).transform.position);
+        distanceBetween *= 0.25f;
+        distanceBetween = Mathf.Clamp(distanceBetween, 5, 999);
+        forceFireTarget.transform.localScale = new Vector3(distanceBetween, distanceBetween, .1f * distanceBetween);
+    }
     private void TargetMagicLeftClickCheck()
     {
         if (selectedFormations.Count == 1)
@@ -712,7 +1114,7 @@ public class FightManager : MonoBehaviour
                 drawingLine = false;
             }
         }
-    } 
+    }
     private void PlaceTargeter(Vector3 pos)
     { 
         lineFormationPosList.Add(pos);
@@ -947,32 +1349,6 @@ public class FightManager : MonoBehaviour
             formationToFocusFire = null;
         } 
     }
-    private void UpdateTargeter()
-    { 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);  
-        LayerMask layerMask = LayerMask.GetMask("Terrain");
-        RaycastHit hit; 
-        if (Physics.Raycast(ray.origin, ray.direction, out hit, Mathf.Infinity, layerMask))
-        {
-            forceFireTarget.transform.position = hit.point;
-            //hit terrain, now check if formation here
-            LayerMask formMask = LayerMask.GetMask("Formation");
-            RaycastHit formHit;
-            Vector3 vec = new Vector3(hit.point.x, 100, hit.point.z);
-            if (Physics.Raycast(vec, Vector3.down, out formHit, Mathf.Infinity, formMask))
-            {
-                formationToFocusFire = formHit.transform.gameObject.GetComponentInParent<FormationPosition>();
-            }
-            else
-            {
-                formationToFocusFire = null;
-            }
-        }  
-        float distanceBetween = Vector3.Distance(forceFireTarget.transform.position, GetClosestSelectedFormationToPoint(forceFireTarget.transform.position).transform.position);
-        distanceBetween *= 0.25f;
-        distanceBetween = Mathf.Clamp(distanceBetween, 5, 999);
-        forceFireTarget.transform.localScale = new Vector3(distanceBetween, distanceBetween, .1f*distanceBetween);
-    }
     private void LeftClickCheck()
     {  
         if (!hoveringUI)
@@ -1054,8 +1430,8 @@ public class FightManager : MonoBehaviour
     }
 
     private void AttemptToSelectUnit()
-    { 
-
+    {
+        //Debug.Log("HEY");
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         LayerMask layerMask = LayerMask.GetMask("Terrain");
@@ -1108,14 +1484,13 @@ public class FightManager : MonoBehaviour
                     DeselectUnits();
                 }
             }
-        }
-         
+        } 
     }
     private void SelectSimilar(FormationPosition ogForm)
     {
         foreach (FormationPosition form in yourFormations)
         {
-            if (form.type == ogForm.type && form.alive && !form.fleeing)
+            if (form.formationType == ogForm.formationType && form.alive && !form.fleeing)
             { 
                 form.SetSelected(true);
                 form.TriggerSelectionCircles(true);

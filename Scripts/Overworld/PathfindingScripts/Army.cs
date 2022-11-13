@@ -140,8 +140,8 @@ public class Army : MonoBehaviour
             {
                 overworldManager.dialogueEvent = true;
                 overworldManager.localeArmy = this;
-                overworldManager.dialogueManager.loadedDialogue = currentSupplyPoint.eventDialogue;
-                overworldManager.dialogueManager.StartDialogue();
+                DialogueManager.Instance.loadedDialogue = currentSupplyPoint.eventDialogue;
+                DialogueManager.Instance.StartDialogue();
                 currentSupplyPoint.eventTriggered = true;
             }
         }
@@ -322,8 +322,8 @@ public class Army : MonoBehaviour
                     numberOfMovementAttempts = 100; //stop the movement of player
                     overworldManager.dialogueEvent = true;
                     overworldManager.localeArmy = this;
-                    overworldManager.dialogueManager.loadedDialogue = surprise.eventDialogue;
-                    overworldManager.dialogueManager.StartDialogue();
+                    DialogueManager.Instance.loadedDialogue = surprise.eventDialogue;
+                    DialogueManager.Instance.StartDialogue();
                     surprise.eventTriggered = true;
                 }
             }

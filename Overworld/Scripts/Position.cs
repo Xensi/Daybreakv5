@@ -11,8 +11,8 @@ public class Position : MonoBehaviour
     [SerializeField] private List<SoldierModel> candidates;
 
     [SerializeField] private int numTimesSought = 0;
-
-    public string team = "Altgard";
+     
+    public GlobalDefines.Team team = GlobalDefines.Team.Altgard;
     public FormationPosition formPos;
 
     public bool activeController = false;
