@@ -20,7 +20,7 @@ public class SupplyPoint : MonoBehaviour
     public int mood = 0;
 
     public string supplyName = "Reevewood";
-    public string faction = "Zhanguo";
+    public GlobalDefines.Team team = GlobalDefines.Team.Altgard;
     public string relations = "Unfriendly";
 
     public bool isFort = false;
@@ -75,19 +75,19 @@ public class SupplyPoint : MonoBehaviour
             return;
         }
 
-        if (isFort && faction == overworldManager.currentFaction)
+        if (isFort && team == overworldManager.currentTeam)
         {
             relations = "Loyal";
         }
-        else if (isFort && faction != overworldManager.currentFaction)
+        else if (isFort && team != overworldManager.currentTeam)
         {
             relations = "Hostile";
         }
-        else if (!isFort && faction != overworldManager.currentFaction)
+        else if (!isFort && team != overworldManager.currentTeam)
         {
             relations = "Unfriendly";
         }
-        else if (!isFort && faction == overworldManager.currentFaction)
+        else if (!isFort && team == overworldManager.currentTeam)
         {
             if (mood > posNeutralityBuffer)
             {

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Soldners
   m_EditorClassIdentifier: 
   cardName: Soldners
+  cardType: 2
   cardIcon: {fileID: 21300000, guid: 47f9db77116e9ec42ab32a1803710f5d, type: 3}
   cardTroops: 80
   cardMaxTroops: 80

@@ -38,9 +38,8 @@ public class RecruitmentManager : MonoBehaviour
     {
         selectedRecruitmentSlot = null;
         recruitmentParent.SetActive(true);
-        DisableRecruitmentOptions();
-        targetedArmy = overworldManager.selectedArmy;
-        availableSpoils = targetedArmy.spoils;
+        DisableRecruitmentOptions(); 
+        availableSpoils = OverworldManager.Instance.playerBattleGroup.spoils;
         UpdateSpoilsText();
     }
     public void HideRecruitmentScreen()
@@ -71,12 +70,21 @@ public class RecruitmentManager : MonoBehaviour
     {
         recruitmentParent.SetActive(false);
         DisableRecruitmentOptions();
-
+         
+        recruitingChoicesMade.Clear();
         //process recruitment choices by storing them somewhere
         foreach (RecruitmentSlot slot in recruitmentSlots)
         {
-            recruitingChoicesMade.Add(slot.information);
+            recruitingChoicesMade.Add(slot.card);
         }
+        foreach (ArmyCardScriptableObj item in recruitingChoicesMade)
+        {
+            if (item != null)
+            { 
+                OverworldManager.Instance.playerBattleGroup.AddUnitToArmy(item);
+            }
+        } 
+        recruitingChoicesMade.Clear();
     }
 
     public void ClickRecruitmentSlot(RecruitmentSlot slot)
@@ -84,9 +92,9 @@ public class RecruitmentManager : MonoBehaviour
 
         selectedRecruitmentSlot = slot;
         
-        if (selectedRecruitmentSlot.information != null)
+        if (selectedRecruitmentSlot.card != null)
         {
-            availableSpoils += selectedRecruitmentSlot.information.spoilsCost;
+            availableSpoils += selectedRecruitmentSlot.card.spoilsCost;
             UpdateSpoilsText();
             ClearInformation(selectedRecruitmentSlot);
 
@@ -100,7 +108,7 @@ public class RecruitmentManager : MonoBehaviour
     {
         slot.slotName.text = "";
         slot.icon.sprite = empty;
-        slot.information = null;
+        slot.card = null;
     }
 
     public void ClickRecruitmentOption(RecruitmentOption option)
@@ -126,7 +134,7 @@ public class RecruitmentManager : MonoBehaviour
     {
         selectedRecruitmentSlot.slotName.text = option.information.cardName;
         selectedRecruitmentSlot.icon.sprite = option.information.cardIcon;
-        selectedRecruitmentSlot.information = option.information;
+        selectedRecruitmentSlot.card = option.information;
     }
 
     private void EnableRecruitmentOptions()

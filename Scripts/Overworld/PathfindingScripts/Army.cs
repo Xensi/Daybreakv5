@@ -224,8 +224,7 @@ public class Army : MonoBehaviour
                 y++;
                 x = 0;
             }
-        }
-
+        } 
     }
     public void CheckSizeAndChangeSpeed()
     {

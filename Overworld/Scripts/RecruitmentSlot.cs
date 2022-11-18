@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 public class RecruitmentSlot : MonoBehaviour
 {
-    public ArmyCardScriptableObj information;
+    public ArmyCardScriptableObj card;
     public Image icon;
     public TMP_Text slotName;
 

@@ -129,7 +129,7 @@ public class FightManager : MonoBehaviour
     {
         PurgeSoldierButtons();
         int i = 0;
-        foreach (UnitInfoClass unit in UnitManager.Instance.unitsInMainArmyList)
+        foreach (UnitInfoClass unit in OverworldManager.Instance.playerBattleGroup.listOfUnitsInThisArmy)
         {
             Button soldierButton = Instantiate(soldierButtonPrefab, Vector3.zero, Quaternion.identity, placerUI.transform);
             TMP_Text text = soldierButton.GetComponentInChildren<TMP_Text>();

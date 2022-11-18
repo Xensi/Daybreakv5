@@ -7,6 +7,8 @@ using UnityEngine.Events;
 public class ArmyCardScriptableObj : ScriptableObject
 {
     public string cardName = "Conscript";
+    public GlobalDefines.SoldierTypes cardType = GlobalDefines.SoldierTypes.conscript;
+    public GlobalDefines.Team cardTeam = GlobalDefines.Team.Altgard;
     public Sprite cardIcon;
     public int cardTroops = 80;
     public int cardMaxTroops = 80;

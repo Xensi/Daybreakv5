@@ -9,9 +9,13 @@ public class UnitManager : MonoBehaviour
     public List<GlobalDefines.SoldierTypes> unitTypes;
     public List<SoldierBlock> formationsToInstantiateBasedOnUnitType;
 
+    public List<ArmyCardScriptableObj> cardsToInstantiateBasedOnUnitType;
+
     public List<UnitInfoClass> unitsInMainArmyList;
     public List<UnitInfoClass> unitsInTestArmyList;
     public List<UnitInfoClass> unitsInEnemyArmyList;
+
+    public ArmyCard armyCardPrefab;
 
 
     private void Awake()
@@ -30,7 +34,7 @@ public class UnitManager : MonoBehaviour
             }
         } 
     }
-    public void UpdateBattleGroup(BattleGroup battleGroup, List<FormationPosition> listOfFormationPositions)
+    public void UpdateBattleGroupWithFormation(BattleGroup battleGroup, List<FormationPosition> listOfFormationPositions)
     {
         battleGroup.listOfUnitsInThisArmy.Clear();
         for (int i = 0; i < listOfFormationPositions.Count; i++)
@@ -47,7 +51,7 @@ public class UnitManager : MonoBehaviour
         unit.type = form.soldierType;
         unit.team = form.team;
         unit.troops = form.numberOfAliveSoldiers;
-        unit.maxTroops = form.maxSoldiers;
+        //unit.maxTroops = form.maxSoldiers;
         return unit;
     }
 }

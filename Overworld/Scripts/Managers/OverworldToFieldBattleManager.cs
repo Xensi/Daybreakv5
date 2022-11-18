@@ -101,12 +101,12 @@ public class OverworldToFieldBattleManager : MonoBehaviour
         //update the player's battlegroup using the player's formations
         if (OverworldManager.Instance.playerBattleGroup != null)
         { 
-            UnitManager.Instance.UpdateBattleGroup(OverworldManager.Instance.playerBattleGroup, FightManager.Instance.playerControlledFormations);
+            UnitManager.Instance.UpdateBattleGroupWithFormation(OverworldManager.Instance.playerBattleGroup, FightManager.Instance.playerControlledFormations);
         }
         //also update the opponent's army
         if (OverworldManager.Instance.enemyBattleGroup != null)
         { 
-            UnitManager.Instance.UpdateBattleGroup(OverworldManager.Instance.enemyBattleGroup, FightManager.Instance.enemyControlledFormations);
+            UnitManager.Instance.UpdateBattleGroupWithFormation(OverworldManager.Instance.enemyBattleGroup, FightManager.Instance.enemyControlledFormations);
         }
     }
     private void EraseAllTroopsAndClearArrays()

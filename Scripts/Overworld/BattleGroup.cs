@@ -18,12 +18,22 @@ public class BattleGroup : MonoBehaviour
 
     private bool onSupplyPoint = false;
     public SupplyPoint currentSupplyPoint = null;
+    public LocaleInvestigatable currentLocale = null;
 
     public int provisions = 50;
     public int maxProvisions = 100;
     public int spoils = 0;
     public int maxSpoils = 100;
+    public int morale = 100;
+    public int maxMorale = 100;
 
+    public List<ArmyCard> armyDisplayCards;
+    [SerializeField] 
+
+    private void Start()
+    {
+        //GenerateArmy();
+    }
     private void UpdateSupplyStatus(SupplyPoint point, bool enterOrExit)
     { 
         if (enterOrExit)
@@ -41,6 +51,63 @@ public class BattleGroup : MonoBehaviour
             OverworldManager.Instance.PlayerBattleGroupExitedSupplyPoint();
         }
     }
+    public void GenerateArmy()
+    {
+        foreach (ArmyCard card in armyDisplayCards)
+        {
+            Destroy(card);
+        }
+        armyDisplayCards.Clear();
+        var x = 0;
+        var y = 0;
+        foreach (UnitInfoClass unit in listOfUnitsInThisArmy)
+        {
+            ArmyCard newCard = Instantiate(UnitManager.Instance.armyCardPrefab, OverworldManager.Instance.leftAnchor.position, Quaternion.identity, OverworldManager.Instance.armyCompBoxParent);
+            ArmyCardScriptableObj cardInfo = ConvertUnitToCard(unit);
+            newCard.cardName = cardInfo.cardName; //take information 
+            newCard.cardColor = cardInfo.cardColor;
+            newCard.cardIcon = cardInfo.cardIcon;
+            newCard.cardTroops = unit.troops;
+            newCard.cardMaxTroops = cardInfo.cardMaxTroops;
+
+            CardVisual visuals = newCard.GetComponent<CardVisual>(); //apply to visuals
+            visuals.colorBG.color = newCard.cardColor;
+            visuals.cardName.text = newCard.cardName;
+            visuals.troopNum.text = newCard.cardTroops + "/" + newCard.cardMaxTroops;
+            visuals.icon.sprite = newCard.cardIcon; 
+
+            armyDisplayCards.Add(newCard);
+            newCard.transform.localPosition += new Vector3(214 * x, -214f* y, 0);
+            x++;
+            if (x >= 5)
+            {
+                y++;
+                x = 0;
+            }
+        } 
+    }  
+    public void AddUnitToArmy(ArmyCardScriptableObj card)
+    {
+        UnitInfoClass unit = new UnitInfoClass();
+        unit.troops = card.cardTroops;
+        unit.type = card.cardType;
+        unit.team = card.cardTeam;
+        listOfUnitsInThisArmy.Add(unit);
+    }
+    private ArmyCardScriptableObj ConvertUnitToCard(UnitInfoClass unit)
+    {
+        List<GlobalDefines.SoldierTypes> list = UnitManager.Instance.unitTypes;
+        List<ArmyCardScriptableObj> cardList = UnitManager.Instance.cardsToInstantiateBasedOnUnitType;
+        for (int i = 0; i < list.Count; i++)
+        {
+            if (list[i] == unit.type)
+            {
+                return cardList[i];
+            }
+        }
+        return null;  
+    } 
+
     private void OnTriggerEnter(Collider other)
     {
         #region OnEnterForAll
