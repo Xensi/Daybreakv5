@@ -10,6 +10,7 @@ public class BattleGroup : MonoBehaviour
         EnemyControlled
     }
     public controlStatus controlledBy = controlStatus.PlayerControlled;
+    public GlobalDefines.Team team = GlobalDefines.Team.Altgard;
 
 
     public List<UnitInfoClass> listOfUnitsInThisArmy;

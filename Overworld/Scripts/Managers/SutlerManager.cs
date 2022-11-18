@@ -43,7 +43,7 @@ public class SutlerManager : MonoBehaviour
         sutlerParent.SetActive(true);
         SetStartingResources();
         UpdateResources();
-        overworldManager.DeselectArmy();
+        //overworldManager.DeselectArmy();
     }
     public void CloseSutlerScreen()
     {

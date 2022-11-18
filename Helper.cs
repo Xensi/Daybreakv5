@@ -23,4 +23,17 @@ public class Helper : MonoBehaviour
             Random.Range(bounds.min.z, bounds.max.z)
         );
     }
+    private float RoundToZeroOrHalf(float a) //1.52 will be 1.5, 1.1232 will be 1
+    {
+        int b = Mathf.RoundToInt(a);
+        if (a > b)
+        {
+            return b + .5f;
+        }
+        else
+        {
+            return b - .5f;
+        }
+    }
+
 }
