@@ -13,7 +13,7 @@ public class OverworldToFieldBattleManager : MonoBehaviour
 
     [SerializeField] private GameObject FieldBattleParent;
     [SerializeField] private GameObject OverworldParent;
-    [SerializeField] private GameObject MenuParent;
+    //[SerializeField] private GameObject MenuParent;
     [SerializeField] private GameObject PauseParent;
 
 
@@ -69,12 +69,22 @@ public class OverworldToFieldBattleManager : MonoBehaviour
         paused = false;
         PauseParent.SetActive(false);
     }
-    public void StartFieldBattle()
+    public void StartFieldBattleWithEnemyArmy(Army army)
     {
+        OverworldManager.Instance.armyThatWeAreFighting = army;
+        UnitManager.Instance.unitsInEnemyArmyList = army.unitsInArmyList;
         state = possibleGameStates.FieldBattle;
         OverworldParent.SetActive(false);
         FieldBattleParent.SetActive(true);
-        //MenuParent.SetActive(false);
+        LoadScenario();
+        AllowPlacementOfPlayerTroops();
+    }
+    public void StartFieldBattle()
+    {
+        UnitManager.Instance.unitsInEnemyArmyList = UnitManager.Instance.unitsInTestArmyList;
+        state = possibleGameStates.FieldBattle;
+        OverworldParent.SetActive(false);
+        FieldBattleParent.SetActive(true); 
         LoadScenario(); 
         AllowPlacementOfPlayerTroops();
     }
@@ -86,18 +96,31 @@ public class OverworldToFieldBattleManager : MonoBehaviour
         OverworldParent.SetActive(true);
     } 
     public void UpdateUnitManagerArmies()
-    { 
-        UnitManager.Instance.UpdateArmy();
+    {
+        //UnitManager.Instance.UpdateArmy();
+        //update the player's battlegroup using the player's formations
+        if (OverworldManager.Instance.playerBattleGroup != null)
+        { 
+            UnitManager.Instance.UpdateBattleGroup(OverworldManager.Instance.playerBattleGroup, FightManager.Instance.playerControlledFormations);
+        }
+        //also update the opponent's army
+        if (OverworldManager.Instance.enemyBattleGroup != null)
+        { 
+            UnitManager.Instance.UpdateBattleGroup(OverworldManager.Instance.enemyBattleGroup, FightManager.Instance.enemyControlledFormations);
+        }
     }
     private void EraseAllTroopsAndClearArrays()
     {
         for (int i = 0; i < FightManager.Instance.allArray.Length; i++)
         {
-            Destroy(FightManager.Instance.allArray[i].soldierBlock.gameObject);
+            if (FightManager.Instance.allArray[i] != null)
+            { 
+                Destroy(FightManager.Instance.allArray[i].soldierBlock.gameObject);
+            }
         }
         FightManager.Instance.allArray = new FormationPosition[0];
-        FightManager.Instance.yourFormations.Clear();
-        FightManager.Instance.aiFormations.Clear();
+        FightManager.Instance.playerControlledFormations.Clear();
+        FightManager.Instance.enemyControlledFormations.Clear();
     }
     private void LoadScenario()
     {

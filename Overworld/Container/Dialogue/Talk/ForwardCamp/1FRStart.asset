@@ -10,20 +10,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
-  m_Name: FRStart
+  m_Name: 1FRStart
   m_EditorClassIdentifier: 
   speaker: Fort Rebentroft
   speakerImage: {fileID: 21300000, guid: 22ae0104a986d6846ac9f4641fd12164, type: 3}
   speakerSpeed: 0.025
-  sentences:
-  - Looking around, the fort isn't what you're used to, but it'll do.
-  sentenceAudio: []
-  nextDialogue: {fileID: 11400000, guid: 62716800b5166e8458c22bf7eb7136da, type: 2}
-  isChoices: 0
   speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
   speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
-  choicePaths: []
   commandToExecuteStart: 
   commandToExecuteEnd: 
   commandVar: 0
+  commandString: 
+  dialogueIfConditionTrue: {fileID: 0}
+  talkedToDialogueNPC: {fileID: 0}
+  isFirstInstanceNPC: 0
+  isChoices: 0
   forceChangeSpeaker: 1
+  italicizedSentences: 
+  speakerSentences: []
+  sentenceAudio: []
+  sentences:
+  - Looking around, the fort isn't what you're used to, but it'll do.
+  sentencesWithSpeakers:
+  - sentence: Looking around, the fort isn't what you're used to, but it'll do.
+    speaker: {fileID: 11400000, guid: 122698e744a1956419ffa32bc370501a, type: 2}
+  nextDialogue: {fileID: 11400000, guid: 62716800b5166e8458c22bf7eb7136da, type: 2}
+  choicePaths: []

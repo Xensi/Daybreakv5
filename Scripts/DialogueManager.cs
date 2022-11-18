@@ -60,6 +60,7 @@ public class DialogueManager : MonoBehaviour
     }
     private void Start()
     {
+        dialogueParent.SetActive(true);
         //define text speeds algorithmically
         UpdateTextSpeeds();
         startingYPos = dialogueParent.transform.position.y; //get starting y position

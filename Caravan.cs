@@ -31,7 +31,7 @@ public class Caravan : MonoBehaviour
 
     public Collider caravanCollider;
 
-    public SupplyGiver homeSupplySource;
+    public SupplyPoint homeSupplySource;
 
     public bool goingHome = false;
     //public Army awaitingCollisionWith;
@@ -95,7 +95,7 @@ public class Caravan : MonoBehaviour
         }
         else if (homeSupplySource != null && goingHome)
         {
-            SupplyGiver collidedGiver = other.gameObject.GetComponent<SupplyGiver>();
+            SupplyPoint collidedGiver = other.gameObject.GetComponent<SupplyPoint>();
             if (collidedGiver == homeSupplySource)
             {
                 collidedGiver.storedProvisions += provisionsCarried;

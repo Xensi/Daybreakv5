@@ -16,8 +16,8 @@ public class FightManager : MonoBehaviour
     public List<FormationPosition> allFormationsList;
     public FormationPosition[] allArray;
 
-    public List<FormationPosition> yourFormations;
-    public List<FormationPosition> aiFormations;
+    public List<FormationPosition> playerControlledFormations; 
+    public List<FormationPosition> enemyControlledFormations;
 
     public List<FormationPosition> selectedFormations;
     public GlobalDefines.Team team = GlobalDefines.Team.Altgard; 
@@ -213,7 +213,7 @@ public class FightManager : MonoBehaviour
     }
     private void PlaceEnemySoldiers() //places soldiers randomly within the placement zone and gives them to zhanguo
     {
-        foreach (UnitInfoClass unit in UnitManager.Instance.unitsInTestArmyList)
+        foreach (UnitInfoClass unit in UnitManager.Instance.unitsInEnemyArmyList)
         {
             Vector3 randomPoint = Helper.Instance.RandomPointInBounds(enemyPlacementZone.bounds);
             Vector3 vec = new Vector3(randomPoint.x, 100, randomPoint.z);
@@ -251,18 +251,18 @@ public class FightManager : MonoBehaviour
         FormationPosition[] array = FindObjectsOfType<FormationPosition>();
         allArray = array;
         int id = 0;
-        yourFormations.Clear();
-        aiFormations.Clear();
+        playerControlledFormations.Clear();
+        enemyControlledFormations.Clear();
         foreach (FormationPosition item in array)
         {
             allFormationsList.Add(item);
             if (item.team == team)
             {
-                yourFormations.Add(item);
+                playerControlledFormations.Add(item);
             }
             else
             {
-                aiFormations.Add(item);
+                enemyControlledFormations.Add(item);
             }
             item.FixPositions();
             if (item.shaker != null)
@@ -309,7 +309,7 @@ public class FightManager : MonoBehaviour
     }
     private void AICheckIfBraceNeeded()
     {
-        foreach (FormationPosition formPos in aiFormations)
+        foreach (FormationPosition formPos in enemyControlledFormations)
         {
             if (formPos.soldierBlock.melee && formPos.usesSpears)
             {
@@ -320,7 +320,7 @@ public class FightManager : MonoBehaviour
     private void AIRaisePursueRadius()
     {
         float newRadius = 999;
-        foreach (FormationPosition formPos in aiFormations)
+        foreach (FormationPosition formPos in enemyControlledFormations)
         {
             if (formPos.soldierBlock.melee)
             { 
@@ -335,7 +335,7 @@ public class FightManager : MonoBehaviour
     }
     private void AISetDefaultPursueRadius()
     {
-        foreach (FormationPosition formPos in aiFormations)
+        foreach (FormationPosition formPos in enemyControlledFormations)
         {
             if (formPos.soldierBlock.melee)
             {
@@ -350,12 +350,12 @@ public class FightManager : MonoBehaviour
     private void AIAllMagesPickTargetsAndFire()
     {
         List<FormationPosition> aiFormList = new List<FormationPosition>();
-        foreach (FormationPosition aiForm in aiFormations)
+        foreach (FormationPosition aiForm in enemyControlledFormations)
         {
             aiFormList.Add(aiForm);
         } 
         List<FormationPosition> curatedPlayerForms = new List<FormationPosition>();
-        foreach (FormationPosition form in yourFormations)
+        foreach (FormationPosition form in playerControlledFormations)
         {
             if (form.alive && !form.fleeing)
             { 
@@ -398,26 +398,26 @@ public class FightManager : MonoBehaviour
         int victoryStatus = 0; //0 is undecided, 1 is player, 2 is ai 
         int numberOfLostFormations = 0;
         int numberOfAILostFormations = 0;
-        foreach (FormationPosition form in yourFormations)
+        foreach (FormationPosition form in playerControlledFormations)
         {
             if (form.numberOfAliveSoldiers <= 0 || form.fleeing || form == null) //if all dead, or fleeing
             {
                 numberOfLostFormations++;
             } 
         } 
-        foreach (FormationPosition form in aiFormations)
+        foreach (FormationPosition form in enemyControlledFormations)
         {
             if (form.numberOfAliveSoldiers <= 0 || form.fleeing || form == null) //if all dead, or fleeing
             {
                 numberOfAILostFormations++;
             } 
         }
-        if (numberOfAILostFormations >= aiFormations.Count)
+        if (numberOfAILostFormations >= enemyControlledFormations.Count)
         {
             gameIsOver = true;
             victoryStatus = 1;
         }
-        if (numberOfLostFormations >= yourFormations.Count)
+        if (numberOfLostFormations >= playerControlledFormations.Count)
         {
             gameIsOver = true;
             victoryStatus = 2;
@@ -441,6 +441,10 @@ public class FightManager : MonoBehaviour
     private void DisplayVictory()
     {
         victoryDisplay.SetActive(true);
+        //OverworldManager.Instance.armyThatWeAreFighting.parent.SetActive(false);
+        //need to remove the army from the world and the overworld update list
+        //need to stop all movement, or only start a battle once movement is settled?
+        //make armies not collide with each other, can take up same tile
     }
     private void DisplayDefeat()
     { 
@@ -1380,7 +1384,7 @@ public class FightManager : MonoBehaviour
         selectionBox.gameObject.SetActive(false);
         Vector2 min = selectionBox.anchoredPosition - (selectionBox.sizeDelta / 2);
         Vector2 max = selectionBox.anchoredPosition + (selectionBox.sizeDelta / 2);
-        foreach (FormationPosition form in yourFormations) //select units if in box
+        foreach (FormationPosition form in playerControlledFormations) //select units if in box
         {
             if (form.fleeing)
             {
@@ -1488,7 +1492,7 @@ public class FightManager : MonoBehaviour
     }
     private void SelectSimilar(FormationPosition ogForm)
     {
-        foreach (FormationPosition form in yourFormations)
+        foreach (FormationPosition form in playerControlledFormations)
         {
             if (form.formationType == ogForm.formationType && form.alive && !form.fleeing)
             { 
@@ -1504,7 +1508,7 @@ public class FightManager : MonoBehaviour
     private void DeselectOtherUnits(FormationPosition exclude)
     {
         selectedFormations.Clear();
-        foreach (FormationPosition form in yourFormations)
+        foreach (FormationPosition form in playerControlledFormations)
         {
             if (form != exclude)
             { 
@@ -1517,7 +1521,7 @@ public class FightManager : MonoBehaviour
     private void DeselectUnits()
     {
         selectedFormations.Clear();
-        foreach (FormationPosition form in yourFormations)
+        foreach (FormationPosition form in playerControlledFormations)
         {
             form.SetSelected(false); 
             form.TriggerSelectionCircles(false);

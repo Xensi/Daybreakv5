@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1684401956911932154
 Transform:
   m_ObjectHideFlags: 0
@@ -155,7 +155,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 9, y: 1, z: 9}
+  m_Size: {x: 6, y: 1, z: 6}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6058009065979722721
 GameObject:
@@ -181,7 +181,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6058009065979722721}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 19.5, y: 0, z: -30.5}
+  m_LocalPosition: {x: 19.5, y: 0, z: -31.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5237408736834967575}
@@ -211,7 +211,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6058009066592447922}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 20.5, y: 0, z: -29.5}
+  m_LocalPosition: {x: 21.5, y: 0, z: -29.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5237408736834967575}
@@ -241,7 +241,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6058009066964073682}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 19.5, y: 0, z: -28.5}
+  m_LocalPosition: {x: 19.5, y: 0, z: -27.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5237408736834967575}
@@ -271,7 +271,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6058009067147064302}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 18.5, y: 0, z: -29.5}
+  m_LocalPosition: {x: 17.5, y: 0, z: -29.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5237408736834967575}
@@ -304,7 +304,7 @@ Transform:
   m_GameObject: {fileID: 6536249916485844265}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0.01, z: 0}
-  m_LocalScale: {x: 8.98, y: 8.98, z: 1}
+  m_LocalScale: {x: 6.99, y: 6.99, z: 1}
   m_Children: []
   m_Father: {fileID: 6058009065852828997}
   m_RootOrder: 0
@@ -384,6 +384,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3898248475158603623}
   - component: {fileID: 6973365729497696137}
+  - component: {fileID: 797989211}
   m_Layer: 17
   m_Name: WatchdogBounds
   m_TagString: Untagged
@@ -421,6 +422,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &797989211
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6935179435839090366}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 9, y: 1, z: 9}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8796460883890399212
 GameObject:
   m_ObjectHideFlags: 0
@@ -488,7 +502,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9155587832336797736}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.5, y: 0, z: -10.5}
+  m_LocalPosition: {x: 7.5, y: 0, z: -8.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 9155587834163804503}
@@ -521,6 +535,7 @@ MonoBehaviour:
   enemyLastSeenPos: {x: 0, y: 0, z: 0}
   lastPosKnown: 0
   detector: {fileID: 6058009065852828986}
+  nodeNumber: 0
   parent: {fileID: 9155587834169126056}
   obstacles: []
   target: {fileID: 9155587832845698493}
@@ -574,8 +589,13 @@ MonoBehaviour:
   moving: 0
   arrestedDernoth: 0
   arrestedButcher: 0
-  watchdogBounds: {fileID: 0}
+  watchdogBounds: {fileID: 797989211}
   withinWatchdogBounds: 1
+  unitsInArmyList:
+  - type: 4
+    team: 1
+    troops: 80
+    maxTroops: 0
 --- !u!114 &9155587832336797741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -619,7 +639,7 @@ MonoBehaviour:
   version: 5
   radius: 0.35
   height: 1.4
-  canMove: 1
+  canMove: 0
   maxSpeed: 1
   gravity: {x: NaN, y: NaN, z: NaN}
   groundMask:
@@ -730,10 +750,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   team: 0
   brightness: 1
-  shapeType: 0
+  shapeType: 1
   absoluteOffset: 0
   offset: {x: 0, y: 0}
-  boxSize: {x: 5, y: 5}
+  boxSize: {x: 6, y: 6}
   circleRadius: 4.5
   innerRadius: 1
   angle: 180
@@ -780,7 +800,7 @@ GameObject:
   m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &9155587832845698493
 Transform:
   m_ObjectHideFlags: 0
@@ -1010,8 +1030,7 @@ VFXRenderer:
   m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 0}
+  m_Materials: []
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

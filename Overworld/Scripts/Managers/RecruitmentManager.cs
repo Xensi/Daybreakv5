@@ -20,7 +20,7 @@ public class RecruitmentManager : MonoBehaviour
     [SerializeField] private TMP_Text spoilsNum;
     [SerializeField] private Army targetedArmy;
 
-    public SupplyGiver recruitingFromSupplyGiver;
+    public SupplyPoint recruitingFromSupplyGiver;
 
     private void Awake()
     {
@@ -29,7 +29,7 @@ public class RecruitmentManager : MonoBehaviour
         UpdateSpoilsText();
     }
 
-    public void CheckIfPathClear(SupplyGiver recruitingFrom)
+    public void CheckIfPathClear(SupplyPoint recruitingFrom)
     {
 
     }

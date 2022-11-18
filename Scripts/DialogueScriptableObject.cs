@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "newDialogue", menuName = "Dialogue")]
+[CreateAssetMenu(fileName = "newDialogue", menuName = "Dialogue")] 
 public class DialogueScriptableObject : ScriptableObject
 {
     [Header("Manual speaker info")]
@@ -11,6 +11,9 @@ public class DialogueScriptableObject : ScriptableObject
     public float speakerSpeed = 0.01f;
     public Color speakerColorBorder;
     public Color speakerFancyBorder;
+
+     
+
 
     [Header("Command info")]
     public string commandToExecuteStart;
@@ -32,6 +35,10 @@ public class DialogueScriptableObject : ScriptableObject
 
     [TextArea(3, 10)]
     public string[] sentences;
+     
+    public SentenceSpeakerClass[] sentencesWithSpeakers;
+
+
 
     [Header("Paths")]
     public DialogueScriptableObject nextDialogue;

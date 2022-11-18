@@ -11,6 +11,7 @@ public class UnitManager : MonoBehaviour
 
     public List<UnitInfoClass> unitsInMainArmyList;
     public List<UnitInfoClass> unitsInTestArmyList;
+    public List<UnitInfoClass> unitsInEnemyArmyList;
 
 
     private void Awake()
@@ -22,12 +23,23 @@ public class UnitManager : MonoBehaviour
     public void UpdateArmy()
     {
         unitsInMainArmyList.Clear();
-        for (int i = 0; i < FightManager.Instance.yourFormations.Count; i++)
+        for (int i = 0; i < FightManager.Instance.playerControlledFormations.Count; i++)
         {
-            if (FightManager.Instance.yourFormations[i] != null){ 
-                unitsInMainArmyList.Add(ConvertFormationToUnitInfoClass(FightManager.Instance.yourFormations[i]));
+            if (FightManager.Instance.playerControlledFormations[i] != null){ 
+                unitsInMainArmyList.Add(ConvertFormationToUnitInfoClass(FightManager.Instance.playerControlledFormations[i]));
             }
         } 
+    }
+    public void UpdateBattleGroup(BattleGroup battleGroup, List<FormationPosition> listOfFormationPositions)
+    {
+        battleGroup.listOfUnitsInThisArmy.Clear();
+        for (int i = 0; i < listOfFormationPositions.Count; i++)
+        {
+            if (listOfFormationPositions[i] != null)
+            {
+                battleGroup.listOfUnitsInThisArmy.Add(ConvertFormationToUnitInfoClass(listOfFormationPositions[i]));
+            }
+        }
     }
     private UnitInfoClass ConvertFormationToUnitInfoClass(FormationPosition form)
     {

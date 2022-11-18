@@ -14,6 +14,8 @@ public static class GlobalDefines
         none,
         conscript,
         soldner,
-        longbowman
+        longbowman,
+        infantry,
+        crossbowman
     }
 }

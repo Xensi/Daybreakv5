@@ -15,8 +15,8 @@ public class OverworldCam : MonoBehaviour
     public float distToGround;
     public int defaultSpeed = 5;
     public Camera cam;
-    public int minZoom = 1;
-    public int maxZoom = 10;
+    public float minZoom = 0.01f;
+    public float maxZoom = 100;
     // Start is called before the first frame update
     public virtual void Start()
     {

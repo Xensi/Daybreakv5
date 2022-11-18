@@ -2,9 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SupplyGiver : MonoBehaviour
+public class SupplyPoint : MonoBehaviour
 {
     public Army armyOnThisSupplyPoint;
+    public BattleGroup battleGroupAtThisSupplyPoint;
     public OverworldManager overworldManager;
 
     private int turnCounter = 0;
@@ -43,7 +44,7 @@ public class SupplyGiver : MonoBehaviour
 
     public bool routeClear = false;
 
-    public List<SupplyGiver> placesBlockingRoute;
+    public List<SupplyPoint> placesBlockingRoute;
 
     //public List<Army> armiesToSupport;
     //public GameObject caravanPrefab;

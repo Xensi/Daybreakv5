@@ -24,7 +24,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1746868039364218769}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.59892464, y: -0.0652442, z: 1.9718411}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -43,11 +43,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53cb7ef0b8a3e7441831bd5b73074605, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  units:
-  - {fileID: 11400000, guid: 7ef2553ac2b3c5c49910a0313e0a4eff, type: 2}
-  - {fileID: 11400000, guid: 5d32ba379a96fe241896b2992d9cdb79, type: 2}
-  unitTypes: 010000000200000003000000
+  unitTypes: 0100000002000000030000000400000005000000
   formationsToInstantiateBasedOnUnitType:
   - {fileID: 5955700111243193916, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
   - {fileID: 5549172327219946826, guid: 62813ba48087d644c81dab156d534c0f, type: 3}
   - {fileID: 7126952025844962424, guid: 6152b6cb4f7ec2e4585600466b851d95, type: 3}
+  - {fileID: 1194388696402372065, guid: 292d4b97a2b623845bd560ef1b50540e, type: 3}
+  - {fileID: 1194388696402372065, guid: 29a6825c1209713459b0c288362584e2, type: 3}
+  unitsInMainArmyList:
+  - type: 1
+    team: 0
+    troops: 80
+    maxTroops: 0
+  - type: 1
+    team: 0
+    troops: 80
+    maxTroops: 0
+  - type: 1
+    team: 0
+    troops: 80
+    maxTroops: 0
+  unitsInTestArmyList:
+  - type: 1
+    team: 1
+    troops: 40
+    maxTroops: 0
+  unitsInEnemyArmyList: []

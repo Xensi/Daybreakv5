@@ -62,7 +62,7 @@ public class Army : MonoBehaviour
     public List<Button> listOfSplitOffs;
     public FogOfWarUnit fowUnit;
     public bool onSupplyPoint = false;
-    public SupplyGiver currentSupplyPoint;
+    public SupplyPoint currentSupplyPoint;
     public LocaleInvestigatable currentLocale;
     [SerializeField] private List<ArmyCardScriptableObj> startingArmy;
     [SerializeField] private VisualEffect dustVFX;
@@ -92,6 +92,8 @@ public class Army : MonoBehaviour
     public Collider watchdogBounds;
     public bool withinWatchdogBounds = true;
     private bool suddenStop = false;
+
+    public List<UnitInfoClass> unitsInArmyList;
 
     public void Awake() //Setup when spawned
     {
@@ -327,10 +329,7 @@ public class Army : MonoBehaviour
                     surprise.eventTriggered = true;
                 }
             }
-        }
-        
-
-
+        } 
         Army collidedArmy = other.gameObject.GetComponent<Army>();
         //Debug.LogError("collision?");
         if (awaitingCollisionWith != null)
@@ -344,7 +343,7 @@ public class Army : MonoBehaviour
                 Destroy(parent);
             }
         }
-        SupplyGiver collidedSupplyPoint = other.gameObject.GetComponent<SupplyGiver>();
+        SupplyPoint collidedSupplyPoint = other.gameObject.GetComponent<SupplyPoint>();
         if (collidedSupplyPoint != null)
         {
             onSupplyPoint = true;
@@ -352,27 +351,25 @@ public class Army : MonoBehaviour
             collidedSupplyPoint.armyOnThisSupplyPoint = this;
             if (overworldManager.selectedArmy == this)
             {
-                overworldManager.SelectedArmyEnteredSupplyPoint();
+                overworldManager.PlayerBattleGroupEnteredSupplyPoint();
             }
         }
         if (!aiControlled && collidedArmy != null && collidedArmy.faction != faction)
         {
-            //Debug.Log("WAR");
-            numberOfMovementAttempts = 100;
-            collidedArmy.numberOfMovementAttempts = 100;
-        }
-
+            Debug.Log("WAR");
+            OverworldToFieldBattleManager.Instance.StartFieldBattleWithEnemyArmy(collidedArmy);
+            //numberOfMovementAttempts = 100;
+            //collidedArmy.numberOfMovementAttempts = 100;
+        } 
         LocaleInvestigatable collidedLocale = other.gameObject.GetComponent<LocaleInvestigatable>();
         if (collidedLocale != null)
         {
             currentLocale = collidedLocale;
-        }
-
+        } 
         if (other == watchdogBounds)
         {
             withinWatchdogBounds = true;
-        }
-
+        } 
     }
     private void OnTriggerExit(Collider other)
     {
@@ -382,7 +379,7 @@ public class Army : MonoBehaviour
             suddenStop = false;
             currentLocale = null;
         }
-        SupplyGiver collidedSupplyPoint = other.gameObject.GetComponent<SupplyGiver>();
+        SupplyPoint collidedSupplyPoint = other.gameObject.GetComponent<SupplyPoint>();
         if (collidedSupplyPoint != null)
         {
             onSupplyPoint = false;
@@ -391,14 +388,13 @@ public class Army : MonoBehaviour
 
             if (overworldManager.selectedArmy == this)
             {
-                overworldManager.SelectedArmyExitedSupplyPoint();
+                overworldManager.PlayerBattleGroupExitedSupplyPoint();
             }
         }
         if (other == watchdogBounds)
         {
             withinWatchdogBounds = false;
-        }
-
+        } 
     }
     public void StartMoving()
     {
@@ -500,11 +496,11 @@ public class Army : MonoBehaviour
 
         if (path.error)
         {
-            Debug.Log("No path was found");
+            //Debug.Log("No path was found");
         }
         else
         {
-            Debug.Log("A path was found with " + path.vectorPath.Count + " nodes");
+            //Debug.Log("A path was found with " + path.vectorPath.Count + " nodes");
 
             // Draw the path in the scene view
             for (int i = 0; i < path.vectorPath.Count - 1; i++)
@@ -528,11 +524,11 @@ public class Army : MonoBehaviour
 
         if (path.error)
         {
-            Debug.Log("No path was found");
+            //Debug.Log("No path was found");
         }
         else
         {
-            Debug.Log("A path was found with " + path.vectorPath.Count + " nodes");
+            //Debug.Log("A path was found with " + path.vectorPath.Count + " nodes");
 
             // Draw the path in the scene view
             for (int i = 0; i < path.vectorPath.Count - 1; i++)
