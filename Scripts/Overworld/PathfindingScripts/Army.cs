@@ -601,7 +601,7 @@ public class Army : MonoBehaviour
                 Tween fixTween = icon.transform.DORotate(new Vector3(0, 90, 0), .5f);
                 predictedMovementSpaces = 0;
                 moving = false;
-                overworldManager.HideNavIndicator();
+                OverworldManager.Instance.HideNavIndicator();
 
                 yield break;
             }

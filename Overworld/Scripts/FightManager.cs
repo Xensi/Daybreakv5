@@ -118,12 +118,28 @@ public class FightManager : MonoBehaviour
     public void StartPlacingSoldiers()
     {
         GenerateSoldierButtons();
+        RandomPlacePlayerFormations();
         placerUI.SetActive(true);
         if (friendlyPlacementZone != null)
         {
             friendlyPlacementZone.gameObject.SetActive(true);
         }
         placingSoldiers = true;
+    }
+    private void RandomPlacePlayerFormations()
+    {
+        foreach (UnitInfoClass unit in OverworldManager.Instance.playerBattleGroup.listOfUnitsInThisArmy)
+        {
+            Vector3 randomPoint = Helper.Instance.RandomPointInBounds(friendlyPlacementZone.bounds);
+            Vector3 vec = new Vector3(randomPoint.x, 100, randomPoint.z);
+            LayerMask layerMask = LayerMask.GetMask("Terrain");
+            RaycastHit hit;
+            if (Physics.Raycast(vec, Vector3.down, out hit, Mathf.Infinity, layerMask))
+            {
+                randomPoint.y = hit.point.y;
+            }
+            PlaceFormationAtPositionOfType(unit.type, unit.troops, randomPoint, GlobalDefines.Team.Altgard);
+        }
     }
     private void GenerateSoldierButtons()
     {
@@ -140,6 +156,7 @@ public class FightManager : MonoBehaviour
             soldierButton.onClick.AddListener(() => UpdateButtonID(tempID));
             soldierButton.onClick.AddListener(() => UpdateSoldierCount(unit.troops));
             soldierButtonsList.Add(soldierButton);
+            soldierButton.interactable = false;
             i++;
         }
     }

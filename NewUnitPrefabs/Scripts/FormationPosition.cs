@@ -409,7 +409,7 @@ public class FormationPosition : MonoBehaviour
                 if (soldier != null && soldier.alive && soldier.modelPosition != null) //terrain check but don't teleport to position
                 { 
                     soldier.PlaceOnGround(); 
-                    soldier.richAI.enabled = true;
+                    soldier.pathfindingAI.enabled = true;
                 }
             }
         } 
@@ -433,7 +433,7 @@ public class FormationPosition : MonoBehaviour
             SoldierModel soldier = soldierBlock.modelsArray[i];
             if (soldier != null) //terrain check but don't teleport to position
             {
-                soldier.richAI.enabled = val;
+                soldier.pathfindingAI.enabled = val;
             }
         }
     }
@@ -444,7 +444,7 @@ public class FormationPosition : MonoBehaviour
             for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
             {
                 SoldierModel soldier = soldierBlock.modelsArray[i];
-                if (soldier != null && soldier.alive && !soldier.richAI.enabled)
+                if (soldier != null && soldier.alive && !soldier.pathfindingAI.enabled)
                 {
                     soldier.modelPosition.PlaceOnGround();
                 }
@@ -464,7 +464,7 @@ public class FormationPosition : MonoBehaviour
                 //soldier.farAway = farAway;
                 if (soldier.formPos.showSoldierModels) //use rich ai
                 {
-                    soldier.richAI.enabled = true;
+                    soldier.pathfindingAI.enabled = true;
                     soldier.animator.enabled = true;
                     /*if (farAway)
                     {
@@ -484,7 +484,7 @@ public class FormationPosition : MonoBehaviour
                 }
                 else //performant
                 {
-                    soldier.richAI.enabled = false;
+                    soldier.pathfindingAI.enabled = false;
                     soldier.animator.enabled = false;
                     if (soldier.moving)
                     {
@@ -666,15 +666,28 @@ public class FormationPosition : MonoBehaviour
                 }
             }
         }
-    }
-
+    } 
     private void SlowUpdate()
     {
         if (!fleeing)
         {
             CheckIfInMeleeRange();
         }
-
+        SlowSoldierUpdate(); 
+    }
+    private void SlowSoldierUpdate()
+    { 
+        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+        {
+            SoldierModel model = soldierBlock.modelsArray[i];
+            if (model != null)
+            {
+                if (model.alive)
+                {
+                    model.UpdatePath();
+                }
+            }
+        }
     }
     public void PlacePositionOnGround(Position itemPos)
     {
@@ -794,13 +807,13 @@ public class FormationPosition : MonoBehaviour
             CheckIfInCombat(); //
             UnfreezeThis();
         }
-        UpdateSoldiers(); // 
+        VerySlowSoldierUpdate(); // 
         UpdateDeployment();
         UpdateSpeed(); // 
         UpdateCollider(); // 
 
     }
-    private void UpdateSoldiers()
+    private void VerySlowSoldierUpdate()
     {
         for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
         {

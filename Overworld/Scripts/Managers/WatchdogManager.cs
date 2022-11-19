@@ -4,17 +4,16 @@ using UnityEngine;
 
 public class WatchdogManager : MonoBehaviour
 {
-    public Vector3 lastSpottedPosition;
-    [SerializeField] private OverworldManager overworldManager;
+    public Vector3 lastSpottedPosition; 
     public void EnemyArmyLostSight()
     {
         Debug.LogError("Lost sight of you");
-        Transform lastPos = overworldManager.soleArmy.transform;
+        Transform lastPos = OverworldManager.Instance.soleArmy.transform;
 
         float fixedCoordsx = RoundToZeroOrHalf(lastPos.position.x);
         float fixedCoordsz = RoundToZeroOrHalf(lastPos.position.z);
         lastSpottedPosition = new Vector3(fixedCoordsx, 0, fixedCoordsz);
-        foreach (Army enemyArmy in overworldManager.enemyArmies)
+        foreach (Army enemyArmy in OverworldManager.Instance.enemyArmies)
         {
             enemyArmy.detectedNotSpottedArmy = null;
             enemyArmy.focusedOnArmy = null;
@@ -25,7 +24,7 @@ public class WatchdogManager : MonoBehaviour
     public void EnemyArmySpotted()
     {
         Debug.LogError("Spotted you");
-        foreach (Army enemyArmy in overworldManager.enemyArmies)
+        foreach (Army enemyArmy in OverworldManager.Instance.enemyArmies)
         {
             enemyArmy.focusedOnArmy = enemyArmy.detectedNotSpottedArmy; //allow army to chase army they've "detected"
             enemyArmy.detectedNotSpottedArmy = null;

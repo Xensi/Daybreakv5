@@ -184,7 +184,7 @@ public class ProjectileFromSoldier : MonoBehaviour
                 isFlying = false;
                 finalRotation = transform.rotation;
                 transform.rotation = finalRotation;
-                soldierParent.richAI.enabled = true;
+                soldierParent.pathfindingAI.enabled = true;
                 soldierParent.transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 0, 999), transform.position.z);
                 Vector3 heading = startingPos - transform.position;
                 soldierParent.transform.rotation = Quaternion.LookRotation(heading, Vector3.up);

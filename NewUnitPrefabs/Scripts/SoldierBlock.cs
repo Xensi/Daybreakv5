@@ -98,17 +98,15 @@ public class SoldierBlock : MonoBehaviour
                     //spawn soldier
                     GameObject soldier = Instantiate(soldierPrefab, position.transform.position, angleToFace, modelParent);
                     formPos.numberOfAliveSoldiers++;
-
-                    AIDestinationSetter aiDesSet = soldier.GetComponentInChildren<AIDestinationSetter>();
-                    aiDesSet.target = position.transform;
                     //getmodel
                     SoldierModel model = soldier.GetComponentInChildren<SoldierModel>();
+                    model.target = position.transform;
                     model.modelPosition = position;
                     rowItem.modelsInRow.Add(model);
                     modelsArray[arrayInc] = model;
                     model.walkSpeed = desiredWalkingSpeed;
                     model.runSpeed = desiredWalkingSpeed * 2;
-                    model.richAI.maxSpeed = desiredWalkingSpeed; 
+                    model.pathfindingAI.maxSpeed = desiredWalkingSpeed; 
                     model.team = teamType;
                     model.formPos = formPos;
                     model.melee = melee;
@@ -137,14 +135,13 @@ public class SoldierBlock : MonoBehaviour
             foreach (Position position in magePositions)
             {
                 increment++;
-                GameObject soldier = Instantiate(magePrefab, position.transform.position, angleToFace, modelParent);
-                AIDestinationSetter aiDesSet = soldier.GetComponentInChildren<AIDestinationSetter>();
-                aiDesSet.target = position.transform;
+                GameObject soldier = Instantiate(magePrefab, position.transform.position, angleToFace, modelParent); 
                 SoldierModel model = soldier.GetComponentInChildren<SoldierModel>();
+                model.target = position.transform;
                 modelsArray[arrayInc] = model;
                 model.walkSpeed = desiredWalkingSpeed;
                 model.runSpeed = desiredWalkingSpeed * 2;
-                model.richAI.maxSpeed = desiredWalkingSpeed; 
+                model.pathfindingAI.maxSpeed = desiredWalkingSpeed; 
                 model.team = teamType;
                 model.formPos = formPos;
                 model.melee = melee;

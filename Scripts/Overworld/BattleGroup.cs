@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Pathfinding;
 public class BattleGroup : MonoBehaviour
 { 
     public enum controlStatus
@@ -28,28 +28,42 @@ public class BattleGroup : MonoBehaviour
     public int maxMorale = 100;
 
     public List<ArmyCard> armyDisplayCards;
-    [SerializeField] 
+    [SerializeField]
+    private LineRenderer lineRenderer;
 
+    public float aiSightDistance = 100;
+
+    public bool aiCanSeePlayer = false;
+    public RichAI pathfindingAI;
+
+    private void OnDrawGizmos()
+    { 
+        if (controlledBy == controlStatus.EnemyControlled)
+        { 
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, aiSightDistance);
+        }
+    }
+    private void Awake()
+    {
+        pathfindingAI = GetComponent<RichAI>();
+    }
+    private void UpdateSpeedBasedOnNumberOfUnits() //bigger armies move slower
+    {
+
+    }
     private void Start()
     {
         //GenerateArmy();
     }
-    private void UpdateSupplyStatus(SupplyPoint point, bool enterOrExit)
-    { 
-        if (enterOrExit)
-        { 
-            onSupplyPoint = true;
-            currentSupplyPoint = point;
-            point.battleGroupAtThisSupplyPoint = this;
-            OverworldManager.Instance.PlayerBattleGroupEnteredSupplyPoint();
-        } 
-        else
-        { 
-            onSupplyPoint = false;
-            currentSupplyPoint = null;
-            point.armyOnThisSupplyPoint = null; 
-            OverworldManager.Instance.PlayerBattleGroupExitedSupplyPoint();
-        }
+    private void UpdateLineRenderer()
+    {
+        lineRenderer.SetPosition(0, new Vector3(transform.position.x, transform.position.y + .2f, transform.position.z));
+        lineRenderer.SetPosition(1, new Vector3(aiTarget.position.x, aiTarget.position.y + .2f, aiTarget.position.z));
+    }
+    private void Update()
+    {
+        UpdateLineRenderer();
     }
     public void GenerateArmy()
     {
@@ -105,63 +119,86 @@ public class BattleGroup : MonoBehaviour
                 return cardList[i];
             }
         }
-        return null;  
-    } 
+        return null;
+    }
+    private void UpdateSupplyStatus(SupplyPoint point, bool enterOrExit)
+    {
+        if (enterOrExit)
+        {
+            onSupplyPoint = true;
+            currentSupplyPoint = point;
+            point.battleGroupAtThisSupplyPoint = this;
+            OverworldManager.Instance.PlayerBattleGroupEnteredSupplyPoint();
+        }
+        else
+        {
+            onSupplyPoint = false;
+            currentSupplyPoint = null;
+            point.armyOnThisSupplyPoint = null;
+            OverworldManager.Instance.PlayerBattleGroupExitedSupplyPoint();
+        }
+    }
+    private void UpdateLocaleStatus(LocaleInvestigatable locale, bool enterOrExit)
+    {
 
+        if (enterOrExit)
+        { 
+            currentLocale = locale; 
+            OverworldManager.Instance.PlayerBattleGroupEnteredLocale();
+        }
+        else
+        { 
+            currentLocale = null; 
+            OverworldManager.Instance.PlayerBattleGroupExitedLocale();
+        }
+    }
     private void OnTriggerEnter(Collider other)
     {
-        #region OnEnterForAll
-        SupplyPoint collidedSupplyPoint = other.gameObject.GetComponent<SupplyPoint>(); //see if we are close to a supply giver
-        if (collidedSupplyPoint != null)
-        {
-            UpdateSupplyStatus(collidedSupplyPoint, true);
-        }
+        #region OnEnterForAll 
         #endregion
-        #region OnEnterForAI
-        #endregion
-        /*if (controlledBy == controlStatus.PlayerControlled)
-        {
-            *//*SurpriseEvent surprise = other.gameObject.GetComponent<SurpriseEvent>();
-            if (surprise != null)
+        #region OnEnterForPlayerOnly
+        if (controlledBy == controlStatus.PlayerControlled)
+        { 
+            SupplyPoint collidedSupplyPoint = other.gameObject.GetComponent<SupplyPoint>(); //see if we are close to a supply giver
+            if (collidedSupplyPoint != null)
             {
-                if (surprise.eventDialogue != null && surprise.eventTriggered == false)
-                {
-                    suddenStop = true;
-                    numberOfMovementAttempts = 100; //stop the movement of player
-                    overworldManager.dialogueEvent = true;
-                    overworldManager.localeArmy = this;
-                    DialogueManager.Instance.loadedDialogue = surprise.eventDialogue;
-                    DialogueManager.Instance.StartDialogue();
-                    surprise.eventTriggered = true;
-                }
-            }*//*
-        }*/
-        //Army collidedArmy = other.gameObject.GetComponent<Army>();
-        //Debug.LogError("collision?");
-        /*if (awaitingCollisionWith != null)
-        {
-            if (collidedArmy == awaitingCollisionWith)
+                UpdateSupplyStatus(collidedSupplyPoint, true);
+            }
+            LocaleInvestigatable collidedLocale = other.gameObject.GetComponent<LocaleInvestigatable>();
+            if (collidedLocale != null)
             {
-                //Debug.LogError("First army collided with second army");'
-                collidedArmy.numberOfUnitsInArmy += numberOfUnitsInArmy;
-                awaitingCollisionWith = null;
-                overworldManager.armies.Remove(this);
-                Destroy(parent);
+                UpdateLocaleStatus(collidedLocale, true);//update screen to show locale options
             }
         }
-        
-        if (!aiControlled && collidedArmy != null && collidedArmy.faction != faction)
+        /*if (controlledBy == controlStatus.PlayerControlled)
+       {
+           *//*SurpriseEvent surprise = other.gameObject.GetComponent<SurpriseEvent>();
+           if (surprise != null)
+           {
+               if (surprise.eventDialogue != null && surprise.eventTriggered == false)
+               {
+                   suddenStop = true;
+                   numberOfMovementAttempts = 100; //stop the movement of player
+                   overworldManager.dialogueEvent = true;
+                   overworldManager.localeArmy = this;
+                   DialogueManager.Instance.loadedDialogue = surprise.eventDialogue;
+                   DialogueManager.Instance.StartDialogue();
+                   surprise.eventTriggered = true;
+               }
+           }*//*
+       }*/
+        //Army collidedArmy = other.gameObject.GetComponent<Army>();
+        /*if (!aiControlled && collidedArmy != null && collidedArmy.faction != faction)
         {
             Debug.Log("WAR");
             OverworldToFieldBattleManager.Instance.StartFieldBattleWithEnemyArmy(collidedArmy);
             //numberOfMovementAttempts = 100;
             //collidedArmy.numberOfMovementAttempts = 100;
-        }
-        LocaleInvestigatable collidedLocale = other.gameObject.GetComponent<LocaleInvestigatable>();
-        if (collidedLocale != null)
-        {
-            currentLocale = collidedLocale;
-        }
+        }*/
+        #endregion
+        #region OnEnterForEnemyOnly
+        #endregion 
+        /*
         if (other == watchdogBounds)
         {
             withinWatchdogBounds = true;
@@ -169,11 +206,20 @@ public class BattleGroup : MonoBehaviour
     }
     private void OnTriggerExit(Collider other)
     {
-        SupplyPoint collidedSupplyPoint = other.gameObject.GetComponent<SupplyPoint>();
-        if (collidedSupplyPoint != null)
+        if (controlledBy == controlStatus.PlayerControlled)
         {
-            UpdateSupplyStatus(collidedSupplyPoint, false);
+            SupplyPoint collidedSupplyPoint = other.gameObject.GetComponent<SupplyPoint>();
+            if (collidedSupplyPoint != null)
+            {
+                UpdateSupplyStatus(collidedSupplyPoint, false);
+            }
+            LocaleInvestigatable collidedLocale = other.gameObject.GetComponent<LocaleInvestigatable>();
+            if (collidedLocale != null)
+            {
+                UpdateLocaleStatus(collidedLocale, false);//update screen to show locale options
+            }
         }
+        
         /*LocaleInvestigatable exitedLocale = other.gameObject.GetComponent<LocaleInvestigatable>();
         if (exitedLocale != null)
         {

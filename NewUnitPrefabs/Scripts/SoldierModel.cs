@@ -8,9 +8,8 @@ public class SoldierModel : MonoBehaviour
     #region AssignedAtStart
 
     private NavmeshCut navMeshCutter;
-    [HideInInspector] public RichAI richAI;
-    [HideInInspector] public Animator animator;
-    private AIDestinationSetter aiDesSet;
+    [HideInInspector] public RichAI pathfindingAI;
+    [HideInInspector] public Animator animator; 
     [HideInInspector] public FormationPosition formPos;
     [HideInInspector] public SpriteRenderer lineOfSightIndicator;
     [HideInInspector] public SpriteRenderer reloadingIndicator;
@@ -174,6 +173,8 @@ public class SoldierModel : MonoBehaviour
         }
         //Debug.DrawRay(transform.position, Vector3.down*100, Color.yellow, 1);
     }
+
+    public Transform target;
     private void Awake()
     {
         #region Initializations
@@ -202,20 +203,15 @@ public class SoldierModel : MonoBehaviour
             navMeshCutter = GetComponent<NavmeshCut>();
         }
 
-        if (richAI == null)
+        if (pathfindingAI == null)
         {
-            richAI = GetComponent<RichAI>();
+            pathfindingAI = GetComponent<RichAI>();
         }
 
         if (animator == null)
         {
             animator = GetComponentInChildren<Animator>();
-        }
-
-        if (aiDesSet == null)
-        {
-            aiDesSet = GetComponent<AIDestinationSetter>();
-        }
+        } 
 
         if (lineOfSightIndicator == null)
         {
@@ -237,7 +233,7 @@ public class SoldierModel : MonoBehaviour
         {
             reloadingIndicator.enabled = false;
         }
-        startingMaxSpeed = richAI.maxSpeed;
+        startingMaxSpeed = pathfindingAI.maxSpeed;
         //Debug.Log(startingMaxSpeed);
         /*if (startingMaxSpeed <= 0)
         {
@@ -264,9 +260,30 @@ public class SoldierModel : MonoBehaviour
 
         //animator.cullingMode = AnimatorCullingMode.CullCompletely;
         animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
-        richAI.enableRotation = true;
+        pathfindingAI.enableRotation = true;
     }
+    private void OnEnable()
+    {
+        if (pathfindingAI != null)
+        {
+            pathfindingAI.onSearchPath += UpdatePath; //subscribe to event
+        }
+    }
+    private void OnDisable()
+    {
 
+        if (pathfindingAI != null)
+        {
+            pathfindingAI.onSearchPath -= UpdatePath;
+        }
+    }
+    public void UpdatePath() //call whenever you want path to be updated, comrade
+    {
+        if (target != null && pathfindingAI != null)
+        {
+            pathfindingAI.destination = target.position;
+        }
+    }
     public bool IsVisible()
     {
         for (int i = 0; i < renderersArray.Length; i++)
@@ -390,7 +407,7 @@ public class SoldierModel : MonoBehaviour
     {
         float dampTime = .1f;
         float deltaTime = .1f;
-        if (richAI.canMove)
+        if (pathfindingAI.canMove)
         {
             //if (formPos.listOfNearbyEnemies.Count == 0)
             //{
@@ -416,11 +433,11 @@ public class SoldierModel : MonoBehaviour
             {
                 newMaxSpeed = startingMaxSpeed * 2;
             }
-            richAI.maxSpeed = newMaxSpeed;
+            pathfindingAI.maxSpeed = newMaxSpeed;
             speedSlow -= 0.1f;
             speedSlow = Mathf.Clamp(speedSlow, 0, documentedMaxSpeed * 0.5f);
 
-            movingSpeed = Mathf.Sqrt(Mathf.Pow(richAI.velocity.x, 2) + Mathf.Pow(richAI.velocity.z, 2)); //calculate speed vector 
+            movingSpeed = Mathf.Sqrt(Mathf.Pow(pathfindingAI.velocity.x, 2) + Mathf.Pow(pathfindingAI.velocity.z, 2)); //calculate speed vector 
             float threshold = .01f;
             /*if (formPos.showSoldierModels)
             { 
@@ -585,14 +602,14 @@ public class SoldierModel : MonoBehaviour
         }
         if (rangedModule != null && rangedModule.rangedNeedsLoading)
         {
-            if (rangedModule.loadingRightNow && stopWhenLoading && richAI.remainingDistance <= remainingDistanceThreshold) //if attacking, and needs to stop when attacking, and in formation position
+            if (rangedModule.loadingRightNow && stopWhenLoading && pathfindingAI.remainingDistance <= remainingDistanceThreshold) //if attacking, and needs to stop when attacking, and in formation position
             {
                 //Debug.Log("ranged module");
                 SetMoving(false);
                 return;
             }
         }
-        else if (attacking && stopWhenAttacking && richAI.remainingDistance <= remainingDistanceThreshold) //if attacking, and needs to stop when attacking, and in formation position
+        else if (attacking && stopWhenAttacking && pathfindingAI.remainingDistance <= remainingDistanceThreshold) //if attacking, and needs to stop when attacking, and in formation position
         {
             //Debug.Log("attacking and stop");
             SetMoving(false);
@@ -606,7 +623,7 @@ public class SoldierModel : MonoBehaviour
         }
         else //if not attacking, check
         {
-            if (richAI.remainingDistance > remainingDistanceThreshold) // if there's still path to traverse 
+            if (pathfindingAI.remainingDistance > remainingDistanceThreshold) // if there's still path to traverse 
             {
                 SetMoving(true);
 
@@ -636,7 +653,7 @@ public class SoldierModel : MonoBehaviour
     private void SetMoving(bool val)
     {
         moving = val;
-        richAI.canMove = val; //we can move
+        pathfindingAI.canMove = val; //we can move
         //animator.SetBool("moving", val); //and animations will match 
         animator.SetBool(AnimatorDefines.movingID, val);
     }
@@ -1049,7 +1066,7 @@ public class SoldierModel : MonoBehaviour
         missile.formPosParent = formPos; //communicate some info to the missile
         missile.soldierParent = this;
         missile.startingPos = startingPos;
-        richAI.enabled = false; //disable pathing for now 
+        pathfindingAI.enabled = false; //disable pathing for now 
         //missile.LaunchProjectile(targetPos, angle, deviation); //fire at the position of the target with a clamped angle and deviation based on distance 
         missile.LaunchBullet(dir, power);
     }
@@ -1141,8 +1158,8 @@ public class SoldierModel : MonoBehaviour
         animator.enabled = true;
         animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
         SetAlive(false);
-        richAI.canMove = false;
-        richAI.enableRotation = false;
+        pathfindingAI.canMove = false;
+        pathfindingAI.enableRotation = false;
 
         ClearReferencesInPositionAndRow();
         //
@@ -1159,8 +1176,7 @@ public class SoldierModel : MonoBehaviour
         {
             formPos.soldierBlock.SelfDestruct();
         }
-        richAI.enabled = false;
-        aiDesSet.enabled = false; 
+        pathfindingAI.enabled = false; 
         //Invoke("DelayedDisable", 2);
         if (renderers.Count > 0)
         { 
@@ -1308,7 +1324,7 @@ public class SoldierModel : MonoBehaviour
     
     public void CheckIfIdle()
     {
-        if (!richAI.canMove) // && formPos.listOfNearbyEnemies.Count == 0
+        if (!pathfindingAI.canMove) // && formPos.listOfNearbyEnemies.Count == 0
         { 
             currentIdleTimer += UnityEngine.Random.Range(0, 2);
             if (currentIdleTimer >= reqIdleTimer)
@@ -1387,7 +1403,7 @@ public class SoldierModel : MonoBehaviour
 
     private void PointTowards(Vector3 targetDirection)
     {
-        richAI.enableRotation = false;
+        pathfindingAI.enableRotation = false;
         Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, Time.deltaTime, 0.0f);
         newDirection.y = 0; //keep level
         transform.rotation = Quaternion.LookRotation(newDirection);

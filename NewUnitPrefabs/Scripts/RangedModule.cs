@@ -94,7 +94,7 @@ public class RangedModule : MonoBehaviour
             CancelLoading();
             return;
         }
-        if (model.richAI.remainingDistance > model.remainingDistanceThreshold)
+        if (model.pathfindingAI.remainingDistance > model.remainingDistanceThreshold)
         {
             CancelLoading();
             return;

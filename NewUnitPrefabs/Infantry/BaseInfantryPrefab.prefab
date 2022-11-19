@@ -286,7 +286,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6588230940471953450}
-  - component: {fileID: 516568650834671649}
   - component: {fileID: 516568650834671651}
   - component: {fileID: 6543225988548055444}
   - component: {fileID: 147310995378209704}
@@ -319,20 +318,6 @@ Transform:
   m_Father: {fileID: 7675737144119584954}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &516568650834671649
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6588230940471953445}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9679e68a0f1144e79c664d9a11ca121, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 1
-  target: {fileID: 5632992659982562817}
 --- !u!114 &516568650834671651
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -432,7 +417,7 @@ MonoBehaviour:
   targetEnemy: {fileID: 0}
   pendingLaunched: 0
   clearLineOfSight: 0
-  team: Altgard
+  team: 0
   attackRange: 4.5
   animate: 0
   currentSpeed: 0
@@ -553,6 +538,7 @@ MonoBehaviour:
   ignoreAsNearby: 0
   getUpTime: 0
   rangedModule: {fileID: 0}
+  moveToPosition: {fileID: 5632992659982562817}
   previousLocation: {x: 0, y: 0, z: 0}
   newMaxSpeed: 0
   waitingForAttackOver: 0
@@ -1258,7 +1244,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5632992659982562817}
   m_Layer: 24
-  m_Name: target
+  m_Name: PositionToMoveTo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

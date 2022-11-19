@@ -121,9 +121,8 @@ public class Position : MonoBehaviour
     private void UpdateModelPosition()
     { 
         if (assignedSoldierModel != null)
-        { 
-            AIDestinationSetter aiDesSet = assignedSoldierModel.GetComponent<AIDestinationSetter>();
-            aiDesSet.target = transform; //it will go here
+        {  
+            assignedSoldierModel.target = transform; //it will go here
             if (assignedSoldierModel.modelPosition != null)
             { 
                 assignedSoldierModel.modelPosition.assignedSoldierModel = null; //remove from original position

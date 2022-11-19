@@ -393,6 +393,7 @@ public class OverworldManager : MonoBehaviour
         else
         {
             townOptionsParent.SetActive(false);
+            localeParent.SetActive(false);
         }
     }
     private void UpdateTownInfo()
@@ -834,9 +835,17 @@ public class OverworldManager : MonoBehaviour
         navIndicator.gameObject.SetActive(false);
     }
 
+    public void PlayerBattleGroupEnteredLocale()
+    {
+        UpdateLocaleInfo();
+    }
+    public void PlayerBattleGroupExitedLocale()
+    {
+        localeParent.SetActive(false);
+    }
     private void UpdateLocaleInfo()
     {
-        var locale = selectedArmy.currentLocale;
+        var locale = playerBattleGroup.currentLocale;
         if (locale.investigated)
         {
             localeExploreButton.interactable = false;
@@ -851,10 +860,9 @@ public class OverworldManager : MonoBehaviour
     } 
     public void ExploreLocale()
     {
-        dialogueEvent = false;
-        localeArmy = selectedArmy;
-        DialogueScriptableObject dialogue = selectedArmy.currentLocale.localeInvestigationDialogue;
-        selectedArmy.currentLocale.investigated = true;
+        dialogueEvent = false; 
+        DialogueScriptableObject dialogue = playerBattleGroup.currentLocale.localeInvestigationDialogue;
+        playerBattleGroup.currentLocale.investigated = true;
         DialogueManager.Instance.loadedDialogue = dialogue;
         DialogueManager.Instance.StartDialogue();
         localeParent.SetActive(false);
