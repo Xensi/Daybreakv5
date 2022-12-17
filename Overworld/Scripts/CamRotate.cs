@@ -55,50 +55,54 @@ public class CamRotate : MonoBehaviour
         for (int i = 0; i < allForms.Length; i++) //determine if formation is in our view frustum
         {
             FormationPosition form = allForms[i];
-            if (GeometryUtility.TestPlanesAABB(planes, form.cameraCollider.bounds)) //in bounds, check distance
-            { 
-                float distance = Vector3.Distance(transform.position, form.transform.position);
-                float reqDistance = QualitySettings.lodBias * 25;
-                Color color = form.farAwayIcon.color;
-                float gradual = 1000;
-                //form.showSoldierModels = true;
-                if (distance > reqDistance)
+            if (form != null && form.cameraCollider != null)
+            {
+                if (GeometryUtility.TestPlanesAABB(planes, form.cameraCollider.bounds)) //in bounds, check distance
                 {
-                    float math = Mathf.Clamp((Mathf.Exp(distance - reqDistance) - 1) / gradual, 0, 1);
-                    color.a = math;
-                    if (math >= 1)
+                    float distance = Vector3.Distance(transform.position, form.transform.position);
+                    float reqDistance = QualitySettings.lodBias * 25;
+                    Color color = form.farAwayIcon.color;
+                    float gradual = 1000;
+                    //form.showSoldierModels = true;
+                    if (distance > reqDistance)
                     {
-                        form.ShowHideSoldiers(false);
+                        float math = Mathf.Clamp((Mathf.Exp(distance - reqDistance) - 1) / gradual, 0, 1);
+                        color.a = math;
+                        if (math >= 1)
+                        {
+                            form.ShowHideSoldiers(false);
+                        }
+                        else if (math > 0)
+                        {
+                            form.ShowHideSoldiers(true);
+                        }
                     }
-                    else if (math > 0)
-                    { 
+                    else
+                    {
+                        color.a = 0;
                         form.ShowHideSoldiers(true);
                     }
+                    form.farAwayIcon.color = color;
+                    form.frontIcon.color = color;
+                    if (form.selectedSprite != null)
+                    {
+                        form.selectedSprite.color = color;
+                    }
                 }
-                else
+                else //out of bounds, show form icon and hide soldiers
                 {
-                    color.a = 0;
-                    form.ShowHideSoldiers(true);
-                }
-                form.farAwayIcon.color = color;
-                form.frontIcon.color = color;
-                if (form.selectedSprite != null)
-                {
-                    form.selectedSprite.color = color;
+                    Color color = form.farAwayIcon.color;
+                    color.a = 1;
+                    form.ShowHideSoldiers(false);
+                    form.farAwayIcon.color = color;
+                    form.frontIcon.color = color;
+                    if (form.selectedSprite != null)
+                    {
+                        form.selectedSprite.color = color;
+                    }
                 }
             }
-            else //out of bounds, show form icon and hide soldiers
-            {
-                Color color = form.farAwayIcon.color;
-                color.a = 1;
-                form.ShowHideSoldiers(false);
-                form.farAwayIcon.color = color;
-                form.frontIcon.color = color;
-                if (form.selectedSprite != null)
-                {
-                    form.selectedSprite.color = color;
-                }
-            }
+            
         } 
     } 
     private void Update()

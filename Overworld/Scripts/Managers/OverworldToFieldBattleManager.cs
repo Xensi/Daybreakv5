@@ -41,6 +41,7 @@ public class OverworldToFieldBattleManager : MonoBehaviour
             case possibleGameStates.Menu:
                 break;
             case possibleGameStates.FieldBattle:
+            case possibleGameStates.Overworld:
                 if (Input.GetKeyDown("escape"))
                 {
                     if (paused)
@@ -59,41 +60,44 @@ public class OverworldToFieldBattleManager : MonoBehaviour
     }
     void PauseGame()
     {
+        if (state == possibleGameStates.Overworld)
+        {
+            OverworldManager.Instance.fleeBattleButton.interactable = false;
+        }
+        else
+        {
+            OverworldManager.Instance.fleeBattleButton.interactable = true;
+        }
         Time.timeScale = 0;
         paused = true;
         PauseParent.SetActive(true);
+        MusicManager.Instance.PauseMusic();
     }
-    void UnpauseGame()
+    public void UnpauseGame()
     {
         Time.timeScale = 1;
         paused = false;
         PauseParent.SetActive(false);
+        MusicManager.Instance.UnpauseMusic();
     }
-    public void StartFieldBattleWithEnemyArmy(Army army)
+    public void StartFieldBattleWithEnemyBattleGroup(BattleGroup battleGroup)
     {
-        OverworldManager.Instance.armyThatWeAreFighting = army;
-        UnitManager.Instance.unitsInEnemyArmyList = army.unitsInArmyList;
+        OverworldManager.Instance.enemyBattleGroup = battleGroup;
+        UnitManager.Instance.unitsInEnemyArmyList = battleGroup.listOfUnitsInThisArmy;
         state = possibleGameStates.FieldBattle;
         OverworldParent.SetActive(false);
         FieldBattleParent.SetActive(true);
         LoadScenario();
         AllowPlacementOfPlayerTroops();
-    }
-    public void StartFieldBattle()
-    {
-        UnitManager.Instance.unitsInEnemyArmyList = UnitManager.Instance.unitsInTestArmyList;
-        state = possibleGameStates.FieldBattle;
-        OverworldParent.SetActive(false);
-        FieldBattleParent.SetActive(true); 
-        LoadScenario(); 
-        AllowPlacementOfPlayerTroops();
-    }
+    } 
     public void EndFieldBattle()
     {
         EraseAllTroopsAndClearArrays();
         state = possibleGameStates.Overworld;
+        BattleGroupManager.Instance.ForcePause();
         FieldBattleParent.SetActive(false);
         OverworldParent.SetActive(true);
+        Cursor.lockState = CursorLockMode.Confined;
     } 
     public void UpdateUnitManagerArmies()
     {
@@ -104,9 +108,10 @@ public class OverworldToFieldBattleManager : MonoBehaviour
             UnitManager.Instance.UpdateBattleGroupWithFormation(OverworldManager.Instance.playerBattleGroup, FightManager.Instance.playerControlledFormations);
         }
         //also update the opponent's army
-        if (OverworldManager.Instance.enemyBattleGroup != null)
+        if (OverworldManager.Instance.enemyBattleGroup != null) 
         { 
             UnitManager.Instance.UpdateBattleGroupWithFormation(OverworldManager.Instance.enemyBattleGroup, FightManager.Instance.enemyControlledFormations);
+            OverworldManager.Instance.enemyBattleGroup.SetTriumphTimer();
         }
     }
     private void EraseAllTroopsAndClearArrays()
@@ -115,12 +120,16 @@ public class OverworldToFieldBattleManager : MonoBehaviour
         {
             if (FightManager.Instance.allArray[i] != null)
             { 
-                Destroy(FightManager.Instance.allArray[i].soldierBlock.gameObject);
+                if (FightManager.Instance.allArray[i].soldierBlock != null)
+                {
+                    Destroy(FightManager.Instance.allArray[i].soldierBlock.gameObject);
+                }
             }
         }
         FightManager.Instance.allArray = new FormationPosition[0];
         FightManager.Instance.playerControlledFormations.Clear();
         FightManager.Instance.enemyControlledFormations.Clear();
+        
     }
     private void LoadScenario()
     {

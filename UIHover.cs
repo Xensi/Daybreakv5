@@ -18,4 +18,9 @@ public class UIHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         hovering = false;
         FightManager.Instance.hoveringUI = false; 
     }
+    private void OnDisable()
+    { 
+        hovering = false;
+        FightManager.Instance.hoveringUI = false;
+    }
 }

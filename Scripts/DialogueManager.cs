@@ -320,36 +320,7 @@ public class DialogueManager : MonoBehaviour
     {
         checkedCondition = false;
         string commandEnd = loadedDialogue.commandToExecuteEnd;
-        if (commandEnd == "startTutorial")
-        {
-            StartTutorial();
-        }
-        if (commandEnd == "startDayOfGlory")
-        {
-            //Debug.Log("Starting day of glory");
-            //gameInit.strafeCam.SetActive(true);
-            //gameInit.cinematicCam.SetActive(false);
-        }
-        if (commandEnd == "startTutorialPlacement")
-        {
-            StartTutorialPlacement();
-        }
-        if (commandEnd == "enableChessControllerInput")
-        {
-            //gameInit.chessController.AllowInput = true;
-        }
-        if (commandEnd == "enableExecution")
-        {
-            //gameInit.executeButtonParent.SetActive(true);
-        }
-        if (commandEnd == "ignoreTutorial")
-        {
-            IgnoreTutorial();
-        }
-        if (commandEnd == "endTutorial")
-        {
-            EndTutorial();
-        }
+        
         if (commandEnd == "moraleGain")
         {
             if (overworldManager.localeArmy != null)
@@ -424,7 +395,7 @@ public class DialogueManager : MonoBehaviour
             {
                 if (overworldManager.localeArmy.currentSupplyPoint != null)
                 {
-                    overworldManager.localeArmy.currentSupplyPoint.reservedProvisions -= loadedDialogue.commandVar;
+                    overworldManager.localeArmy.currentSupplyPoint.amountOfProvisionsToReserve -= loadedDialogue.commandVar;
                 }
             }
         }
@@ -481,12 +452,8 @@ public class DialogueManager : MonoBehaviour
         }
         if (commandEnd == "gainSutler")
         {
-            overworldManager.sutlerParent.SetActive(true);
-        }
-        if (commandEnd == "testBattle")
-        { 
-            OverworldToFieldBattleManager.Instance.StartFieldBattle();
-        }
+            OverworldManager.Instance.sutlerParent.SetActive(true);
+        } 
     }
     private void EndDialogue()
     {
@@ -499,6 +466,7 @@ public class DialogueManager : MonoBehaviour
             //Debug.Log("End of conversation");
             //dialogueParent.SetActive(false);
             Tween tween = dialogueParent.transform.DOMove(new Vector3(dialogueParent.transform.position.x, startingYPos, dialogueParent.transform.position.z), .5f).SetEase(Ease.InOutQuad);
+            OverworldManager.Instance.DialogueOver();
         }
         else if (checkedCondition)
         {
@@ -647,257 +615,6 @@ public class DialogueManager : MonoBehaviour
             }
         }*/
     }
-
-    //FIELD BATTLE STUFF; WILL BE MIGRATED TO FIELD BATTLE MANAGER
-
-    public void ActivatePlacementScreen()
-    {
-        /*gameInit.board.placingPieces = true;
-        gameInit.placingUnitsScreen.SetActive(true);
-        var text = gameInit.placingUnitsAlertText.GetComponentInChildren<TMP_Text>();
-        text.text = "Select a unit to place on the field.";
-        gameInit.image.SetActive(true);
-        gameInit.placingUnitsAlertText.SetActive(true);
-        //var i = 0;
-
-        List<UIButton> buttonsToDestroy = new List<UIButton>();
-        foreach (var button in gameInit.board.unitButtonsList)
-        {
-            buttonsToDestroy.Add(button);
-        }
-        foreach (var item in buttonsToDestroy)
-        {
-            gameInit.board.unitButtonsList.Remove(item);
-            Destroy(item);
-        }
-
-        */
-        //gameInit.board.GenerateButtonsFromSavedUnits();
-    }
-    private void DestroyAndLoadLevelUnitList(string level) // will destroy saved units list. useful if a level doesn't require units from a previous level
-    {
-        /*List<UnitInformationScript> toDestroyList = new List<UnitInformationScript>();
-        foreach (var item in gameInit.saveInfoObject.listOfSavedUnits)
-        {
-            toDestroyList.Add(item);
-        }
-
-        foreach (var item in toDestroyList)
-        {
-            gameInit.saveInfoObject.listOfSavedUnits.Remove(item);
-            Destroy(item);
-        }
-        //this the list of saved units
-
-        foreach (var levelUnitList in levelUnitLists)
-        {
-            //Debug.Log(levelUnitList.ToString());
-            if (levelUnitList.ToString() == level + "UnitList (UnitListScriptableObject)")
-            {
-                gameInit.saveInfoObject.list = levelUnitList.unitList;
-            }
-        }
-        //loads the correct unit list
-        gameInit.saveInfoObject.GenerateModifiableScripObjsAsChildren(); //generates them*/
-    }
-    public void StartTestingGrounds()
-    {
-        LoadLevelSetup("Tutorial");
-    }
-    public void FastLaunchDayOfGlory()
-    {
-        LoadLevelSetup("DayOfGlory");
-    }
-    public void LoadLevelSetup(string level)
-    {
-       /* gameInit.strafeCam.transform.position = cameraPosTutorial.position;
-        gameInit.strafeCam.SetActive(true);
-        gameInit.cinematicCam.SetActive(false);
-
-        cinematicParent.SetActive(false);
-
-        gameInit.SelectLevel(level); //loads the correct board layout (pieces positioning)
-        gameInit.levelGen.SelectLevel(level); //loads correct map, and placement map*/
-
-        StartCoroutine(WaitForASec(level));
-    }
-
-    private IEnumerator WaitForASec(string level)
-    {
-        yield return new WaitForSecondsRealtime(0.01f);
-
-        FastLaunch(level);
-    }
-
-    private void FastLaunch(string level)
-    {
-        /*gameInit.CreateSinglePlayerBoard(); //enables execute button, creates board, finds board for level gen, generates level, finds board
-        chessUI.OnSingleplayerModeSelected(); //simply disables some screens
-        gameInit.InitializeSinglePlayerController(); //creates units
-        DestroyAndLoadLevelUnitList(level);
-        gameInit.board.GenerateButtonsFromSavedUnits();
-
-        gameInit.chessController.AllowInput = true;
-        gameInit.placingUnitsScreen.SetActive(true);
-        gameInit.executeButtonParent.SetActive(true);
-        gameInit.unreadyButtonParent.SetActive(true);*/
-    }
-
-    public void DestroyLevel(string level)
-    {
-
-        //gameInit.levelGen.DestroyLevel(level);
-    }
-
-    public void LoadLevel(string level) //use to swap levels on the fly. 
-    {
-        //gameInit.levelGen.DestroyLevel();
-        //gameInit.levelGen.DestroyLevel(level);
-
-        //gameInit.SelectLevel(level); //loads the correct board layout (pieces positioning)
-        //gameInit.levelGen.SelectLevel(level); //loads correct map, and placement map
-        //if board already exists then we should just generate the level
-        //gameInit.levelGen.GenerateLevel();
-        //if controller already exists then don't make another one
-
-        //save units on your team
-        //gameInit.saveInfoObject.SaveExistingPieceInfoInScripObjs();
-        DestroyAndLoadLevelUnitList(level);
-
-        //destroy units on board
-        //Piece[] AllPieces = FindObjectsOfType<Piece>();
-        /*foreach (var piece in AllPieces)
-        {
-            piece.ImmediateRemoval();
-            foreach (var corpse in piece.deadSoldiers) //delete corpses
-            {
-                Destroy(corpse);
-            }
-            foreach (var projectile in piece.childProjectiles)
-            {
-                Destroy(projectile);
-            }
-        }
-*/
-        //if (gameInit.board == null)
-        {
-        //    gameInit.CreateSinglePlayerBoard();
-        }
-
-        //gameInit.InitializeSinglePlayerController(); //creates units
-        //create new units from loadout
-        //gameInit.chessController.CreatePiecesFromLayout(gameInit.boardLevel);
-        //enable placement again
-        ActivatePlacementScreen();
-    }
-
-    //TUTORIAL STUFF; WILL BE MIGRATED TO TUTORIAL MANAGER
-    
-    public void StartTutorial()
-    {
-        //gameInit.inTutorial = true;
-        //chessUI.menuOptionsParent.SetActive(false);
-        //chessUI.BG.gameObject.SetActive(false);
-        Tween tween = fadeToBlack.DOFade(1, 1).SetEase(Ease.InOutQuad);//dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
-        tween.OnComplete(StartTutorial2);
-
-    }
-
-    private void StartTutorial2()
-    {
-        //gameInit.strafeCam.transform.position = cameraPosTutorial.position;
-       // gameInit.strafeCam.SetActive(true);
-        //gameInit.cinematicCam.SetActive(false);
-
-        cinematicParent.SetActive(false);
-
-        //gameInit.SelectLevel("Tutorial"); //loads the correct board layout (pieces positioning)
-        //gameInit.levelGen.SelectLevel("Tutorial"); //loads correct map, and placement map
-
-        StartCoroutine(Tutorial3());
-    }
-
-    private IEnumerator Tutorial3()
-    {
-        yield return new WaitForSecondsRealtime(.01f);
-
-        //gameInit.CreateSinglePlayerBoard(); //enables execute button, creates board, finds board for level gen, generates level, finds board
-        //chessUI.OnSingleplayerModeSelected(); //simply disables some screens
-        //gameInit.InitializeSinglePlayerController();
-        DestroyAndLoadLevelUnitList("Tutorial");
-        //gameInit.board.GenerateButtonsFromSavedUnits();
-
-
-        //gameInit.chessController.AllowInput = false;
-        Tween tween = fadeToBlack.DOFade(0, 1).SetEase(Ease.InOutQuad);//dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
-        tween.OnComplete(StartTutorial3);
-    }
-
-    private void StartTutorial3()
-    {
-        SelectDialogue("Actual1");
-    }
-
-    void StartTutorialPlacement()
-    {
-
-        //gameInit.placingUnitsScreen.SetActive(true);
-    }
-    public void ConfirmedUnitPlacementTutorial()
-    {
-        SelectDialogue("Actual3");
-    }
-
-    public void MovementMade()
-    {
-        SelectDialogue("Actual5");
-    }
-    private void EndTutorial()
-    {
-        //gameInit.chessController.AllowInput = false;
-        Tween tween = fadeToBlack.DOFade(1, 1).SetEase(Ease.InOutQuad);
-        tween.OnComplete(EndTutorial2);
-    }
-    private void EndTutorial2()
-    {
-        LoadLevel("HemmedIn");
-        Tween tween = fadeToBlack.DOFade(0, 1).SetEase(Ease.InOutQuad);
-        tween.OnComplete(EndTutorial3);
-    }
-    private void EndTutorial3()
-    {
-        //gameInit.chessController.AllowInput = true;
-        //Debug.Log("tutorial over");
-    }
-
-    private void IgnoreTutorial()
-    {
-        //chessUI.menuOptionsParent.SetActive(false);
-        //chessUI.BG.gameObject.SetActive(false);
-        Tween tween = fadeToBlack.DOFade(1, 1).SetEase(Ease.InOutQuad);
-        tween.OnComplete(IgnoreTutorial2);
-    }
-
-    private void IgnoreTutorial2()
-    {
-       /* gameInit.strafeCam.transform.position = cameraPosTutorial.position;
-        gameInit.strafeCam.SetActive(true);
-        gameInit.cinematicCam.SetActive(false);
-        cinematicParent.SetActive(false);
-
-        gameInit.SelectLevel("HemmedIn"); //loads the correct board layout (pieces positioning)
-        gameInit.levelGen.SelectLevel("HemmedIn"); //loads correct map, and placement map
-        gameInit.CreateSinglePlayerBoard(); //enables execute button, creates board, finds board for level gen, generates level, finds board
-        chessUI.OnSingleplayerModeSelected(); //simply disables some screens
-        gameInit.InitializeSinglePlayerController();
-        DestroyAndLoadLevelUnitList("HemmedIn");
-        gameInit.board.GenerateButtonsFromSavedUnits();
-
-
-        gameInit.chessController.AllowInput = false; //needs to show up after chesscontroller is made 
-
-        Tween tween = fadeToBlack.DOFade(0, 1).SetEase(Ease.InOutQuad);//dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
-        tween.OnComplete(IgnoreTutorial3);*/
-    }
+     
      
 }

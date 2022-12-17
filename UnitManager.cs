@@ -37,13 +37,20 @@ public class UnitManager : MonoBehaviour
     public void UpdateBattleGroupWithFormation(BattleGroup battleGroup, List<FormationPosition> listOfFormationPositions)
     {
         battleGroup.listOfUnitsInThisArmy.Clear();
+        battleGroup.casualtiesInflictedThisBattle = 0;
         for (int i = 0; i < listOfFormationPositions.Count; i++)
         {
             if (listOfFormationPositions[i] != null)
             {
-                battleGroup.listOfUnitsInThisArmy.Add(ConvertFormationToUnitInfoClass(listOfFormationPositions[i]));
+                battleGroup.casualtiesInflictedThisBattle += listOfFormationPositions[i].numKills;
+
+                if (listOfFormationPositions[i].numberOfAliveSoldiers > 0)
+                { 
+                    battleGroup.listOfUnitsInThisArmy.Add(ConvertFormationToUnitInfoClass(listOfFormationPositions[i]));
+                }
             }
         }
+        battleGroup.threatValue = battleGroup.CalculateThreatValueOfArmy();
     }
     private UnitInfoClass ConvertFormationToUnitInfoClass(FormationPosition form)
     {

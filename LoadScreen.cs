@@ -25,8 +25,8 @@ public class LoadScreen : MonoBehaviour
         {
             levelLoad = menu.levelLoad;
             loadingOperation = SceneManager.LoadSceneAsync(sceneToLoad, LoadSceneMode.Additive);
-            //loadingOperation = SceneManager.LoadSceneAsync(sceneToLoad); //load overworld, of course 
-            loadOp2 = SceneManager.LoadSceneAsync("Level" + levelLoad, LoadSceneMode.Additive);
+            //loadingOperation = SceneManager.LoadSceneAsync(sceneToLoad); //load overworld, of course  
+            //loadOp2 = SceneManager.LoadSceneAsync("Level" + levelLoad, LoadSceneMode.Additive);
             menu.ui.SetActive(false);
             SceneManager.UnloadSceneAsync("MainMenu");
         }
@@ -44,14 +44,18 @@ public class LoadScreen : MonoBehaviour
     }
     void Update()
     {
-        progressBar.value = Mathf.Clamp01(((loadingOperation.progress + loadOp2.progress)/2) / 0.9f);
-        if (loadingOperation.progress >= 1 && loadOp2.progress >= 1 && !finishedLoad)
+        progressBar.value = Mathf.Clamp01(loadingOperation.progress / 0.9f); //+ loadOp2.progress
+        if (loadingOperation.progress >= 1 && !finishedLoad) //&& loadOp2.progress >= 1 
         {
             finishedLoad = true;
 
             //FightManager fightmanager = FindObjectOfType<FightManager>();
             FightManager.Instance.UpdateAllFormArrayAndStartAIToBeginBattle();
             SceneManager.UnloadSceneAsync("LoadGame");
+            if (menu.loadSavedGame)
+            {
+                GameDataManager.Instance.readFile();
+            }
         }
     }
 }

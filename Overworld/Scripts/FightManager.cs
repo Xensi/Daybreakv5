@@ -289,6 +289,8 @@ public class FightManager : MonoBehaviour
             //item.ClearOrders(); //resets targets
             id++;
         }
+
+        MusicManager.Instance.PlayCombatMusicBasedOnBattleSize();
         InvokeRepeating("CheckIfFieldBattleOver", 2, 2);
     } 
     private void AIBrain()
@@ -408,50 +410,62 @@ public class FightManager : MonoBehaviour
             }
         } 
     }
-
-    private void CheckIfFieldBattleOver()
+    public void FleeFromFieldBattle()
     {
-        bool gameIsOver = false;
-        int victoryStatus = 0; //0 is undecided, 1 is player, 2 is ai 
-        int numberOfLostFormations = 0;
-        int numberOfAILostFormations = 0;
-        foreach (FormationPosition form in playerControlledFormations)
-        {
-            if (form.numberOfAliveSoldiers <= 0 || form.fleeing || form == null) //if all dead, or fleeing
-            {
-                numberOfLostFormations++;
-            } 
-        } 
-        foreach (FormationPosition form in enemyControlledFormations)
-        {
-            if (form.numberOfAliveSoldiers <= 0 || form.fleeing || form == null) //if all dead, or fleeing
-            {
-                numberOfAILostFormations++;
-            } 
-        }
-        if (numberOfAILostFormations >= enemyControlledFormations.Count)
-        {
-            gameIsOver = true;
-            victoryStatus = 1;
-        }
-        if (numberOfLostFormations >= playerControlledFormations.Count)
-        {
-            gameIsOver = true;
-            victoryStatus = 2;
-        }
-        if (gameIsOver)
-        {
-            if (victoryStatus == 1)
-            { 
-                DisplayVictory();
-            }
-            else if (victoryStatus == 2)
-            { 
-                DisplayDefeat();
-            }
+        if (OverworldToFieldBattleManager.Instance.state == OverworldToFieldBattleManager.possibleGameStates.FieldBattle)
+        { 
+            DisplayDefeat();
             OverworldToFieldBattleManager.Instance.UpdateUnitManagerArmies();
             Invoke("BattleOver", 5);
         }
+    }
+    private void CheckIfFieldBattleOver()
+    {
+        if (OverworldToFieldBattleManager.Instance.state == OverworldToFieldBattleManager.possibleGameStates.FieldBattle)
+        {
+            bool gameIsOver = false;
+            int victoryStatus = 0; //0 is undecided, 1 is player, 2 is ai 
+            int numberOfLostFormations = 0;
+            int numberOfAILostFormations = 0;
+            foreach (FormationPosition form in playerControlledFormations)
+            {
+                if (form.numberOfAliveSoldiers <= 0 || form.fleeing || form == null) //if all dead, or fleeing
+                {
+                    numberOfLostFormations++;
+                }
+            }
+            foreach (FormationPosition form in enemyControlledFormations)
+            {
+                if (form.numberOfAliveSoldiers <= 0 || form.fleeing || form == null) //if all dead, or fleeing
+                {
+                    numberOfAILostFormations++;
+                }
+            }
+            if (numberOfAILostFormations >= enemyControlledFormations.Count)
+            {
+                gameIsOver = true;
+                victoryStatus = 1;
+            }
+            if (numberOfLostFormations >= playerControlledFormations.Count)
+            {
+                gameIsOver = true;
+                victoryStatus = 2;
+            }
+            if (gameIsOver)
+            {
+                if (victoryStatus == 1)
+                {
+                    DisplayVictory();
+                }
+                else if (victoryStatus == 2)
+                {
+                    DisplayDefeat();
+                }
+                OverworldToFieldBattleManager.Instance.UpdateUnitManagerArmies();
+                Invoke("BattleOver", 5);
+            }
+        }
+        
     }
     [SerializeField] private GameObject victoryDisplay;
     [SerializeField] private GameObject defeatDisplay;
@@ -478,6 +492,7 @@ public class FightManager : MonoBehaviour
         CancelInvoke("CheckIfFieldBattleOver");
         HideOutcomeDisplays();
         OverworldToFieldBattleManager.Instance.EndFieldBattle();
+        MusicManager.Instance.PlayOverworldMusic();
     }
     private void AfterBattleCleanup()
     { 

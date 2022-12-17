@@ -9,6 +9,7 @@ public class MainMenu : MonoBehaviour
     public string sceneToLoad = "LoadGame";
     public int levelLoad = 1;
     public GameObject ui;
+    public bool loadSavedGame = false;
     // Start is called before the first frame update
     void Start()
     { 
@@ -16,6 +17,11 @@ public class MainMenu : MonoBehaviour
     }
     public void StartGame()
     {
+        SceneManager.LoadScene(sceneToLoad, LoadSceneMode.Additive);
+    }
+    public void LoadGame()
+    {
+        loadSavedGame = true;
         SceneManager.LoadScene(sceneToLoad, LoadSceneMode.Additive);
     }
     public void ChooseLevel(int level)

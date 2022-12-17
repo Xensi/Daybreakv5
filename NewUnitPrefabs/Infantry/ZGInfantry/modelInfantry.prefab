@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6909705476253476, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 3971422626699966185, guid: ea9127458b64e3645923071d64961f81, type: 3}
       propertyPath: m_Center.z
       value: 1.74
@@ -17,7 +21,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
       propertyPath: armor
-      value: 10
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
       propertyPath: damage

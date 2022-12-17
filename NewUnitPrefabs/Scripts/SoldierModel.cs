@@ -88,6 +88,19 @@ public class SoldierModel : MonoBehaviour
     #endregion
 
     #region Status 
+    public enum AnimationState
+    {
+        Idle,
+        Attacking,
+        Moving,
+        Damaged,
+        Braced,
+        Deployed,
+        KnockedDown,
+        Airborne,
+        Loading
+    }
+    public AnimationState currentAnimationState = AnimationState.Idle;
     [HideInInspector] public bool braced = false;
     private bool allowedToDealDamage = true;
     [HideInInspector] public Position modelPosition;
@@ -358,6 +371,32 @@ public class SoldierModel : MonoBehaviour
         if (alive && health <= 0)
         {
             KillThis();
+        }
+    }
+    private void UpdateAnimationState()
+    {
+        switch (currentAnimationState)
+        {
+            case AnimationState.Idle:  
+                break;
+            case AnimationState.Attacking: 
+                break;
+            case AnimationState.Moving: 
+                break;
+            case AnimationState.Damaged: 
+                break;
+            case AnimationState.Braced: 
+                break;
+            case AnimationState.Deployed: 
+                break;
+            case AnimationState.KnockedDown: 
+                break;
+            case AnimationState.Airborne: 
+                break;
+            case AnimationState.Loading: 
+                break;
+            default:
+                break;
         }
     }
 
@@ -1020,7 +1059,7 @@ public class SoldierModel : MonoBehaviour
             if (origin != null)
             {
                 origin.targetEnemy = null;
-                origin.numKills++;
+                origin.formPos.numKills++;
             }
             if (isMagic)
             { 
@@ -1214,7 +1253,7 @@ public class SoldierModel : MonoBehaviour
         nearbyEnemyModels.Clear(); //wipe the list 
         //grab nearby models
         LayerMask layerMask = LayerMask.GetMask("Model"); 
-        int maxColliders = 80; //lower numbers stop working
+        int maxColliders = 320; //lower numbers stop working
         Collider[] colliders = new Collider[maxColliders];
         int numColliders = Physics.OverlapSphereNonAlloc(transform.position, attackRange, colliders, layerMask, QueryTriggerInteraction.Ignore);
         for (int i = 0; i < numColliders; i++) //go for hurtboxes

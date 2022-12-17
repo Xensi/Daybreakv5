@@ -14,6 +14,7 @@ public class RecruitmentManager : MonoBehaviour
 
     [SerializeField] private RecruitmentSlot selectedRecruitmentSlot;
     [SerializeField] private int availableSpoils;
+    public int startingAvailableSpoils;
 
     [SerializeField] private List<ArmyCardScriptableObj> recruitingChoicesMade;
     [SerializeField] private Sprite empty;
@@ -40,17 +41,25 @@ public class RecruitmentManager : MonoBehaviour
         recruitmentParent.SetActive(true);
         DisableRecruitmentOptions(); 
         availableSpoils = OverworldManager.Instance.playerBattleGroup.spoils;
+        startingAvailableSpoils = availableSpoils;
         UpdateSpoilsText();
+        ClearSlots();
     }
     public void HideRecruitmentScreen()
     {
         selectedRecruitmentSlot = null;
         recruitmentParent.SetActive(false);
         DisableRecruitmentOptions();
-        //availableSpoils = targetedArmy.spoils;
         UpdateSpoilsText();
+        ClearSlots();
     }
-
+    private void ClearSlots()
+    {
+        foreach (RecruitmentSlot slot in recruitmentSlots)
+        {
+            ClearInformation(slot);
+        }
+    }
     private void SetInteractiveBasedOnSpoils()
     {
         foreach (RecruitmentOption option in recruitmentOptions)
@@ -85,21 +94,20 @@ public class RecruitmentManager : MonoBehaviour
             }
         } 
         recruitingChoicesMade.Clear();
+        ClearSlots();
+        OverworldManager.Instance.playerBattleGroup.spoils -= startingAvailableSpoils - availableSpoils; //10-5 means spent 5. 10-0 means spent 10. 10-10 = 0
+        OverworldManager.Instance.ShowArmyInfoAndUpdateArmyBars();
     }
 
     public void ClickRecruitmentSlot(RecruitmentSlot slot)
-    {
-
-        selectedRecruitmentSlot = slot;
-        
+    { 
+        selectedRecruitmentSlot = slot; 
         if (selectedRecruitmentSlot.card != null)
         {
             availableSpoils += selectedRecruitmentSlot.card.spoilsCost;
             UpdateSpoilsText();
-            ClearInformation(selectedRecruitmentSlot);
-
-        }
-
+            ClearInformation(selectedRecruitmentSlot); 
+        } 
         //EnableRecruitmentOptions();
         SetInteractiveBasedOnSpoils();
     }

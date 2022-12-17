@@ -98,7 +98,7 @@ public class Caravan : MonoBehaviour
             SupplyPoint collidedGiver = other.gameObject.GetComponent<SupplyPoint>();
             if (collidedGiver == homeSupplySource)
             {
-                collidedGiver.storedProvisions += provisionsCarried;
+                collidedGiver.storedSupplies += provisionsCarried;
                 provisionsCarried = 0;
                 overworldManager.caravans.Remove(this);
                 Destroy(parent);

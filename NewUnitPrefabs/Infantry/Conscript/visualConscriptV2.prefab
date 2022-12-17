@@ -55,6 +55,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: visualConscriptV2
       objectReference: {fileID: 0}
+    - target: {fileID: 3002043239218145805, guid: f1602a916dd6f9848b776ed675ca91e4, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5944d86e9d817a54eab48a44abeceef4, type: 2}
     - target: {fileID: 5866666021909216657, guid: f1602a916dd6f9848b776ed675ca91e4, type: 3}
       propertyPath: m_Controller
       value: 

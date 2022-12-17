@@ -7,6 +7,7 @@ public static class GlobalDefines
     public enum Team
     {
         Altgard,
+        Maukland,
         Zhanguo
     }
     public enum SoldierTypes

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SupplyPoint : MonoBehaviour
-{
+{ 
     public Army armyOnThisSupplyPoint;
     public BattleGroup battleGroupAtThisSupplyPoint;
     public OverworldManager overworldManager;
@@ -12,12 +12,13 @@ public class SupplyPoint : MonoBehaviour
     public int storedSpoils = 10;
     public int reservedSpoils = 7;
     public int extortionReservedSpoils = 5;
-    public int storedProvisions = 10;
-    public int reservedProvisions = 7;
+    public float storedSupplies = 10;
+    public float maxProvisions = 100;
+    public float amountOfProvisionsToReserve = 7;
     public int extortionReservedProvisions = 5;
     //public int maxProvisions = 20;
 
-    public int mood = 0;
+    public float mood = 0;
 
     public string supplyName = "Reevewood";
     public GlobalDefines.Team team = GlobalDefines.Team.Altgard;
@@ -55,6 +56,8 @@ public class SupplyPoint : MonoBehaviour
     //public int supportedArmyRotater = 0;
     //public DialogueScriptableObject dialogueUponRequestingSupplies;
     //public bool suppliesRequestedForFirstTime = false;
+    public float provisionGainRate = 1;
+    private float provisionGainModifier = .1f;
 
     public void Awake()
     {
@@ -65,6 +68,15 @@ public class SupplyPoint : MonoBehaviour
             var oManager = GameObject.FindWithTag("OverworldManager");
             overworldManager = oManager.GetComponent<OverworldManager>();
         }
+    }
+    private void Start()
+    {
+        InvokeRepeating("GainProvisions", 1, 1);
+    }
+    private void GainProvisions()
+    {
+        storedSupplies += provisionGainRate * BattleGroupManager.Instance.timeScale * provisionGainModifier;
+        Mathf.Clamp(storedSupplies, 0, maxProvisions);
     }
 
     public void UpdateRelations()

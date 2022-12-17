@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class OverworldCam : MonoBehaviour
 {
@@ -17,7 +18,8 @@ public class OverworldCam : MonoBehaviour
     public Camera cam;
     public float minZoom = 0.01f;
     public float maxZoom = 100;
-    // Start is called before the first frame update
+    // Start is called before the first frame update 
+    public CinemachineVirtualCamera cinemachine;
     public virtual void Start()
     {
     }
@@ -56,14 +58,14 @@ public class OverworldCam : MonoBehaviour
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         var speed = scroll * scrollSpeed * 1f * Time.deltaTime * Mathf.Sqrt(pos.y+defaultSpeed) / 2;
         //pos.y -= speed;
-        cam.orthographicSize -= speed;
-        if (cam.orthographicSize < minZoom)
+        cinemachine.m_Lens.OrthographicSize -= speed;
+        if (cinemachine.m_Lens.OrthographicSize < minZoom)
         {
-            cam.orthographicSize = minZoom;
+            cinemachine.m_Lens.OrthographicSize = minZoom;
         }
-        else if (cam.orthographicSize > maxZoom)
+        else if (cinemachine.m_Lens.OrthographicSize > maxZoom)
         {
-            cam.orthographicSize = maxZoom;
+            cinemachine.m_Lens.OrthographicSize = maxZoom;
         }
 
 

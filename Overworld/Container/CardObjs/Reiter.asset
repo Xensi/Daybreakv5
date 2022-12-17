@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: Reiter
   m_EditorClassIdentifier: 
   cardName: Reiter
+  cardType: 1
+  cardTeam: 0
   cardIcon: {fileID: 21300000, guid: 141720bf275d039488a24ba21c29666a, type: 3}
   cardTroops: 100
   cardMaxTroops: 100
   cardColor: {r: 0.10980393, g: 0.33333334, b: 0.6431373, a: 1}
-  spoilsCost: 4
+  spoilsCost: 16
+  threatValuePerIndividual: 1

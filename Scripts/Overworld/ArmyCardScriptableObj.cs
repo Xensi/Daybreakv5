@@ -14,4 +14,5 @@ public class ArmyCardScriptableObj : ScriptableObject
     public int cardMaxTroops = 80;
     public Color cardColor;
     public int spoilsCost = 0;
+    public float threatValuePerIndividual = 1;
 }

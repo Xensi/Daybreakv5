@@ -61,7 +61,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3950065472280351257, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
       propertyPath: armor
-      value: 5
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 3950065472280351257, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
       propertyPath: damage
@@ -114,6 +114,10 @@ PrefabInstance:
     - target: {fileID: 3950065472280351257, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
       propertyPath: timeUntilFinishedAttacking
       value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784413231663457449, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
+      propertyPath: m_RootOrder
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}

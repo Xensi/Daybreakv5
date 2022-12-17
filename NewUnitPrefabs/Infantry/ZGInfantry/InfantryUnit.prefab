@@ -16,6 +16,10 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 29422916108755641, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
+      propertyPath: soldierType
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 29422916108755641, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: offsetAmount.z
       value: 0.5
       objectReference: {fileID: 0}

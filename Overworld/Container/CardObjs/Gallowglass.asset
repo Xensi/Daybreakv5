@@ -13,8 +13,11 @@ MonoBehaviour:
   m_Name: Gallowglass
   m_EditorClassIdentifier: 
   cardName: Gallowglass
+  cardType: 1
+  cardTeam: 0
   cardIcon: {fileID: 21300000, guid: 6160716f346b85d4e928a60f2639d7e8, type: 3}
   cardTroops: 80
   cardMaxTroops: 80
   cardColor: {r: 0.14901961, g: 0.33333334, b: 0.58431375, a: 1}
-  spoilsCost: 3
+  spoilsCost: 8
+  threatValuePerIndividual: 2

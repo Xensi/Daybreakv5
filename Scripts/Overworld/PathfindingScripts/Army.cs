@@ -291,25 +291,7 @@ public class Army : MonoBehaviour
             fowUnit.circleRadius = 8;
             size = "Scout";
         }*/
-    }
-    public void SpawnSplitArmy()
-    {
-        for (int i = 0; i < strengthToSplitOff.Count; i++)
-        {
-            if (actuallySplitOffOrNot[i])
-            {
-                Army army = overworldManager.SpawnArmy(transform.position); //create the army
-                army.numberOfUnitsInArmy = strengthToSplitOff[i]; //give it correct strength
-                numberOfUnitsInArmy -= strengthToSplitOff[i]; //subtract strength
-
-                if (army.target != null)
-                {
-                    army.target.position = destinationForSplitOff[i]; //give it a path to the clicked position
-                    ABPath path = army.DrawPath();
-                }
-            }
-        }
-    }
+    } 
     private void OnTriggerEnter(Collider other)
     {
         if (!aiControlled)
@@ -356,7 +338,7 @@ public class Army : MonoBehaviour
         if (!aiControlled && collidedArmy != null && collidedArmy.faction != faction)
         {
             Debug.Log("WAR");
-            OverworldToFieldBattleManager.Instance.StartFieldBattleWithEnemyArmy(collidedArmy);
+            //OverworldToFieldBattleManager.Instance.StartFieldBattleWithEnemyBattleGroup(collidedArmy);
             //numberOfMovementAttempts = 100;
             //collidedArmy.numberOfMovementAttempts = 100;
         } 

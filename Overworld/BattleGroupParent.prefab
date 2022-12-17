@@ -279,7 +279,8 @@ VFXRenderer:
   m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
-  m_Materials: []
+  m_Materials:
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -467,6 +468,11 @@ MonoBehaviour:
   maxMorale: 100
   armyDisplayCards: []
   lineRenderer: {fileID: 4546786721408448688}
+  aiSightDistance: 100
+  aiCanSeePlayer: 0
+  pathfindingAI: {fileID: 0}
+  maxSpeed: 2
+  horses: 0
 --- !u!114 &4546786721408448840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -684,7 +690,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 5
-  radius: 21.64
+  radius: 10
   height: 2
   canMove: 1
   maxSpeed: 1
@@ -704,9 +710,9 @@ MonoBehaviour:
     maximumInterval: 2
     visualizeSensitivity: 0
   targetCompatibility: {fileID: 0}
-  acceleration: 5
+  acceleration: 999
   rotationSpeed: 360
-  slowdownTime: 0.5
+  slowdownTime: 0.01
   endReachedDistance: 0.01
   wallForce: 3
   wallDist: 1
