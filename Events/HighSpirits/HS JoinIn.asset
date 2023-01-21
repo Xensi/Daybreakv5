@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44a2071f90a402e40b49b952701af2a1, type: 3}
+  m_Name: HS JoinIn
+  m_EditorClassIdentifier: 
+  title: A Night to Remember
+  description: Not wanting to dampen the mood, you party with your men. Some supplies
+    are wasted in the ensuing revelry.
+  weight: 1
+  removeFromEventPoolAfterTriggering: 0
+  commands:
+  - command: 0
+    commandNum: 20
+  - command: 1
+    commandNum: -20
+  choices:
+  - eventScriptable: {fileID: 0}
+    choiceText: At least they're happy.
+  endOfEventChain: 1

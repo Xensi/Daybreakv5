@@ -8,23 +8,13 @@ public class EventScriptable : ScriptableObject
 {
     public string title;
     [TextArea(3, 10)]
-    public string description;
-    public string effectDesc;
-    public string choice1;
-    public string choice2;
-    public string choice3;
+    public string description; 
 
-    public enum EventCommands
-    {
-        AddMorale,
-        AddSupplies,
-        AddSpoils,
-        AddUnit
-    }
-    public EventCommands command;
-    public int commandNum;
+    public float weight = 1;
+    public bool removeFromEventPoolAfterTriggering = false;
 
-    public EventScriptable choice1Event;
-    public EventScriptable choice2Event;
-    public EventScriptable choice3Event;  
+    public List<EventCommandClass> commands;
+     
+    public List<ChoiceClass> choices;
+    public bool endOfEventChain = true;
 }

@@ -15,11 +15,14 @@ MonoBehaviour:
   title: High Spirits
   description: "The men celebrate! Spirits are lifted, and the weight of war is lifted\u2014if
     only for a moment."
-  effectDesc: +1 morale.
-  choice1: Join in
-  choice2: Oversee the party
-  choice3: End this foolishness
-  eventCommand: morale 1
-  choice1Event: {fileID: 0}
-  choice2Event: {fileID: 0}
-  choice3Event: {fileID: 0}
+  weight: 1
+  removeFromEventPoolAfterTriggering: 1
+  commands: []
+  choices:
+  - eventScriptable: {fileID: 11400000, guid: 229d0ccb3ee66a44f9965c55c57e1f38, type: 2}
+    choiceText: Join in
+  - eventScriptable: {fileID: 11400000, guid: a3cd13c5346e9114c801ebac7cee11b8, type: 2}
+    choiceText: Oversee the party
+  - eventScriptable: {fileID: 11400000, guid: 4f8b4f438c370a44fbc47905c4043d93, type: 2}
+    choiceText: End this foolishness
+  endOfEventChain: 0

@@ -7,8 +7,6 @@ using System;
 public class BattleGroupManager : MonoBehaviour
 {
 
-    public static BattleGroupManager Instance { get; private set; }
-
     public BattleGroup[] allBattleGroupsArray;
     public SupplyPoint[] allSupplyPointsArray;
     public LocaleInvestigatable[] allLocalesArray;
@@ -17,6 +15,8 @@ public class BattleGroupManager : MonoBehaviour
     public float savedSliderValue = 1;
     public Slider timeSlider;
     public TMP_Text pauseText;
+    public static BattleGroupManager Instance { get; private set; }
+
     private void Awake()
     {
         Instance = this;
@@ -24,6 +24,7 @@ public class BattleGroupManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //timeScale = 0;
         UpdateBattleGroupArray();
         UpdateSupplyPointArray();
         UpdateLocaleArray();
