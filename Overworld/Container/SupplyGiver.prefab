@@ -180,6 +180,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c6aa30e775e79439f969aaaab098c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  localeInvestigationDialogue: {fileID: 0}
+  investigated: 0
+  destroyed: 0
+  localeAppearance: {fileID: 0}
+  destroyedAppearance: {fileID: 0}
+  mapIcon: {fileID: 3861473719155925663}
   armyOnThisSupplyPoint: {fileID: 0}
   battleGroupAtThisSupplyPoint: {fileID: 0}
   overworldManager: {fileID: 0}

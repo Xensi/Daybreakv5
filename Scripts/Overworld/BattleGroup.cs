@@ -32,7 +32,6 @@ public class BattleGroup : MonoBehaviour
     public controlStatus controlledBy = controlStatus.PlayerControlled;
     public GlobalDefines.Team team = GlobalDefines.Team.Altgard;
 
-
     public List<UnitInfoClass> listOfUnitsInThisArmy;
     public Transform aiTarget;
 
@@ -56,7 +55,7 @@ public class BattleGroup : MonoBehaviour
     public float aiPlayerTooCloseDistance = 10;
 
     public bool aiCanSeePlayer = false;
-    public RichAI pathfindingAI;
+    public IAstarAI pathfindingAI;
     public float maxSpeed = 2;
     private float unitSpeedDebuff = 0.1f;
     private float horseSpeedBuff = 0.01f;
@@ -99,7 +98,7 @@ public class BattleGroup : MonoBehaviour
     }
     private void Awake()
     {
-        pathfindingAI = GetComponent<RichAI>();
+        pathfindingAI = GetComponent<IAstarAI>();
     }
     private void Start()
     {

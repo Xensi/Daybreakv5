@@ -7,6 +7,7 @@ public class LocaleInvestigatable : MonoBehaviour
     public SpriteRenderer localeAppearance;
     public Sprite destroyedAppearance;
 
+    public SpriteRenderer mapIcon;
     public void UpdateAppearance()
     {
         if (destroyed)

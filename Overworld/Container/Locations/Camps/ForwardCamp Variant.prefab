@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!65 &1026512355
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5439671063450044401}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.5, y: 1, z: 0.5}
+  m_Center: {x: 0.000030517578, y: 0, z: -0.000030517578}
 --- !u!1001 &8755683309586406299
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7,13 +20,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1563903514922801450, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b76a0514b7d1a1a4297b94823bc5aef0, type: 3}
+    - target: {fileID: 1733981763013741114, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3674928044732158095, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528874, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_Name
-      value: ForwardCamp Variant
+      value: ForwardCamp
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: mood
@@ -48,6 +69,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: storedSupplies
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: talkToDialogue
+      value: 
+      objectReference: {fileID: 11400000, guid: 3b422f4b27c31f245a9e32150ad23c7f, type: 2}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: storedProvisions
       value: 6
       objectReference: {fileID: 0}
@@ -76,8 +105,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.045454547
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.045454547
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.5
+      value: 0.47727272
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalPosition.y
@@ -85,7 +122,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.5
+      value: 0.47727272
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalRotation.w
@@ -93,15 +130,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -118,10 +155,23 @@ PrefabInstance:
     - target: {fileID: 4088390276273729580, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 4422f4284097fdb4ebcd54be132a50b2, type: 3}
+      objectReference: {fileID: 21300000, guid: 790f17d0450a51a4e97b4a0e6beece8c, type: 3}
+    - target: {fileID: 5366174909288178475, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5366174909288178475, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 5985221084514597763, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_Name
       value: Icon
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+--- !u!1 &5439671063450044401 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3674928046426528874, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+  m_PrefabInstance: {fileID: 8755683309586406299}
+  m_PrefabAsset: {fileID: 0}

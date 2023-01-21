@@ -251,6 +251,12 @@ public class OverworldManager : MonoBehaviour
              
         } 
     }
+    public void HideArmyInfo()
+    {
+        armyOptionsParent.SetActive(false);
+        townOptionsParent.SetActive(false);
+        localeParent.SetActive(false);
+    }
     public void ShowArmyInfoAndUpdateArmyBars()
     {
         armyOptionsParent.SetActive(true);

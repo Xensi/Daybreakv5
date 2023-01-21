@@ -13,11 +13,15 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: f6e56c7e23c0c3c4aad287c8a78a84d3, type: 3}
     - target: {fileID: 3674928046426528874, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_Name
-      value: SmallZhanguoCamp
+      value: SmallZhanguoCamp (1)
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528874, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: team
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: isFort
@@ -30,6 +34,10 @@ PrefabInstance:
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: relations
       value: Hostile
+      objectReference: {fileID: 0}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: extortable
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: population
@@ -77,7 +85,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.5
+      value: 0.72727305
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalPosition.y
@@ -85,7 +93,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -30.5
+      value: 0.40909073
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalRotation.w
@@ -113,6 +121,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528879, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4088390276273729580, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 790f17d0450a51a4e97b4a0e6beece8c, type: 3}
+    - target: {fileID: 4088390276273729580, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5366174909288178475, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}

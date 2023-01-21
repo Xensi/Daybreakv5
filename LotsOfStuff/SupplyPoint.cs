@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SupplyPoint : MonoBehaviour
+public class SupplyPoint : LocaleInvestigatable
 { 
     public Army armyOnThisSupplyPoint;
     public BattleGroup battleGroupAtThisSupplyPoint;

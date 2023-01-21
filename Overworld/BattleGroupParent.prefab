@@ -381,7 +381,8 @@ GameObject:
   - component: {fileID: 1989164119020635881}
   - component: {fileID: 4546786721408448691}
   - component: {fileID: 4546786721408448688}
-  - component: {fileID: 4546786721408448689}
+  - component: {fileID: 6967533986382005149}
+  - component: {fileID: 5876123543419886680}
   m_Layer: 31
   m_Name: BattleGroup
   m_TagString: Untagged
@@ -418,6 +419,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f7dad6eac9558b4d96b8757c2c301d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  aiCurrentPriority: 1
+  aiCurrentBehavior: 1
   controlledBy: 0
   team: 0
   listOfUnitsInThisArmy:
@@ -460,8 +463,9 @@ MonoBehaviour:
   aiTarget: {fileID: 4546786719944016382}
   currentSupplyPoint: {fileID: 0}
   currentLocale: {fileID: 0}
-  provisions: 50
-  maxProvisions: 100
+  supplies: 100
+  maxSupplies: 100
+  aiLowSuppliesThreshold: 50
   spoils: 0
   maxSpoils: 100
   morale: 100
@@ -469,10 +473,21 @@ MonoBehaviour:
   armyDisplayCards: []
   lineRenderer: {fileID: 4546786721408448688}
   aiSightDistance: 100
+  aiPlayerTooCloseDistance: 10
   aiCanSeePlayer: 0
-  pathfindingAI: {fileID: 0}
   maxSpeed: 2
   horses: 0
+  allowedToStartCombat: 1
+  aiLastKnownPlayerPosition: {x: 0, y: 0, z: 0}
+  aiPatrolNodes: []
+  aiPatrolIndex: 0
+  aiNearestSupplyPoint: {fileID: 0}
+  provisionsConsumptionRatePerUnit: 1
+  aiVisitedSupplyPoints: []
+  aiTriumphTimer: 0
+  casualtiesInflictedThisBattle: 0
+  reachedDestination: 0
+  threatValue: 0
 --- !u!114 &4546786721408448840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -677,7 +692,7 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
---- !u!114 &4546786721408448689
+--- !u!114 &6967533986382005149
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -686,39 +701,41 @@ MonoBehaviour:
   m_GameObject: {fileID: 4546786721408448845}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce11ea984e202491d9271f53021d8b89, type: 3}
+  m_Script: {fileID: 11500000, guid: 847a14d4dc9cc43679ab34fc78e0182f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 5
-  radius: 10
-  height: 2
-  canMove: 1
-  maxSpeed: 1
-  gravity: {x: NaN, y: NaN, z: NaN}
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 1073741824
-  centerOffsetCompatibility: NaN
-  repathRateCompatibility: NaN
-  canSearchCompability: 0
-  orientation: 0
-  enableRotation: 0
+  version: 4
   autoRepath:
     mode: 2
     interval: 0.5
     sensitivity: 10
     maximumInterval: 2
     visualizeSensitivity: 0
+  canMove: 1
+  speed: 1
+  orientation: 0
+  enableRotation: 0
+  rotationSpeed: 999
+  interpolatePathSwitches: 1
+  switchPathInterpolationSpeed: 5
   targetCompatibility: {fileID: 0}
-  acceleration: 999
-  rotationSpeed: 360
-  slowdownTime: 0.01
-  endReachedDistance: 0.01
-  wallForce: 3
-  wallDist: 1
-  funnelSimplification: 0
-  slowWhenNotFacingTarget: 0
-  animCompatibility: {fileID: 0}
+  repathRateCompatibility: NaN
+  canSearchCompability: 0
+--- !u!114 &5876123543419886680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4546786721408448845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77f586f285b3847808d79083bd19ef1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  unwrap: 1
+  splitAtEveryPortal: 0
 --- !u!1 &5500021797630951615
 GameObject:
   m_ObjectHideFlags: 0

@@ -97,11 +97,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4665412469295489751, guid: 95c54d3bbe0417e49af5d2890430e937, type: 3}
       propertyPath: m_Name
-      value: Castle Borgham
+      value: Castle Borgham Variant
       objectReference: {fileID: 0}
     - target: {fileID: 4665412469295489751, guid: 95c54d3bbe0417e49af5d2890430e937, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5403696343512403601, guid: 95c54d3bbe0417e49af5d2890430e937, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 4422f4284097fdb4ebcd54be132a50b2, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95c54d3bbe0417e49af5d2890430e937, type: 3}
