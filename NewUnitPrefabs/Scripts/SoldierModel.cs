@@ -173,7 +173,7 @@ public class SoldierModel : MonoBehaviour
     #endregion  
 
 
-    public RangedModule rangedModule;
+    [HideInInspector] public RangedModule rangedModule;
 
     public void PlaceOnGround()
     {
@@ -190,16 +190,22 @@ public class SoldierModel : MonoBehaviour
     public Transform target;
     private void Awake()
     {
-        #region Initializations
-        if (rangedModule == null)
+        #region Initializations 
+        if (attackType == AttackType.Ranged)
         {
-            rangedModule = GetComponent<RangedModule>();
-        }
-        if (rangedModule != null)
-        { 
-            rangedModule.model = this;
-        }
-
+            if (rangedModule == null)
+            {
+                rangedModule = GetComponent<RangedModule>();
+                if (rangedModule == null)
+                {
+                    Debug.LogError("Ranged unit is missing RangedModule");
+                }
+            }
+            if (rangedModule != null)
+            {
+                rangedModule.model = this;
+            }
+        } 
 
         if (renderers.Count <= 0)
         { 

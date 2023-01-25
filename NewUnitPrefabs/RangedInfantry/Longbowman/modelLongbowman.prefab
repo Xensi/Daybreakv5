@@ -51,6 +51,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 675383383096578748, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3331573949371797782, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
       propertyPath: m_Name
       value: modelLongbowman
@@ -58,6 +62,14 @@ PrefabInstance:
     - target: {fileID: 3888064497551611319, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3888064497551611319, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
+      propertyPath: forceRatio
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3888064497551611319, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
+      propertyPath: maxProjectileForce
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 3950065472280351257, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
       propertyPath: damage
@@ -67,6 +79,10 @@ PrefabInstance:
       propertyPath: eyeline
       value: 
       objectReference: {fileID: 4221769043787470523}
+    - target: {fileID: 3950065472280351257, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3950065472280351257, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
       propertyPath: projectile
       value: 

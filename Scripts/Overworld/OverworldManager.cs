@@ -257,8 +257,17 @@ public class OverworldManager : MonoBehaviour
         townOptionsParent.SetActive(false);
         localeParent.SetActive(false);
     }
+    public void HideAllArmyInfo()
+    { 
+        armyOptionsParent.SetActive(false);
+        townOptionsParent.SetActive(false);
+        localeParent.SetActive(false);
+        mapParent.SetActive(false);
+    }
+    public GameObject mapParent;
     public void ShowArmyInfoAndUpdateArmyBars()
     {
+        mapParent.gameObject.SetActive(true);
         armyOptionsParent.SetActive(true);
         moraleBarSlider.maxValue = playerBattleGroup.maxMorale;
         moraleBarSlider.value = playerBattleGroup.morale;
@@ -409,7 +418,7 @@ public class OverworldManager : MonoBehaviour
             {
                 card.gameObject.SetActive(true);
             }
-        }  
+        }
         /*codeNameText.text = "Force: " + playerBattleGroup.befestigungName;
         headedByText.text = "Headed by: " + playerBattleGroup.oberkommandantName;
         sizeText.text = "Size: " + playerBattleGroup.size;
@@ -617,17 +626,25 @@ public class OverworldManager : MonoBehaviour
     private void UpdateLocaleInfo()
     {
         var locale = playerBattleGroup.currentLocale;
-        if (locale.investigated)
+        if (locale.investigatable)
         {
-            localeExploreButton.interactable = false;
-            closedEyeParent.SetActive(true);
+            if (locale.investigated)
+            {
+                localeExploreButton.interactable = false;
+                closedEyeParent.SetActive(true);
+            }
+            else
+            {
+                localeExploreButton.interactable = true;
+                closedEyeParent.SetActive(false);
+            }
+            localeParent.SetActive(true);
         }
         else
         {
-            localeExploreButton.interactable = true;
-            closedEyeParent.SetActive(false);
+            localeParent.SetActive(false);
         }
-        localeParent.SetActive(true);
+        
     } 
     public void ExploreLocale()
     {
@@ -636,8 +653,7 @@ public class OverworldManager : MonoBehaviour
         playerBattleGroup.currentLocale.investigated = true;
         DialogueManager.Instance.loadedDialogue = dialogue;
         DialogueManager.Instance.StartDialogue();
-        localeParent.SetActive(false);
-        armyOptionsParent.SetActive(false);
+        HideAllArmyInfo();
     }
     public bool readingDialogue = false;
     public void TalkToSupplyGiver()
@@ -649,13 +665,13 @@ public class OverworldManager : MonoBehaviour
         SupplyPoint supply = playerBattleGroup.currentSupplyPoint;
         if (supply == null)
         {
-            Debug.Log("2");
+            Debug.LogError("Supply is null");
             return;
         }
-        DialogueScriptableObject dialogue = supply.talkToDialogue;
+        DialogueScriptableObject dialogue = supply.talkToVillageDialogue;
         if (dialogue == null)
         {
-            Debug.Log("3");
+            Debug.LogError("Dialogue is null");
             return;
         }
         if (supply.talkDescriptionRead && playerBattleGroup.currentSupplyPoint.afterReadTalkToDialogue != null)
@@ -665,9 +681,7 @@ public class OverworldManager : MonoBehaviour
         supply.talkDescriptionRead = true;
         DialogueManager.Instance.loadedDialogue = dialogue;
         DialogueManager.Instance.StartDialogue();
-        townOptionsParent.SetActive(false);
-        armyOptionsParent.SetActive(false);
-
+        HideAllArmyInfo(); 
     } 
     #endregion 
 }

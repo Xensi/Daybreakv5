@@ -13,8 +13,10 @@ public class EventManager : MonoBehaviour
     }
 
     public float timeUntilNextRandomEvent = 120;
+    public float timeUntilLinearObjectiveEvent = 5;
     [SerializeField] private float timer;
-    public EventClass[] events;
+    public List<EventClass> randomEvents;
+    public List<EventClass> linearObjectiveEvents;  
 
     public Canvas eventCanvas;
     public TMP_Text eventTitle;
@@ -24,17 +26,58 @@ public class EventManager : MonoBehaviour
     private void Start()
     {
         eventCanvas.enabled = false;
+        TriggerSpecificLinearEvent(0); //penitent crusade event
     }
+    
     private void Update()
     {
-        if (BattleGroupManager.Instance.timeScale > 0)
+        if (BattleGroupManager.Instance.timeScale > 0 && OverworldToFieldBattleManager.Instance.state == OverworldToFieldBattleManager.possibleGameStates.Overworld)
         {
             timer += Time.deltaTime * BattleGroupManager.Instance.timeScale;
+
             if (timer >= timeUntilNextRandomEvent)
             {
                 TriggerRandomEvent();
             }
+            /*else if (timer >= timeUntilLinearObjectiveEvent)
+            {
+                TriggerLinearObjectiveEvent();
+            }*/
+            
+            
         } 
+    }
+    int linearEventInt = 0;
+    private void TriggerSpecificLinearEvent(int id)
+    {
+        EventClass item = linearObjectiveEvents[id];
+        currentEvent = item.eventScriptable;
+        if (currentEvent != null && item.allowedToTrigger)
+        {
+            DisplayEvent(currentEvent);
+        }
+    }
+    private void TriggerLinearObjectiveEvent()
+    {
+        currentEvent = GetLinearEvent();
+        if (currentEvent != null)
+        {
+            DisplayEvent(currentEvent);
+        }
+        linearEventInt++;
+    }
+    private EventScriptable GetLinearEvent()
+    {
+        while (!linearObjectiveEvents[linearEventInt].allowedToTrigger)
+        {
+            linearEventInt++;
+        }
+        EventScriptable item = linearObjectiveEvents[linearEventInt].eventScriptable;
+        if (item.removeFromEventPoolAfterTriggering)
+        {
+            linearObjectiveEvents[linearEventInt].allowedToTrigger = false;
+        }
+        return item;
     }
     private void TriggerRandomEvent() //calculate weights based on allowed events
     {
@@ -51,7 +94,7 @@ public class EventManager : MonoBehaviour
         BattleGroupManager.Instance.ForcePause();
         currentEvent = triggeredEvent;
         eventCanvas.enabled = true;
-        eventTitle.text = triggeredEvent.title;
+        eventTitle.text = triggeredEvent.title; 
         eventDescription.text = triggeredEvent.description; 
         ProcessEventCommands(triggeredEvent);
         DisplayChoices(triggeredEvent);
@@ -59,19 +102,43 @@ public class EventManager : MonoBehaviour
     private void DisplayChoices(EventScriptable triggeredEvent)
     {
         int highest = triggeredEvent.choices.Count-1; 
-        for (int i = 0; i < eventChoiceTexts.Count; i++)
+
+
+        if (triggeredEvent.choices.Count == 0)
         {
-            if (i <= highest)
-            { 
-                eventChoiceTexts[i].text = triggeredEvent.choices[i].choiceText;
-                eventChoiceTexts[i].transform.parent.gameObject.SetActive(true);
-            }
-            else
+            for (int i = 0; i < eventChoiceTexts.Count; i++)
             {
-                eventChoiceTexts[i].text = "";
-                eventChoiceTexts[i].transform.parent.gameObject.SetActive(false); 
-            } 
+                if (i == 0)
+                {
+                    eventChoiceTexts[i].text = "Acknowledged.";
+                    eventChoiceTexts[i].transform.parent.gameObject.SetActive(true);
+                }
+                else
+                {
+                    eventChoiceTexts[i].text = "";
+                    eventChoiceTexts[i].transform.parent.gameObject.SetActive(false);
+                }
+            }
         }
+        else if (highest >= 0)
+        {
+            for (int i = 0; i < eventChoiceTexts.Count; i++)
+            {
+                if (i <= highest)
+                {
+                    eventChoiceTexts[i].text = triggeredEvent.choices[i].choiceText;
+                    eventChoiceTexts[i].transform.parent.gameObject.SetActive(true);
+                }
+                else
+                {
+                    eventChoiceTexts[i].text = "";
+                    eventChoiceTexts[i].transform.parent.gameObject.SetActive(false);
+                }
+            }
+        }
+        
+
+        
     }
     private void ProcessEventCommands(EventScriptable triggeredEvent)
     {
@@ -104,6 +171,9 @@ public class EventManager : MonoBehaviour
                     break;
                 case EventCommandClass.EventCommands.AddUnit:
                     break;
+                case EventCommandClass.EventCommands.RevealLocation:
+                    ManualMapManager.Instance.ChangeLocationStatus(commandNum, MapStatusClass.MapStatus.Visible);
+                    break;
                 default:
                     break;
             } 
@@ -113,20 +183,20 @@ public class EventManager : MonoBehaviour
     public EventScriptable currentEvent;
     private EventScriptable GetRandomEvent()
     {
-        float randomNum = Random.Range(0, events[events.Length - 1].calculatedWeight);
+        float randomNum = Random.Range(0, randomEvents[randomEvents.Count - 1].calculatedWeight);
         Debug.Log(randomNum);
-        for (int i = 0; i < events.Length; i++)
+        for (int i = 0; i < randomEvents.Count; i++)
         {
-            if (randomNum <= events[i].calculatedWeight)
+            if (randomNum <= randomEvents[i].calculatedWeight)
             {
-                if (!events[i].allowedToTrigger)
+                if (!randomEvents[i].allowedToTrigger)
                 {
                     continue;
                 }
-                EventScriptable item = events[i].eventScriptable;
+                EventScriptable item = randomEvents[i].eventScriptable;
                 if (item.removeFromEventPoolAfterTriggering)
                 {
-                    events[i].allowedToTrigger = false;
+                    randomEvents[i].allowedToTrigger = false;
                 }
                 return item;
             }
@@ -136,10 +206,10 @@ public class EventManager : MonoBehaviour
     private void CalculateWeights()
     {
         float currentWeight = 0;
-        for (int i = 0; i < events.Length; i++)
+        for (int i = 0; i < randomEvents.Count; i++)
         {
-            currentWeight += events[i].eventScriptable.weight;
-            events[i].calculatedWeight = currentWeight;
+            currentWeight += randomEvents[i].eventScriptable.weight;
+            randomEvents[i].calculatedWeight = currentWeight;
         }
     }
     public void ChooseEventChoice(int choiceNum)

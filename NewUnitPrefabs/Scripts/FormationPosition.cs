@@ -20,7 +20,7 @@ public class FormationPosition : MonoBehaviour
 
     #region MustBeSet 
 
-    [SerializeField] private Rigidbody rigid;
+    public Rigidbody rigid;
     [SerializeField] private NavmeshCut navCutter; 
     [SerializeField] private bool simultaneousPositionCheck = false; 
     public SoldierBlock soldierBlock; 
@@ -213,8 +213,7 @@ public class FormationPosition : MonoBehaviour
         //PlaceAITargetOnTerrain();
         InvokeRepeating("TimeFrameAdvance", 0, timeFrame);
 
-        BeginUpdates();
-        InvokeRepeating("AnimationModelCuller", 0, 1);
+        BeginUpdates(); 
         InvokeRepeating("LockSoldiers", 0, lockTime);
         InvokeRepeating("LockSoldiersToTerrain", 0, terrainLockTime);
         InvokeRepeating("UpdateFarAwayIconPos", 0, .1f);

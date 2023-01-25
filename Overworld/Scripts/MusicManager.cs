@@ -69,6 +69,7 @@ public class MusicManager : MonoBehaviour
     } 
     public void PlayCombatMusicBasedOnBattleSize()
     {
+        AudioClip song;
         if (OverworldManager.Instance.enemyBattleGroup != null)
         { 
             source.Stop();
@@ -76,16 +77,21 @@ public class MusicManager : MonoBehaviour
 
             if (battleSize >= largeBattleSize)
             {
-                source.PlayOneShot(skirmishTracks[Random.Range(0, skirmishTracks.Count - 1)]);
+                song = largeTracks[Random.Range(0, largeTracks.Count - 1)];
+                source.PlayOneShot(song);
+                Debug.Log("Now playing song: " + song.name);
             }
             else if (battleSize >= mediumBattleSize)
             {
-                source.PlayOneShot(mediumTracks[Random.Range(0, mediumTracks.Count - 1)]);
+                song = mediumTracks[Random.Range(0, mediumTracks.Count - 1)];
+                source.PlayOneShot(song);
+                Debug.Log("Now playing song: " + song.name);
             }
             else
             {
-
-                source.PlayOneShot(mediumTracks[Random.Range(0, mediumTracks.Count - 1)]);
+                song = skirmishTracks[Random.Range(0, skirmishTracks.Count - 1)];
+                source.PlayOneShot(song);
+                Debug.Log("Now playing song: " + song.name);
             }
             musicPaused = false;
         }

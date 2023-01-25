@@ -399,8 +399,7 @@ public class BattleGroup : MonoBehaviour
         }
     }
     private void UpdateLocaleStatus(LocaleInvestigatable locale, bool enterOrExit)
-    {
-
+    { 
         if (enterOrExit)
         { 
             currentLocale = locale; 

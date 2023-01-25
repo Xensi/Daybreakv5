@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eda3dea4b05762146b86949b41351a74, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  behavior: 0
   eyeline: {fileID: 263644038749723861}
   directFire: 0
   directFireRadius: 80
@@ -31,6 +32,9 @@ MonoBehaviour:
   loadingRightNow: 0
   timeUntilFinishedLoading: 1
   model: {fileID: 0}
+  useMovementPrediction: 1
+  forceRatio: 1
+  maxThrowForce: 100
 --- !u!1001 &7791023671330243469
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -146,6 +150,7 @@ PrefabInstance:
     - {fileID: 543705842456125332, guid: ea9127458b64e3645923071d64961f81, type: 3}
     - {fileID: 2760982560612019990, guid: ea9127458b64e3645923071d64961f81, type: 3}
     - {fileID: 3971422626699966185, guid: ea9127458b64e3645923071d64961f81, type: 3}
+    - {fileID: 7295892263859704113, guid: ea9127458b64e3645923071d64961f81, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ea9127458b64e3645923071d64961f81, type: 3}
 --- !u!1 &3995079770724174760 stripped
 GameObject:

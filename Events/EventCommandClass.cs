@@ -6,7 +6,8 @@ public class EventCommandClass
         AddMorale,
         AddSupplies,
         AddSpoils,
-        AddUnit
+        AddUnit,
+        RevealLocation
     }
     public EventCommands command;
     public int commandNum;

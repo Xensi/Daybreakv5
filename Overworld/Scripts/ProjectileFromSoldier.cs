@@ -68,6 +68,10 @@ public class ProjectileFromSoldier : MonoBehaviour
         rigid.AddForce(direction.normalized * reqForce);
         isFlying = true;
     }
+    public void LaunchProjectileRevised(ProjectileDataClass data)
+    {
+        rigid.velocity = data.InitialVelocity;
+    }
     public void LaunchProjectile(Vector3 targetPos, float LaunchAngle, float deviationAmount)
     {
         Vector3 projectileXZPos = new Vector3(transform.position.x, 0.0f, transform.position.z);

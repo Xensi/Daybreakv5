@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class ManualMapManager : MonoBehaviour
 {
+    public static ManualMapManager Instance { get; private set; }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
     //bool mapPulledUp = false;
     public Camera mapCamera;
     public List<MapStatusClass> mapLocations;
@@ -25,23 +31,28 @@ public class ManualMapManager : MonoBehaviour
             switch (item.status)
             {
                 case MapStatusClass.MapStatus.Invisible:
-                    item.location.mapIcon.enabled = false;
+                    item.location.mapIcon.gameObject.SetActive(false);
                     item.location.mapIcon.color = Color.black;
                     break;
                 case MapStatusClass.MapStatus.Visible:
-                    item.location.mapIcon.enabled = true;
+                    item.location.mapIcon.gameObject.SetActive(true);
                     item.location.mapIcon.color = Color.gray;
                     break;
                 case MapStatusClass.MapStatus.Visited:
-                    item.location.mapIcon.enabled = true;
-                    item.location.mapIcon.color = Color.blue;
+                    item.location.mapIcon.gameObject.SetActive(true);
+                    item.location.mapIcon.color = Color.cyan;
                     break;
                 default:
                     break;
             }
         }
     }
-    private void ToggleMapCamera()
+    public void ChangeLocationStatus(int locationInt, MapStatusClass.MapStatus status)
+    { 
+        mapLocations[locationInt].status = status;
+        UpdateLocationsStatus();
+    }
+    public void ToggleMapCamera()
     {
         mapCamera.enabled = !mapCamera.enabled;
         if (mapCamera.enabled)

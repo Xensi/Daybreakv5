@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44a2071f90a402e40b49b952701af2a1, type: 3}
+  m_Name: PenitentCrusade
+  m_EditorClassIdentifier: 
+  title: The Penitent Crusade
+  description: "Due to your failure at Reevewood, you have graciously been granted
+    one last chance at redemption: Your army has been tasked with retaking Borgham
+    Castle. \r\n\r\nThe area surrounding the forward camp must be secured. Two nearby
+    Maukling villages and a known Atlesian outpost have been marked on your map.\r\n\r\nDo
+    not fail us again.\r\n"
+  weight: 1
+  removeFromEventPoolAfterTriggering: 1
+  commands:
+  - command: 4
+    commandNum: 1
+  - command: 4
+    commandNum: 2
+  - command: 4
+    commandNum: 3
+  - command: 4
+    commandNum: 4
+  choices:
+  - eventScriptable: {fileID: 0}
+    choiceText: "Aufstieg f\xFCr Altgard."
+  endOfEventChain: 1

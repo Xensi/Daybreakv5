@@ -33,7 +33,7 @@ public class SupplyPoint : LocaleInvestigatable
 
     public List<ArmyCardScriptableObj> cardsAvailable;
     public bool talkDescriptionRead = false;
-    public DialogueScriptableObject talkToDialogue;
+    public DialogueScriptableObject talkToVillageDialogue;
     public DialogueScriptableObject afterReadTalkToDialogue;
     public DialogueScriptableObject eventDialogue;
     public bool eventTriggered = false;
@@ -59,6 +59,10 @@ public class SupplyPoint : LocaleInvestigatable
     public float provisionGainRate = 1;
     private float provisionGainModifier = .1f;
 
+    public void UpdateMapText()
+    {
+        mapText.text = supplyName;
+    }
     public void Awake()
     {
         //regainTracker = turnsUntilNextRegain;
@@ -68,6 +72,7 @@ public class SupplyPoint : LocaleInvestigatable
             var oManager = GameObject.FindWithTag("OverworldManager");
             overworldManager = oManager.GetComponent<OverworldManager>();
         }
+        UpdateMapText();
     }
     private void Start()
     {
