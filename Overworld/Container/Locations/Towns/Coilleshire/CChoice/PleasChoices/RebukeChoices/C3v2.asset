@@ -12,27 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
   m_Name: C3v2
   m_EditorClassIdentifier: 
-  speaker: 
-  speakerImage: {fileID: 0}
-  speakerSpeed: 0.01
-  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
-  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
-  commandToExecuteStart: 
-  commandToExecuteEnd: checkVisited
-  commandVar: 0
+  startCommand: 0
+  endCommand: 0
+  commandNum: 0
   commandString: Eadin
   dialogueIfConditionTrue: {fileID: 11400000, guid: 8a77c3c0f588758418b75240052c4f2e, type: 2}
-  isChoices: 0
-  forceChangeSpeaker: 1
   talkedToDialogueNPC: {fileID: 0}
   isFirstInstanceNPC: 0
-  italicizedSentences: 0101000000
+  isChoices: 0
+  forceChangeSpeaker: 1
   speakerSentences:
   - {fileID: 11400000, guid: bd9061ea356defc4abb4febd4475b11d, type: 2}
   - {fileID: 11400000, guid: bd9061ea356defc4abb4febd4475b11d, type: 2}
   - {fileID: 11400000, guid: e0dc0ba66e5aabd4eafd74488f70e272, type: 2}
   - {fileID: 11400000, guid: e0dc0ba66e5aabd4eafd74488f70e272, type: 2}
   - {fileID: 11400000, guid: e0dc0ba66e5aabd4eafd74488f70e272, type: 2}
+  sentenceAudio: []
   sentences:
   - "Without hesitation, Gotfried, with the help of another soldier, forcibly bind
     the man\u2019s hands behind his back. He is dragged kicking and screeching towards
@@ -47,6 +42,6 @@ MonoBehaviour:
   - "Oh, and a fair word of warning before you depart. The Atlesians are now ranging
     farther and farther from their stronghold. And come to think of it, we haven\u2019t
     heard from Eadin in a few days . . ."
-  sentenceAudio: []
+  sentencesWithSpeakers: []
   nextDialogue: {fileID: 11400000, guid: 3280add2ee85e824eb4f88e86937386b, type: 2}
   choicePaths: []

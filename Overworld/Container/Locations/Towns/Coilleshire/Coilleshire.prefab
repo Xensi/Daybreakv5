@@ -48,6 +48,10 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
+      propertyPath: talkToVillageDialogue
+      value: 
+      objectReference: {fileID: 11400000, guid: e16f6c084ec362a4e81282c1cff8ae98, type: 2}
+    - target: {fileID: 3674928046426528876, guid: deb49cf23a8aba84bbe602d2c9573250, type: 3}
       propertyPath: extortionReservedSpoils
       value: 0
       objectReference: {fileID: 0}

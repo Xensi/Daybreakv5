@@ -12,33 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
   m_Name: C1
   m_EditorClassIdentifier: 
-  speaker: 
-  speakerImage: {fileID: 0}
-  speakerSpeed: 0.01
-  isChoices: 0
-  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
-  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
-  commandToExecuteStart: 
-  commandToExecuteEnd: 
-  commandVar: 0
-  commandString: 
-  forceChangeSpeaker: 1
-  talkedToDialogue: {fileID: 0}
-  isFirstInstanceNPC: 0
-  italicizedSentences: 00010100
-  speakerSentences:
-  - {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
-  - {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
-  - {fileID: 11400000, guid: 42bda72bf8c9f704fa8d2dce43ec5b09, type: 2}
-  - {fileID: 11400000, guid: 42bda72bf8c9f704fa8d2dce43ec5b09, type: 2}
-  sentences:
-  - Oh, please do not presume that I have any . . . other motives. But I will be
-    frank . . . I do wish to offer you some more direct assistance in this task.
-    In exchange, I have a humble request.
-  - "\rHis eyes dart about, and he seems to twitch nervously. \r\n"
-  - 'Ingva keenly narrows her eyes. '
-  - "\rI won\u2019t be hearing any of this. The Maukling is attempting a scheme.
-    We should rebuke him, commander.\r\n"
+  sentencesWithSpeakers:
+  - sentence: Oh, please do not presume that I have any . . . other motives. But
+      I will be frank . . . I do wish to offer you some more direct assistance in
+      this task. In exchange, I have a humble request.
+    speaker: {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
+  - sentence: "\rHis eyes dart about, and he seems to twitch nervously. \r\n"
+    speaker: {fileID: 0}
+  - sentence: 'Ingva keenly narrows her eyes. '
+    speaker: {fileID: 11400000, guid: 42bda72bf8c9f704fa8d2dce43ec5b09, type: 2}
+  - sentence: "\rI won\u2019t be hearing any of this. The Maukling is attempting
+      a scheme. We should rebuke him, commander.\r\n"
+    speaker: {fileID: 0}
   sentenceAudio: []
-  nextDialogue: {fileID: 11400000, guid: f61faad925e3fbf448dc42f4d6356c16, type: 2}
-  choicePaths: []
+  sentences: []
+  nextDialogue: {fileID: 0}
+  choicePaths:
+  - {fileID: 11400000, guid: f61faad925e3fbf448dc42f4d6356c16, type: 2}
+  startCommand: 0
+  endCommand: 0
+  commandNum: 0
+  commandString: 
+  dialogueIfConditionTrue: {fileID: 0}

@@ -75,7 +75,7 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator LateStart(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
-        if (loadedDialogue.isChoices)
+        if (HasChoices())
         {
             PresentChoices();
         }
@@ -99,7 +99,7 @@ public class DialogueManager : MonoBehaviour
             {
                 loadedDialogue = convo;
 
-                if (loadedDialogue.isChoices)
+                if (HasChoices())
                 {
                     PresentChoices();
 
@@ -117,13 +117,12 @@ public class DialogueManager : MonoBehaviour
         if (loadedDialogue != null)
         {
             readingDialogue = true;
-            ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
-            dialogueText.text = "";
-            speakerText.text = loadedDialogue.speaker;
+            ChangeToInitialSpeaker();
+            dialogueText.text = ""; 
 
             Tween tween = dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad); //tweens dialogue up
 
-            if (loadedDialogue.isChoices)
+            if (HasChoices())
             {
                 choicesParent.SetActive(true);
                 PresentChoices();
@@ -135,13 +134,24 @@ public class DialogueManager : MonoBehaviour
             }
         }
     }
+    private bool HasChoices()
+    {
+        if (loadedDialogue.choicePaths.Length > 1) //2 or more
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     private void ReadDialogue() //begins actually reading dialogue
     {
         sentences.Clear();
 
-        foreach (string sentence in loadedDialogue.sentences)
+        foreach (SentenceSpeakerClass item in loadedDialogue.sentencesWithSpeakers)
         {
-            sentences.Enqueue(sentence);
+            sentences.Enqueue(item.sentence);
         }
 
         DisplayNextSentence();
@@ -150,7 +160,7 @@ public class DialogueManager : MonoBehaviour
     
     private void ProcessStartCommand() //if command needed at beginning of dialogue
     {
-        //Debug.LogError("Processing commands");
+     /*   //Debug.LogError("Processing commands");
         if (loadedDialogue.commandToExecuteStart == "nod")
         {
             npcAnimController.AnimNod();
@@ -158,51 +168,20 @@ public class DialogueManager : MonoBehaviour
         if (loadedDialogue.commandToExecuteStart == "confused")
         {
             npcAnimController.AnimConfused();
-        }
+        }*/
     }
     
     private void DisplayNextSentence() //display next "sentence" (a chunk of dialogue)
     {
-        if (loadedDialogue.isChoices)
+        if (HasChoices())
         {
             return;
-        }
-
-        if (loadedDialogue.italicizedSentences.Count > 0 && sentenceCount < loadedDialogue.italicizedSentences.Count) //change italicization
-        {
-            if (loadedDialogue.italicizedSentences[sentenceCount] == true)
-            {
-                dialogueText.fontStyle = FontStyles.Italic;
-            }
-            else
-            {
-
-                dialogueText.fontStyle = FontStyles.Normal;
-            }
-        }
-        if (loadedDialogue.forceChangeSpeaker && loadedDialogue.speakerSentences.Count > 0 && sentenceCount < loadedDialogue.speakerSentences.Count) //change speaker
-        {
-            if (loadedDialogue.speakerSentences[sentenceCount] != null)
-            {
-                SpeakerScriptable speaker = loadedDialogue.speakerSentences[sentenceCount];
-                //speakerBGImage.color = speaker.colorBorder;
-                foreach (Image image in speakerBorders)
-                {
-                    image.color = speaker.colorBorder;
-                }
-                speakerFancyBorder.color = speaker.fancyBorder;
-                textspeed = speaker.speed;
-                speakerImage.sprite = speaker.image;
-                speakerText.text = speaker.speakerName;
-                UpdateTextSpeeds();
-            }
-        }
+        } 
 
         audioSource.Stop();
         runningText = true;
         if (sentences.Count == 0) //end of queue
         {
-
             runningText = false;
             EndDialogue();
             return;
@@ -215,6 +194,7 @@ public class DialogueManager : MonoBehaviour
         {
             currentAudio = null;
         }
+        SwitchSpeaker();
         sentenceCount++;
         currentSentence = sentences.Dequeue();
 
@@ -314,18 +294,58 @@ public class DialogueManager : MonoBehaviour
             runningText = false;
         }
 
-    }
-
+    } 
     private void ProcessEndCommand()
     {
         checkedCondition = false;
-        string commandEnd = loadedDialogue.commandToExecuteEnd;
-        
+        //string commandEnd = loadedDialogue.commandToExecuteEnd;
+
+        DialogueScriptableObject.Commands command = loadedDialogue.endCommand;
+
+        switch (command)
+        {
+            case DialogueScriptableObject.Commands.None:
+                break;
+            case DialogueScriptableObject.Commands.GainMorale:
+                break;
+            case DialogueScriptableObject.Commands.GainSupply:
+                break;
+            case DialogueScriptableObject.Commands.GainMaxSupply:
+                break;
+            case DialogueScriptableObject.Commands.GainHorses:
+                break;
+            case DialogueScriptableObject.Commands.GiveUnit:
+                break;
+            case DialogueScriptableObject.Commands.MakeAvailableSupplyTown:
+                break;
+            case DialogueScriptableObject.Commands.HelpCharacter:
+                break;
+            case DialogueScriptableObject.Commands.ArrestCharacter:
+                break;
+            case DialogueScriptableObject.Commands.RevealLocation:
+                break;
+            case DialogueScriptableObject.Commands.CheckVisited:
+                break;
+            case DialogueScriptableObject.Commands.CheckHelped:
+                break;
+            case DialogueScriptableObject.Commands.TradeSutler:
+                break;
+            case DialogueScriptableObject.Commands.GainSutler:
+                break;
+            case DialogueScriptableObject.Commands.DestroyLocale:
+                break;
+            case DialogueScriptableObject.Commands.MultiplyVisionRange:
+                break;
+            default:
+                break;
+        }
+
+/*
         if (commandEnd == "moraleGain")
         {
             if (overworldManager.localeArmy != null)
             {
-                overworldManager.localeArmy.overallMorale += loadedDialogue.commandVar;
+                overworldManager.localeArmy.overallMorale += loadedDialogue.commandNum;
                 if (overworldManager.localeArmy.overallMorale > overworldManager.localeArmy.maxMorale)
                 {
                     overworldManager.localeArmy.overallMorale = overworldManager.localeArmy.maxMorale;
@@ -340,7 +360,7 @@ public class DialogueManager : MonoBehaviour
         {
             if (overworldManager.localeArmy.provisions < overworldManager.localeArmy.maxProvisions)
             {
-                overworldManager.localeArmy.provisions += loadedDialogue.commandVar;
+                overworldManager.localeArmy.provisions += loadedDialogue.commandNum;
             }
         }
         if (commandEnd == "destroyLocale")
@@ -356,36 +376,36 @@ public class DialogueManager : MonoBehaviour
             //Debug.LogError("MULT");
             if (overworldManager.localeArmy != null)
             {
-                overworldManager.localeArmy.fowUnit.circleRadius = .5f + (overworldManager.localeArmy.sightRadius * loadedDialogue.commandVar);
+                overworldManager.localeArmy.fowUnit.circleRadius = .5f + (overworldManager.localeArmy.sightRadius * loadedDialogue.commandNum);
             }
         }
         if (commandEnd == "gainMaxSupply")
         {
             if (overworldManager.localeArmy != null)
             {
-                overworldManager.localeArmy.maxProvisions += loadedDialogue.commandVar;
+                overworldManager.localeArmy.maxProvisions += loadedDialogue.commandNum;
             }
         }
         if (commandEnd == "gainHorses")
         {
             if (overworldManager.localeArmy != null)
             {
-                overworldManager.localeArmy.horses += loadedDialogue.commandVar;
+                overworldManager.localeArmy.horses += loadedDialogue.commandNum;
             }
         }
         if (commandEnd == "giveUnit")
         {
             if (overworldManager.localeArmy != null)
             {
-                for (int i = 0; i < loadedDialogue.commandVar; i++)
+                for (int i = 0; i < loadedDialogue.commandNum; i++)
                 {
-                    /*foreach (ArmyCardScriptableObj card in unitManager.units)
+                    *//*foreach (ArmyCardScriptableObj card in unitManager.units)
                     {
                         if (card.cardName == loadedDialogue.commandString)
                         {
                             overworldManager.localeArmy.AddArmyCard(card);
                         }
-                    }*/
+                    }*//*
                 }
             }
         }
@@ -395,7 +415,7 @@ public class DialogueManager : MonoBehaviour
             {
                 if (overworldManager.localeArmy.currentSupplyPoint != null)
                 {
-                    overworldManager.localeArmy.currentSupplyPoint.amountOfProvisionsToReserve -= loadedDialogue.commandVar;
+                    overworldManager.localeArmy.currentSupplyPoint.amountOfProvisionsToReserve -= loadedDialogue.commandNum;
                 }
             }
         }
@@ -453,14 +473,14 @@ public class DialogueManager : MonoBehaviour
         if (commandEnd == "gainSutler")
         {
             OverworldManager.Instance.sutlerParent.SetActive(true);
-        } 
+        } */
     }
     private void EndDialogue()
     {
         
         ProcessEndCommand();
         sentenceCount = 0;
-        if (loadedDialogue.nextDialogue == null)
+        if (loadedDialogue.choicePaths.Length == 0)
         {
             readingDialogue = false;
             //Debug.Log("End of conversation");
@@ -474,21 +494,21 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-            StartNextDialogue(loadedDialogue.nextDialogue);
+            StartNextDialogue(loadedDialogue.choicePaths[0]);
         }
     }
     private void StartNextDialogue(DialogueScriptableObject dialogue) //loads next dialogue and reads it
     {
         loadedDialogue = dialogue;
 
-        if (loadedDialogue.isChoices)
+        if (HasChoices())
         {
             PresentChoices();
         }
         else
         {
             choicesParent.SetActive(false);
-            ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
+            ChangeToInitialSpeaker();
             //Debug.Log("Starting conversation");
             sentences.Clear();
 
@@ -508,17 +528,17 @@ public class DialogueManager : MonoBehaviour
         Tween tween = dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
         dialogueText.text = "";
 
-        ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
+        ChangeToInitialSpeaker();
         choicesParent.SetActive(true);
 
         var i = 0;
         foreach (var item in choiceList)
         {
-            if (i < loadedDialogue.sentences.Length) //say i = 2 and tere are 2 choices
+            if (i < loadedDialogue.sentencesWithSpeakers.Length) //say i = 2 and tere are 2 choices
             {
                 item.transform.parent.gameObject.SetActive(true);
                 //Debug.Log(loadedDialogue.sentences[i]);
-                item.text = loadedDialogue.sentences[i];
+                item.text = loadedDialogue.sentencesWithSpeakers[i].sentence;
                 i++;
             }
             else
@@ -528,65 +548,46 @@ public class DialogueManager : MonoBehaviour
         }
         ProcessStartCommand();
     }
-    private void ForceChangeSpeaker(bool change)
+    private void ChangeToInitialSpeaker()
     {
-        if (change)
+        SpeakerScriptable speaker; 
+        if (loadedDialogue.sentencesWithSpeakers.Length > 0)
         {
-            if (loadedDialogue.speakerSentences.Count > 0) //if there's at least one speaker
+            speaker = loadedDialogue.sentencesWithSpeakers[0].speaker;
+            UpdateSpeakerUI(speaker);
+        }
+    }
+    private void SwitchSpeaker()
+    { 
+        SpeakerScriptable speaker;
+        if (loadedDialogue.sentencesWithSpeakers[sentenceCount] != null)
+        {
+            speaker = loadedDialogue.sentencesWithSpeakers[sentenceCount].speaker;
+            UpdateSpeakerUI(speaker);
+        }
+    }
+    private void UpdateSpeakerUI(SpeakerScriptable speaker)
+    {
+        if (speaker != null)
+        { 
+            foreach (Image image in speakerBorders)
             {
-                if (loadedDialogue.speakerSentences[0] != null)
-                {
-                    SpeakerScriptable speaker = loadedDialogue.speakerSentences[0];
-                    foreach (Image image in speakerBorders)
-                    {
-                        image.color = speaker.colorBorder;
-                    }
-                    speakerFancyBorder.color = speaker.fancyBorder;
-                    textspeed = speaker.speed;
-                    speakerImage.sprite = speaker.image;
-                    speakerText.text = speaker.speakerName;
-                    UpdateTextSpeeds();
-                }
+                image.color = speaker.colorBorder;
             }
-            else
-            {
-                foreach (Image image in speakerBorders)
-                {
-                    image.color = loadedDialogue.speakerColorBorder;
-                }
-                speakerFancyBorder.color = loadedDialogue.speakerFancyBorder;
-                textspeed = loadedDialogue.speakerSpeed;
-                speakerImage.sprite = loadedDialogue.speakerImage;
-                speakerText.text = loadedDialogue.speaker;
-            }
+            speakerFancyBorder.color = speaker.fancyBorder;
+            textspeed = speaker.speed;
+            speakerImage.sprite = speaker.image;
+            speakerText.text = speaker.speakerName;
+            UpdateTextSpeeds();
         }
     }
     public void ChooseChoice(int num) //triggered by clicking on a choice
     {
         loadedDialogue = loadedDialogue.choicePaths[num];
-        displayingChoices = false;
-        /*if (overworldManager.dialogueEvent == false) //weird npc code, fix later
-        {
-            if (overworldManager.localeArmy != null)
-            {
-                if (overworldManager.localeArmy.currentSupplyPoint != null)
-                {
-                    if (overworldManager.localeArmy.currentSupplyPoint.npcTalkedTo.Count > 0)
-                    {
-                        if (overworldManager.localeArmy.currentSupplyPoint.npcTalkedTo[num] == true)
-                        {
-                            if (loadedDialogue.talkedToDialogueNPC != null)
-                            {
-                                loadedDialogue = loadedDialogue.talkedToDialogueNPC;
-                            }
-                        }
-                    }
-                }
-            }
-        }*/
-        ForceChangeSpeaker(loadedDialogue.forceChangeSpeaker);
+        displayingChoices = false; 
+        ChangeToInitialSpeaker();
 
-        if (loadedDialogue.isChoices)
+        if (HasChoices())
         {
             PresentChoices();
         }
@@ -596,24 +597,13 @@ public class DialogueManager : MonoBehaviour
             //Debug.Log("Starting conversation");
             sentences.Clear();
 
-            foreach (string sentence in loadedDialogue.sentences)
+            foreach (SentenceSpeakerClass item in loadedDialogue.sentencesWithSpeakers)
             {
-                sentences.Enqueue(sentence);
+                sentences.Enqueue(item.sentence);
             }
             DisplayNextSentence();
         }
-        ProcessStartCommand();
-
-        /*if (overworldManager.localeArmy != null) //weird npc code fix later
-        {
-            if (overworldManager.localeArmy.currentSupplyPoint != null)
-            {
-                if (loadedDialogue.isFirstInstanceNPC)
-                {
-                    overworldManager.localeArmy.currentSupplyPoint.npcTalkedTo[num] = true;
-                }
-            }
-        }*/
+        ProcessStartCommand(); 
     }
      
      

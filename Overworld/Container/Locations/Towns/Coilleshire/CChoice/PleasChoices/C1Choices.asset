@@ -12,27 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
   m_Name: C1Choices
   m_EditorClassIdentifier: 
-  speaker: 
-  speakerImage: {fileID: 0}
-  speakerSpeed: 0.01
-  isChoices: 1
-  speakerColorBorder: {r: 0, g: 0, b: 0, a: 0}
-  speakerFancyBorder: {r: 0, g: 0, b: 0, a: 0}
-  commandToExecuteStart: 
-  commandToExecuteEnd: 
-  commandVar: 0
-  commandString: 
-  forceChangeSpeaker: 1
-  talkedToDialogue: {fileID: 0}
-  isFirstInstanceNPC: 0
-  italicizedSentences: 
-  speakerSentences:
-  - {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
-  sentences:
-  - "Let\u2019s hear the man out first."
-  - 'Most definitely. We have little patience for trickery, Dernoth. '
+  sentencesWithSpeakers:
+  - sentence: "Let\u2019s hear the man out first."
+    speaker: {fileID: 0}
+  - sentence: 'Most definitely. We have little patience for trickery, Dernoth. '
+    speaker: {fileID: 0}
   sentenceAudio: []
+  sentences: []
   nextDialogue: {fileID: 0}
   choicePaths:
   - {fileID: 11400000, guid: 6ad2ba59498e48b4097bd12be1418259, type: 2}
   - {fileID: 11400000, guid: 50ffe43635595314fb588d2f1eb40856, type: 2}
+  startCommand: 0
+  endCommand: 0
+  commandNum: 0
+  commandString: 
+  dialogueIfConditionTrue: {fileID: 0}

@@ -5,42 +5,52 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "newDialogue", menuName = "Dialogue")] 
 public class DialogueScriptableObject : ScriptableObject
 {
-    [Header("Manual speaker info")]
+    /*[Header("Manual speaker info")]
     public string speaker;
     public Sprite speakerImage;
     public float speakerSpeed = 0.01f;
     public Color speakerColorBorder;
-    public Color speakerFancyBorder;
+    public Color speakerFancyBorder; */
 
-     
+    public enum Commands
+    {
+        None,
+        GainMorale,
+        GainSupply,
+        GainMaxSupply,
+        GainHorses,
+        GiveUnit,
+        MakeAvailableSupplyTown,
+        HelpCharacter,
+        ArrestCharacter,
+        RevealLocation,
+        CheckVisited,
+        CheckHelped,
+        TradeSutler,
+        GainSutler,
+        DestroyLocale,
+        MultiplyVisionRange
+    } 
 
-
-    [Header("Command info")]
-    public string commandToExecuteStart;
-    public string commandToExecuteEnd;
-    public int commandVar;
-    public string commandString;
-    public DialogueScriptableObject dialogueIfConditionTrue;
-
-    [Header("NPC")]
-    public DialogueScriptableObject talkedToDialogueNPC;
-    public bool isFirstInstanceNPC = false;
-
-    [Header("Settings")]
-    public bool isChoices = false;
-    public bool forceChangeSpeaker = true;
-    public List<bool> italicizedSentences;
-    public List<SpeakerScriptable> speakerSentences;
+    [Header("Sentences")]
+    public SentenceSpeakerClass[] sentencesWithSpeakers;
     public AudioClip[] sentenceAudio;
 
     [TextArea(3, 10)]
     public string[] sentences;
      
-    public SentenceSpeakerClass[] sentencesWithSpeakers;
-
-
 
     [Header("Paths")]
     public DialogueScriptableObject nextDialogue;
-    public DialogueScriptableObject[] choicePaths;
+    public DialogueScriptableObject[] choicePaths; 
+
+    [Header("Command info")]
+    public Commands startCommand;
+    public Commands endCommand;
+
+    //public string commandToExecuteStart;
+    //public string commandToExecuteEnd;
+    public int commandNum;
+    public string commandString;
+    public DialogueScriptableObject dialogueIfConditionTrue;
 }
