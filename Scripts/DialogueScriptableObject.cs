@@ -34,7 +34,6 @@ public class DialogueScriptableObject : ScriptableObject
 
     [Header("Sentences")]
     public SentenceSpeakerClass[] sentencesWithSpeakers;
-    public AudioClip[] sentenceAudio;
 
     [TextArea(3, 10)]
     public string[] sentences;

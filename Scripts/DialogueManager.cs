@@ -186,14 +186,14 @@ public class DialogueManager : MonoBehaviour
             EndDialogue();
             return;
         }
-        if (loadedDialogue.sentenceAudio.Length > sentenceCount) //length 3, count 2
+        /*if (loadedDialogue.sentenceAudio.Length > sentenceCount) //length 3, count 2
         {
             currentAudio = loadedDialogue.sentenceAudio[sentenceCount];
         }
         else
         {
             currentAudio = null;
-        }
+        }*/
         SwitchSpeaker();
         sentenceCount++;
         currentSentence = sentences.Dequeue();
@@ -205,12 +205,12 @@ public class DialogueManager : MonoBehaviour
     }
     private IEnumerator TypeSentence(string sentence) //reveal characters of sentence one by one
     {
-        if (currentAudio != null)
+        /*if (currentAudio != null)
         {
 
             audioSource.clip = currentAudio;
             audioSource.Play();
-        }
+        }*/
 
         dialogueText.text = sentence;
         dialogueText.maxVisibleCharacters = 0;
