@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
-  m_Name: C1Choices
+  m_Name: C6Choices
   m_EditorClassIdentifier: 
   sentencesWithSpeakers:
-  - sentence: Towards what end are you making these pleas of aid, Dernoth?
+  - sentence: This . . . this is useful information after all. What do you want?
     speaker: {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
-  - sentence: You bother me. Away with you.
+  - sentence: Hm. You have fallen quite short of my expectations.
     speaker: {fileID: 0}
   sentences: []
   nextDialogue: {fileID: 0}
   choicePaths:
-  - {fileID: 11400000, guid: 0f46c5569aacbc94983382c90a39743d, type: 2}
-  - {fileID: 11400000, guid: 50ffe43635595314fb588d2f1eb40856, type: 2}
+  - {fileID: 11400000, guid: 26bd5e771df7b0c4bbfe2b3446f99cc4, type: 2}
+  - {fileID: 11400000, guid: e0adba023ecfc204cb521454555f78d2, type: 2}
   startCommand: 0
   endCommand: 0
   commandNum: 0

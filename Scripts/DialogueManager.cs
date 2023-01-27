@@ -49,7 +49,7 @@ public class DialogueManager : MonoBehaviour
     private int sentenceCount = 0;
     private float startingYPos;
     private npcAnimController npcAnimController;
-    private bool displayingChoices = false;
+    public bool displayingChoices = false;
     private bool checkedCondition = false;
 
     [SerializeField] private char currentChar;
@@ -159,16 +159,7 @@ public class DialogueManager : MonoBehaviour
     }
     
     private void ProcessStartCommand() //if command needed at beginning of dialogue
-    {
-     /*   //Debug.LogError("Processing commands");
-        if (loadedDialogue.commandToExecuteStart == "nod")
-        {
-            npcAnimController.AnimNod();
-        }
-        if (loadedDialogue.commandToExecuteStart == "confused")
-        {
-            npcAnimController.AnimConfused();
-        }*/
+    { 
     }
     
     private void DisplayNextSentence() //display next "sentence" (a chunk of dialogue)
@@ -182,6 +173,7 @@ public class DialogueManager : MonoBehaviour
         runningText = true;
         if (sentences.Count == 0) //end of queue
         {
+            Debug.Log("sentences.count = 0");
             runningText = false;
             EndDialogue();
             return;
@@ -283,8 +275,11 @@ public class DialogueManager : MonoBehaviour
             return;
         }
         StopAllCoroutines();
-        dialogueText.text = currentSentence;
-        dialogueText.maxVisibleCharacters = currentSentence.ToCharArray().Length;
+        if (currentSentence != null)
+        {
+            dialogueText.text = currentSentence;
+            dialogueText.maxVisibleCharacters = currentSentence.ToCharArray().Length; 
+        }
         if (runningText == false)
         {
             DisplayNextSentence();
@@ -295,17 +290,19 @@ public class DialogueManager : MonoBehaviour
         }
 
     } 
-    private void ProcessEndCommand()
+    private bool ProcessEndCommand(DialogueScriptableObject.Commands command, int num = 0)
     {
-        checkedCondition = false;
-        //string commandEnd = loadedDialogue.commandToExecuteEnd;
-
-        DialogueScriptableObject.Commands command = loadedDialogue.endCommand;
+        //checkedCondition = false; 
+        if (command == DialogueScriptableObject.Commands.UseDialogueCommand)
+        { 
+            command = loadedDialogue.endCommand;
+            num = loadedDialogue.commandNum; 
+        }
 
         switch (command)
         {
             case DialogueScriptableObject.Commands.None:
-                break;
+                return true; 
             case DialogueScriptableObject.Commands.GainMorale:
                 break;
             case DialogueScriptableObject.Commands.GainSupply:
@@ -319,14 +316,40 @@ public class DialogueManager : MonoBehaviour
             case DialogueScriptableObject.Commands.MakeAvailableSupplyTown:
                 break;
             case DialogueScriptableObject.Commands.HelpCharacter:
+                CharactersManager.Instance.ImprisonCharacter(num);
                 break;
             case DialogueScriptableObject.Commands.ArrestCharacter:
+                CharactersManager.Instance.ImprisonCharacter(num);
                 break;
             case DialogueScriptableObject.Commands.RevealLocation:
+                ManualMapManager.Instance.ChangeLocationStatus(num, MapStatusClass.MapStatus.Visible);
                 break;
-            case DialogueScriptableObject.Commands.CheckVisited:
+            case DialogueScriptableObject.Commands.CheckVisited: 
+                return ManualMapManager.Instance.HasLocationBeenVisited(num);   
+            case DialogueScriptableObject.Commands.SetVisited:
+                ManualMapManager.Instance.ChangeLocationStatus(num, MapStatusClass.MapStatus.Visited);
                 break;
-            case DialogueScriptableObject.Commands.CheckHelped:
+            case DialogueScriptableObject.Commands.CheckHelped: 
+                return CharactersManager.Instance.HasHelpedCharacter(num); 
+            case DialogueScriptableObject.Commands.CheckImprisoned:
+                return CharactersManager.Instance.CharacterIsImprisoned(num); 
+                break;
+            case DialogueScriptableObject.Commands.PutPrisonerOnTrial:
+                CharacterClass prisoner = null;
+                foreach (CharacterClass item in CharactersManager.Instance.characters)
+                {
+                    if (item.imprisonedByPlayer)
+                    {
+                        prisoner = item;
+                        break;
+                    }
+                }
+                if (prisoner != null)
+                { 
+                    loadedDialogue.dialogueIfConditionTrue = prisoner.trialDialogue;
+                    return true;
+                } 
+
                 break;
             case DialogueScriptableObject.Commands.TradeSutler:
                 break;
@@ -336,9 +359,12 @@ public class DialogueManager : MonoBehaviour
                 break;
             case DialogueScriptableObject.Commands.MultiplyVisionRange:
                 break;
+            case DialogueScriptableObject.Commands.HasAtLeastPrisonerCount:
+                return CharactersManager.Instance.CheckPrisonerCount(num); 
             default:
                 break;
         }
+        return false;
 
 /*
         if (commandEnd == "moraleGain")
@@ -439,18 +465,7 @@ public class DialogueManager : MonoBehaviour
         {
 
         }
-
-        if (commandEnd == "checkVisited")
-        {
-            //Debug.LogError("checking");
-            string location = loadedDialogue.commandString;
-            bool visited = LFPManager.CheckIfVisited(location);
-            //Debug.LogError("bool" + visited);
-            if (visited && loadedDialogue.dialogueIfConditionTrue != null)
-            {
-                checkedCondition = true;
-            }
-        }
+         
         if (commandEnd == "checkHelped")
         {
             string npcName = loadedDialogue.commandString;
@@ -475,31 +490,39 @@ public class DialogueManager : MonoBehaviour
             OverworldManager.Instance.sutlerParent.SetActive(true);
         } */
     }
+
     private void EndDialogue()
-    {
-        
-        ProcessEndCommand();
+    { 
+        if (loadedDialogue.endCommand != DialogueScriptableObject.Commands.None)
+        {
+            checkedCondition = false;
+            checkedCondition = ProcessEndCommand(DialogueScriptableObject.Commands.UseDialogueCommand);
+        }
         sentenceCount = 0;
-        if (loadedDialogue.choicePaths.Length == 0)
+        if (checkedCondition)
+        {
+            checkedCondition = false;
+            StartNextDialogue(loadedDialogue.dialogueIfConditionTrue);
+            //Debug.Log("condition checked");
+        }
+        else if (loadedDialogue.choicePaths.Length == 0)
         {
             readingDialogue = false;
             //Debug.Log("End of conversation");
             //dialogueParent.SetActive(false);
             Tween tween = dialogueParent.transform.DOMove(new Vector3(dialogueParent.transform.position.x, startingYPos, dialogueParent.transform.position.z), .5f).SetEase(Ease.InOutQuad);
             OverworldManager.Instance.DialogueOver();
-        }
-        else if (checkedCondition)
-        {
-            StartNextDialogue(loadedDialogue.dialogueIfConditionTrue);
-        }
+        } 
         else
         {
             StartNextDialogue(loadedDialogue.choicePaths[0]);
+            //Debug.Log("starting dialogue");
         }
     }
     private void StartNextDialogue(DialogueScriptableObject dialogue) //loads next dialogue and reads it
     {
         loadedDialogue = dialogue;
+        //Debug.Log("next dialogue = " + dialogue.name);
 
         if (HasChoices())
         {
@@ -512,38 +535,58 @@ public class DialogueManager : MonoBehaviour
             //Debug.Log("Starting conversation");
             sentences.Clear();
 
-            foreach (string sentence in loadedDialogue.sentences)
+            foreach (SentenceSpeakerClass item in loadedDialogue.sentencesWithSpeakers)
             {
-                sentences.Enqueue(sentence);
+                sentences.Enqueue(item.sentence);
             }
 
             DisplayNextSentence();
         }
         ProcessStartCommand();
     }
+    public List<bool> choiceAvailable;
     private void PresentChoices()
     {
+        //option to display specific choices if condition is met
         displayingChoices = true;
-        //Debug.Log("presenting choices");
+        Debug.Log("presenting choices");
         Tween tween = dialogueParent.transform.DOMove(targetPosObj.transform.position, .5f).SetEase(Ease.InOutQuad);
         dialogueText.text = "";
 
         ChangeToInitialSpeaker();
         choicesParent.SetActive(true);
 
-        var i = 0;
-        foreach (var item in choiceList)
+        int nextEligible = 0;
+        choiceAvailable.Clear();
+        foreach (var choiceText in choiceList) //go through choice blocks
         {
-            if (i < loadedDialogue.sentencesWithSpeakers.Length) //say i = 2 and tere are 2 choices
+            choiceText.text = "";
+            SentenceSpeakerClass sentenceClass = null; 
+            for (int i = nextEligible; i < loadedDialogue.sentencesWithSpeakers.Length; i++) //first loop 0. +1 = 1. next loop 1;
             {
-                item.transform.parent.gameObject.SetActive(true);
-                //Debug.Log(loadedDialogue.sentences[i]);
-                item.text = loadedDialogue.sentencesWithSpeakers[i].sentence;
-                i++;
+                if (ProcessEndCommand(loadedDialogue.sentencesWithSpeakers[i].commandPrerequisite, loadedDialogue.sentencesWithSpeakers[i].commandNum))
+                {
+                    sentenceClass = loadedDialogue.sentencesWithSpeakers[i];
+                    nextEligible = i;
+                    choiceAvailable.Add(true);
+                    break;
+                }
+                else //skipping over the ineligible
+                { 
+                    choiceAvailable.Add(false);
+                }
+            }
+
+            if (sentenceClass != null)
+            { 
+                choiceText.transform.parent.gameObject.SetActive(true);
+                choiceText.text = sentenceClass.sentence;
+                nextEligible += 1;
+
             }
             else
             {
-                item.transform.parent.gameObject.SetActive(false);
+                choiceText.transform.parent.gameObject.SetActive(false);
             }
         }
         ProcessStartCommand();
@@ -581,8 +624,12 @@ public class DialogueManager : MonoBehaviour
             UpdateTextSpeeds();
         }
     }
-    public void ChooseChoice(int num) //triggered by clicking on a choice
+    public void ChooseChoice(int num) //triggered by clicking on a choice. num is simply the button's location, 0 1 2
     {
+        while (!choiceAvailable[num] && num < loadedDialogue.choicePaths.Length-1)
+        {
+            num++;
+        }
         loadedDialogue = loadedDialogue.choicePaths[num];
         displayingChoices = false; 
         ChangeToInitialSpeaker();

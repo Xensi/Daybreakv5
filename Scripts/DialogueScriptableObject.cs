@@ -29,7 +29,12 @@ public class DialogueScriptableObject : ScriptableObject
         TradeSutler,
         GainSutler,
         DestroyLocale,
-        MultiplyVisionRange
+        MultiplyVisionRange,
+        SetVisited,
+        CheckImprisoned,
+        PutPrisonerOnTrial,
+        UseDialogueCommand,
+        HasAtLeastPrisonerCount
     } 
 
     [Header("Sentences")]
@@ -40,7 +45,7 @@ public class DialogueScriptableObject : ScriptableObject
      
 
     [Header("Paths")]
-    public DialogueScriptableObject nextDialogue;
+    //public DialogueScriptableObject nextDialogue;
     public DialogueScriptableObject[] choicePaths; 
 
     [Header("Command info")]

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: C4Arrest
+  m_EditorClassIdentifier: 
+  sentencesWithSpeakers:
+  - sentence: Hold on a moment now. Did I say we were going to hear him out? He is
+      a thief after all, and thieves should be handled appropriately.
+    speaker: {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - sentence: "It seems as though this Dernoth will be going through many emotions
+      at once today. Hartwig sighs with some regret, whereas Gotfried chuckles amusedly.
+      Even Ingva seems to smile. \r\n"
+    speaker: {fileID: 11400000, guid: 6798afcb7e39dbc409de2575107cb5fe, type: 2}
+  - sentence: "\rDernoth squeals and flails as your guards put manacles around his
+      wrists. He will face justice, just not Maukland\u2019s justice. \r\n"
+    speaker: {fileID: 11400000, guid: 6798afcb7e39dbc409de2575107cb5fe, type: 2}
+  - sentence: (You arrested Dernoth. Bring him to the Forward Camp for judgement.)
+    speaker: {fileID: 11400000, guid: 6798afcb7e39dbc409de2575107cb5fe, type: 2}
+  sentences: []
+  nextDialogue: {fileID: 0}
+  choicePaths: []
+  startCommand: 0
+  endCommand: 0
+  commandNum: 0
+  commandString: 
+  dialogueIfConditionTrue: {fileID: 0}

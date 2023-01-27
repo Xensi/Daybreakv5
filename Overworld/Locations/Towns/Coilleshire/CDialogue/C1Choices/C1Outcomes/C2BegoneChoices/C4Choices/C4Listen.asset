@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: C4Listen
+  m_EditorClassIdentifier: 
+  sentencesWithSpeakers:
+  - sentence: "You needn\u2019t grovel further, Dernoth. Name your demands, and then
+      provide this information you claim is so vital."
+    speaker: {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+  - sentence: 'But of course, and so it will be readily provided! Before I put forth
+      my requests, as I am generous myself. '
+    speaker: {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
+  - sentence: "Now, listen here. To our south is a smaller post, but it is not of
+      great concern. However, it will call on its allies upon sighting you, no doubt
+      about that. \r"
+    speaker: {fileID: 0}
+  - sentence: 'The path to the stronghold of Borgham is guarded by a camp far to
+      the west of here. If you just head straight west of Coilleshire, and tread
+      the northern path through the dead garrison, you will find a weakly defended
+      Atlesian camp.
+
+'
+    speaker: {fileID: 0}
+  - sentence: ' I assure you, they will not expect you. And I believe a larger one
+      is not far from that one. If you do this, the line of supply to Borgham will
+      be cut, and the Atlesians will have a much harder time defending their holdings. '
+    speaker: {fileID: 0}
+  - sentence: "Ingva looks a bit surprised and nods attentively, considering the
+      thief\u2019s words. Gotfried, who was previously disinterested, furrows his
+      brow upon realizing that Dernoth knew more than he let on. "
+    speaker: {fileID: 11400000, guid: 6798afcb7e39dbc409de2575107cb5fe, type: 2}
+  - sentence: 'Hartwig grins, feeling that his suggestion to show mercy to this strange
+      vagrant was validated. '
+    speaker: {fileID: 0}
+  sentences: []
+  nextDialogue: {fileID: 11400000, guid: 4ba9d838b32b0d34590990a2f1a8c4af, type: 2}
+  choicePaths:
+  - {fileID: 11400000, guid: 4ba9d838b32b0d34590990a2f1a8c4af, type: 2}
+  startCommand: 0
+  endCommand: 0
+  commandNum: 0
+  commandString: 
+  dialogueIfConditionTrue: {fileID: 0}

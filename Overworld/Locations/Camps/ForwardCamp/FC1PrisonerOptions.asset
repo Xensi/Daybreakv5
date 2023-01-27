@@ -10,18 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
-  m_Name: C1Choices
+  m_Name: FC1PrisonerOptions
   m_EditorClassIdentifier: 
   sentencesWithSpeakers:
-  - sentence: Towards what end are you making these pleas of aid, Dernoth?
+  - sentence: placeholder
     speaker: {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
-  - sentence: You bother me. Away with you.
-    speaker: {fileID: 0}
+    commandPrerequisite: 0
+    commandNum: 0
+  - sentence: I've got a prisoner for the Amber Court.
+    speaker: {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+    commandPrerequisite: 20
+    commandNum: 1
   sentences: []
-  nextDialogue: {fileID: 0}
   choicePaths:
-  - {fileID: 11400000, guid: 0f46c5569aacbc94983382c90a39743d, type: 2}
-  - {fileID: 11400000, guid: 50ffe43635595314fb588d2f1eb40856, type: 2}
+  - {fileID: 11400000, guid: 22e0c7967aee01740916f7ee2ecacab4, type: 2}
+  - {fileID: 11400000, guid: eeb51de1b929070489a553500b32c3cf, type: 2}
   startCommand: 0
   endCommand: 0
   commandNum: 0

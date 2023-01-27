@@ -14,10 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sentencesWithSpeakers:
   - sentence: "Let\u2019s hear the man out first."
-    speaker: {fileID: 0}
+    speaker: {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
   - sentence: 'Most definitely. We have little patience for trickery, Dernoth. '
     speaker: {fileID: 0}
-  sentenceAudio: []
   sentences: []
   nextDialogue: {fileID: 0}
   choicePaths:

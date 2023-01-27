@@ -10,18 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
-  m_Name: C1Choices
+  m_Name: DernothTrial
   m_EditorClassIdentifier: 
   sentencesWithSpeakers:
-  - sentence: Towards what end are you making these pleas of aid, Dernoth?
-    speaker: {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
-  - sentence: You bother me. Away with you.
-    speaker: {fileID: 0}
+  - sentence: This fucking sucks
+    speaker: {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
   sentences: []
-  nextDialogue: {fileID: 0}
-  choicePaths:
-  - {fileID: 11400000, guid: 0f46c5569aacbc94983382c90a39743d, type: 2}
-  - {fileID: 11400000, guid: 50ffe43635595314fb588d2f1eb40856, type: 2}
+  choicePaths: []
   startCommand: 0
   endCommand: 0
   commandNum: 0

@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: C7DoubleDown
+  m_EditorClassIdentifier: 
+  sentencesWithSpeakers:
+  - sentence: 'Dernoth sighs, though it sounds more like a croak. '
+    speaker: {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
+  - sentence: Well, I tried my best to deliver, but if you still find me wanting
+      . . .
+    speaker: {fileID: 0}
+  - sentence: 'He backs away slowly at first. Noticing this, you send your troops
+      forth to apprehend him. '
+    speaker: {fileID: 0}
+  - sentence: 'His slow stride turns into a mad dash, as he vaults over a fence,
+      runs across a field of crops, before reaching a horse and outrunning your soldiers
+      all together. It seems business has concluded with the thief. '
+    speaker: {fileID: 0}
+  - sentence: 'Hartwig shakes his head in disappointment.
+
+'
+    speaker: {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  sentences: []
+  nextDialogue: {fileID: 0}
+  choicePaths: []
+  startCommand: 0
+  endCommand: 0
+  commandNum: 0
+  commandString: 
+  dialogueIfConditionTrue: {fileID: 0}

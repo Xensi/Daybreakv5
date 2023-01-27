@@ -16,7 +16,7 @@ MonoBehaviour:
   - sentence: 'Nestled in the shade of the forest to the north, the village of Coilleshire
       is noisy with the sound of lumber workers slamming their axe-heads into the
       large pines close to them. '
-    speaker: {fileID: 11400000, guid: bd9061ea356defc4abb4febd4475b11d, type: 2}
+    speaker: {fileID: 11400000, guid: 6798afcb7e39dbc409de2575107cb5fe, type: 2}
   - sentence: "The Grafton forest is dense enough that their efforts don\u2019t seem
       to shrink it in the slightest. Villagers who wander about bow their heads in
       acknowledgement of your arrival. "
@@ -43,7 +43,7 @@ MonoBehaviour:
   - sentence: "We are most honored by your hospitality. And please, we are no saviors,
       but simply wish to perform a humble duty on Maukland\u2019s behalf.\r\n\r\r<i>Hartwig
       smiles warmly. Gotfried rolls his eyes.\r</i>"
-    speaker: {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
+    speaker: {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
   - sentence: 'Aha . . . yes. And of course we wish to aid you in this duty in any
       way possible. Borgham fell so quickly, its brave defenders fighting to the
       last.
@@ -57,7 +57,6 @@ MonoBehaviour:
       course, we can only look to you for aid. Defenseless, and helpless as we are.\n\r<i>His
       grating, gravelly voice continues to plead.\r</i>"
     speaker: {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
-  sentenceAudio: []
   sentences: []
   nextDialogue: {fileID: 0}
   choicePaths:

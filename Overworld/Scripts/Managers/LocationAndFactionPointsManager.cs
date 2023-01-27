@@ -4,23 +4,9 @@ using UnityEngine;
 
 public class LocationAndFactionPointsManager : MonoBehaviour
 {
-    public List<SupplyPoint> importantFactionPoints;
+    public List<SupplyPoint> importantFactionPoints; 
 
-    public List<ImportantNPC> importantNPCs;
-
-    [SerializeField] private List<SupplyPoint> otherLocations;
-
-    public void SetHelped(string npcName)
-    {
-        foreach (ImportantNPC npc in importantNPCs)
-        {
-            if (npc.NPCName == npcName)
-            {
-                Debug.LogError(npcName);
-                npc.helpedNPC = true;
-            }
-        }
-    }
+    [SerializeField] private List<SupplyPoint> otherLocations; 
 
     public bool CheckIfVisited(string location)
     {
@@ -35,19 +21,5 @@ public class LocationAndFactionPointsManager : MonoBehaviour
         }
 
         return false;
-    }
-
-    public bool CheckIfHelped(string npcName)
-    {
-        foreach(ImportantNPC npc in importantNPCs)
-        {
-            if (npc.NPCName == npcName)
-            {
-                return npc.helpedNPC;
-            }
-        }
-        return false;
-    }
-
-
+    }  
 }

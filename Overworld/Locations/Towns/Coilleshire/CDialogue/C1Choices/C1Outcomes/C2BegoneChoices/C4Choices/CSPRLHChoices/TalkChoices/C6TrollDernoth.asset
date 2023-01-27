@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
+  m_Name: C6TrollDernoth
+  m_EditorClassIdentifier: 
+  sentencesWithSpeakers:
+  - sentence: "Gotfried tilts his head in confusion.\r"
+    speaker: {fileID: 11400000, guid: 3cfbda2f7caecd64c919e7bac200db33, type: 2}
+  - sentence: "Look, I mislike this slimy creature of a man as much as you do, but
+      this is genuine intelligence. And a deal\u2019s a deal. "
+    speaker: {fileID: 0}
+  - sentence: "Gotfried is right. I\u2019m taken aback by just how much he knows.
+      Perhaps some compensation is in order. "
+    speaker: {fileID: 11400000, guid: 42bda72bf8c9f704fa8d2dce43ec5b09, type: 2}
+  - sentence: Commander, please. Give the poor man a chance!
+    speaker: {fileID: 11400000, guid: 1f0bd3d581d074f498fbb30739c7fe38, type: 2}
+  sentences: []
+  nextDialogue: {fileID: 11400000, guid: 72d6bd60421e6814ea88db215817a39a, type: 2}
+  choicePaths:
+  - {fileID: 11400000, guid: 72d6bd60421e6814ea88db215817a39a, type: 2}
+  startCommand: 0
+  endCommand: 0
+  commandNum: 0
+  commandString: 
+  dialogueIfConditionTrue: {fileID: 0}

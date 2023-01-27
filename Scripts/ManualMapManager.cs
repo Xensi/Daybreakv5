@@ -52,6 +52,19 @@ public class ManualMapManager : MonoBehaviour
         mapLocations[locationInt].status = status;
         UpdateLocationsStatus();
     }
+
+    public bool HasLocationBeenVisited(int id)
+    {
+        if (mapLocations[id].status == MapStatusClass.MapStatus.Visited)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
     public void ToggleMapCamera()
     {
         mapCamera.enabled = !mapCamera.enabled;

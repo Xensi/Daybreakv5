@@ -10,18 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ec2505857ce00c4e941981221ba012c, type: 3}
-  m_Name: C1Choices
+  m_Name: C3EadinVisited
   m_EditorClassIdentifier: 
   sentencesWithSpeakers:
-  - sentence: Towards what end are you making these pleas of aid, Dernoth?
+  - sentence: I'll keep that in mind.
     speaker: {fileID: 11400000, guid: 6c2578e72a24555498a1856afd0cc048, type: 2}
-  - sentence: You bother me. Away with you.
+  - sentence: Actually, on the way to Eadin, we were ambushed by Atlesians.
+    speaker: {fileID: 0}
+  - sentence: Going to Eadin, we were ambushed by Atlesians. One disguised as a Maukling
+      farmer suddenly appeared out of hiding.
     speaker: {fileID: 0}
   sentences: []
-  nextDialogue: {fileID: 0}
   choicePaths:
-  - {fileID: 11400000, guid: 0f46c5569aacbc94983382c90a39743d, type: 2}
-  - {fileID: 11400000, guid: 50ffe43635595314fb588d2f1eb40856, type: 2}
+  - {fileID: 11400000, guid: 3280add2ee85e824eb4f88e86937386b, type: 2}
+  - {fileID: 11400000, guid: b51a0c08d27ea9c41a326fcc4ee9fced, type: 2}
+  - {fileID: 11400000, guid: b51a0c08d27ea9c41a326fcc4ee9fced, type: 2}
   startCommand: 0
   endCommand: 0
   commandNum: 0
