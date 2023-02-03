@@ -96,24 +96,32 @@ public class BattleGroupManager : MonoBehaviour
     }
     private void CheckIfEnemiesCanSeePlayer()
     {
+        
         for (int i = 0; i < allBattleGroupsArray.Length; i++)
         {
             BattleGroup group = allBattleGroupsArray[i];
             if (group.controlledBy == BattleGroup.controlStatus.AIControlled)
             {
-                float distance = Vector3.Distance(group.transform.position, OverworldManager.Instance.playerBattleGroup.transform.position); //get distance between enemy and group
-                if (distance <= group.aiSightDistance) //check if distance less or equal than ai distance
+                if (!OverworldManager.Instance.playerBattleGroup.allowedToStartCombat) //we can't see player if they have lost a battle
                 {
-                    group.aiCanSeePlayer = true; 
-                    //in the future compare our estimated strength vs player.
+                    group.aiCanSeePlayer = false;
                 }
                 else
-                { 
-                    if (group.aiCanSeePlayer) //only update last known position if we saw them and now cannot
+                {
+                    float distance = Vector3.Distance(group.transform.position, OverworldManager.Instance.playerBattleGroup.transform.position); //get distance between enemy and group
+                    if (distance <= group.aiSightDistance) //check if distance less or equal than ai distance
                     {
-                        group.aiLastKnownPlayerPosition = OverworldManager.Instance.playerBattleGroup.transform.position; 
+                        group.aiCanSeePlayer = true;
+                        //in the future compare our estimated strength vs player.
                     }
-                    group.aiCanSeePlayer = false;
+                    else
+                    {
+                        if (group.aiCanSeePlayer) //only update last known position if we saw them and now cannot
+                        {
+                            group.aiLastKnownPlayerPosition = OverworldManager.Instance.playerBattleGroup.transform.position;
+                        }
+                        group.aiCanSeePlayer = false;
+                    }
                 } 
             }
         }
@@ -123,7 +131,7 @@ public class BattleGroupManager : MonoBehaviour
         for (int i = 0; i < allBattleGroupsArray.Length; i++)
         {
             BattleGroup group = allBattleGroupsArray[i];
-            group.pathfindingAI.canMove = !movementPaused;
+            group.pathfindingAI.canMove = !movementPaused; 
             group.UpdateSpeedBasedOnNumberOfUnits(timeScale);
         }
     }

@@ -23,7 +23,7 @@ MonoBehaviour:
     commandNum: 2
   sentences: []
   choicePaths:
-  - {fileID: 11400000, guid: 1dfd81e017ae7414f82125ba8ed64a62, type: 2}
+  - {fileID: 11400000, guid: 77e49a7d3c668084bb5ae8da29c85609, type: 2}
   - {fileID: 11400000, guid: 7cd84182b5959ca4fa15dc032cc4f17b, type: 2}
   startCommand: 0
   endCommand: 0

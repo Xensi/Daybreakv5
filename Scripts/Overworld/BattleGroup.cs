@@ -118,25 +118,25 @@ public class BattleGroup : MonoBehaviour
         }
     }
     private float triumphMultiplier = 0.25f;
-    public float aiTriumphTimer = 0; //higher the more casualties inflicted
-    public void SetTriumphTimer()
+    public float aiTriumphTimer = 0; //higher the more casualties inflicted. determines how long battlegroups become immune to battles 
+    public void BeginCombatDefeatTimer()
     {
-        aiTriumphTimer = casualtiesInflictedThisBattle * triumphMultiplier;
-        allowedToStartCombat = false;
-        InvokeRepeating("UpdateTriumphTimer", 1, 1);
+        aiTriumphTimer = FightManager.Instance.victorBattleGroup.casualtiesInflictedThisBattle * triumphMultiplier; //should be based on the winner's casualties inflicted
+        InvokeRepeating("UpdateCombatDefeatTimer", timerDelta, timerDelta);
     }
     public int casualtiesInflictedThisBattle = 0;
-    private void UpdateTriumphTimer()
+    float timerDelta = 0.1f;
+    private void UpdateCombatDefeatTimer()
     {
         if (aiTriumphTimer > 0)
         { 
-            aiTriumphTimer -= 1 * BattleGroupManager.Instance.timeScale;
+            aiTriumphTimer -= timerDelta * BattleGroupManager.Instance.timeScale;
         }
         else
         {
             aiTriumphTimer = 0;
             allowedToStartCombat = true;
-            CancelInvoke("UpdateTriumphTimer");
+            CancelInvoke("UpdateCombatDefeatTimer");
         }
     }
     public bool reachedDestination = false;
@@ -419,7 +419,7 @@ public class BattleGroup : MonoBehaviour
         BattleGroup collidedBattleGroup = other.gameObject.GetComponent<BattleGroup>();
         #endregion
         #region OnEnterForPlayerOnly
-        if (controlledBy == controlStatus.PlayerControlled)
+        if (controlledBy == controlStatus.PlayerControlled) 
         { 
             if (collidedSupplyPoint != null)
             {
@@ -429,9 +429,13 @@ public class BattleGroup : MonoBehaviour
             {
                 UpdateLocaleStatus(collidedLocale, true);//update screen to show locale options
             }
-            if (collidedBattleGroup != null && collidedBattleGroup.controlledBy == controlStatus.AIControlled && collidedBattleGroup.allowedToStartCombat)
+            //when player touches a battle group:
+            //check if player is allowed to start a battle (has not lost a battle recently)
+            //check if enemy is allowed to start a battle
+            if (collidedBattleGroup != null && collidedBattleGroup.controlledBy == controlStatus.AIControlled && collidedBattleGroup.allowedToStartCombat && OverworldManager.Instance.playerBattleGroup.allowedToStartCombat)
             {
                 collidedBattleGroup.allowedToStartCombat = false;
+                OverworldManager.Instance.playerBattleGroup.allowedToStartCombat = false;
                 OverworldToFieldBattleManager.Instance.StartFieldBattleWithEnemyBattleGroup(collidedBattleGroup);
                 //if you lose the AI should stop being able to see you for a while 
             }

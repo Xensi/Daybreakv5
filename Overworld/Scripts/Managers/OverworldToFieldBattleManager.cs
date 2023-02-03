@@ -87,9 +87,15 @@ public class OverworldToFieldBattleManager : MonoBehaviour
         state = possibleGameStates.FieldBattle;
         OverworldParent.SetActive(false);
         FieldBattleParent.SetActive(true);
+        ResetCamera();
         LoadScenario();
         AllowPlacementOfPlayerTroops();
     } 
+    private void ResetCamera()
+    {
+        CinemachineShake.Instance.HaltShakes();
+        FightManager.Instance.virtualCamTransform.SetPositionAndRotation(new Vector3(0, 50, -90), Quaternion.Euler(0, 0, 0));
+    }
     public void EndFieldBattle()
     {
         EraseAllTroopsAndClearArrays();
@@ -98,6 +104,15 @@ public class OverworldToFieldBattleManager : MonoBehaviour
         FieldBattleParent.SetActive(false);
         OverworldParent.SetActive(true);
         Cursor.lockState = CursorLockMode.Confined;
+
+        if (FightManager.Instance.victorBattleGroup != null) //re-enable allowedToStartCombat for victor
+        {
+            FightManager.Instance.victorBattleGroup.allowedToStartCombat = true;
+        }
+        if (FightManager.Instance.loserBattleGroup != null) //
+        { 
+            FightManager.Instance.loserBattleGroup.BeginCombatDefeatTimer();
+        }
     } 
     public void UpdateUnitManagerArmies()
     {
@@ -111,8 +126,7 @@ public class OverworldToFieldBattleManager : MonoBehaviour
         if (OverworldManager.Instance.enemyBattleGroup != null) 
         { 
             UnitManager.Instance.UpdateBattleGroupWithFormation(OverworldManager.Instance.enemyBattleGroup, FightManager.Instance.enemyControlledFormations);
-            OverworldManager.Instance.enemyBattleGroup.SetTriumphTimer();
-        }
+        } 
     }
     private void EraseAllTroopsAndClearArrays()
     {

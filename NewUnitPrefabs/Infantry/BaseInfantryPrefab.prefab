@@ -289,6 +289,7 @@ GameObject:
   - component: {fileID: 516568650834671651}
   - component: {fileID: 6543225988548055444}
   - component: {fileID: 147310995378209704}
+  - component: {fileID: 6608709247010324616}
   - component: {fileID: 7295892263859704113}
   m_Layer: 24
   m_Name: Model
@@ -358,7 +359,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c23e0c2eb0ccd54594e51e55db8c15b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  richAI: {fileID: 147310995378209704}
+  pathfindingAI: {fileID: 0}
+  pathfindingAILerp: {fileID: 0}
   animator: {fileID: 0}
   formPos: {fileID: 0}
   lineOfSightIndicator: {fileID: 3149635272380389554}
@@ -405,6 +407,7 @@ MonoBehaviour:
   isMagic: 0
   magicRechargeTime: 60
   magicCharged: 1
+  currentAnimationState: 0
   braced: 0
   modelPosition: {fileID: 0}
   movingSpeed: 0
@@ -538,9 +541,11 @@ MonoBehaviour:
   ignoreAsNearby: 0
   getUpTime: 0
   rangedModule: {fileID: 0}
-  moveToPosition: {fileID: 5632992659982562817}
+  dispersalLevel: 0.25
+  target: {fileID: 0}
   previousLocation: {x: 0, y: 0, z: 0}
   newMaxSpeed: 0
+  hitThreshold: 10
   waitingForAttackOver: 0
   farAway: 0
 --- !u!114 &147310995378209704
@@ -582,9 +587,38 @@ MonoBehaviour:
   endReachedDistance: 0.5
   wallForce: 3
   wallDist: 1
-  funnelSimplification: 0
+  funnelSimplification: 1
   slowWhenNotFacingTarget: 0
   animCompatibility: {fileID: 0}
+--- !u!114 &6608709247010324616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6588230940471953445}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 847a14d4dc9cc43679ab34fc78e0182f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 4
+  autoRepath:
+    mode: 2
+    interval: 0.5
+    sensitivity: 10
+    maximumInterval: 2
+    visualizeSensitivity: 0
+  canMove: 1
+  speed: 3
+  orientation: 0
+  enableRotation: 1
+  rotationSpeed: 10
+  interpolatePathSwitches: 1
+  switchPathInterpolationSpeed: 5
+  targetCompatibility: {fileID: 0}
+  repathRateCompatibility: NaN
+  canSearchCompability: 0
 --- !u!114 &7295892263859704113
 MonoBehaviour:
   m_ObjectHideFlags: 0

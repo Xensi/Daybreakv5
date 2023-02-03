@@ -11,6 +11,10 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 147310995378209704, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3581954252962277856, guid: ea9127458b64e3645923071d64961f81, type: 3}
       propertyPath: m_Name
       value: visualsConscript

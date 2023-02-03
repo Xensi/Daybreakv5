@@ -38,6 +38,14 @@ public class CinemachineShake : MonoBehaviour
         float amplitude = intensity * attenuate;
         shakes[id] = amplitude;
     }
+    public void HaltShakes()
+    {
+        for (int i = 0; i < shakes.Length; i++)
+        {
+            shakes[i] = 0;
+        }
+        shakeTime = 0;
+    }
     private void AddUpShakes()
     {
         float total = 0;

@@ -55,7 +55,7 @@ public class FormationPosition : MonoBehaviour
     [HideInInspector] public int shotsHit = 0;
     public bool showSoldierModels = true;
     public GlobalDefines.Team team = GlobalDefines.Team.Altgard; 
-    [HideInInspector] public List<FormationPosition> listOfNearbyEnemies;
+    public List<FormationPosition> listOfNearbyEnemies;
     [HideInInspector] public float startingPursueRadius = 0; //do not modify manually
     public FormationPosition enemyFormationToTarget;
     [Tooltip("Should we try to attack nearby enemies?")]
@@ -389,7 +389,7 @@ public class FormationPosition : MonoBehaviour
         { 
             TeleportSoldiers();
         }
-        showSoldierModels = val;
+        /*showSoldierModels = val;
         for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
         {
             SoldierModel soldier =  soldierBlock.modelsArray[i];
@@ -401,7 +401,7 @@ public class FormationPosition : MonoBehaviour
             { 
                 soldier.UpdateVisibility(true);
             }
-        }
+        }*/
     }
     private void TeleportSoldiers()
     {
@@ -412,8 +412,9 @@ public class FormationPosition : MonoBehaviour
                 SoldierModel soldier = soldierBlock.modelsArray[i];
                 if (soldier != null && soldier.alive && soldier.modelPosition != null) //terrain check but don't teleport to position
                 { 
-                    soldier.PlaceOnGround(); 
-                    soldier.pathfindingAI.enabled = true;
+                    soldier.PlaceOnGround();
+                    soldier.SwitchAI(SoldierModel.AIToUse.RichAI);
+                    //soldier.pathfindingAI.enabled = true;
                 }
             }
         } 
@@ -430,17 +431,17 @@ public class FormationPosition : MonoBehaviour
             }
         }
     }
-    public void ToggleFormationSoldiersPathfinding(bool val)
+    /*public void ToggleFormationSoldiersPathfinding(bool val)
     {
         for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
         {
             SoldierModel soldier = soldierBlock.modelsArray[i];
             if (soldier != null) //terrain check but don't teleport to position
             {
-                soldier.pathfindingAI.enabled = val;
+                soldier.pathfindingAI.enabled = val; 
             }
         }
-    }
+    }*/
     private void LockSoldiersToTerrain() //called periodically
     {
         if (showSoldierModels)
@@ -468,7 +469,8 @@ public class FormationPosition : MonoBehaviour
                 //soldier.farAway = farAway;
                 if (soldier.formPos.showSoldierModels) //use rich ai
                 {
-                    soldier.pathfindingAI.enabled = true;
+                    soldier.SwitchAI(SoldierModel.AIToUse.RichAI);
+                    //soldier.pathfindingAI.enabled = true;
                     soldier.animator.enabled = true;
                     /*if (farAway)
                     {
@@ -488,13 +490,14 @@ public class FormationPosition : MonoBehaviour
                 }
                 else //performant
                 {
-                    soldier.pathfindingAI.enabled = false;
+                    soldier.SwitchAI(SoldierModel.AIToUse.AILerp);
+                    //soldier.pathfindingAI.enabled = false;
                     soldier.animator.enabled = false;
-                    if (soldier.moving)
+                    /*if (soldier.moving)
                     {
                         var step = soldier.newMaxSpeed * lockTime; // calculate distance to move
                         soldier.transform.position = Vector3.MoveTowards(soldier.transform.position, soldier.modelPosition.transform.position, step);
-                    } 
+                    } */
                 } 
             }
         }
@@ -862,8 +865,8 @@ public class FormationPosition : MonoBehaviour
     }
     private void CheckForNearbyEnemyFormations()
     {
-        //listOfNearbyEnemies.Clear();
-        /*LayerMask layerMask = LayerMask.GetMask("Formation");
+        listOfNearbyEnemies.Clear();
+        LayerMask layerMask = LayerMask.GetMask("Formation");
         int maxColliders = 40;
         Collider[] hitColliders = new Collider[maxColliders];
         int numColliders = Physics.OverlapSphereNonAlloc(transform.position, engageEnemyRadius, hitColliders, layerMask, QueryTriggerInteraction.Ignore); //nonalloc generates no garbage
@@ -887,7 +890,7 @@ public class FormationPosition : MonoBehaviour
                 }
                 listOfNearbyEnemies.Add(form);
             }
-        }*/
+        }
 
         if (obeyingMovementOrder)
         {
@@ -1109,7 +1112,7 @@ public class FormationPosition : MonoBehaviour
 
     private void GetMeOutOfHere()
     {
-        Debug.Log("Fleeing");
+        //Debug.Log("Fleeing");
         float detectionRange = 50;
         FormationPosition closestEnemy = GetClosestFormationWithinRange(1, team, false, detectionRange);
         if (closestEnemy != null)

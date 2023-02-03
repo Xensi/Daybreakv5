@@ -13,8 +13,28 @@ MonoBehaviour:
   m_Name: DernothTrial
   m_EditorClassIdentifier: 
   sentencesWithSpeakers:
-  - sentence: This fucking sucks
+  - sentence: The Amber Court has found you guilty of thievery. The sentence is amputation
+      of the hands, so that they may sin no more.
+    speaker: {fileID: 11400000, guid: 1fa14bf23b3943845b3e0b53860a01fc, type: 2}
+    commandPrerequisite: 0
+    commandNum: 0
+  - sentence: The sentence shall be carried out immediately.
+    speaker: {fileID: 11400000, guid: 1fa14bf23b3943845b3e0b53860a01fc, type: 2}
+    commandPrerequisite: 0
+    commandNum: 0
+  - sentence: "Don\u2019t I get a lawyer?"
     speaker: {fileID: 11400000, guid: 5f051be3d2cecfa4e831466d5b6a405c, type: 2}
+    commandPrerequisite: 0
+    commandNum: 0
+  - sentence: The smug look on his face fades as two men haul him away to meet his
+      fate. He writhes and flails in a pitiful attempt to break free.
+    speaker: {fileID: 11400000, guid: 6798afcb7e39dbc409de2575107cb5fe, type: 2}
+    commandPrerequisite: 0
+    commandNum: 0
+  - sentence: "Altgard\u2019s justice prevails once again."
+    speaker: {fileID: 11400000, guid: 6798afcb7e39dbc409de2575107cb5fe, type: 2}
+    commandPrerequisite: 0
+    commandNum: 0
   sentences: []
   choicePaths: []
   startCommand: 0

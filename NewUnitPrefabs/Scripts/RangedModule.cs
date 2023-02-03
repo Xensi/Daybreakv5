@@ -37,7 +37,7 @@ public class RangedModule : MonoBehaviour
     [SerializeField] private int maxAmmo = 1;
     [SerializeField] private int internalAmmoCapacity = 100;
     public bool loadingRightNow = false;
-    private float currentFinishedLoadingTime = 0;
+    [SerializeField] private float currentFinishedLoadingTime = 0;
     [SerializeField] private float timeUntilFinishedLoading = 1f;
     [HideInInspector] public SoldierModel model;
 
@@ -46,7 +46,9 @@ public class RangedModule : MonoBehaviour
     [Range(0, 1)] //0: low force high angle; 1: high force low angle
     [SerializeField] private float forceRatio = 1;
     #endregion
-     
+    float maxDistanceAllowReloads = 1;
+
+
     private void Start()
     {
 
@@ -73,6 +75,7 @@ public class RangedModule : MonoBehaviour
             }
             else
             {
+                //Debug.Log("firing proj revised");
                 FireProjectileRevised();
             }
         }
@@ -85,34 +88,53 @@ public class RangedModule : MonoBehaviour
         internalAmmoCapacity--;
         internalAmmoCapacity = Mathf.Clamp(internalAmmoCapacity, 0, 999);
     }
-    private void CancelLoading()
+    public enum MoveTreatment
     {
+        DoNotChange,
+        Halt,
+        Move
+    }
+    private void CancelLoading(MoveTreatment moveTreatment)
+    {
+        currentFinishedLoadingTime = 0; //reset the time
         SetLoading(false);
+
+        switch (moveTreatment)
+        {
+            case MoveTreatment.DoNotChange:
+                break;
+            case MoveTreatment.Halt:
+                model.SetMoving(false);
+                break;
+            case MoveTreatment.Move:
+                model.SetMoving(true);
+                break;
+            default:
+                break;
+        }
     }
     public void UpdateLoadTimer()
     {
         if (model.routing)
         {
             return;
-        }
-        if (!rangedNeedsLoading)
-        {
-            CancelLoading();
-            return;
-        }
-        if (model.pathfindingAI.remainingDistance > model.remainingDistanceThreshold)
-        {
-            CancelLoading();
+        } 
+        if (model.CheckIfRemainingDistanceOverThreshold(maxDistanceAllowReloads))
+        { 
+            //Debug.Log("too far from formation position");
+            CancelLoading(MoveTreatment.Move); //move to formation position please
             return;
         }
         if (model.airborne || model.knockedDown)
         {
-            CancelLoading();
+            //Debug.Log("incapped");
+            CancelLoading(MoveTreatment.DoNotChange); 
             return;
         }
         if (model.damaged)
         {
-            CancelLoading();
+            //Debug.Log("damaged");
+            CancelLoading(MoveTreatment.DoNotChange);
             return;
         }
         if (model.formPos.movementManuallyStopped || !model.formPos.obeyingMovementOrder)
@@ -121,7 +143,8 @@ public class RangedModule : MonoBehaviour
         }
         else if (model.moving)
         {
-            CancelLoading();
+            //Debug.Log("model is moving");
+            CancelLoading(MoveTreatment.DoNotChange);
             return;
         }
         if (ammo <= 0 && !loadingRightNow && internalAmmoCapacity > 0)
@@ -131,7 +154,8 @@ public class RangedModule : MonoBehaviour
         else if (loadingRightNow)
         {   //should we stop reloading? 
             //increment timer  
-            currentFinishedLoadingTime += 1f;
+            currentFinishedLoadingTime += 1f; //why does this only increment when models are visible?
+            //Debug.Log("load time is incrementing: " + currentFinishedLoadingTime);
             if (currentFinishedLoadingTime >= timeUntilFinishedLoading)
             {
                 FinishReload();
@@ -140,6 +164,7 @@ public class RangedModule : MonoBehaviour
     }
     private void Reload()
     {
+        //Debug.Log("RELOADING");
         SetLoading(true);
     }
 
@@ -515,15 +540,6 @@ public class RangedModule : MonoBehaviour
             missile.LaunchProjectileRevised(data);
             model.formPos.modelAttacked = true;
             
-            //manage ammo
-            if (rangedNeedsLoading) //if we need reloading and we're out
-            {
-                ModifyAmmo(-1);
-                if (ammo <= 0 && internalAmmoCapacity > 0)
-                {
-                    Reload();
-                }
-            }
             #region Cosmetic Effects
             //cosmetic
             if (model.attackSounds.Count > 0)
@@ -537,7 +553,16 @@ public class RangedModule : MonoBehaviour
                 GameObject effect = Instantiate(fireEffect, projectileSpawn.position, Quaternion.identity);
                 effect.transform.rotation = Quaternion.LookRotation(transform.forward);
             }
-            #endregion
+            #endregion 
+            //manage ammo
+            if (rangedNeedsLoading) //if we need reloading and we're out
+            {
+                ModifyAmmo(-1);
+                if (ammo <= 0 && internalAmmoCapacity > 0)
+                {
+                    Reload();
+                }
+            }
         }
     }
     private void FireProjectile() //let's fire projectiles at a target

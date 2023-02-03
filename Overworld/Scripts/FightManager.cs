@@ -10,6 +10,8 @@ public class FightManager : MonoBehaviour
 {
     public static FightManager Instance { get; private set; }
 
+    public Transform virtualCamTransform;
+
     [SerializeField] private GameObject destPrefab;
     private Vector3 clickPosition;
 
@@ -456,10 +458,14 @@ public class FightManager : MonoBehaviour
                 if (victoryStatus == 1)
                 {
                     DisplayVictory();
+                    victorBattleGroup = OverworldManager.Instance.playerBattleGroup;
+                    loserBattleGroup = OverworldManager.Instance.enemyBattleGroup;
                 }
                 else if (victoryStatus == 2)
                 {
                     DisplayDefeat();
+                    victorBattleGroup = OverworldManager.Instance.enemyBattleGroup;
+                    loserBattleGroup = OverworldManager.Instance.playerBattleGroup;
                 }
                 OverworldToFieldBattleManager.Instance.UpdateUnitManagerArmies();
                 Invoke("BattleOver", 5);
@@ -467,6 +473,10 @@ public class FightManager : MonoBehaviour
         }
         
     }
+
+    public BattleGroup victorBattleGroup;
+
+    public BattleGroup loserBattleGroup;
     [SerializeField] private GameObject victoryDisplay;
     [SerializeField] private GameObject defeatDisplay;
     private void DisplayVictory()
@@ -1742,7 +1752,11 @@ public class FightManager : MonoBehaviour
                     {
                         item.rotTarget.transform.position = heldPosition;
                         item.pathSet = true;
-                        item.obeyingMovementOrder = true; 
+                        item.obeyingMovementOrder = true;
+                        /*foreach (SoldierModel model in item.soldierBlock.listSoldierModels)
+                        {
+                            model.GenerateDispersalVector();
+                        }*/
 
                         float distanceReq = 1;
                         if (Vector3.Distance(heldPosition, item.destinationsList[0]) >= distanceReq)

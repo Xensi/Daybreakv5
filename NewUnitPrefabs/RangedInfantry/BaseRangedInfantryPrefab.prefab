@@ -30,11 +30,13 @@ MonoBehaviour:
   maxAmmo: 1
   internalAmmoCapacity: 100
   loadingRightNow: 0
+  currentFinishedLoadingTime: 0
   timeUntilFinishedLoading: 1
   model: {fileID: 0}
   useMovementPrediction: 1
-  forceRatio: 1
-  maxThrowForce: 100
+  forceRatio: 0.75
+  maxProjectileForce: 50
+  maxRange: 200
 --- !u!1001 &7791023671330243469
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -59,6 +59,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: modelCrossbowman
       objectReference: {fileID: 0}
+    - target: {fileID: 3888064497551611319, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
+      propertyPath: rangedNeedsLoading
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3888064497551611319, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
+      propertyPath: timeUntilFinishedLoading
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 3950065472280351257, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
       propertyPath: armor
       value: 1.5

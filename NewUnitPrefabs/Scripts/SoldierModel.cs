@@ -9,6 +9,7 @@ public class SoldierModel : MonoBehaviour
 
     private NavmeshCut navMeshCutter;
     [HideInInspector] public RichAI pathfindingAI;
+    [HideInInspector] public AILerp pathfindingAILerp;
     [HideInInspector] public Animator animator; 
     [HideInInspector] public FormationPosition formPos;
     [HideInInspector] public SpriteRenderer lineOfSightIndicator;
@@ -175,8 +176,13 @@ public class SoldierModel : MonoBehaviour
 
     [HideInInspector] public RangedModule rangedModule;
 
+    [Range(0, 1f)]
+    [SerializeField] private float dispersalLevel;
+    private Vector3 dispersalVector;
+
     public void PlaceOnGround()
     {
+        transform.rotation = Quaternion.Euler(0, transform.rotation.y, 0);
         LayerMask layerMask = LayerMask.GetMask("Terrain");
         RaycastHit hit;
         Vector3 vec = new Vector3(transform.position.x, 100, transform.position.z);
@@ -226,6 +232,10 @@ public class SoldierModel : MonoBehaviour
         {
             pathfindingAI = GetComponent<RichAI>();
         }
+        if (pathfindingAILerp == null)
+        {
+            pathfindingAILerp = GetComponent<AILerp>();
+        }
 
         if (animator == null)
         {
@@ -267,6 +277,7 @@ public class SoldierModel : MonoBehaviour
         {
             SetDeployed(false);
             animator.SetBool(AnimatorDefines.meleeID, true);
+            animator.SetInteger(AnimatorDefines.ammoID, 999);
         }
         else
         {
@@ -280,12 +291,18 @@ public class SoldierModel : MonoBehaviour
         //animator.cullingMode = AnimatorCullingMode.CullCompletely;
         animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
         pathfindingAI.enableRotation = true;
+
+        GenerateDispersalVector(dispersalLevel);
     }
     private void OnEnable()
     {
         if (pathfindingAI != null)
         {
             pathfindingAI.onSearchPath += UpdatePath; //subscribe to event
+        }
+        if (pathfindingAILerp != null)
+        {
+            pathfindingAILerp.onSearchPath += UpdatePath;
         }
     }
     private void OnDisable()
@@ -295,13 +312,28 @@ public class SoldierModel : MonoBehaviour
         {
             pathfindingAI.onSearchPath -= UpdatePath;
         }
+        if (pathfindingAILerp != null)
+        {
+            pathfindingAILerp.onSearchPath -= UpdatePath;
+        }
     }
     public void UpdatePath() //call whenever you want path to be updated, comrade
     {
-        if (target != null && pathfindingAI != null)
+        if (target != null && pathfindingAI != null && pathfindingAILerp != null)
         {
-            pathfindingAI.destination = target.position;
+            if (pathfindingAI.enabled)
+            { 
+                pathfindingAI.destination = target.position + dispersalVector;
+            }
+            else if (pathfindingAILerp.enabled)
+            {
+                pathfindingAILerp.destination = target.position + dispersalVector;
+            }
         }
+    }
+    public void GenerateDispersalVector(float dispersalLevel)
+    {
+        dispersalVector = new Vector3(UnityEngine.Random.Range(-dispersalLevel, dispersalLevel), 0, UnityEngine.Random.Range(-dispersalLevel, dispersalLevel));
     }
     public bool IsVisible()
     {
@@ -331,6 +363,8 @@ public class SoldierModel : MonoBehaviour
     }
     public void Rout()
     {
+        float dispersalModifier = 4;
+        GenerateDispersalVector(dispersalLevel * dispersalModifier);
         routing = true;
         SetDeployed(false);
         SetAttacking(false);
@@ -342,6 +376,7 @@ public class SoldierModel : MonoBehaviour
     } 
     public void StopRout()
     {
+        GenerateDispersalVector(dispersalLevel);
         routing = false; 
         SetMoving(false);
     }
@@ -406,7 +441,7 @@ public class SoldierModel : MonoBehaviour
         }
     }
 
-    public void UpdateVisibility(bool val)
+    public void UpdateVisibility(bool val) //true means visible. false is hidden
     { 
         /*foreach (Renderer rend in renderers)
         {
@@ -420,6 +455,7 @@ public class SoldierModel : MonoBehaviour
         if (val)
         {
             animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
+
         }
         else
         { 
@@ -452,7 +488,7 @@ public class SoldierModel : MonoBehaviour
     {
         float dampTime = .1f;
         float deltaTime = .1f;
-        if (pathfindingAI.canMove)
+        if (PathfindingCanMove())
         {
             //if (formPos.listOfNearbyEnemies.Count == 0)
             //{
@@ -479,6 +515,7 @@ public class SoldierModel : MonoBehaviour
                 newMaxSpeed = startingMaxSpeed * 2;
             }
             pathfindingAI.maxSpeed = newMaxSpeed;
+            pathfindingAILerp.speed = newMaxSpeed;
             speedSlow -= 0.1f;
             speedSlow = Mathf.Clamp(speedSlow, 0, documentedMaxSpeed * 0.5f);
 
@@ -549,11 +586,11 @@ public class SoldierModel : MonoBehaviour
 
     public void UpdateDeploymentStatus()
     {
-        /*if (formPos.charging && !MeleeWeaponObstructed(transform.forward))
-        {
+        if (formPos.charging) // && !MeleeWeaponObstructed(transform.forward)
+        { 
             SetDeployed(true);
             return;
-        }*/
+        }
         if (routing)
         {
             return;
@@ -563,8 +600,8 @@ public class SoldierModel : MonoBehaviour
             SetDeployed(true);
             return;
         }
-        //if (formPos.listOfNearbyEnemies.Count > 0) //check if enemies nearby
-        //{
+        if (formPos.listOfNearbyEnemies.Count > 0) //check if enemies nearby
+        {
             if (modelPosition != null)
             {
                 if (modelPosition.row != null)
@@ -573,10 +610,7 @@ public class SoldierModel : MonoBehaviour
                     {
                         if (!deployed)
                         {
-                            if (attackType == AttackType.Melee)
-                            {
-                                SetDeployed(true);
-                            }
+                            SetDeployed(true);
 
                             if (!formPos.inCombat)
                             {
@@ -605,9 +639,8 @@ public class SoldierModel : MonoBehaviour
                         }
                     }
                 }
-            }
-            
-        //}
+            } 
+        }
         else //if none don't be deployed
         {
             SetDeployed(false);
@@ -647,18 +680,24 @@ public class SoldierModel : MonoBehaviour
         }
         if (rangedModule != null && rangedModule.rangedNeedsLoading)
         {
-            if (rangedModule.loadingRightNow && stopWhenLoading && pathfindingAI.remainingDistance <= remainingDistanceThreshold) //if attacking, and needs to stop when attacking, and in formation position
+            if (rangedModule.loadingRightNow && stopWhenLoading) //if attacking, and needs to stop when attacking, and in formation position
             {
-                //Debug.Log("ranged module");
+                if (CheckIfRemainingDistanceUnderThreshold(remainingDistanceThreshold))
+                {
+                    //Debug.Log("stopping due to ranged reasons");
+                    SetMoving(false);
+                    return;
+                } 
+            }
+        }
+        else if (attacking && stopWhenAttacking) //if attacking, and needs to stop when attacking, and in formation position
+        {
+            if (CheckIfRemainingDistanceUnderThreshold(remainingDistanceThreshold))
+            { 
+                //Debug.Log("attacking and stop");
                 SetMoving(false);
                 return;
             }
-        }
-        else if (attacking && stopWhenAttacking && pathfindingAI.remainingDistance <= remainingDistanceThreshold) //if attacking, and needs to stop when attacking, and in formation position
-        {
-            //Debug.Log("attacking and stop");
-            SetMoving(false);
-            return;
         }
         else if (knockedDown || airborne)
         {
@@ -668,22 +707,44 @@ public class SoldierModel : MonoBehaviour
         }
         else //if not attacking, check
         {
-            if (pathfindingAI.remainingDistance > remainingDistanceThreshold) // if there's still path to traverse 
+            if (CheckIfRemainingDistanceOverThreshold(remainingDistanceThreshold)) // if there's still path to traverse 
             {
-                SetMoving(true);
-
+                SetMoving(true); 
             }
             else
             {
                 //Debug.Log("reached destination");
                 SetMoving(false);
             }
+        } 
+    } 
+    public bool CheckIfRemainingDistanceUnderThreshold(float threshold)
+    {
+        if (pathfindingAI.enabled && pathfindingAI.remainingDistance <= threshold)
+        {
+            return true;
         }
-        
+        else if (pathfindingAILerp.enabled && pathfindingAILerp.remainingDistance <= threshold)
+        {
+            return true;
+        }
+        return false;
+    }
+    public bool CheckIfRemainingDistanceOverThreshold(float threshold)
+    {
+        if (pathfindingAI.enabled && pathfindingAI.remainingDistance > threshold)
+        {
+            return true;
+        }
+        else if (pathfindingAILerp.enabled && pathfindingAILerp.remainingDistance > threshold)
+        {
+            return true;
+        }
+        return false;
     }
     public void UpdateLoadTimer()
     {
-        if (rangedModule != null)
+        if (rangedModule != null && rangedModule.rangedNeedsLoading)
         { 
             rangedModule.UpdateLoadTimer();
         }
@@ -695,10 +756,11 @@ public class SoldierModel : MonoBehaviour
             attackBox.ToggleAttackBox(val);
         }
     }
-    private void SetMoving(bool val)
+    public void SetMoving(bool val)
     {
         moving = val;
         pathfindingAI.canMove = val; //we can move
+        pathfindingAILerp.canMove = val;
         //animator.SetBool("moving", val); //and animations will match 
         animator.SetBool(AnimatorDefines.movingID, val);
     }
@@ -946,8 +1008,19 @@ public class SoldierModel : MonoBehaviour
                 currentAttackTime = 0;
 
                 if (attackType == AttackType.Melee)
-                {   
-                    DealDamage(targetEnemy, formPos.charging);
+                {
+                    int rand = UnityEngine.Random.Range(1, 100);
+                    if (rand <= hitThreshold) //all melee attacks have 50% chance to hit?
+                    {
+                        //Debug.Log("hit");
+                        DealDamage(targetEnemy, formPos.charging);
+                    }
+                    else
+                    {
+                        //Debug.Log("miss");
+                        //miss
+                    }
+
                 }
                 else if (rangedModule != null)
                 {
@@ -956,6 +1029,9 @@ public class SoldierModel : MonoBehaviour
             }
         }
     }
+
+    [Range(1, 100)]
+    [SerializeField] int hitThreshold = 50; //higher numbers are better. wider range of good hits
     
     public void DealDamage(SoldierModel enemy, bool launchEnemy = false, bool knockDown = false, bool trampling = false)
     { //check if in range, otherwise whiff  
@@ -1190,6 +1266,27 @@ public class SoldierModel : MonoBehaviour
             }
         } 
     }
+    public enum AIToUse
+    {
+        RichAI,
+        AILerp
+    }
+    public void SwitchAI(AIToUse ai)
+    {
+        switch (ai)
+        {
+            case AIToUse.RichAI:
+                pathfindingAI.enabled = true;
+                pathfindingAILerp.enabled = false;
+                break;
+            case AIToUse.AILerp:
+                pathfindingAI.enabled = false;
+                pathfindingAILerp.enabled = true;
+                break;
+            default:
+                break;
+        }
+    }
     public void KillThis()
     {
         PlaceOnGround();
@@ -1204,6 +1301,7 @@ public class SoldierModel : MonoBehaviour
         animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
         SetAlive(false);
         pathfindingAI.canMove = false;
+        pathfindingAILerp.canMove = false;
         pathfindingAI.enableRotation = false;
 
         ClearReferencesInPositionAndRow();
@@ -1366,10 +1464,21 @@ public class SoldierModel : MonoBehaviour
         }
         return closest;
     }
-    
+    public bool PathfindingCanMove()
+    {
+        if (pathfindingAI.enabled)
+        {
+            return pathfindingAI.canMove;
+        }
+        else if (pathfindingAILerp.enabled)
+        {
+            return pathfindingAILerp.canMove;
+        }
+        return true;
+    }
     public void CheckIfIdle()
     {
-        if (!pathfindingAI.canMove) // && formPos.listOfNearbyEnemies.Count == 0
+        if (!PathfindingCanMove()) // && formPos.listOfNearbyEnemies.Count == 0
         { 
             currentIdleTimer += UnityEngine.Random.Range(0, 2);
             if (currentIdleTimer >= reqIdleTimer)
@@ -1448,7 +1557,7 @@ public class SoldierModel : MonoBehaviour
 
     private void PointTowards(Vector3 targetDirection)
     {
-        pathfindingAI.enableRotation = false;
+        pathfindingAI.enableRotation = false; 
         Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, Time.deltaTime, 0.0f);
         newDirection.y = 0; //keep level
         transform.rotation = Quaternion.LookRotation(newDirection);
