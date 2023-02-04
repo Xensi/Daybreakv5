@@ -121,6 +121,8 @@ public class FightManager : MonoBehaviour
     {
         GenerateSoldierButtons();
         RandomPlacePlayerFormations();
+
+        PlaceEnemySoldiers();
         placerUI.SetActive(true);
         if (friendlyPlacementZone != null)
         {
@@ -221,9 +223,8 @@ public class FightManager : MonoBehaviour
     {
         StopPlacingSoldiers();
         UpdateGUI();
-        PlaceEnemySoldiers();
-        HidePlacementZones(); 
-        UpdateAllFormArrayAndStartAIToBeginBattle(); 
+        HidePlacementZones();
+        UpdateAllFormArrayAndStartAIToBeginBattle();
     }
     private void HidePlacementZones()
     {

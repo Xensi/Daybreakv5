@@ -91,19 +91,6 @@ public class SoldierModel : MonoBehaviour
     #endregion
 
     #region Status 
-    public enum ModelState
-    {
-        Idle,
-        Attacking,
-        Moving,
-        Damaged,
-        Braced,
-        Deployed,
-        KnockedDown,
-        Airborne,
-        Reloading
-    }
-    public ModelState currentModelState = ModelState.Idle;
     [HideInInspector] public bool braced = false;
     private bool allowedToDealDamage = true;
     [HideInInspector] public Position modelPosition;
@@ -419,34 +406,81 @@ public class SoldierModel : MonoBehaviour
             KillThis();
         }
     }
+    public enum ModelState
+    {
+        Idle,
+        Attacking,
+        Moving,
+        Damaged,
+        Braced,
+        Deploying,
+        KnockedDown,
+        Airborne,
+        Reloading,
+        Charging
+    }
+    public ModelState currentModelState = ModelState.Idle;
     private void UpdateModelState()
     {
         switch (currentModelState)
         {
-            case ModelState.Idle:  
+            case ModelState.Idle:
+                SwitchPathfinderMovement(false);
+                //if our destination is far enough away from us
+                if (CheckIfRemainingDistanceOverThreshold(remainingDistanceThreshold))
+                { 
+                    //switch state to moving
+                    SwitchState(ModelState.Moving);
+                }
+
                 break;
-            case ModelState.Attacking: 
+            case ModelState.Attacking:
+                SwitchPathfinderMovement(false);
                 break;
-            case ModelState.Moving: 
+            case ModelState.Moving:
+                SwitchPathfinderMovement(true);
                 break;
-            case ModelState.Damaged: 
+            case ModelState.Damaged:
+                SwitchPathfinderMovement(false);
                 break;
-            case ModelState.Braced: 
+            case ModelState.Braced:
+                SwitchPathfinderMovement(false);
                 break;
-            case ModelState.Deployed: 
+            case ModelState.Deploying: 
                 break;
-            case ModelState.KnockedDown: 
+            case ModelState.KnockedDown:
+                SwitchPathfinderMovement(false);
                 break;
-            case ModelState.Airborne: 
+            case ModelState.Airborne:
+                SwitchPathfinderMovement(false);
                 break;
-            case ModelState.Reloading: 
+            case ModelState.Reloading:
+                SwitchPathfinderMovement(false);
+                break;
+            case ModelState.Charging:
+                SwitchPathfinderMovement(false);
                 break;
             default:
                 break;
         }
     }
-
-    private void UpdateAnimationState(ModelState state)
+    private void SwitchPathfinderMovement(bool val)
+    { 
+        if (pathfindingAI.enabled)
+        { 
+            pathfindingAI.canMove = val;
+        }
+        else if (pathfindingAILerp.enabled)
+        {
+            pathfindingAILerp.canMove = val; 
+        }
+    }
+    private void SwitchState(ModelState state)
+    {
+        currentModelState = state;
+        UpdateAnimationState(state);
+    }
+    private void UpdateAnimationState(ModelState state) //set all animation states to false, except for chosen, which is set to true
     {
         animator.SetBool(AnimatorDefines.idleID, false);
         animator.SetBool(AnimatorDefines.attackingID, false);
@@ -458,22 +492,34 @@ public class SoldierModel : MonoBehaviour
         switch (state)
         {
             case ModelState.Idle:
+                animator.SetBool(AnimatorDefines.idleID, true);
                 break;
             case ModelState.Attacking:
+                animator.SetBool(AnimatorDefines.attackingID, false);
                 break;
             case ModelState.Moving:
+                animator.SetBool(AnimatorDefines.movingID, false);
                 break;
             case ModelState.Damaged:
+                animator.SetBool(AnimatorDefines.damagedID, false);
                 break;
             case ModelState.Braced:
+                animator.SetBool(AnimatorDefines.deployedID, false);
                 break;
-            case ModelState.Deployed:
+            case ModelState.Deploying:
+                animator.SetBool(AnimatorDefines.deployedID, false);
                 break;
             case ModelState.KnockedDown:
+                animator.SetBool(AnimatorDefines.knockedDownID, false);
                 break;
             case ModelState.Airborne:
+                animator.SetBool(AnimatorDefines.knockedDownID, false);
                 break;
             case ModelState.Reloading:
+                animator.SetBool(AnimatorDefines.loadingID, false);
+                break;
+            case ModelState.Charging:
+                animator.SetBool(AnimatorDefines.movingID, true);
                 break;
             default:
                 break;

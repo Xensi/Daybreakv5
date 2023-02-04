@@ -1001,6 +1001,10 @@ public class FormationPosition : MonoBehaviour
     }
     private FormationPosition GetClosestFormationWithinRange(int targetType = 1, GlobalDefines.Team ourTeam = GlobalDefines.Team.Altgard, bool targetRouting = false, float range = 100) //targettype 0: any, targettype 1: enemy, targettype 2: ally
     {
+        if (fightManager.allArray.Length <= 0)
+        {
+            return null;
+        }
         FormationPosition closest = null;
 
         if (targetType == 0)
