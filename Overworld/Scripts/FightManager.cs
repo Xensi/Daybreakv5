@@ -284,6 +284,7 @@ public class FightManager : MonoBehaviour
                 enemyControlledFormations.Add(item);
             }
             item.FixPositions();
+            item.BeginUpdates();
             if (item.shaker != null)
             {
                 item.shaker.id = id;

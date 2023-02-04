@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
+using System.Threading;
+using System.Threading.Tasks;
 public class SoldierModel : MonoBehaviour
 {  
     #region AssignedAtStart
@@ -89,7 +91,7 @@ public class SoldierModel : MonoBehaviour
     #endregion
 
     #region Status 
-    public enum AnimationState
+    public enum ModelState
     {
         Idle,
         Attacking,
@@ -99,9 +101,9 @@ public class SoldierModel : MonoBehaviour
         Deployed,
         KnockedDown,
         Airborne,
-        Loading
+        Reloading
     }
-    public AnimationState currentAnimationState = AnimationState.Idle;
+    public ModelState currentModelState = ModelState.Idle;
     [HideInInspector] public bool braced = false;
     private bool allowedToDealDamage = true;
     [HideInInspector] public Position modelPosition;
@@ -196,6 +198,7 @@ public class SoldierModel : MonoBehaviour
     public Transform target;
     private void Awake()
     {
+        modelLayerMask = LayerMask.GetMask("Model");
         #region Initializations 
         if (attackType == AttackType.Ranged)
         {
@@ -298,26 +301,27 @@ public class SoldierModel : MonoBehaviour
     {
         if (pathfindingAI != null)
         {
-            pathfindingAI.onSearchPath += UpdatePath; //subscribe to event
+            pathfindingAI.onSearchPath += UpdateDestination; //subscribe to event
         }
         if (pathfindingAILerp != null)
         {
-            pathfindingAILerp.onSearchPath += UpdatePath;
+            pathfindingAILerp.onSearchPath += UpdateDestination;
         }
     }
     private void OnDisable()
-    {
+    { 
 
         if (pathfindingAI != null)
         {
-            pathfindingAI.onSearchPath -= UpdatePath;
+            pathfindingAI.onSearchPath -= UpdateDestination;
         }
         if (pathfindingAILerp != null)
         {
-            pathfindingAILerp.onSearchPath -= UpdatePath;
+            pathfindingAILerp.onSearchPath -= UpdateDestination;
         }
-    }
-    public void UpdatePath() //call whenever you want path to be updated, comrade
+    } 
+     
+    public async void UpdateDestination() //call whenever you want path to be updated, comrade
     {
         if (target != null && pathfindingAI != null && pathfindingAILerp != null)
         {
@@ -329,7 +333,8 @@ public class SoldierModel : MonoBehaviour
             {
                 pathfindingAILerp.destination = target.position + dispersalVector;
             }
-        }
+        } 
+        await Task.Yield();
     }
     public void GenerateDispersalVector(float dispersalLevel)
     {
@@ -414,33 +419,66 @@ public class SoldierModel : MonoBehaviour
             KillThis();
         }
     }
-    private void UpdateAnimationState()
+    private void UpdateModelState()
     {
-        switch (currentAnimationState)
+        switch (currentModelState)
         {
-            case AnimationState.Idle:  
+            case ModelState.Idle:  
                 break;
-            case AnimationState.Attacking: 
+            case ModelState.Attacking: 
                 break;
-            case AnimationState.Moving: 
+            case ModelState.Moving: 
                 break;
-            case AnimationState.Damaged: 
+            case ModelState.Damaged: 
                 break;
-            case AnimationState.Braced: 
+            case ModelState.Braced: 
                 break;
-            case AnimationState.Deployed: 
+            case ModelState.Deployed: 
                 break;
-            case AnimationState.KnockedDown: 
+            case ModelState.KnockedDown: 
                 break;
-            case AnimationState.Airborne: 
+            case ModelState.Airborne: 
                 break;
-            case AnimationState.Loading: 
+            case ModelState.Reloading: 
                 break;
             default:
                 break;
         }
     }
 
+    private void UpdateAnimationState(ModelState state)
+    {
+        animator.SetBool(AnimatorDefines.idleID, false);
+        animator.SetBool(AnimatorDefines.attackingID, false);
+        animator.SetBool(AnimatorDefines.movingID, false);
+        animator.SetBool(AnimatorDefines.damagedID, false);
+        animator.SetBool(AnimatorDefines.deployedID, false);
+        animator.SetBool(AnimatorDefines.knockedDownID, false);
+        animator.SetBool(AnimatorDefines.loadingID, false);
+        switch (state)
+        {
+            case ModelState.Idle:
+                break;
+            case ModelState.Attacking:
+                break;
+            case ModelState.Moving:
+                break;
+            case ModelState.Damaged:
+                break;
+            case ModelState.Braced:
+                break;
+            case ModelState.Deployed:
+                break;
+            case ModelState.KnockedDown:
+                break;
+            case ModelState.Airborne:
+                break;
+            case ModelState.Reloading:
+                break;
+            default:
+                break;
+        }
+    }
     public void UpdateVisibility(bool val) //true means visible. false is hidden
     { 
         /*foreach (Renderer rend in renderers)
@@ -1347,6 +1385,7 @@ public class SoldierModel : MonoBehaviour
     {
         Destroy(transform.parent.gameObject);
     }
+    private LayerMask modelLayerMask;
 
     public void CheckIfEnemyModelsNearby()
     {
@@ -1355,11 +1394,10 @@ public class SoldierModel : MonoBehaviour
             return;
         }
         nearbyEnemyModels.Clear(); //wipe the list 
-        //grab nearby models
-        LayerMask layerMask = LayerMask.GetMask("Model"); 
+        //grab nearby models 
         int maxColliders = 320; //lower numbers stop working
         Collider[] colliders = new Collider[maxColliders];
-        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, attackRange, colliders, layerMask, QueryTriggerInteraction.Ignore);
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, attackRange, colliders, modelLayerMask, QueryTriggerInteraction.Ignore);   
         for (int i = 0; i < numColliders; i++) //go for hurtboxes
         {
             if (colliders[i].gameObject == self)

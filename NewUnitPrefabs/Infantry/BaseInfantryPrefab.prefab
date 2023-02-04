@@ -407,7 +407,7 @@ MonoBehaviour:
   isMagic: 0
   magicRechargeTime: 60
   magicCharged: 1
-  currentAnimationState: 0
+  currentModelState: 0
   braced: 0
   modelPosition: {fileID: 0}
   movingSpeed: 0
@@ -545,7 +545,7 @@ MonoBehaviour:
   target: {fileID: 0}
   previousLocation: {x: 0, y: 0, z: 0}
   newMaxSpeed: 0
-  hitThreshold: 10
+  hitThreshold: 30
   waitingForAttackOver: 0
   farAway: 0
 --- !u!114 &147310995378209704

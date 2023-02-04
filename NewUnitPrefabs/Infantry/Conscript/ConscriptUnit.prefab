@@ -5025,6 +5025,7 @@ MonoBehaviour:
   deathsThisTimeFrame: 0
   extremeRoutThreshold: 15
   hardRoutOnSoftRoutThreshold: 40
+  numKills: 0
   modelHasAShot: 0
   positionToCheck: 0
   frontIcon: {fileID: 8784098199558271929}
@@ -5502,7 +5503,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3403759567167199859
 RectTransform:
   m_ObjectHideFlags: 0

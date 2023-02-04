@@ -13,6 +13,8 @@ public class CinemachineShake : MonoBehaviour
 
     [SerializeField] private float[] shakes;
 
+    public bool allow = false;
+
     private void Awake()
     {
         shakes = new float[50];
@@ -48,15 +50,23 @@ public class CinemachineShake : MonoBehaviour
     }
     private void AddUpShakes()
     {
-        float total = 0;
-        for (int i = 0; i < shakes.Length; i++)
+        if (allow)
         {
-            total += shakes[i];
+            float total = 0;
+            for (int i = 0; i < shakes.Length; i++)
+            {
+                total += shakes[i];
+            }
+            if (cineVirCam != null)
+            {
+                perlin.m_AmplitudeGain = total;
+                shakeTime = 1;
+            }
         }
-        if (cineVirCam != null)
-        { 
-            perlin.m_AmplitudeGain = total;
-            shakeTime = 1;
+        else
+        {
+            HaltShakes();
+            CancelInvoke("AddUpShakes");
         }
     } 
 
