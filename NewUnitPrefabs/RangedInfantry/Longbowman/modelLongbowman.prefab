@@ -71,6 +71,10 @@ PrefabInstance:
       propertyPath: maxProjectileForce
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 3888064497551611319, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
+      propertyPath: useMovementPrediction
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3950065472280351257, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
       propertyPath: damage
       value: 14
@@ -104,6 +108,10 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3950065472280351257, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
+      propertyPath: currentAttackTime
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3950065472280351257, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
       propertyPath: rangedAttackRange
       value: 160
       objectReference: {fileID: 0}
@@ -112,12 +120,20 @@ PrefabInstance:
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3950065472280351257, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
+      propertyPath: requiredDamageTime
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3950065472280351257, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
       propertyPath: projectileDeviationAmount
       value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 3950065472280351257, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
       propertyPath: timeUntilFinishedAttacking
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3950065472280351257, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
+      propertyPath: requiredTimeUntilFinishedAttacking
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7784413231663457449, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
       propertyPath: m_RootOrder
@@ -187,13 +203,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0aed8b0a47b84404e900236a202f4621, type: 3}
---- !u!4 &5329267159565664804 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2513303012816125692, guid: 0aed8b0a47b84404e900236a202f4621, type: 3}
-  m_PrefabInstance: {fileID: 7715888787959839960}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4221769043787470523 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5873515709080971875, guid: 0aed8b0a47b84404e900236a202f4621, type: 3}
+  m_PrefabInstance: {fileID: 7715888787959839960}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5329267159565664804 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2513303012816125692, guid: 0aed8b0a47b84404e900236a202f4621, type: 3}
   m_PrefabInstance: {fileID: 7715888787959839960}
   m_PrefabAsset: {fileID: 0}

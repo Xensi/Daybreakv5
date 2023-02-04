@@ -33,12 +33,12 @@ public class RangedModule : MonoBehaviour
 
     [Header("Reloading vars")]
     public bool rangedNeedsLoading = false;
-    [SerializeField] private int ammo = 0; //start unloaded typically.
+    public int ammo = 0; //start unloaded typically.
     [SerializeField] private int maxAmmo = 1;
-    [SerializeField] private int internalAmmoCapacity = 100;
+    public int internalAmmoCapacity = 100;
     public bool loadingRightNow = false;
-    [SerializeField] private float currentFinishedLoadingTime = 0;
-    [SerializeField] private float timeUntilFinishedLoading = 1f;
+    public float currentFinishedLoadingTime = 0;
+    public float requiredLoadingTime = 1f;
     [HideInInspector] public SoldierModel model;
 
     public bool useMovementPrediction = true;
@@ -78,9 +78,10 @@ public class RangedModule : MonoBehaviour
                 //Debug.Log("firing proj revised");
                 FireProjectileRevised();
             }
+            ModifyAmmo(-1);
         }
     }
-    private void FinishReload()
+    public void FinishReload()
     {
         SetLoading(false);
         currentFinishedLoadingTime = 0;
@@ -156,7 +157,7 @@ public class RangedModule : MonoBehaviour
             //increment timer  
             currentFinishedLoadingTime += 1f; //why does this only increment when models are visible?
             //Debug.Log("load time is incrementing: " + currentFinishedLoadingTime);
-            if (currentFinishedLoadingTime >= timeUntilFinishedLoading)
+            if (currentFinishedLoadingTime >= requiredLoadingTime)
             {
                 FinishReload();
             }
@@ -564,63 +565,5 @@ public class RangedModule : MonoBehaviour
                 }
             }
         }
-    }
-    private void FireProjectile() //let's fire projectiles at a target
-    {
-        //Debug.Log("firing proj");
-        if (model.targetEnemy != null || model.formPos.focusFire || model.formPos.enemyFormationToTarget != null)
-        {
-            Vector3 targetPos = GetTarget();
-
-            //calculations
-            float dist = Vector3.Distance(transform.position, targetPos);
-            float clamped = AngleCalculation(targetPos);
-            float deviation = projectileDeviationAmount * dist * 0.01f;
-
-            float clampedDeviation = Mathf.Clamp(deviation, 2, 999);
-            float adjusted = clamped / 45; //for anim   
-
-            if (model.attackSounds.Count > 0)
-            {
-                //Debug.Log("playing proj sound");
-                model.impactSource.PlayOneShot(model.attackSounds[UnityEngine.Random.Range(0, model.attackSounds.Count)]);
-            }
-            ProjectileFromSoldier missile = SpawnMissile();
-
-
-            model.animator.SetFloat(AnimatorDefines.angleID, adjusted);
-            if (dist <= directFireRadius && !directFire) //if enemy is close
-            {
-                Vector3 heading = targetPos - transform.position;
-                float newDeviation = UnityEngine.Random.Range(-projectileDeviationAmount, projectileDeviationAmount);
-                float deviationUp = UnityEngine.Random.Range(-projectileDeviationAmountVertical, projectileDeviationAmountVertical);
-                //Debug.Log(deviationUp);
-
-                heading = Quaternion.AngleAxis(newDeviation, Vector3.up) * heading;
-                heading = Quaternion.AngleAxis(deviationUp, Vector3.forward) * heading;
-
-                float velocity = 37.5f;
-                //missile.FireBullet(heading, power);
-                missile.LaunchBullet(heading, velocity);
-            }
-            else
-            {
-                missile.LaunchProjectile(model.formPos.missileTarget.transform.position, clamped, clampedDeviation); //fire at the position of the target with a clamped angle and deviation based on distance
-            }
-            if (fireEffect != null)
-            {
-                GameObject effect = Instantiate(fireEffect, projectileSpawn.position, Quaternion.identity);
-                effect.transform.rotation = Quaternion.LookRotation(transform.forward);
-            }
-            if (rangedNeedsLoading) //if we need reloading and we're out
-            {
-                ModifyAmmo(-1);
-                if (ammo <= 0 && internalAmmoCapacity > 0)
-                {
-                    Reload();
-                }
-            }
-            model.formPos.modelAttacked = true;
-        }
-    }
+    } 
 }

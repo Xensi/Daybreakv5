@@ -220,18 +220,20 @@ public class FormationPosition : MonoBehaviour
         cancelToken = new CancellationTokenSource();
     }
     public void BeginUpdates()
-    { 
-        //PathfindingUpdate(200, cancelToken.Token); //.2 seconds
-        //ModelRotationUpdate(500, cancelToken.Token); //.5 seconds
-        ReinforceUpdate(100, cancelToken.Token); //.1 seconds
-        CheckEnemyUpdate(100, cancelToken.Token);
+    {
+        PathfindingUpdate(1000, cancelToken.Token); //in parallel
+        FastUpdate(100, cancelToken.Token);
+        ReinforceUpdate(100, cancelToken.Token); //cycles through positions
+        CheckEnemyUpdate(50, cancelToken.Token); //cycles through soldiers 1 by one
 
-        FastUpdate(100, cancelToken.Token); 
         SlowUpdate(500, cancelToken.Token);
         VerySlowUpdate(1000, cancelToken.Token);
-        //InvokeRepeating("SlowUpdate", 0f, .5f); //normally .05f
-        //InvokeRepeating("VerySlowUpdate", 0f, 1f); 
         InvokeRepeating("TimeFrameAdvance", 0, timeFrame);
+
+
+
+
+
         //InvokeRepeating("LockSoldiers", 0, lockTime);
         //InvokeRepeating("LockSoldiersToTerrain", 0, terrainLockTime);
         //InvokeRepeating("UpdateFarAwayIconPos", 0, .1f);
@@ -239,16 +241,20 @@ public class FormationPosition : MonoBehaviour
     private void OnDisable()
     {
         cancelToken.Cancel();
+    } 
+    public void CancelTasks()
+    {
+        cancelToken.Cancel();
     }
     #region Updates 
     #region Async
     private async void CheckEnemyUpdate(int time, CancellationToken cancelToken)
     {
-        ModelsCheckEnemy();
+        CheckModelsIndividually();
         await Task.Delay(time, cancelToken);
         CheckEnemyUpdate(time, cancelToken);
     }
-    private void ModelsCheckEnemy()
+    private void CheckModelsIndividually()
     {
         SoldierModel checkingModel = soldierBlock.modelsArray[soldierModelToCheck];
         if (checkingModel == null)
@@ -265,21 +271,23 @@ public class FormationPosition : MonoBehaviour
         }
         if (checkingModel.alive)
         {
-            if (soldierBlock.melee) //we only need to check if enemies are near us if we are melee. ranged does it on a formation basis
-            { 
-                /*if (checkingModel.melee && enemyFormationToTarget != null) { 
-                    checkingModel.CheckIfEnemyModelsNearby();
-                }*/
-            }
-            else
+            if (checkingModel.melee) //if model has a target in range, don't need to check more
             {
-                if (checkingModel.rangedModule != null)
-                {
-                    checkingModel.rangedModule.LineOfSightUpdate();
+                if (enemyFormationToTarget != null && !checkingModel.HasTargetInRange())
+                { 
+                    if (checkingModel.currentModelState == SoldierModel.ModelState.Moving || checkingModel.currentModelState == SoldierModel.ModelState.Idle)
+                    { 
+                        checkingModel.CheckIfEnemyModelsNearby();
+                    }
                 }
             }
-
+            else
+            { 
+                checkingModel.rangedModule.LineOfSightUpdate();
+            } 
             checkingModel.SaveFromFallingInfinitely();
+            checkingModel.FaceEnemy();
+            //checkingModel.UpdateDestination();
         } 
 
         soldierModelToCheck++;
@@ -303,7 +311,7 @@ public class FormationPosition : MonoBehaviour
             {
                 if (model.alive)
                 {
-                    //model.UpdateDestination();
+                    model.UpdateDestination();
                 }
             }
         });
@@ -365,7 +373,7 @@ public class FormationPosition : MonoBehaviour
             CheckIfInMeleeRange();
         }
         await Task.Delay(time, cancelToken);
-        FastUpdate(time, cancelToken);
+        SlowUpdate(time, cancelToken);
     }
     private void CheckIfInMeleeRange()
     {
@@ -417,16 +425,7 @@ public class FormationPosition : MonoBehaviour
             {
                 if (model.alive)
                 {
-                    model.UpdateModelState();
-                    /*model.CheckForPendingDamage();
-                    if (!model.routing)
-                    {
-                        model.UpdateDamageTimer();
-                        model.UpdateFinishedAttackingTimer();
-                    }
-                    model.UpdateMovementStatus();
-                    model.UpdateRecoveryTimer();
-                    model.UpdateSpeed();*/
+                    model.UpdateModelState(cancelToken.Token); 
                     ////model.UpdateVisibility();
                 }
             }
@@ -1188,6 +1187,8 @@ public class FormationPosition : MonoBehaviour
                 {
                     if (soldierBlock.modelsArray[i] != null)
                     {
+                        soldierBlock.modelsArray[i].SwitchState(SoldierModel.ModelState.Charging);
+                        soldierBlock.modelsArray[i].attackBox.Rearm();
                         soldierBlock.modelsArray[i].ToggleAttackBox(true);
                     }
                 }
@@ -1206,6 +1207,7 @@ public class FormationPosition : MonoBehaviour
             {
                 if (soldierBlock.modelsArray[i] != null)
                 {
+                    soldierBlock.modelsArray[i].SwitchState(SoldierModel.ModelState.Idle);
                     soldierBlock.modelsArray[i].ToggleAttackBox(false);
                 }
             }
@@ -1913,6 +1915,10 @@ public class FormationPosition : MonoBehaviour
     public void StopCommand()
     {
         movementManuallyStopped = true;
+    }
+    public void RoutCommand()
+    {
+
     }
     public void ResumeCommand()
     {

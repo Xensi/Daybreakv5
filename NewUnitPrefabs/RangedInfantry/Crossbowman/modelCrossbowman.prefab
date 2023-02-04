@@ -64,6 +64,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3888064497551611319, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
+      propertyPath: requiredLoadingTime
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3888064497551611319, guid: ffcf48910fb35e446912189c86ba1c82, type: 3}
       propertyPath: timeUntilFinishedLoading
       value: 7
       objectReference: {fileID: 0}

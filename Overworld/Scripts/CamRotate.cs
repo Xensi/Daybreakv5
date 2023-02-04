@@ -30,7 +30,7 @@ public class CamRotate : MonoBehaviour
     { 
         fightManager = FindObjectOfType<FightManager>().GetComponent<FightManager>();
         InvokeRepeating("FindFormationsNearMe", 0f, 1f);
-        //InvokeRepeating("UpdateFarAwayIcons", 0.1f, 0.1f);
+        InvokeRepeating("UpdateFarAwayIcons", 0.1f, 0.1f);
 
         Cursor.lockState = CursorLockMode.Confined;
 

@@ -295,7 +295,7 @@ public class FightManager : MonoBehaviour
         }
 
         MusicManager.Instance.PlayCombatMusicBasedOnBattleSize();
-        InvokeRepeating("CheckIfFieldBattleOver", 2, 2);
+        InvokeRepeating("GameOverCheck", 2, 2);
     } 
     private void AIBrain()
     {
@@ -416,14 +416,20 @@ public class FightManager : MonoBehaviour
     }
     public void FleeFromFieldBattle()
     {
-        if (OverworldToFieldBattleManager.Instance.state == OverworldToFieldBattleManager.possibleGameStates.FieldBattle)
+        /*if (OverworldToFieldBattleManager.Instance.state == OverworldToFieldBattleManager.possibleGameStates.FieldBattle)
         { 
             DisplayDefeat();
             OverworldToFieldBattleManager.Instance.UpdateUnitManagerArmies();
             Invoke("BattleOver", 5);
-        }
+        }*/
+        CancelInvoke("Game");
+        CheckIfFieldBattleOver(true);
     }
-    private void CheckIfFieldBattleOver()
+    private void GameOverCheck()
+    {
+        CheckIfFieldBattleOver();
+    }
+    private void CheckIfFieldBattleOver(bool invokeFailure = false)
     {
         if (OverworldToFieldBattleManager.Instance.state == OverworldToFieldBattleManager.possibleGameStates.FieldBattle)
         {
@@ -455,8 +461,14 @@ public class FightManager : MonoBehaviour
                 gameIsOver = true;
                 victoryStatus = 2;
             }
+            if (invokeFailure)
+            {
+                gameIsOver = true;
+                victoryStatus = 2;
+            }
             if (gameIsOver)
             {
+                CancelAllTasks();
                 if (victoryStatus == 1)
                 {
                     DisplayVictory();
@@ -475,6 +487,18 @@ public class FightManager : MonoBehaviour
         }
         
     }
+    private void CancelAllTasks()
+    {
+        foreach (FormationPosition form in playerControlledFormations)
+        {
+            form.CancelTasks();
+        }
+        foreach (FormationPosition form in enemyControlledFormations)
+        {
+            form.CancelTasks();
+        }
+    }
+
 
     public BattleGroup victorBattleGroup;
 
@@ -501,7 +525,7 @@ public class FightManager : MonoBehaviour
     private void BattleOver()
     { 
         AfterBattleCleanup();
-        CancelInvoke("CheckIfFieldBattleOver");
+        CancelInvoke("GameOverCheck");
         HideOutcomeDisplays();
         OverworldToFieldBattleManager.Instance.EndFieldBattle();
         MusicManager.Instance.PlayOverworldMusic();
@@ -561,6 +585,14 @@ public class FightManager : MonoBehaviour
         foreach (FormationPosition item in selectedFormations)
         {
             item.StopCommand();
+        }
+        UpdateGUI();
+    }
+    public void RoutCommand()
+    {
+        foreach (FormationPosition item in selectedFormations)
+        {
+            item.RoutCommand();
         }
         UpdateGUI();
     }

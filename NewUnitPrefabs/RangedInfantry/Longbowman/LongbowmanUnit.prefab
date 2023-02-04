@@ -76,6 +76,10 @@ PrefabInstance:
       value: 160
       objectReference: {fileID: 0}
     - target: {fileID: 5955700111243193916, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
+      propertyPath: soldiersToCreate
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 5955700111243193916, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: hasSpecialVeterans
       value: 0
       objectReference: {fileID: 0}
