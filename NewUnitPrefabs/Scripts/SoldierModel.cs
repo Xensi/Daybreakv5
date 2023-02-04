@@ -56,13 +56,13 @@ public class SoldierModel : MonoBehaviour
     public float armorPiercingDamage = 0;
     [SerializeField] private float armor = 0;
 
-    [SerializeField] private float timeUntilDamage = .8f;
+    [SerializeField] private float requiredDamageTime = .8f;
     private float currentDamageTime = 0;
     [SerializeField] private float timeUntilFinishedAttacking = 1f;
     private float currentFinishedAttackingTime = 0;
     [SerializeField] private float timeUntilRecovery = .1f;
     private float currentRecoveryTime = 0;
-    [SerializeField] private float reqAttackTime = 3;
+    [SerializeField] private float requiredAttackTime = 3;
     public float currentAttackTime = 3; 
 
     [SerializeField] private bool chargeDamage = false;
@@ -129,8 +129,7 @@ public class SoldierModel : MonoBehaviour
 
     #region Animation
     [Header("UnimportantSetters")]
-    [SerializeField] private int reqIdleTimer = 20;
-    [SerializeField] private bool useOldWalkCalculations = false;
+    [SerializeField] private int reqIdleTimer = 20; 
     [SerializeField] private int numRandIdleAnims = 1;
     [SerializeField] private int numRandAttackAnims = 1; 
     //public List<SkinnedMeshRenderer> normalMeshes;
@@ -308,7 +307,7 @@ public class SoldierModel : MonoBehaviour
         }
     } 
      
-    public async void UpdateDestination() //call whenever you want path to be updated, comrade
+    public async void UpdateDestination() //call whenever you want path to be updated
     {
         if (target != null && pathfindingAI != null && pathfindingAILerp != null)
         {
@@ -417,51 +416,141 @@ public class SoldierModel : MonoBehaviour
         KnockedDown,
         Airborne,
         Reloading,
-        Charging
+        Charging,
+        Routing,
+        Dead,
+        Undeploying
     }
     public ModelState currentModelState = ModelState.Idle;
-    private void UpdateModelState()
+    public void UpdateModelState()
     {
         switch (currentModelState)
         {
             case ModelState.Idle:
-                SwitchPathfinderMovement(false);
+                //do nothing unless
                 //if our destination is far enough away from us
                 if (CheckIfRemainingDistanceOverThreshold(remainingDistanceThreshold))
-                { 
-                    //switch state to moving
-                    SwitchState(ModelState.Moving);
+                {  
+                    SwitchState(ModelState.Moving);  //start moving
                 }
-
+                CheckIfEnemyModelsNearby();
+                CheckIfCanSwitchToAttacking();
                 break;
-            case ModelState.Attacking:
-                SwitchPathfinderMovement(false);
+            case ModelState.Attacking: //swinging
+                CheckIfCanDealDamage();
                 break;
             case ModelState.Moving:
-                SwitchPathfinderMovement(true);
+                UpdateDestination();
+                UpdateSpeed();
+                //if destination close enough
+                if (CheckIfRemainingDistanceUnderThreshold(remainingDistanceThreshold))
+                {
+                    SwitchState(ModelState.Idle);
+                }
+                CheckIfEnemyModelsNearby();
+                CheckIfCanSwitchToAttacking();
                 break;
-            case ModelState.Damaged:
-                SwitchPathfinderMovement(false);
+            case ModelState.Damaged: 
                 break;
-            case ModelState.Braced:
-                SwitchPathfinderMovement(false);
+            case ModelState.Braced: 
                 break;
             case ModelState.Deploying: 
                 break;
-            case ModelState.KnockedDown:
-                SwitchPathfinderMovement(false);
+            case ModelState.KnockedDown: 
                 break;
-            case ModelState.Airborne:
-                SwitchPathfinderMovement(false);
+            case ModelState.Airborne: 
                 break;
-            case ModelState.Reloading:
-                SwitchPathfinderMovement(false);
+            case ModelState.Reloading: //reloading ranged weapon
                 break;
-            case ModelState.Charging:
-                SwitchPathfinderMovement(false);
+            case ModelState.Charging: 
+                break; 
+            case ModelState.Routing:
+                break;
+            case ModelState.Dead:
+                break; 
+            case ModelState.Undeploying:
                 break;
             default:
                 break;
+        }
+    }
+    public void CheckIfCanDealDamage()
+    { 
+        if (!DamageIsReady()) //if not ready
+        { 
+            currentDamageTime += .1f;
+        }
+        else
+        { 
+            PlayAttackChatter();
+
+            FinishAttack();
+        } 
+    }
+    private void FinishAttack()
+    {
+        if (attackType == AttackType.Melee)
+        {
+            int rand = UnityEngine.Random.Range(1, 100);
+            if (rand <= hitThreshold)
+            { 
+                DealDamage(targetEnemy, formPos.charging);
+            }  
+        }
+        else if (rangedModule != null)
+        {
+            rangedModule.TriggerRangedAttack();
+        }
+        SwitchState(ModelState.Idle);
+    }
+    private void PlayAttackChatter()
+    {
+        if (!formPos.playingAttackChatter) //play some attack voice line
+        {
+            formPos.playingAttackChatter = true;
+            formPos.DisableAttackChatterForSeconds(10);
+            if (attackVoiceLines.Count > 0)
+            {
+                voiceSource.PlayOneShot(attackVoiceLines[UnityEngine.Random.Range(0, attackVoiceLines.Count)]);
+            }
+        } 
+    }
+    private void CheckIfCanSwitchToAttacking()
+    {
+        //if melee
+        if (attackType == AttackType.Melee)
+        {
+            if (!MeleeAttackIsReady()) //if not ready to attack, start getting ready
+            {
+                currentAttackTime += 0.1f;
+            }
+            else if (HasTargetInRange()) //if ready and enemy is nearby
+            {
+                currentAttackTime = 0; //reset attack time
+                SwitchState(ModelState.Attacking);
+            }
+        }
+        else if (attackType == AttackType.Ranged) //ranged
+        { 
+           /* if (attackType == AttackType.Ranged && HasTarget())
+            {
+                if (!clearLineOfSight)
+                {
+                    SetAttacking(false);
+                    return;
+                }
+            }*/
+        }
+    }
+    private bool HasTargetInRange()
+    {
+        if (targetEnemy != null && CheckIfInAttackRange())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
     private void SwitchPathfinderMovement(bool val)
@@ -479,6 +568,42 @@ public class SoldierModel : MonoBehaviour
     {
         currentModelState = state;
         UpdateAnimationState(state);
+        switch (state)
+        {
+            case ModelState.Idle:
+                SwitchPathfinderMovement(false);
+                SetSpeedNull();
+                break;
+            case ModelState.Attacking:
+                SwitchPathfinderMovement(false);
+                SetSpeedNull();
+                break;
+            case ModelState.Moving: 
+                SwitchPathfinderMovement(true);
+                break;
+            case ModelState.Damaged:
+                break;
+            case ModelState.Braced:
+                break;
+            case ModelState.Deploying:
+                break;
+            case ModelState.KnockedDown:
+                break;
+            case ModelState.Airborne:
+                break;
+            case ModelState.Reloading:
+                break;
+            case ModelState.Charging:
+                break;
+            case ModelState.Routing:
+                break; 
+            case ModelState.Dead:
+                break;
+            case ModelState.Undeploying:
+                break;
+            default:
+                break;
+        }
     }
     private void UpdateAnimationState(ModelState state) //set all animation states to false, except for chosen, which is set to true
     {
@@ -495,43 +620,311 @@ public class SoldierModel : MonoBehaviour
                 animator.SetBool(AnimatorDefines.idleID, true);
                 break;
             case ModelState.Attacking:
-                animator.SetBool(AnimatorDefines.attackingID, false);
+                animator.SetBool(AnimatorDefines.attackingID, true);
                 break;
             case ModelState.Moving:
-                animator.SetBool(AnimatorDefines.movingID, false);
+                animator.SetBool(AnimatorDefines.movingID, true);
                 break;
             case ModelState.Damaged:
-                animator.SetBool(AnimatorDefines.damagedID, false);
+                animator.SetBool(AnimatorDefines.damagedID, true);
                 break;
             case ModelState.Braced:
-                animator.SetBool(AnimatorDefines.deployedID, false);
+                animator.SetBool(AnimatorDefines.deployedID, true);
                 break;
             case ModelState.Deploying:
-                animator.SetBool(AnimatorDefines.deployedID, false);
+                animator.SetBool(AnimatorDefines.deployedID, true);
                 break;
             case ModelState.KnockedDown:
-                animator.SetBool(AnimatorDefines.knockedDownID, false);
+                animator.SetBool(AnimatorDefines.knockedDownID, true);
                 break;
             case ModelState.Airborne:
-                animator.SetBool(AnimatorDefines.knockedDownID, false);
+                animator.SetBool(AnimatorDefines.knockedDownID, true);
                 break;
             case ModelState.Reloading:
-                animator.SetBool(AnimatorDefines.loadingID, false);
+                animator.SetBool(AnimatorDefines.loadingID, true);
                 break;
             case ModelState.Charging:
                 animator.SetBool(AnimatorDefines.movingID, true);
                 break;
+            case ModelState.Routing:
+                break;
             default:
                 break;
         }
+    } 
+    private bool MeleeAttackIsReady()
+    {
+        if (currentAttackTime >= requiredAttackTime)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
-    public void UpdateVisibility(bool val) //true means visible. false is hidden
+    private bool DamageIsReady()
+    {
+        if (currentDamageTime >= requiredDamageTime)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    private bool CheckIfInAttackRange()
+    {
+        //return (Vector3.Distance(transform.position, targetEnemy.transform.position) <= attackRange);
+        return Helper.Instance.GetSquaredMagnitude(transform.position, targetEnemy.transform.position) <= Mathf.Pow(attackRange, 2);
+    }
+    private bool HasTarget()
+    {
+        if (targetEnemy != null || formPos.focusFire || formPos.enemyFormationToTarget != null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public void CheckIfEnemyModelsNearby()
     { 
-        /*foreach (Renderer rend in renderers)
+        nearbyEnemyModels.Clear(); //wipe the list 
+        //grab nearby models 
+        int maxColliders = 320; //lower numbers stop working
+        Collider[] colliders = new Collider[maxColliders];
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, attackRange, colliders, modelLayerMask, QueryTriggerInteraction.Ignore);
+        for (int i = 0; i < numColliders; i++) //go for hurtboxes
+        {
+            if (colliders[i].gameObject == self)
+            {
+                continue;
+            }
+            if (colliders[i].gameObject.tag == "Hurtbox") //if is hurtbox
+            {
+                SoldierModel model = colliders[i].GetComponentInParent<SoldierModel>();
+                if (model != null)
+                {
+                    if (model.alive && model.team != team) //alive and enemy
+                    {
+                        nearbyEnemyModels.Add(model);
+                    }
+                }
+            }
+        }
+        if (nearbyEnemyModels.Count > 0)
+        {
+            TargetClosestEnemyModel(); //set target enemy to be closest model
+        }
+    }
+    public void TargetClosestEnemyModel()
+    {
+        if (directionalAttacks)
+        {
+            //rule out any that aren't in our viewing angle
+
+            foreach (SoldierModel model in nearbyEnemyModels)
+            {
+                if (Vector3.Angle(transform.forward, model.transform.position - transform.position) > angleOfAttack)
+                {
+                    //mark as out of bounds
+                    model.ignoreAsNearby = true;
+                }
+                else
+                {
+                    model.ignoreAsNearby = false;
+                }
+            }
+        }
+        float initDist = Helper.Instance.GetSquaredMagnitude(transform.position, nearbyEnemyModels[0].transform.position);
+        float compareDist = initDist;
+
+        foreach (SoldierModel item in nearbyEnemyModels)
+        {
+            if (!item.ignoreAsNearby)
+            {
+                //float dist = GetDistance(transform, item.gameObject.transform);
+                //float dist = GetSquaredMagnitude(transform.position, item.gameObject.transform.position);
+                float dist = Helper.Instance.GetSquaredMagnitude(transform.position, item.transform.position);
+                if (dist < compareDist)
+                {
+                    targetEnemy = item;
+                    compareDist = dist;
+                }
+            }
+        }
+    }
+    public void UpdateAttackTimer()
+    {
+        if (impactAttacks || formPos.charging) //cavalry/braced inf
+        {
+            if (!attackBox.canDamage)
+            {
+                AttackCodeChecks();
+            }
+        }
+        else
+        {
+            if (attackType == AttackType.Melee)
+            {
+                if (targetEnemy != null && targetEnemy.alive && CheckIfInAttackRange() && !formPos.holdFire) //if we reach attack time, and we have a valid target
+                {  //start an attack
+                    AttackCodeChecks();
+                }
+            }
+            else //ranged
+            {
+                //Debug.Log("ranged reached");
+                if (!formPos.holdFire)
+                {
+                    //Debug.Log("not hold fire");
+                    if (formPos.focusFire)
+                    {
+
+                        //Debug.Log("Focus fire");
+                        AttackCodeChecks();
+                    }
+                    else if (formPos.enemyFormationToTarget != null)
+                    {
+                        //Debug.Log("formation to target present");
+                        if (formPos.enemyFormationToTarget.alive)
+                        {
+                            //Debug.Log("formation enemy alive");
+                            AttackCodeChecks();
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private void AttackCodeChecks() //called to see if we can make an attack
+    {
+        if (routing)
+        {
+            //Debug.Log("rout");
+            return;
+        }
+        if (!formPos.charging) //if charging we can attack while moving
+        {
+            if (canOnlyAttackWhileMoving && !moving)
+            {
+                //Debug.Log("still");
+                return;
+            }
+        }
+        if (attackType == AttackType.Melee) //if melee, we can attack while moving
+        {
+            //Debug.Log("melee");
+            SetDeployed(true);
+            AttackCodeContinued();
+        }
+        else //ranged
+        {
+            //Debug.Log("ranged");
+            float threshold = 0.1f;
+            if (formPos.movingSpeed < threshold) //ranged; if not working check what conditions we are set to be able to move in  && !formPos.aiPath.canMove !formPos.obeyingMovementOrder
+            {
+                //Debug.Log("not moving");
+                AttackCodeContinued();
+            }
+        }
+    }
+    private void AttackCodeContinued()
+    {
+        //Debug.Log("continued");
+        if (routing)
+        {
+            return;
+        }
+        if (attackType == AttackType.Ranged && HasTarget())
+        {
+            if (!clearLineOfSight)
+            {
+                SetAttacking(false);
+                return;
+            }
+        }
+        SetAttacking(true); //attacking starts here
+        SetMoving(false); //stop moving while attacking.
+        currentDamageTime = 0;
+
+        allowedToDealDamage = true;
+
+        if (impactAttacks || formPos.charging)
+        {
+            if (attackBox != null)
+            {
+                attackBox.Rearm();
+            }
+        }
+    }
+
+    
+    private void SetSpeedNull()
+    {
+        float dampTime = .1f;
+        float deltaTime = .1f;
+        animator.SetFloat(AnimatorDefines.speedID, 0, dampTime, deltaTime);
+    }
+    private void UpdateSpeed()
+    {
+        float dampTime = .1f;
+        float deltaTime = .1f; 
+        if (!routing)
+        { 
+            if (formPos.charging)
+            {
+                newMaxSpeed = startingMaxSpeed * 2 - speedSlow;
+            }
+            else
+            {
+                newMaxSpeed = startingMaxSpeed - speedSlow;
+            }
+        }
+        else //if routing
+        {
+            newMaxSpeed = startingMaxSpeed * 2;
+        }
+        SetPathfindingSpeed(newMaxSpeed); 
+        speedSlow -= 0.1f;
+        speedSlow = Mathf.Clamp(speedSlow, 0, documentedMaxSpeed * 0.5f);
+
+        movingSpeed = Mathf.Sqrt(Mathf.Pow(pathfindingAI.velocity.x, 2) + Mathf.Pow(pathfindingAI.velocity.z, 2)); //calculate speed vector 
+        float threshold = .01f; 
+        float min = .01f;
+        if (movingSpeed < min)
+        {
+            movingSpeed = 0;
+        }
+
+        normalizedSpeed = movingSpeed; 
+
+        normalizedSpeed /= documentedMaxSpeed; 
+
+        if (normalizedSpeed > threshold)
+        {
+            animator.SetFloat(AnimatorDefines.speedID, normalizedSpeed * adjustWalkSpeedVisually, dampTime, deltaTime);
+        }
+        else
+        {
+            animator.SetFloat(AnimatorDefines.speedID, 0, dampTime, deltaTime);
+        } 
+    }
+    private void SetPathfindingSpeed(float speed)
+    {
+        pathfindingAI.maxSpeed = speed;
+        pathfindingAILerp.speed = speed;
+    }
+    /*public void UpdateVisibility(bool val) //true means visible. false is hidden
+    { 
+        *//*foreach (Renderer rend in renderers)
         {
             rend.enabled = formPos.showSoldierModels;
             //rend.material.color = formPos.farAwayIcon.color;
-        }*/
+        }*//*
         for (int i = 0; i < renderersArray.Length; i++)
         {
             renderersArray[i].enabled = val;
@@ -545,9 +938,9 @@ public class SoldierModel : MonoBehaviour
         { 
             animator.cullingMode = AnimatorCullingMode.CullCompletely;
         }
-        //animator.enabled = val; 
-
-    }
+        //animator.enabled = val;  
+    }*/
+    
     public void CheckForPendingDamage()
     {
         if (pendingDamage > 0 || pendingArmorPiercingDamage > 0)
@@ -568,105 +961,6 @@ public class SoldierModel : MonoBehaviour
     }
     public Vector3 previousLocation;
     public float newMaxSpeed;
-    public void UpdateSpeed()
-    {
-        float dampTime = .1f;
-        float deltaTime = .1f;
-        if (PathfindingCanMove())
-        {
-            //if (formPos.listOfNearbyEnemies.Count == 0)
-            //{
-                if (animator.GetCurrentAnimatorStateInfo(0).IsTag("idle") || idle) //if we are idle or in idle anim state
-                {
-                    SetIdle(false);
-                    animator.Play("WalkingBlend");
-                }
-            //}
-            if (!routing)
-            {
-                //richAI.maxSpeed = startingMaxSpeed * 0.5f - speedSlow;
-                if (formPos.charging)
-                {
-                    newMaxSpeed = startingMaxSpeed*2 - speedSlow;
-                }
-                else
-                {
-                    newMaxSpeed = startingMaxSpeed - speedSlow;
-                }
-            }
-            else //if routing
-            {
-                newMaxSpeed = startingMaxSpeed * 2;
-            }
-            pathfindingAI.maxSpeed = newMaxSpeed;
-            pathfindingAILerp.speed = newMaxSpeed;
-            speedSlow -= 0.1f;
-            speedSlow = Mathf.Clamp(speedSlow, 0, documentedMaxSpeed * 0.5f);
-
-            movingSpeed = Mathf.Sqrt(Mathf.Pow(pathfindingAI.velocity.x, 2) + Mathf.Pow(pathfindingAI.velocity.z, 2)); //calculate speed vector 
-            float threshold = .01f;
-            /*if (formPos.showSoldierModels)
-            { 
-                movingSpeed = Mathf.Sqrt(Mathf.Pow(richAI.velocity.x, 2) + Mathf.Pow(richAI.velocity.z, 2)); //calculate speed vector 
-            }
-            else
-            {
-                movingSpeed = Mathf.Sqrt(Mathf.Pow(transform.position.x - previousLocation.x, 2) + Mathf.Pow(transform.position.z - previousLocation.z,2))/.01f;
-            } */
-            float min = .01f;
-            if (movingSpeed < min)
-            {
-                movingSpeed = 0;
-            }
-
-            normalizedSpeed = movingSpeed;
-
-            if (useOldWalkCalculations)
-            { 
-                if (formPos.soldierBlock.useActualMaxSpeed)
-                {
-                    if (deployed)
-                    {
-                        normalizedSpeed /= newMaxSpeed * 2; //at max speed = 1;
-                    }
-                    else
-                    {
-                        normalizedSpeed /= newMaxSpeed; //actual speed divided by max speed normalizes it to 0-1
-                    }
-                }
-                else //default
-                {
-                    if (deployed)
-                    {
-                        normalizedSpeed /= formPos.soldierBlock.forcedMaxSpeed * 2; //at max speed = 1;
-                    }
-                    else
-                    {
-                        normalizedSpeed /= formPos.soldierBlock.forcedMaxSpeed; //actual speed divided by max speed normalizes it to 0-1
-                    }
-                }
-            }
-            else //new calculations
-            {
-                normalizedSpeed /= documentedMaxSpeed;
-                //Debug.Log(normalizedSpeed);
-            }
-
-            if (normalizedSpeed > threshold)
-            {
-                animator.SetFloat(AnimatorDefines.speedID, normalizedSpeed * adjustWalkSpeedVisually, dampTime, deltaTime);
-            }
-            else
-            {
-                animator.SetFloat(AnimatorDefines.speedID, 0, dampTime, deltaTime);
-            }
-        }
-        else
-        {
-            animator.SetFloat(AnimatorDefines.speedID, 0, dampTime, deltaTime);
-        }
-
-    }
 
     public void UpdateDeploymentStatus()
     {
@@ -867,148 +1161,7 @@ public class SoldierModel : MonoBehaviour
             }
         }
     }
-    public void UpdateAttackTimer()
-    {
-        //Debug.Log("timer");
-        if (routing)
-        {
-            return;
-        } 
-        if (airborne || knockedDown)
-        { 
-            return;
-        }
-        if (rangedModule != null && rangedModule.loadingRightNow)
-        {
-            return;
-        }
-        if (rangedModule != null && HasTarget())
-        {
-            if (!clearLineOfSight)
-            {
-                SetAttacking(false);
-                return;
-            }
-        }
-        if (!attacking && !damaged && !isMagic) //increment if not attacking and not damaged not reloading not magic
-        { 
-            if (currentAttackTime < reqAttackTime) //timer goes up
-            {
-                currentAttackTime += 1; //increment timer
-            }
-            else //timer has reached
-            {
-                //Debug.Log("timer reached");
-                
-                if (impactAttacks || formPos.charging) //cavalry/braced inf
-                {
-                    if (!attackBox.canDamage)
-                    { 
-                        AttackCodeChecks();
-                    }
-                }
-                else
-                {
-                    if (attackType == AttackType.Melee)
-                    {
-                        if (targetEnemy != null && targetEnemy.alive && CheckIfInAttackRange() && !formPos.holdFire) //if we reach attack time, and we have a valid target
-                        {  //start an attack
-                            AttackCodeChecks();
-                        }
-                    }
-                    else //ranged
-                    { 
-                        //Debug.Log("ranged reached");
-                        if (!formPos.holdFire)
-                        {
-                            //Debug.Log("not hold fire");
-                            if (formPos.focusFire)
-                            {
-
-                                //Debug.Log("Focus fire");
-                                AttackCodeChecks();
-                            }
-                            else if (formPos.enemyFormationToTarget != null )
-                            { 
-                                //Debug.Log("formation to target present");
-                                if (formPos.enemyFormationToTarget.alive)
-                                { 
-                                    //Debug.Log("formation enemy alive");
-                                    AttackCodeChecks();
-                                }
-                            }
-                        } 
-                    }
-                }
-            }  
-        }
-    }
-    private bool CheckIfInAttackRange() //slow
-    {
-        //return (Vector3.Distance(transform.position, targetEnemy.transform.position) <= attackRange);
-        return Helper.Instance.GetSquaredMagnitude(transform.position, targetEnemy.transform.position) <= Mathf.Pow(attackRange, 2);
-    }
-    private void AttackCodeChecks() //called to see if we can make an attack
-    { 
-        if (routing)
-        {
-            //Debug.Log("rout");
-            return;
-        }
-        if (!formPos.charging) //if charging we can attack while moving
-        { 
-            if (canOnlyAttackWhileMoving && !moving)
-            {
-                //Debug.Log("still");
-                return;
-            }
-        }
-        if (attackType == AttackType.Melee) //if melee, we can attack while moving
-        {
-            //Debug.Log("melee");
-            SetDeployed(true);
-            AttackCodeContinued();
-        }
-        else //ranged
-        {
-            //Debug.Log("ranged");
-            float threshold = 0.1f;
-            if (formPos.movingSpeed < threshold) //ranged; if not working check what conditions we are set to be able to move in  && !formPos.aiPath.canMove !formPos.obeyingMovementOrder
-            {
-                //Debug.Log("not moving");
-                AttackCodeContinued();
-            }
-        }
-    }
-    private void AttackCodeContinued()
-    {
-        //Debug.Log("continued");
-        if (routing)
-        {
-            return;
-        }
-        if (attackType == AttackType.Ranged && HasTarget())
-        {
-            if (!clearLineOfSight)
-            {
-                SetAttacking(false);
-                return;
-            }
-        }
-        SetAttacking(true); //attacking starts here
-        SetMoving(false); //stop moving while attacking.
-        currentDamageTime = 0; 
-            
-        allowedToDealDamage = true;
-
-        if (impactAttacks || formPos.charging)
-        {
-            if (attackBox != null)
-            {
-                attackBox.Rearm();
-            }
-        }
-    } 
+    
     private void SetMelee(bool val)
     {
         if (val)
@@ -1033,84 +1186,6 @@ public class SoldierModel : MonoBehaviour
         {
             SetMelee(false);
             attackRange = rangedAttackRange;
-        }
-    }
-    private bool HasTarget()
-    {
-        if (targetEnemy != null || formPos.focusFire || formPos.enemyFormationToTarget != null)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    } 
-    public void UpdateDamageTimer() //ATTACK CODE
-    {
-        if (routing)
-        {
-            return;
-        }
-        if (attackType == AttackType.Ranged && HasTarget())
-        {
-            if (!clearLineOfSight)
-            {
-                SetAttacking(false);
-                return;
-            }
-        }
-        if (impactAttacks)
-        {
-            return;
-        }
-        if (airborne  || knockedDown)
-        {
-            return;
-        }
-        if (rangedModule != null && rangedModule.loadingRightNow)
-        {
-            return;
-        }
-        if (attacking) //increment only if attacking and not reloading
-        {
-            currentDamageTime += .1f;
-
-            if (currentDamageTime >= timeUntilDamage && allowedToDealDamage)
-            {
-
-                if (!formPos.playingAttackChatter) //play some attack voice line
-                {
-                    formPos.playingAttackChatter = true;
-                    formPos.DisableAttackChatterForSeconds(10);
-                    if (attackVoiceLines.Count > 0)
-                    {
-                        voiceSource.PlayOneShot(attackVoiceLines[UnityEngine.Random.Range(0, attackVoiceLines.Count)]);
-                    }
-                }
-                allowedToDealDamage = false; 
-                currentAttackTime = 0;
-
-                if (attackType == AttackType.Melee)
-                {
-                    int rand = UnityEngine.Random.Range(1, 100);
-                    if (rand <= hitThreshold) //all melee attacks have 50% chance to hit?
-                    {
-                        //Debug.Log("hit");
-                        DealDamage(targetEnemy, formPos.charging);
-                    }
-                    else
-                    {
-                        //Debug.Log("miss");
-                        //miss
-                    }
-
-                }
-                else if (rangedModule != null)
-                {
-                    rangedModule.TriggerRangedAttack();
-                } 
-            }
         }
     }
 
@@ -1403,7 +1478,8 @@ public class SoldierModel : MonoBehaviour
         {
             formPos.soldierBlock.SelfDestruct();
         }
-        pathfindingAI.enabled = false; 
+        pathfindingAI.enabled = false;
+        pathfindingAILerp.enabled = false;
         //Invoke("DelayedDisable", 2);
         if (renderers.Count > 0)
         { 
@@ -1417,93 +1493,19 @@ public class SoldierModel : MonoBehaviour
         {
             lineOfSightIndicator.enabled = false;
         }
-        Invoke("DelayedDisable", 2);
-    }
-    private void DelayedDisable()
-    {
+        SwitchState(ModelState.Dead);
         voiceSource.enabled = false;
-        impactSource.enabled = false; 
+        impactSource.enabled = false;
         enabled = false;
         animator.cullingMode = AnimatorCullingMode.CullCompletely;
-        //SelfDestruct();
-    }
+    } 
     private void SelfDestruct()
     {
         Destroy(transform.parent.gameObject);
     }
     private LayerMask modelLayerMask;
 
-    public void CheckIfEnemyModelsNearby()
-    {
-        if (routing)
-        {
-            return;
-        }
-        nearbyEnemyModels.Clear(); //wipe the list 
-        //grab nearby models 
-        int maxColliders = 320; //lower numbers stop working
-        Collider[] colliders = new Collider[maxColliders];
-        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, attackRange, colliders, modelLayerMask, QueryTriggerInteraction.Ignore);   
-        for (int i = 0; i < numColliders; i++) //go for hurtboxes
-        {
-            if (colliders[i].gameObject == self)
-            {
-                continue;
-            }
-            if (colliders[i].gameObject.tag == "Hurtbox") //if is hurtbox
-            {
-                SoldierModel model = colliders[i].GetComponentInParent<SoldierModel>();
-                if (model != null)
-                {
-                    if (model.alive && model.team != team) //alive and enemy
-                    {
-                        nearbyEnemyModels.Add(model);
-                    }
-                }
-            }
-        } 
-        if (nearbyEnemyModels.Count > 0)
-        {
-            TargetClosestEnemyModel(); //set target enemy to be closest model
-        }  
-    }
-    public void TargetClosestEnemyModel()
-    {
-        if (directionalAttacks)
-        {
-            //rule out any that aren't in our viewing angle
-
-            foreach (SoldierModel model in nearbyEnemyModels)
-            {
-                if (Vector3.Angle(transform.forward, model.transform.position - transform.position) > angleOfAttack)
-                {
-                    //mark as out of bounds
-                    model.ignoreAsNearby = true;
-                }
-                else
-                {
-                    model.ignoreAsNearby = false;
-                }
-            }
-        }
-        float initDist = Helper.Instance.GetSquaredMagnitude(transform.position, nearbyEnemyModels[0].transform.position);
-        float compareDist = initDist;
-
-        foreach (SoldierModel item in nearbyEnemyModels)
-        {
-            if (!item.ignoreAsNearby)
-            {
-                //float dist = GetDistance(transform, item.gameObject.transform);
-                //float dist = GetSquaredMagnitude(transform.position, item.gameObject.transform.position);
-                float dist = Helper.Instance.GetSquaredMagnitude(transform.position, item.transform.position);
-                if (dist < compareDist)
-                {
-                    targetEnemy = item;
-                    compareDist = dist;
-                }
-            }
-        }
-    }
+    
     public void TargetClosestEnemyInFormation(FormationPosition form)
     {
         float initDist = Helper.Instance.GetSquaredMagnitude(transform.position, form.formationPositionBasedOnSoldierModels);
@@ -1560,7 +1562,7 @@ public class SoldierModel : MonoBehaviour
         }
         return true;
     }
-    public void CheckIfIdle()
+    /*public void CheckIfIdle()
     {
         if (!PathfindingCanMove()) // && formPos.listOfNearbyEnemies.Count == 0
         { 
@@ -1590,16 +1592,16 @@ public class SoldierModel : MonoBehaviour
                 SetIdle(false);
             }
         }
-    } 
+    } */
     private void SetIdle(bool val)
     {
         idle = val;
 
-        if (playIdleAnims)
+        /*if (playIdleAnims)
         { 
             animator.SetBool(AnimatorDefines.idleID, val);
             animator.SetInteger(AnimatorDefines.randomIdleID, UnityEngine.Random.Range(0, numRandIdleAnims-1));
-        }
+        }*/
     }  
     void OnDrawGizmosSelected()
     {

@@ -221,14 +221,12 @@ public class FormationPosition : MonoBehaviour
     }
     public void BeginUpdates()
     { 
-        PathfindingUpdate(200, cancelToken.Token); //.2 seconds
+        //PathfindingUpdate(200, cancelToken.Token); //.2 seconds
         //ModelRotationUpdate(500, cancelToken.Token); //.5 seconds
         ReinforceUpdate(100, cancelToken.Token); //.1 seconds
         CheckEnemyUpdate(100, cancelToken.Token);
 
-        FastUpdate(100, cancelToken.Token);
-
-        FastUpdate(100, cancelToken.Token);
+        FastUpdate(100, cancelToken.Token); 
         SlowUpdate(500, cancelToken.Token);
         VerySlowUpdate(1000, cancelToken.Token);
         //InvokeRepeating("SlowUpdate", 0f, .5f); //normally .05f
@@ -269,9 +267,9 @@ public class FormationPosition : MonoBehaviour
         {
             if (soldierBlock.melee) //we only need to check if enemies are near us if we are melee. ranged does it on a formation basis
             { 
-                if (checkingModel.melee && enemyFormationToTarget != null) { 
+                /*if (checkingModel.melee && enemyFormationToTarget != null) { 
                     checkingModel.CheckIfEnemyModelsNearby();
-                }
+                }*/
             }
             else
             {
@@ -305,7 +303,7 @@ public class FormationPosition : MonoBehaviour
             {
                 if (model.alive)
                 {
-                    model.UpdateDestination();
+                    //model.UpdateDestination();
                 }
             }
         });
@@ -419,7 +417,8 @@ public class FormationPosition : MonoBehaviour
             {
                 if (model.alive)
                 {
-                    model.CheckForPendingDamage();
+                    model.UpdateModelState();
+                    /*model.CheckForPendingDamage();
                     if (!model.routing)
                     {
                         model.UpdateDamageTimer();
@@ -427,8 +426,8 @@ public class FormationPosition : MonoBehaviour
                     }
                     model.UpdateMovementStatus();
                     model.UpdateRecoveryTimer();
-                    model.UpdateSpeed();
-                    //model.UpdateVisibility();
+                    model.UpdateSpeed();*/
+                    ////model.UpdateVisibility();
                 }
             }
         }
@@ -559,20 +558,22 @@ public class FormationPosition : MonoBehaviour
             {
                 if (model.alive)
                 {
-                    model.UpdateAttackTimer();
-                    model.UpdateLoadTimer();
-                    if (model.melee)
+                    //model.UpdateAttackTimer();
+                    //model.UpdateLoadTimer();
+                    /*if (model.melee)
                     {
-                        /*if (listOfNearbyEnemies.Count > 0) //only check if enemies are nearby and we're melee
+                        *//*if (listOfNearbyEnemies.Count > 0) //only check if enemies are nearby and we're melee
                         {
                             //model.CheckIfEnemyModelsNearby();
-                        }*/
+                        }*//*
                         //model.StopAttackingWhenNoEnemiesNearby();
-                        model.UpdateDeploymentStatus();
-                    }
+                        
+                        
+                        //model.UpdateDeploymentStatus();
+                    }*/
                     model.UpdateAndCullAnimations();
-                    model.CheckIfIdle();
-                    model.CheckIfAlive();
+                    //model.CheckIfIdle();
+                    //model.CheckIfAlive();
                 }
             }
         }
