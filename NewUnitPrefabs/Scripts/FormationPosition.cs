@@ -34,7 +34,8 @@ public class FormationPosition : MonoBehaviour
     public Collider cameraCollider;
     public SpriteRenderer routingIcon;
     public SpriteRenderer shatteredIcon;
-    public GameObject farAwayIconMask; 
+    public GameObject farAwayIconMask;
+    public GameObject formationIconsParent;
     public bool usesSpears = true;
     public FormationType formationType = FormationType.Infantry; //just by default
     #endregion
@@ -706,8 +707,7 @@ public class FormationPosition : MonoBehaviour
                 SoldierModel soldier = soldierBlock.modelsArray[i];
                 if (soldier != null && soldier.alive && soldier.modelPosition != null) //terrain check but don't teleport to position
                 { 
-                    soldier.PlaceOnGround();
-                    soldier.SwitchAI(SoldierModel.AIToUse.RichAI);
+                    soldier.PlaceOnGround(); 
                     //soldier.pathfindingAI.enabled = true;
                 }
             }
@@ -762,8 +762,7 @@ public class FormationPosition : MonoBehaviour
             {
                 //soldier.farAway = farAway;
                 if (soldier.formPos.showSoldierModels) //use rich ai
-                {
-                    soldier.SwitchAI(SoldierModel.AIToUse.RichAI); 
+                { 
                     soldier.animator.enabled = true; 
                 }
                 else //performant
@@ -798,8 +797,8 @@ public class FormationPosition : MonoBehaviour
 
         formationPositionBasedOnSoldierModels = new Vector3(transform.position.x, averagePositionBasedOnSoldierModels, transform.position.z);
 
-        farAwayIcon.transform.position = new Vector3(farAwayIcon.transform.position.x, avgHeight, farAwayIcon.transform.position.z); //set to average height
-        if (shatteredIcon != null)
+        formationIconsParent.transform.position = new Vector3(formationIconsParent.transform.position.x, avgHeight, formationIconsParent.transform.position.z); //set to average height
+        /*if (shatteredIcon != null)
         {
 
             shatteredIcon.transform.position = new Vector3(farAwayIconMask.transform.position.x, avgHeight + 0.01f, farAwayIconMask.transform.position.z);
@@ -817,7 +816,7 @@ public class FormationPosition : MonoBehaviour
         if (selectedSprite != null)
         {
             selectedSprite.transform.position = new Vector3(farAwayIconMask.transform.position.x, avgHeight, farAwayIconMask.transform.position.z);
-        }
+        }*/
     } 
     private void SetAnimationsModels(bool val)
     { 
@@ -1691,7 +1690,7 @@ public class FormationPosition : MonoBehaviour
             float remedy = 1.25f;
             float calc = math * remedy;
 
-            if (farAwayIconMask != null)
+            /*if (farAwayIconMask != null)
             {
                 farAwayIconMask.gameObject.transform.localScale = new Vector3(defSize, calc, 1);
                 farAwayIconMask.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
@@ -1721,7 +1720,7 @@ public class FormationPosition : MonoBehaviour
                 shatteredIcon.gameObject.transform.localScale = new Vector3(defSize + 1, calc + 1, 1);
 
                 shatteredIcon.transform.localRotation = Quaternion.Euler(new Vector3(90, 0, 0));
-            }
+            }*/
 
 
             /*if (!soldierBlock.canBeRanged)

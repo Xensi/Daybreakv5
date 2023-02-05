@@ -10,8 +10,7 @@ public class SoldierModel : MonoBehaviour
     #region AssignedAtStart
 
     private NavmeshCut navMeshCutter;
-    [HideInInspector] public RichAI pathfindingAI;
-    [HideInInspector] public AILerp pathfindingAILerp;
+    [HideInInspector] public RichAI pathfindingAI; 
     private Seeker seeker;
     [HideInInspector] public Animator animator; 
     [HideInInspector] public FormationPosition formPos;
@@ -221,11 +220,7 @@ public class SoldierModel : MonoBehaviour
         if (pathfindingAI == null)
         {
             pathfindingAI = GetComponent<RichAI>();
-        }
-        if (pathfindingAILerp == null)
-        {
-            pathfindingAILerp = GetComponent<AILerp>();
-        }
+        } 
 
         if (animator == null)
         {
@@ -281,30 +276,21 @@ public class SoldierModel : MonoBehaviour
         animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
         pathfindingAI.enableRotation = true;
 
-        GenerateDispersalVector(dispersalLevel);
-        SwitchAI(AIToUse.RichAI);
+        GenerateDispersalVector(dispersalLevel); 
     }
     private void OnEnable()
     {
         if (pathfindingAI != null)
         {
             pathfindingAI.onSearchPath += UpdateDestinationPosition; //subscribe to event
-        }
-        if (pathfindingAILerp != null)
-        {
-            pathfindingAILerp.onSearchPath += UpdateDestinationPosition;
-        }
+        } 
     }
     private void OnDisable()
     {
         if (pathfindingAI != null)
         {
             pathfindingAI.onSearchPath -= UpdateDestinationPosition;
-        }
-        if (pathfindingAILerp != null)
-        {
-            pathfindingAILerp.onSearchPath -= UpdateDestinationPosition;
-        }
+        } 
     }
     public async void UpdateDestinationPosition() //call whenever you want path to be updated
     {
@@ -630,12 +616,12 @@ public class SoldierModel : MonoBehaviour
         if (attackType == AttackType.Melee)
         {
             int rand = UnityEngine.Random.Range(1, 100);
-            if (targetEnemy.attackType == AttackType.Ranged)
+            /*if ()
             {
                 hitThreshold *= 2; //melee is doubly effective against ranged units
-            }
+            }*/
 
-            if (rand <= hitThreshold)
+            if (rand <= hitThreshold && targetEnemy.attackType == AttackType.Ranged)
             { 
                 DealDamage(targetEnemy, formPos.charging);
             }  
@@ -702,11 +688,7 @@ public class SoldierModel : MonoBehaviour
         if (pathfindingAI.enabled)
         { 
             pathfindingAI.canMove = val;
-        }
-        else if (pathfindingAILerp.enabled)
-        {
-            pathfindingAILerp.canMove = val; 
-        }
+        } 
     }
     public void SwitchState(ModelState state)
     {
@@ -999,8 +981,7 @@ public class SoldierModel : MonoBehaviour
     }
     private void SetPathfindingSpeed(float speed)
     {
-        pathfindingAI.maxSpeed = speed;
-        pathfindingAILerp.speed = speed;
+        pathfindingAI.maxSpeed = speed; 
     }
     /*public void UpdateVisibility(bool val) //true means visible. false is hidden
     { 
@@ -1050,11 +1031,7 @@ public class SoldierModel : MonoBehaviour
         if (pathfindingAI.enabled && pathfindingAI.remainingDistance <= threshold)
         {
             return true;
-        }
-        else if (pathfindingAILerp.enabled && pathfindingAILerp.remainingDistance <= threshold)
-        {
-            return true;
-        }
+        } 
         return false;
     }
     public bool CheckIfRemainingDistanceOverThreshold(float threshold)
@@ -1062,11 +1039,7 @@ public class SoldierModel : MonoBehaviour
         if (pathfindingAI.enabled && pathfindingAI.remainingDistance > threshold)
         {
             return true;
-        }
-        else if (pathfindingAILerp.enabled && pathfindingAILerp.remainingDistance > threshold)
-        {
-            return true;
-        }
+        } 
         return false; 
     } 
     public void ToggleAttackBox(bool val)
@@ -1079,8 +1052,7 @@ public class SoldierModel : MonoBehaviour
     public void SetMoving(bool val)
     {
         moving = val;
-        pathfindingAI.canMove = val; //we can move
-        pathfindingAILerp.canMove = val;
+        pathfindingAI.canMove = val; //we can move 
         //animator.SetBool("moving", val); //and animations will match 
         animator.SetBool(AnimatorDefines.movingID, val);
     }
@@ -1314,12 +1286,10 @@ public class SoldierModel : MonoBehaviour
         switch (ai)
         {
             case AIToUse.RichAI:
-                pathfindingAI.enabled = true;
-                pathfindingAILerp.enabled = false;
+                pathfindingAI.enabled = true; 
                 break;
             case AIToUse.AILerp:
-                pathfindingAI.enabled = false;
-                pathfindingAILerp.enabled = true;
+                pathfindingAI.enabled = false; 
                 break;
             default:
                 break;
@@ -1340,10 +1310,8 @@ public class SoldierModel : MonoBehaviour
         animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
         SetAlive(false);
 
-        pathfindingAI.canMove = false;
-        pathfindingAILerp.canMove = false;
-        pathfindingAI.enableRotation = false;
-        pathfindingAILerp.enableRotation = false;
+        pathfindingAI.canMove = false; 
+        pathfindingAI.enableRotation = false; 
 
         ClearReferencesInPositionAndRow();
         //
@@ -1353,8 +1321,7 @@ public class SoldierModel : MonoBehaviour
         {
             formPos.soldierBlock.SelfDestruct();
         }
-        pathfindingAI.enabled = false;
-        pathfindingAILerp.enabled = false;
+        pathfindingAI.enabled = false; 
         if (renderers.Count > 0)
         { 
             foreach (Renderer item in renderers)
@@ -1435,11 +1402,7 @@ public class SoldierModel : MonoBehaviour
         if (pathfindingAI.enabled)
         {
             return pathfindingAI.canMove;
-        }
-        else if (pathfindingAILerp.enabled)
-        {
-            return pathfindingAILerp.canMove;
-        }
+        } 
         return true;
     }  
     void OnDrawGizmosSelected()

@@ -30,7 +30,7 @@ public class CamRotate : MonoBehaviour
     { 
         fightManager = FindObjectOfType<FightManager>().GetComponent<FightManager>();
         InvokeRepeating("FindFormationsNearMe", 0f, 1f);
-        InvokeRepeating("UpdateFarAwayIcons", 0.1f, 0.1f);
+        //InvokeRepeating("UpdateFarAwayIcons", 0.1f, 0.1f);
 
         Cursor.lockState = CursorLockMode.Confined;
 
@@ -147,6 +147,7 @@ public class CamRotate : MonoBehaviour
         { 
             Cursor.lockState = CursorLockMode.Confined;
         }
+        UpdateBanners();
     }
     private void UpdateTerrainHeightValue()
     {
@@ -156,6 +157,32 @@ public class CamRotate : MonoBehaviour
         if (Physics.Raycast(vec, Vector3.down, out hit, Mathf.Infinity, layerMask))
         {
             terrainHeightBelowUs = hit.point.y;
+        }
+    }
+    private void UpdateBanners()
+    {
+        if (fightManager.allFormationsList.Count > 0)
+        {
+            foreach (FormationPosition form in fightManager.allArray)
+            {
+                form.formationIconsParent.transform.forward = -transform.forward;
+
+                float distance = Vector3.Distance(transform.position, form.transform.position);
+                float reqDistance = 40;
+                Color color = Color.white;
+                float gradual = 1000; 
+                if (distance > reqDistance)
+                {
+                    float math = Mathf.Clamp((Mathf.Exp(distance - reqDistance) - 1) / gradual, 0, 1);
+                    color.a = math;
+
+                }
+                else
+                {
+                    color.a = 0;
+                }
+                form.farAwayIcon.color = color; 
+            }
         }
     }
     private void UpdateFarAwayIcons()
@@ -172,18 +199,12 @@ public class CamRotate : MonoBehaviour
                 if (distance > reqDistance)
                 {
                     float math = Mathf.Clamp((Mathf.Exp(distance - reqDistance) - 1) / gradual, 0, 1);
-                    color.a = math;
-                    if (math >= 1)
-                    {
-                        form.ShowHideSoldiers(false);
-                        //form.showSoldierModels = false;
-                    }
+                    color.a = math; 
 
                 }
                 else
                 {
-                    color.a = 0;
-                    form.ShowHideSoldiers(true);
+                    color.a = 0; 
                 }
                 form.farAwayIcon.color = color;
                 if (form.selectedSprite != null)

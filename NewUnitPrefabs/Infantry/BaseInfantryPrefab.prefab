@@ -296,7 +296,6 @@ GameObject:
   - component: {fileID: 516568650834671651}
   - component: {fileID: 6543225988548055444}
   - component: {fileID: 147310995378209704}
-  - component: {fileID: 6608709247010324616}
   - component: {fileID: 7295892263859704113}
   m_Layer: 24
   m_Name: Model
@@ -368,7 +367,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pathfindingAI: {fileID: 0}
-  pathfindingAILerp: {fileID: 0}
   animator: {fileID: 0}
   formPos: {fileID: 0}
   lineOfSightIndicator: {fileID: 3149635272380389554}
@@ -537,7 +535,6 @@ MonoBehaviour:
   numRandIdleAnims: 1
   numRandAttackAnims: 1
   self: {fileID: 6588230940471953445}
-  remainingDistanceThreshold: 0.01
   getUpTimeCap: 8
   pendingDamage: 0
   pendingArmorPiercingDamage: 0
@@ -597,35 +594,6 @@ MonoBehaviour:
   funnelSimplification: 1
   slowWhenNotFacingTarget: 0
   animCompatibility: {fileID: 0}
---- !u!114 &6608709247010324616
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6588230940471953445}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 847a14d4dc9cc43679ab34fc78e0182f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 4
-  autoRepath:
-    mode: 0
-    interval: 1
-    sensitivity: 10
-    maximumInterval: 2
-    visualizeSensitivity: 0
-  canMove: 1
-  speed: 3
-  orientation: 0
-  enableRotation: 1
-  rotationSpeed: 10
-  interpolatePathSwitches: 1
-  switchPathInterpolationSpeed: 5
-  targetCompatibility: {fileID: 0}
-  repathRateCompatibility: NaN
-  canSearchCompability: 0
 --- !u!114 &7295892263859704113
 MonoBehaviour:
   m_ObjectHideFlags: 0
