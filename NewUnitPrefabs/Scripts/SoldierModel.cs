@@ -140,7 +140,7 @@ public class SoldierModel : MonoBehaviour
     #region ShouldNotSet
     [HideInInspector] public GameObject self;
     private int currentIdleTimer = 0;
-    public float remainingDistanceThreshold = .01f;
+    private float remainingDistanceThreshold = .5f;
     [HideInInspector] public float getUpTimeCap = 8;
     [HideInInspector] private float speedSlow = 0;
     [HideInInspector] public float pendingDamage = 0;
@@ -152,8 +152,7 @@ public class SoldierModel : MonoBehaviour
     [HideInInspector] public float getUpTime = 0; 
     #endregion
 
-    #region Unused
-    private bool exhausted = false;
+    #region Unused 
     private float waitForAttackChatterTime = 10;
     private float waitForMarchChatterTime = 10;
     private float waitForDeathReactionChatterTime = 10;
@@ -1156,8 +1155,13 @@ public class SoldierModel : MonoBehaviour
                     }
 
                     if (enemy.attackType == AttackType.Ranged) //melee breaks ranged cohesion
-                    { 
+                    {
                         enemy.formPos.BreakCohesion();
+                        if (formPos.charging) //rout them if charging
+                        { 
+                            int time = 10;
+                            enemy.formPos.SoftRout(time);
+                        }
                     }
                 }
                 if (attacksBreakEnemyCohesion && !enemy.braced)
@@ -1465,19 +1469,21 @@ public class SoldierModel : MonoBehaviour
     } 
     private void PointTowards(Vector3 targetDirection)
     {
-        pathfindingAI.enableRotation = false; 
-        Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, Time.deltaTime, 0.0f);
+        Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, 100 * deltaTime * Time.deltaTime, 0.0f);
         newDirection.y = 0; //keep level
         transform.rotation = Quaternion.LookRotation(newDirection);
         //transform.rotation = Quaternion.LookRotation(targetDirection);
     }
     public void FaceEnemy()
     {
-        if (HasTargetInRange())
-        { 
-            Vector3 targetDirection = targetEnemy.transform.position - transform.position;
-            PointTowards(targetDirection);
-        }
+        if (targetEnemy != null) //HasTargetInRange()
+        {
+            /*Vector3 targetDirection = targetEnemy.transform.position - transform.position;
+            pathfindingAI.enableRotation = false;
+            PointTowards(targetDirection);*/
+            Vector3 dir = targetEnemy.transform.position - transform.position;
+            transform.rotation = Quaternion.LookRotation(dir);
+        } 
     }
     public void FixRotation()
     {

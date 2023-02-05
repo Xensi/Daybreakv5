@@ -347,11 +347,15 @@ public class FightManager : MonoBehaviour
         {
             if (formPos.soldierBlock.melee && formPos.chargeRecharged)
             {
-                if (formPos.enemyFormationToTarget != null)
+                if (formPos.enemyFormationToTarget != null && formPos.enemyFormationToTarget.alive && !formPos.enemyFormationToTarget.routing)
                 { 
                     formPos.formationToFocusFire = formPos.enemyFormationToTarget; 
                     formPos.StartCharging();
-                } 
+                }
+                else
+                {
+                    formPos.formationToFocusFire = null;
+                }
             } 
         }
     }

@@ -5028,7 +5028,7 @@ MonoBehaviour:
   shaker: {fileID: 0}
   AIIntelligence: 50
   aiBraceRadius: 75
-  fleeing: 0
+  routing: 0
   chargeRecharged: 1
   alive: 1
   abilityCharged: 1
@@ -5118,7 +5118,7 @@ MonoBehaviour:
   chargeSpeed: 7
   maxChargeTime: 15
   currentChargeTime: 0
-  chargeRechargeTime: 30
+  chargeRechargeTime: 60
   maxToleratedDeaths: 30
   deathsThisTimeFrame: 0
   extremeRoutThreshold: 15
