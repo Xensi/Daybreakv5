@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
 
+using System.Threading;
+using System.Threading.Tasks;
 public class RangedModule : MonoBehaviour
 {
     #region RangedUnits
@@ -41,7 +43,7 @@ public class RangedModule : MonoBehaviour
     public float requiredLoadingTime = 1f;
     [HideInInspector] public SoldierModel model;
 
-    public bool useMovementPrediction = true;
+    //public bool useMovementPrediction = true;
     //[SerializeField]
     [Range(0, 1)] //0: low force high angle; 1: high force low angle
     [SerializeField] private float forceRatio = 1;
@@ -68,7 +70,7 @@ public class RangedModule : MonoBehaviour
     public void TriggerRangedAttack()
     {
         if (ammo > 0)
-        {
+        { 
             if (directFire)
             {
                 LaunchBullet();
@@ -113,56 +115,7 @@ public class RangedModule : MonoBehaviour
             default:
                 break;
         }
-    }
-    public void UpdateLoadTimer()
-    {
-        if (model.routing)
-        {
-            return;
-        } 
-        if (model.CheckIfRemainingDistanceOverThreshold(maxDistanceAllowReloads))
-        { 
-            //Debug.Log("too far from formation position");
-            CancelLoading(MoveTreatment.Move); //move to formation position please
-            return;
-        }
-        if (model.airborne || model.knockedDown)
-        {
-            //Debug.Log("incapped");
-            CancelLoading(MoveTreatment.DoNotChange); 
-            return;
-        }
-        if (model.damaged)
-        {
-            //Debug.Log("damaged");
-            CancelLoading(MoveTreatment.DoNotChange);
-            return;
-        }
-        if (model.formPos.movementManuallyStopped || !model.formPos.obeyingMovementOrder)
-        {
-            //if we're force stopped we can reload
-        }
-        else if (model.moving)
-        {
-            //Debug.Log("model is moving");
-            CancelLoading(MoveTreatment.DoNotChange);
-            return;
-        }
-        if (ammo <= 0 && !loadingRightNow && internalAmmoCapacity > 0)
-        {
-            Reload();
-        }
-        else if (loadingRightNow)
-        {   //should we stop reloading? 
-            //increment timer  
-            currentFinishedLoadingTime += 1f; //why does this only increment when models are visible?
-            //Debug.Log("load time is incrementing: " + currentFinishedLoadingTime);
-            if (currentFinishedLoadingTime >= requiredLoadingTime)
-            {
-                FinishReload();
-            }
-        }
-    }
+    } 
     private void Reload()
     {
         //Debug.Log("RELOADING");
@@ -202,13 +155,15 @@ public class RangedModule : MonoBehaviour
         ammo = Mathf.Clamp(ammo, 0, maxAmmo);
         model.animator.SetInteger(AnimatorDefines.ammoID, ammo);
     }
-    public void LineOfSightUpdate()
+    private Vector3 targetPos; //set using GetTarget();
+    public async void LineOfSightUpdate()
     {
-        model.clearLineOfSight = !IsLineOfSightObstructed(GetTarget());
+        CheckIfLOSObstructed(targetPos);
+        await Task.Yield();
     }
-    private Vector3 GetTarget()
+    public async void GetTarget()
     {
-        Vector3 targetPos = new Vector3(999, 999, 999);
+        Vector3 targetPosition = new Vector3(999, 999, 999);
         Vector3 spawn = projectileSpawn.transform.position;
 
         if (directFire) //muskets
@@ -220,13 +175,13 @@ public class RangedModule : MonoBehaviour
                     float centerOfMassOffset = 1;
                     model.TargetClosestEnemyInFormation(model.formPos.formationToFocusFire);
                     Vector3 pos = model.targetEnemy.transform.position;
-                    targetPos = new Vector3(pos.x, pos.y + centerOfMassOffset, pos.z);
+                    targetPosition = new Vector3(pos.x, pos.y + centerOfMassOffset, pos.z);
                     //Vector3 vecFocus = formPos.formationToFocusFire.formationPositionBasedOnSoldierModels;
                     //targetPos = new Vector3(vecFocus.x, vecFocus.y, vecFocus.z);
                 }
                 else //otherwise use the terrain position.
                 {
-                    targetPos = new Vector3(model.formPos.focusFirePos.x, model.formPos.focusFirePos.y, model.formPos.focusFirePos.z);
+                    targetPosition = new Vector3(model.formPos.focusFirePos.x, model.formPos.focusFirePos.y, model.formPos.focusFirePos.z);
                 }
             }
             else
@@ -236,7 +191,7 @@ public class RangedModule : MonoBehaviour
                     float centerOfMassOffset = 1;
                     model.TargetClosestEnemyInFormation(model.formPos.enemyFormationToTarget);
                     Vector3 pos = model.targetEnemy.transform.position;
-                    targetPos = new Vector3(pos.x, pos.y + centerOfMassOffset, pos.z);
+                    targetPosition = new Vector3(pos.x, pos.y + centerOfMassOffset, pos.z);
                     //Vector3 vec = formPos.enemyFormationToTarget.formationPositionBasedOnSoldierModels;
                     //targetPos = new Vector3(vec.x, vec.y, vec.z);
                 }
@@ -249,12 +204,12 @@ public class RangedModule : MonoBehaviour
                 if (model.formPos.formationToFocusFire != null) //if we have a formation to focus on
                 {
                     //targetPos = formPos.formationToFocusFire.transform.position;
-                    targetPos = new Vector3(model.formPos.formationToFocusFire.transform.position.x, model.formPos.formationToFocusFire.averagePositionBasedOnSoldierModels, model.formPos.formationToFocusFire.transform.position.z);
+                    targetPosition = new Vector3(model.formPos.formationToFocusFire.transform.position.x, model.formPos.formationToFocusFire.averagePositionBasedOnSoldierModels, model.formPos.formationToFocusFire.transform.position.z);
 
                 }
                 else //otherwise use the terrain position.
                 {
-                    targetPos = new Vector3(model.formPos.focusFirePos.x, model.formPos.focusFirePos.y + 1, model.formPos.focusFirePos.z);
+                    targetPosition = new Vector3(model.formPos.focusFirePos.x, model.formPos.focusFirePos.y + 1, model.formPos.focusFirePos.z);
                 }
             }
             else
@@ -262,7 +217,7 @@ public class RangedModule : MonoBehaviour
                 if (model.formPos.enemyFormationToTarget != null)
                 {
                     //targetPos = formPos.enemyFormationToTarget.transform.position;
-                    targetPos = new Vector3(model.formPos.enemyFormationToTarget.transform.position.x, model.formPos.enemyFormationToTarget.averagePositionBasedOnSoldierModels, model.formPos.enemyFormationToTarget.transform.position.z);
+                    targetPosition = new Vector3(model.formPos.enemyFormationToTarget.transform.position.x, model.formPos.enemyFormationToTarget.averagePositionBasedOnSoldierModels, model.formPos.enemyFormationToTarget.transform.position.z);
 
                 }
             }
@@ -270,9 +225,10 @@ public class RangedModule : MonoBehaviour
 
         if (model.formPos.missileTarget != null)
         {
-            model.formPos.missileTarget.transform.position = targetPos;
+            model.formPos.missileTarget.transform.position = targetPosition;
         }
-        return targetPos;
+        targetPos = targetPosition;
+        await Task.Yield();
     }
     public void MageCastProjectile(Vector3 targetPos, int abilityNum, string mageType) //let's fire projectiles at a target
     {
@@ -311,31 +267,39 @@ public class RangedModule : MonoBehaviour
         missile.LaunchProjectile(targetPos, clamped, clampedDeviation); //fire at the position of the target with a clamped angle and deviation based on distance
     }
 
-    private bool IsLineOfSightObstructed(Vector3 target)
+    private async void CheckIfLOSObstructed(Vector3 target) 
     {
-        float distance = Vector3.Distance(target, transform.position);
-        bool treatAsDirectFire = directFire;
-        if (distance <= directFireRadius && !directFire)
+        Vector3 start = projectileSpawn.transform.position;
+        float distance = Vector3.Distance(target, start);
+        bool treatAsDirectFire = directFire; 
+        /*if (distance <= directFireRadius && !directFire)
         {
             treatAsDirectFire = true; //if arcing and enemy is within radius, then direct fire
-        }
-        Vector3 heading = (target - transform.position).normalized; //vector from here to there 
+        }*/
+        Vector3 heading = (target - start).normalized; //vector from here to there 
         LayerMask layerMask;
         float range;
         if (treatAsDirectFire)
         {
             layerMask = LayerMask.GetMask("Model", "Terrain");
-            range = Vector3.Distance(transform.position, target);
+            range = Vector3.Distance(start, target);
         }
         else
         {
             layerMask = LayerMask.GetMask("Model", "Terrain");
             range = 20;
-            float angle = AngleCalculation(target);
-            var a = angle * Mathf.Deg2Rad;
+            Vector3 displacement = new Vector3(target.x, start.y, target.z) - start;
+
+            ProjectileDataClass data = CalculateProjectileInformation(start, target);
+            data = CalculatePredictedPositionData(data, start, target);
+            float angle = data.Angle;
+            //float angle = AngleCalculation(target);
+            //var a = angle;// * Mathf.Deg2Rad;
             //Vector3 dir = (transform.forward * Mathf.Cos(a) + transform.right * Mathf.Sin(a)).normalized;
-            Vector3 dir = (heading * Mathf.Cos(a) + transform.up * Mathf.Sin(a)).normalized;
-            heading = dir;
+            //Vector3 dir = (heading * Mathf.Cos(a) + transform.up * Mathf.Sin(a)).normalized;
+
+            Vector3 dir = Mathf.Cos(angle) * range * displacement.normalized + Mathf.Sin(angle) * range * Vector3.up;
+            heading = dir; 
         }
         Vector3 sightLine = transform.position;
 
@@ -345,57 +309,63 @@ public class RangedModule : MonoBehaviour
         }
 
         RaycastHit hit;
-        if (Physics.Raycast(sightLine, heading, out hit, range, layerMask))
+        if (Physics.Raycast(sightLine, heading, out hit, range, layerMask)) //hit something
         {
-            Debug.DrawRay(sightLine, heading * range, Color.white, Time.deltaTime, true);
-            if (hit.collider.gameObject.tag == "Hurtbox")
+            if (hit.collider.gameObject.tag == "Hurtbox") //if model
             {
                 SoldierModel hitModel = hit.collider.gameObject.GetComponentInParent<SoldierModel>();
                 if (hitModel != null)
                 {
                     if (hitModel.team == model.team)
+                    { 
+                        UpdateLOSIndicator();
+                        model.hasClearLineOfSight = false;
+                        Debug.DrawRay(sightLine, heading * range, Color.red, 1, true);
+                    }
+                    else //enemies are fair game
                     {
-                        if (model.lineOfSightIndicator != null)
-                        {
-                            if (model.formPos.selected)
-                            {
-                                model.lineOfSightIndicator.enabled = true;
-                            }
-                            else
-                            {
-                                model.lineOfSightIndicator.enabled = false;
-                            }
-                        }
-                        return true;
+                        UpdateLOSIndicator(true);
+                        model.hasClearLineOfSight = true;
+                        Debug.DrawRay(sightLine, heading * range, Color.green, 1, true);
                     }
                 }
             }
             else if (hit.collider.gameObject.tag == "Terrain") //terrain blocks shots
             {
-                if (model.lineOfSightIndicator != null)
-                {
-                    if (model.formPos.selected)
-                    {
-                        model.lineOfSightIndicator.enabled = true;
-                    }
-                    else
-                    {
-                        model.lineOfSightIndicator.enabled = false;
-                    }
-                }
-                return true;
+                UpdateLOSIndicator();
+                model.hasClearLineOfSight = false;
+                Debug.DrawRay(sightLine, heading * range, Color.red, 1, true);
             }
         }
         else
-        {
-
-            Debug.DrawRay(sightLine, heading * range, Color.red, Time.deltaTime, true);
+        { 
+            Debug.DrawRay(sightLine, heading * range, Color.green, 1, true); 
+            UpdateLOSIndicator(true);
+            model.hasClearLineOfSight = true;
         }
+        await Task.Yield();
+    }
+    private async void UpdateLOSIndicator(bool ForceHide = false)
+    {
         if (model.lineOfSightIndicator != null)
         {
-            model.lineOfSightIndicator.enabled = false;
+            if (ForceHide)
+            { 
+                model.lineOfSightIndicator.enabled = false;
+            }
+            else //enable if visible
+            { 
+                if (model.formPos.selected)
+                {
+                    model.lineOfSightIndicator.enabled = true;
+                }
+                else
+                {
+                    model.lineOfSightIndicator.enabled = false;
+                }
+            }
         }
-        return false;
+        await Task.Yield();
     }
     private void LaunchBullet()
     {
@@ -409,7 +379,7 @@ public class RangedModule : MonoBehaviour
         }
         if (model.targetEnemy != null || model.formPos.focusFire || model.formPos.enemyFormationToTarget != null)
         {
-            Vector3 targetPos = GetTarget();
+            //Vector3 targetPos = GetTarget();
 
             //calculations
             float dist = Vector3.Distance(transform.position, targetPos);
@@ -460,10 +430,10 @@ public class RangedModule : MonoBehaviour
 
     public float maxProjectileForce = 100;
     public float maxRange = 200;
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     { 
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, maxRange);
+        /*Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, maxRange);*/
     }
     private ProjectileDataClass CalculateProjectileInformation(Vector3 startPos, Vector3 targetPos)
     {
@@ -523,7 +493,7 @@ public class RangedModule : MonoBehaviour
         {
             #region Projectile Math
             //get target and apply random deviation based on distance
-            Vector3 targetPos = GetTarget();
+            //Vector3 targetPos = GetTarget();
             float dist = Vector3.Distance(transform.position, targetPos);
             float deviation = projectileDeviationAmount * dist * 0.01f;
             Vector3 deviationVec = new Vector3(Random.Range(-deviation, deviation), Random.Range(-deviation, deviation), Random.Range(-deviation, deviation));

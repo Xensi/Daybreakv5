@@ -303,6 +303,7 @@ public class FightManager : MonoBehaviour
         {
             case combatStrategy.Attack:
                 AIRaisePursueRadius();
+                AITryToCharge();
                 AICheckIfBraceNeeded();
                 break;
             case combatStrategy.Defend:
@@ -337,6 +338,20 @@ public class FightManager : MonoBehaviour
             if (formPos.soldierBlock.melee && formPos.usesSpears)
             {
                 formPos.AICheckIfNeedToBrace();
+            } 
+        }
+    }
+    private void AITryToCharge()
+    {
+        foreach (FormationPosition formPos in enemyControlledFormations)
+        {
+            if (formPos.soldierBlock.melee && formPos.chargeRecharged)
+            {
+                if (formPos.enemyFormationToTarget != null)
+                { 
+                    formPos.formationToFocusFire = formPos.enemyFormationToTarget; 
+                    formPos.StartCharging();
+                } 
             } 
         }
     }
@@ -380,7 +395,7 @@ public class FightManager : MonoBehaviour
         List<FormationPosition> curatedPlayerForms = new List<FormationPosition>();
         foreach (FormationPosition form in playerControlledFormations)
         {
-            if (form.alive && !form.fleeing)
+            if (form.alive && !form.routing)
             { 
                 curatedPlayerForms.Add(form);
             }
@@ -439,14 +454,14 @@ public class FightManager : MonoBehaviour
             int numberOfAILostFormations = 0;
             foreach (FormationPosition form in playerControlledFormations)
             {
-                if (form.numberOfAliveSoldiers <= 0 || form.fleeing || form == null) //if all dead, or fleeing
+                if (form.numberOfAliveSoldiers <= 0 || form.routing || form == null) //if all dead, or fleeing
                 {
                     numberOfLostFormations++;
                 }
             }
             foreach (FormationPosition form in enemyControlledFormations)
             {
-                if (form.numberOfAliveSoldiers <= 0 || form.fleeing || form == null) //if all dead, or fleeing
+                if (form.numberOfAliveSoldiers <= 0 || form.routing || form == null) //if all dead, or fleeing
                 {
                     numberOfAILostFormations++;
                 }
@@ -1462,7 +1477,7 @@ public class FightManager : MonoBehaviour
         Vector2 max = selectionBox.anchoredPosition + (selectionBox.sizeDelta / 2);
         foreach (FormationPosition form in playerControlledFormations) //select units if in box
         {
-            if (form.fleeing)
+            if (form.routing)
             {
                 continue;
             }
@@ -1528,7 +1543,7 @@ public class FightManager : MonoBehaviour
             {
                 FormationPosition form = formHit.transform.gameObject.GetComponentInParent<FormationPosition>();  
 
-                if (form.fleeing)
+                if (form.routing)
                 {
                     return;
                 }
@@ -1570,7 +1585,7 @@ public class FightManager : MonoBehaviour
     {
         foreach (FormationPosition form in playerControlledFormations)
         {
-            if (form.formationType == ogForm.formationType && form.alive && !form.fleeing)
+            if (form.formationType == ogForm.formationType && form.alive && !form.routing)
             { 
                 form.SetSelected(true);
                 form.TriggerSelectionCircles(true);

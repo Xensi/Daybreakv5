@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Pathfinding;
+using System.Threading.Tasks;
+using System.Threading;
 public class Position : MonoBehaviour
 {
     public SoldierModel assignedSoldierModel;
@@ -22,7 +24,7 @@ public class Position : MonoBehaviour
         PlaceOnGround();
     }
 
-    public void PlaceOnGround()
+    public async void PlaceOnGround()
     {
         Vector3 vec = new Vector3(transform.position.x, 100, transform.position.z);
         LayerMask layerMask = LayerMask.GetMask("Terrain");
@@ -30,7 +32,8 @@ public class Position : MonoBehaviour
         if (Physics.Raycast(vec, Vector3.down, out hit, Mathf.Infinity, layerMask))
         {
             transform.position = hit.point;
-        } 
+        }
+        await Task.Yield();
     }
 
     public void SeekReplacement(float range = 5f)
@@ -63,16 +66,16 @@ public class Position : MonoBehaviour
         }    
         if (candidates.Count > 0)
         {
-            GetClosest();
+            GetClosestReplacement();
         }
         else
         { 
             numTimesSought++;
             //SeekReplacement(); //keep going until out of bounds?
-        }
+        } 
     }
 
-    private void GetClosest()
+    private void GetClosestReplacement()
     {
         if (assignedSoldierModel != null)
         {
@@ -114,8 +117,7 @@ public class Position : MonoBehaviour
                     UpdateModelPosition();
                 } 
             }
-        }
-        
+        } 
     }
 
     private void UpdateModelPosition()
@@ -127,7 +129,7 @@ public class Position : MonoBehaviour
             { 
                 assignedSoldierModel.modelPosition.assignedSoldierModel = null; //remove from original position
             }
-            assignedSoldierModel.modelPosition = this; //update its assigned position
+            assignedSoldierModel.modelPosition = this; //update its assigned position 
             row.UpdateModelsInRow();
 
 
