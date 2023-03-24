@@ -459,7 +459,6 @@ public class FormationPosition : MonoBehaviour
                 if (model.alive)
                 {
                     model.UpdateModelState(cancelToken.Token);
-                    //model.FaceEnemy();
                     ////model.UpdateVisibility(); 
                 }
             }
@@ -632,6 +631,8 @@ public class FormationPosition : MonoBehaviour
                 if (model.alive) //  && model.CheckIfRemainingDistanceOverThreshold(threshold) //&& !model.pathfindingAI.pathPending
                 {
                     model.UpdateAndCullAnimations();
+                    model.CheckIfTargetIsDead();
+
                     if (model.attackType == SoldierModel.AttackType.Ranged)
                     {
                         model.rangedModule.GetTarget();
@@ -643,7 +644,7 @@ public class FormationPosition : MonoBehaviour
         await Task.Yield();
     }
     #endregion 
-    void LateUpdate()
+    void Update()
     {
         UpdateLineRenderer();
         if (selected)
@@ -674,7 +675,17 @@ public class FormationPosition : MonoBehaviour
                 }
             }
         }
-
+        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+        {
+            SoldierModel model = soldierBlock.modelsArray[i];
+            if (model != null)
+            {
+                if (model.alive)
+                {
+                    model.FaceEnemy(); 
+                }
+            }
+        }
     }
     private int fastModelCheck = 0; 
 
@@ -1613,7 +1624,10 @@ public class FormationPosition : MonoBehaviour
     {
         farAwayIcon.enabled = val;
         frontIcon.enabled = val;
-        farAwayIconMask.SetActive(val);
+        if (farAwayIconMask != null)
+        {
+            farAwayIconMask.SetActive(val); 
+        }
         selectedSprite.enabled = val;
     }
 

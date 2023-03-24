@@ -139,7 +139,7 @@ public class SoldierModel : MonoBehaviour
     #region ShouldNotSet
     [HideInInspector] public GameObject self;
     private int currentIdleTimer = 0;
-    private float remainingDistanceThreshold = .5f;
+    private float remainingDistanceThreshold = 1f;
     [HideInInspector] public float getUpTimeCap = 8;
     [HideInInspector] private float speedSlow = 0;
     [HideInInspector] public float pendingDamage = 0;
@@ -404,6 +404,13 @@ public class SoldierModel : MonoBehaviour
     }
     public ModelState currentModelState = ModelState.Idle;
     private ModelState lastState;
+    public void CheckIfTargetIsDead()
+    {
+        if (targetEnemy != null && !targetEnemy.alive)
+        {
+            targetEnemy = null;
+        }
+    }
     public async void UpdateModelState(CancellationToken cancelToken)
     {
         switch (currentModelState)
@@ -612,6 +619,11 @@ public class SoldierModel : MonoBehaviour
     }
     private void BeginAttack()
     {
+        if (targetEnemy == null && attackType == AttackType.Melee) //if we don't have a target and we're melee go back
+        {
+            SwitchState(lastState);
+            return;
+        }
         currentDamageTime = 0;
         if (attackType == AttackType.Melee)
         {
@@ -621,10 +633,11 @@ public class SoldierModel : MonoBehaviour
                 hitThreshold *= 2; //melee is doubly effective against ranged units
             }*/
 
-            if (rand <= hitThreshold && targetEnemy.attackType == AttackType.Ranged)
-            { 
-                DealDamage(targetEnemy, formPos.charging);
-            }  
+            if (rand <= hitThreshold || targetEnemy.attackType == AttackType.Ranged) //if target is ranged guaranteed hit because no way for them to defend against
+            {
+                DealDamage(targetEnemy, formPos.charging); //change based on if charging or not
+            }
+            //DealDamage(targetEnemy, formPos.charging);
         }
         else if (rangedModule != null)
         {
@@ -909,7 +922,7 @@ public class SoldierModel : MonoBehaviour
 
         foreach (SoldierModel item in nearbyEnemyModels)
         {
-            if (!item.ignoreAsNearby)
+            if (!item.ignoreAsNearby && item.alive)
             {
                 //float dist = GetDistance(transform, item.gameObject.transform);
                 //float dist = GetSquaredMagnitude(transform.position, item.gameObject.transform.position);
@@ -1090,61 +1103,44 @@ public class SoldierModel : MonoBehaviour
     [SerializeField] int hitThreshold = 50; //higher numbers are better. wider range of good hits
     
     public void DealDamage(SoldierModel enemy, bool launchEnemy = false, bool knockDown = false, bool trampling = false)
-    { //check if in range, otherwise whiff  
+    {
+        //check if in range, otherwise whiff ?
         formPos.modelAttacked = true;
-        if (enemy != null)
-        { 
-            if (enemy.alive)
+        if (enemy != null && enemy.alive)
+        {
+            float force = 1; 
+            if (attackType == AttackType.Melee)
             {
-                float force = 1;
+                PlayAttackSound();
+
+                if (enemy.attackType == AttackType.Ranged) //melee breaks ranged cohesion
+                {
+                    enemy.formPos.BreakCohesion();
+                    if (formPos.charging) //rout them if charging
+                    {
+                        int time = 10;
+                        enemy.formPos.SoftRout(time);
+                    }
+                } 
+
                 if (usesChargeDamage)
                 {
-                    force = normalizedSpeed; 
+                    force = normalizedSpeed;
                 }
                 else if (formPos.charging)
                 {
                     force = normalizedSpeed * 2;
                     //Debug.Log(damage * force);
                 }
-                if (launchEnemy && !enemy.formPos.braced) //attacksCanLaunchEnemies && launchEnemy
-                {
-                    //Debug.Log("attempting to launch enemy");
-                    force = Mathf.Clamp(force, 0, 1);
-                    float maxDistance = 5; 
-                    //Vector3 pos = enemy.transform.position + (transform.forward * force * maxDistance);
-                    Vector3 heading = transform.forward;
-                    float slowMax = startingMaxSpeed * 0.9f;
-                    float minSlow = 0.1f;
-                    SlowDown(slowMax-force, minSlow);
-                    Vector3 startPos = new Vector3(enemy.transform.position.x, enemy.transform.position.y + 1, enemy.transform.position.z); 
-                    enemy.LaunchModel(heading, force* maxDistance, enemy.transform.position); 
-                }
-                if (attackType == AttackType.Melee)
-                { 
-                    if (attackSounds.Count > 0)
-                    { 
-                        impactSource.PlayOneShot(attackSounds[UnityEngine.Random.Range(0, attackSounds.Count)]);  
-                    }
-
-                    if (enemy.attackType == AttackType.Ranged) //melee breaks ranged cohesion
-                    {
-                        enemy.formPos.BreakCohesion();
-                        if (formPos.charging) //rout them if charging
-                        { 
-                            int time = 10;
-                            enemy.formPos.SoftRout(time);
-                        }
-                    }
-                }
                 if (attacksBreakEnemyCohesion && !enemy.braced)
                 {
                     enemy.formPos.BreakCohesion();
                 }
                 if (knockDown && !enemy.formPos.braced) //can't knock down braced units
-                { 
+                {
                     float getUpTime = knockDownForSecondsMax;
                     enemy.KnockDown();
-                    enemy.getUpTimeCap = getUpTime * force; 
+                    enemy.getUpTimeCap = getUpTime * force;
                 }
                 if (trampling)
                 {
@@ -1154,25 +1150,47 @@ public class SoldierModel : MonoBehaviour
                     float minSlow = 0.1f;
                     SlowDown(slowMax - force, minSlow);
                 }
-                /*if (braced) //if we're braced, and they're charging
-                { 
+                if (braced) //if we're braced, and they're charging
+                {
                     if (enemy.formPos.charging || enemy.formPos.isCavalry)
                     {
                         float stunTime = 3;
                         enemy.formPos.FreezeMovement(stunTime);
                     }
-                }*/
-                enemy.SufferDamage(damage * force, armorPiercingDamage * force, this, 1); 
+                }
             } 
+            
+            if (launchEnemy && !enemy.formPos.braced) //attacksCanLaunchEnemies && launchEnemy
+            {
+                //Debug.Log("attempting to launch enemy");
+                force = Mathf.Clamp(force, 0, 1);
+                float maxDistance = 5;
+                //Vector3 pos = enemy.transform.position + (transform.forward * force * maxDistance);
+                Vector3 heading = transform.forward;
+                float slowMax = startingMaxSpeed * 0.9f;
+                float minSlow = 0.1f;
+                SlowDown(slowMax - force, minSlow);
+                Vector3 startPos = new Vector3(enemy.transform.position.x, enemy.transform.position.y + 1, enemy.transform.position.z);
+                enemy.LaunchModel(heading, force * maxDistance, enemy.transform.position);
+            } 
+            enemy.SufferDamage(damage * force, armorPiercingDamage * force, this, 1);
         }
     }
-
+    private void PlayAttackSound()
+    { 
+        if (attackSounds.Count > 0)
+        {
+            impactSource.PlayOneShot(attackSounds[UnityEngine.Random.Range(0, attackSounds.Count)]);
+        }
+    }
     public void SufferDamage(float dmg, float armorPiercingDmg, SoldierModel origin, float damageMultiplier = 1)
     {  
         float damageAfterArmor = dmg - armor;
         damageAfterArmor = Mathf.Clamp(damageAfterArmor, 0, 999);
         health -= damageAfterArmor * damageMultiplier;
-        health -= armorPiercingDmg * damageMultiplier;  
+        health -= armorPiercingDmg * damageMultiplier;
+        //Debug.Log(armorPiercingDamage * damageMultiplier);
+
 
         currentDamageTime = 0;
         currentFinishedAttackingTime = 0;
@@ -1358,11 +1376,11 @@ public class SoldierModel : MonoBehaviour
         float initDist = Helper.Instance.GetSquaredMagnitude(transform.position, form.formationPositionBasedOnSoldierModels);
         float compareDist = initDist;
 
-        var array = form.soldierBlock.modelsArray;
+        SoldierModel[] array = form.soldierBlock.modelsArray;
 
         for (int i = 0; i < form.soldierBlock.modelsArray.Length; i++)
         {
-            if (array[i] != null)
+            if (array[i] != null && array[i].alive)
             {
                 float dist = Helper.Instance.GetSquaredMagnitude(transform.position, array[i].transform.position);
                 if (dist < compareDist)
@@ -1405,10 +1423,15 @@ public class SoldierModel : MonoBehaviour
         } 
         return true;
     }  
-    void OnDrawGizmosSelected()
+    void OnDrawGizmos()
     {
         /*Gizmos.DrawWireSphere(transform.position, attackRange);
         Gizmos.color = Color.green; */
+        if (targetEnemy != null)
+        { 
+            Gizmos.DrawWireSphere(targetEnemy.transform.position, 1);
+            Gizmos.color = Color.red;
+        }
     }
     public void StopAttackingWhenNoEnemiesNearby()
     {
@@ -1436,17 +1459,21 @@ public class SoldierModel : MonoBehaviour
         newDirection.y = 0; //keep level
         transform.rotation = Quaternion.LookRotation(newDirection);
         //transform.rotation = Quaternion.LookRotation(targetDirection);
-    }
+    } 
     public void FaceEnemy()
     {
         if (targetEnemy != null) //HasTargetInRange()
         {
-            /*Vector3 targetDirection = targetEnemy.transform.position - transform.position;
             pathfindingAI.enableRotation = false;
-            PointTowards(targetDirection);*/
             Vector3 dir = targetEnemy.transform.position - transform.position;
-            transform.rotation = Quaternion.LookRotation(dir);
-        } 
+            Vector3 newDirection = Vector3.RotateTowards(transform.forward, dir, Time.deltaTime, 0.0f);
+            newDirection.y = 0; //keep level
+            transform.rotation = Quaternion.LookRotation(newDirection);
+        }
+        else
+        {
+            pathfindingAI.enableRotation = true;
+        }
     }
     public void FixRotation()
     {

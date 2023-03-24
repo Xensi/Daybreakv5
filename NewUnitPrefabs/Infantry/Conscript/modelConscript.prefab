@@ -56,6 +56,14 @@ PrefabInstance:
       value: modelConscript
       objectReference: {fileID: 0}
     - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: hitThreshold
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: dispersalLevel
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
       propertyPath: veteranMeshes.Array.size
       value: 0
       objectReference: {fileID: 0}
