@@ -161,12 +161,41 @@ public class RangedModule : MonoBehaviour
         CheckIfLOSObstructed(targetPos);
         await Task.Yield();
     }
-    public async void GetTarget()
+    private void ManualUpdateTargetPosition()
     {
-        Vector3 targetPosition = new Vector3(999, 999, 999);
-        Vector3 spawn = projectileSpawn.transform.position;
+        if (!directFire) //arrows
+        {
+            if (!model.formPos.focusFire) //not focus fire
+            {
+                if (model.formPos.enemyFormationToTarget != null)
+                {
+                    targetPos = new Vector3(model.formPos.enemyFormationToTarget.transform.position.x, model.formPos.enemyFormationToTarget.averagePositionBasedOnSoldierModels, model.formPos.enemyFormationToTarget.transform.position.z);
+ 
+                    hasTarget = true;
+                }
+                else
+                {
+                    targetPos = new Vector3(999, 999, 999);
+                    hasTarget = false;
+                }
+            }
+            else //focus fire
+            {
+                if (model.formPos.formationToFocusFire != null) //if we have a formation to focus on
+                {
+                    //targetPos = formPos.formationToFocusFire.transform.position;
+                    targetPos = new Vector3(model.formPos.formationToFocusFire.transform.position.x, model.formPos.formationToFocusFire.averagePositionBasedOnSoldierModels, model.formPos.formationToFocusFire.transform.position.z);
 
-        if (directFire) //muskets
+                    hasTarget = true;
+                }
+                else //otherwise use the terrain position.
+                {
+                    targetPos = new Vector3(model.formPos.focusFirePos.x, model.formPos.focusFirePos.y + 1, model.formPos.focusFirePos.z);
+                    hasTarget = true;
+                }
+            }
+        }
+        else //muskets, cannons
         {
             if (model.formPos.focusFire)
             {
@@ -175,13 +204,15 @@ public class RangedModule : MonoBehaviour
                     float centerOfMassOffset = 1;
                     model.TargetClosestEnemyInFormation(model.formPos.formationToFocusFire);
                     Vector3 pos = model.targetEnemy.transform.position;
-                    targetPosition = new Vector3(pos.x, pos.y + centerOfMassOffset, pos.z);
+                    targetPos = new Vector3(pos.x, pos.y + centerOfMassOffset, pos.z);
                     //Vector3 vecFocus = formPos.formationToFocusFire.formationPositionBasedOnSoldierModels;
                     //targetPos = new Vector3(vecFocus.x, vecFocus.y, vecFocus.z);
+                    hasTarget = true;
                 }
                 else //otherwise use the terrain position.
                 {
-                    targetPosition = new Vector3(model.formPos.focusFirePos.x, model.formPos.focusFirePos.y, model.formPos.focusFirePos.z);
+                    targetPos = new Vector3(model.formPos.focusFirePos.x, model.formPos.focusFirePos.y, model.formPos.focusFirePos.z);
+                    hasTarget = true;
                 }
             }
             else
@@ -191,43 +222,25 @@ public class RangedModule : MonoBehaviour
                     float centerOfMassOffset = 1;
                     model.TargetClosestEnemyInFormation(model.formPos.enemyFormationToTarget);
                     Vector3 pos = model.targetEnemy.transform.position;
-                    targetPosition = new Vector3(pos.x, pos.y + centerOfMassOffset, pos.z);
+                    targetPos = new Vector3(pos.x, pos.y + centerOfMassOffset, pos.z);
                     //Vector3 vec = formPos.enemyFormationToTarget.formationPositionBasedOnSoldierModels;
-                    //targetPos = new Vector3(vec.x, vec.y, vec.z);
+                    //targetPos = new Vector3(vec.x, vec.y, vec.z); 
+                    hasTarget = true;
+                }
+                else
+                {
+                    hasTarget = false;
                 }
             }
         }
-        else //arc
-        {
-            if (model.formPos.focusFire)
-            {
-                if (model.formPos.formationToFocusFire != null) //if we have a formation to focus on
-                {
-                    //targetPos = formPos.formationToFocusFire.transform.position;
-                    targetPosition = new Vector3(model.formPos.formationToFocusFire.transform.position.x, model.formPos.formationToFocusFire.averagePositionBasedOnSoldierModels, model.formPos.formationToFocusFire.transform.position.z);
-
-                }
-                else //otherwise use the terrain position.
-                {
-                    targetPosition = new Vector3(model.formPos.focusFirePos.x, model.formPos.focusFirePos.y + 1, model.formPos.focusFirePos.z);
-                }
-            }
-            else
-            {
-                if (model.formPos.enemyFormationToTarget != null)
-                {
-                    //targetPos = formPos.enemyFormationToTarget.transform.position;
-                    targetPosition = new Vector3(model.formPos.enemyFormationToTarget.transform.position.x, model.formPos.enemyFormationToTarget.averagePositionBasedOnSoldierModels, model.formPos.enemyFormationToTarget.transform.position.z);
-
-                }
-            }
-        }
-
-        if (model.formPos.missileTarget != null)
+        /*if (model.formPos.missileTarget != null)
         {
             model.formPos.missileTarget.transform.position = targetPosition;
-        }
-        targetPos = targetPosition;
+        }*/
+    }
+    public async void RepeatingUpdateTargetPosition()
+    {
+        ManualUpdateTargetPosition(); 
         await Task.Yield();
     }
     public void MageCastProjectile(Vector3 targetPos, int abilityNum, string mageType) //let's fire projectiles at a target
@@ -430,10 +443,14 @@ public class RangedModule : MonoBehaviour
 
     public float maxProjectileForce = 100;
     public float maxRange = 200;
-    private void OnDrawGizmosSelected()
-    { 
-        /*Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, maxRange);*/
+
+    void OnDrawGizmos()
+    {
+        if (model.alive && !model.formPos.routing && hasTarget && model.hasClearLineOfSight)
+        { 
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(targetPos, 1);
+        }
     }
     private ProjectileDataClass CalculateProjectileInformation(Vector3 startPos, Vector3 targetPos)
     {
@@ -487,14 +504,24 @@ public class RangedModule : MonoBehaviour
         predictiveData.InitialVelocity = Vector3.ClampMagnitude(predictiveData.InitialVelocity, maxProjectileForce);
         return predictiveData;
     }
-    private void FireProjectileRevised()
+    private bool hasTarget = false;
+    private void FireProjectileRevised() //what causes targetpos to not sync up with formation?
     {
-        if (model.targetEnemy != null || model.formPos.focusFire || model.formPos.enemyFormationToTarget != null)
+        if (targetPos.y > 500)
+        {
+            hasTarget = false;
+            return;
+        }
+
+        if (model.targetEnemy != null || model.formPos.focusFire || model.formPos.enemyFormationToTarget != null || hasTarget)
         {
             #region Projectile Math
             //get target and apply random deviation based on distance
-            //Vector3 targetPos = GetTarget();
+            
+            ManualUpdateTargetPosition();
+
             float dist = Vector3.Distance(transform.position, targetPos);
+
             float deviation = projectileDeviationAmount * dist * 0.01f;
             Vector3 deviationVec = new Vector3(Random.Range(-deviation, deviation), Random.Range(-deviation, deviation), Random.Range(-deviation, deviation));
             targetPos += deviationVec;

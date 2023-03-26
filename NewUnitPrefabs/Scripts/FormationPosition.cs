@@ -635,7 +635,7 @@ public class FormationPosition : MonoBehaviour
 
                     if (model.attackType == SoldierModel.AttackType.Ranged)
                     {
-                        model.rangedModule.GetTarget();
+                        model.rangedModule.RepeatingUpdateTargetPosition();
                         model.rangedModule.LineOfSightUpdate();
                     }
                 }
