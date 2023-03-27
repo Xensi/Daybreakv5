@@ -1974,7 +1974,8 @@ public class FormationPosition : MonoBehaviour
     }
     public void RoutCommand()
     {
-
+        int time = 10;
+        SoftRout(time);
     }
     public void ResumeCommand()
     {

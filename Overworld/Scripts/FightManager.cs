@@ -58,7 +58,8 @@ public class FightManager : MonoBehaviour
     [SerializeField] private Button setHoldPositionButton;
     [SerializeField] private Button setPursueButton;
     [SerializeField] private Button mageAbility1;
-    [SerializeField] private Button mageAbility2;
+    [SerializeField] private Button mageAbility2; 
+
     [SerializeField] private TMP_Text mageHeader;
 
     public bool hoveringUI = false;
@@ -524,6 +525,7 @@ public class FightManager : MonoBehaviour
     public BattleGroup loserBattleGroup;
     [SerializeField] private GameObject victoryDisplay;
     [SerializeField] private GameObject defeatDisplay;
+
     private void DisplayVictory()
     {
         victoryDisplay.SetActive(true);
@@ -885,6 +887,16 @@ public class FightManager : MonoBehaviour
         //Clear pos list based on selected
         UpdateGUI();
     }
+
+    public void OrderRetreat()
+    {
+        List<FormationPosition> list = new List<FormationPosition>(selectedFormations);
+        foreach (FormationPosition formation in list)
+        {
+            formation.RoutCommand();
+        }
+    }
+
     public void SetAutoFire( bool holdFire) //for bowmen
     {
         foreach (FormationPosition formation in selectedFormations)

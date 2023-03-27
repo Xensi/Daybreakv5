@@ -506,19 +506,18 @@ public class RangedModule : MonoBehaviour
     }
     private bool hasTarget = false;
     private void FireProjectileRevised() //what causes targetpos to not sync up with formation?
-    {
-        if (targetPos.y > 500)
-        {
-            hasTarget = false;
-            return;
-        }
-
+    { 
         if (model.targetEnemy != null || model.formPos.focusFire || model.formPos.enemyFormationToTarget != null || hasTarget)
         {
             #region Projectile Math
             //get target and apply random deviation based on distance
             
             ManualUpdateTargetPosition();
+            CheckIfLOSObstructed(targetPos);
+            if (!model.hasClearLineOfSight)
+            {
+                return;
+            }
 
             float dist = Vector3.Distance(transform.position, targetPos);
 
