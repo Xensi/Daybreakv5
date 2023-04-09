@@ -97,6 +97,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2272350549337477986}
     m_Modifications:
+    - target: {fileID: 6756734135127783550, guid: 8de224ef566183041ab2c56424e1363f, type: 3}
+      propertyPath: m_Radius
+      value: 0.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 6756734135127783550, guid: 8de224ef566183041ab2c56424e1363f, type: 3}
+      propertyPath: m_Center.y
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 8353535365282557464, guid: 8de224ef566183041ab2c56424e1363f, type: 3}
       propertyPath: m_Name
       value: visualInfantry

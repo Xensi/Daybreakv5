@@ -17,6 +17,10 @@ public static class GlobalDefines
         soldner,
         longbowman,
         infantry,
-        crossbowman
+        crossbowman,
+        gallowglass,
+        footKnight,
+        lancer,
+        mountedKnight
     }
 }

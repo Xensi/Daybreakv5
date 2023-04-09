@@ -203,7 +203,7 @@ public class ProjectileFromSoldier : MonoBehaviour
                 if (canDamage)
                 {
                     SoldierModel hitModel = other.GetComponentInParent<SoldierModel>();
-                    if (hitModel != null && hitModel.alive && hitModel.formPos != soldierParent.formPos) //can't hit our own formation, but can hit any others
+                    if (hitModel != null && hitModel.alive && hitModel.formPos != soldierParent.formPos && hitModel.team != soldierParent.team) //can't hit our own formation, but can hit any others
                     {
                         //canDamage = false;
 
