@@ -552,7 +552,6 @@ MonoBehaviour:
   newMaxSpeed: 0
   hitThreshold: 40
   farAway: 0
-  positionToMoveTo: {fileID: 5632992659982562817}
 --- !u!114 &147310995378209704
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -588,8 +587,8 @@ MonoBehaviour:
   targetCompatibility: {fileID: 0}
   acceleration: 25
   rotationSpeed: 360
-  slowdownTime: 1
-  endReachedDistance: 0.5
+  slowdownTime: 3
+  endReachedDistance: 0.01
   wallForce: 3
   wallDist: 1
   funnelSimplification: 1

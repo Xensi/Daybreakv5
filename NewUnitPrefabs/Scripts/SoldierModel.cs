@@ -276,7 +276,8 @@ public class SoldierModel : MonoBehaviour
         animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
         pathfindingAI.enableRotation = true;
 
-        GenerateDispersalVector(dispersalLevel); 
+        GenerateDispersalVector(dispersalLevel);
+        //animator.enabled = false;
     }
     private void OnEnable()
     {
@@ -291,23 +292,16 @@ public class SoldierModel : MonoBehaviour
         {
             pathfindingAI.onSearchPath -= UpdateDestinationPosition;
         } 
-    }
-    public async void UpdateDestinationPosition() //call whenever you want path to be updated
+    } 
+    /*void Update()
     {
         pathfindingAI.destination = target.position + dispersalVector;
-
-        /*if (target != null && pathfindingAI != null && pathfindingAILerp != null)
-        {
-            if (pathfindingAI.enabled)
-            { 
-                pathfindingAI.destination = target.position + dispersalVector; 
-            }
-            else if (pathfindingAILerp.enabled)
-            {
-                pathfindingAILerp.destination = target.position + dispersalVector; 
-            }
-        }*/
-        await Task.Yield();
+    }*/
+    public void UpdateDestinationPosition()
+    //public async void UpdateDestinationPosition() //call whenever you want path to be updated
+    {
+        pathfindingAI.destination = target.position + dispersalVector; 
+        //await Task.Yield();
     }
     public void GenerateDispersalVector(float dispersalLevel)
     {
@@ -1445,7 +1439,7 @@ public class SoldierModel : MonoBehaviour
     {
         if (formPos.showSoldierModels)
         {
-            animator.enabled = !farAway; //if faraway, disable animator
+            //animator.enabled = !farAway; //if faraway, disable animator
         }
         else
         {
