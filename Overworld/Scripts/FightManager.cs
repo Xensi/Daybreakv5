@@ -625,6 +625,8 @@ public class FightManager : MonoBehaviour
             if (!item.braced)
             { 
                 item.ResumeCommand();
+                //item.ForceUpdateSoldiersDestinations();
+                item.RapidUpdateDestinations();
             }
         }
         UpdateGUI();

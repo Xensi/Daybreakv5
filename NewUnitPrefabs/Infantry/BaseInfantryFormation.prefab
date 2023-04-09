@@ -5106,7 +5106,7 @@ MonoBehaviour:
   targetCompatibility: {fileID: 0}
   acceleration: 5
   rotationSpeed: 60
-  slowdownTime: 0.5
+  slowdownTime: 1
   endReachedDistance: 1
   wallForce: 3
   wallDist: 1

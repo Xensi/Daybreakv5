@@ -224,10 +224,10 @@ public class FormationPosition : MonoBehaviour
     private void OnEnable()
     {
         cancelToken = new CancellationTokenSource();
-    }
+    } 
     public void BeginUpdates()
     {
-        //PathfindingUpdate(250, cancelToken.Token); //in parallel
+        PathfindingUpdate(cancelToken.Token); //in parallel
         FastUpdate(100, cancelToken.Token);
         ReinforceUpdate(100, cancelToken.Token); //cycles through positions
         CheckEnemyUpdate(50, cancelToken.Token); //cycles through soldiers 1 by one
@@ -303,14 +303,45 @@ public class FormationPosition : MonoBehaviour
         }
         await Task.Yield();
     }
-    /*private async void PathfindingUpdate(int time, CancellationToken cancelToken)
+    public int pathfindingUpdateCurrentFrequency = 500;
+    private int pathfindingUpdateFrequencyCap = 500;
+    private int pathfindingUpdateFrequencyMin = 10;
+    private int pathfindingUpdateFrequencyIncrease = 50;
+
+    public void RapidUpdateDestinations()
+    {
+        pathfindingUpdateCurrentFrequency = pathfindingUpdateFrequencyMin;
+    }
+    private async void PathfindingUpdate(CancellationToken cancelToken)
     {
         UpdatePathsOfSoldierModels();
-        await Task.Delay(time, cancelToken);
-        PathfindingUpdate(time, cancelToken);
+        await Task.Delay(pathfindingUpdateCurrentFrequency, cancelToken);
+        if (pathfindingUpdateCurrentFrequency < pathfindingUpdateFrequencyCap)
+        {
+            pathfindingUpdateCurrentFrequency += pathfindingUpdateFrequencyIncrease;
+            pathfindingUpdateCurrentFrequency = Mathf.Clamp(pathfindingUpdateCurrentFrequency, pathfindingUpdateFrequencyMin, pathfindingUpdateFrequencyCap);
+            /*if (team == GlobalDefines.Team.Altgard)
+            { 
+                Debug.Log(pathfindingUpdateCurrentFrequency);
+            }*/
+        }
+        PathfindingUpdate(cancelToken);
         await Task.Yield();
-    }*/
-
+    }
+    public void ForceUpdateSoldiersDestinations()
+    {
+        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+        {
+            SoldierModel model = soldierBlock.modelsArray[i];
+            if (model != null)
+            {
+                if (model.alive)
+                {
+                    model.UpdateDestinationPosition();
+                }
+            }
+        }
+    }
     private void UpdatePathsOfSoldierModels()
     //private async void UpdatePathsOfSoldierModels()
     {
@@ -325,18 +356,21 @@ public class FormationPosition : MonoBehaviour
                     model.UpdateDestinationPosition();
                 }
             }
-        });*/
-        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
-        {
-            SoldierModel model = soldierBlock.modelsArray[i];
-            if (model != null)
+        });*/ 
+        if (!aiPath.reachedDestination)
+        { 
+            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
             {
-                if (model.alive)
+                SoldierModel model = soldierBlock.modelsArray[i];
+                if (model != null)
                 {
-                    model.UpdateDestinationPosition();
+                    if (model.alive)
+                    {
+                        model.UpdateDestinationPosition();
+                    }
                 }
             }
-        }
+        } 
         /*for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
         {
             SoldierModel model = soldierBlock.modelsArray[i];
@@ -659,7 +693,7 @@ public class FormationPosition : MonoBehaviour
     #endregion 
     private void Update()
     {
-        UpdatePathsOfSoldierModels();
+        //UpdatePathsOfSoldierModels();
         UpdateLineRenderer();
         if (selected)
         {
@@ -696,7 +730,10 @@ public class FormationPosition : MonoBehaviour
             {
                 if (model.alive)
                 {
-                    model.FaceEnemy(); 
+                    if (model.currentModelState != SoldierModel.ModelState.Routing)
+                    {
+                        model.FaceEnemy(); 
+                    }
                 }
             }
         }

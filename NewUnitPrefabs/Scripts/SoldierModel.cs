@@ -139,7 +139,7 @@ public class SoldierModel : MonoBehaviour
     #region ShouldNotSet
     [HideInInspector] public GameObject self;
     private int currentIdleTimer = 0;
-    private float remainingDistanceThreshold = 1f;
+    private float remainingDistanceThreshold = 0.1f;
     [HideInInspector] public float getUpTimeCap = 8;
     [HideInInspector] private float speedSlow = 0;
     [HideInInspector] public float pendingDamage = 0;
@@ -425,6 +425,7 @@ public class SoldierModel : MonoBehaviour
                 { 
                     CheckIfCanSwitchToReloading();
                 }
+                SetSpeedNull(); //force animation walking speed to zero;
                 break;
             case ModelState.Attacking: //swinging
                 CheckIfCanDealDamage();
@@ -942,8 +943,27 @@ public class SoldierModel : MonoBehaviour
         float deltaTime = .1f;
         animator.SetFloat(AnimatorDefines.speedID, 0, dampTime, deltaTime);
     }
+    private float slowTime = 3;
+    private float fasterSlowTime = 2f;
+    private float veryFastSlowTime = 1f;
+    private float farDistanceThreshold = 5f;
     private void UpdateSpeed()
     {
+        if (CheckIfRemainingDistanceOverThreshold(farDistanceThreshold)) //if far away, slow time isn't a factor
+        { 
+            pathfindingAI.slowdownTime = veryFastSlowTime;
+        }
+        else if (currentModelState == ModelState.Charging || currentModelState == ModelState.Routing)
+        {
+            pathfindingAI.slowdownTime = fasterSlowTime;
+        }
+        else
+        {
+            pathfindingAI.slowdownTime = slowTime;
+        }
+
+
+
         float dampTime = .1f;
         float deltaTime = .1f; 
         if (currentModelState != ModelState.Routing)
