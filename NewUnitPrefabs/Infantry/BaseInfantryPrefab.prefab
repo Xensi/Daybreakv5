@@ -580,9 +580,9 @@ MonoBehaviour:
   enableRotation: 1
   autoRepath:
     mode: 2
-    interval: 1
-    sensitivity: 20
-    maximumInterval: 2
+    interval: 10
+    sensitivity: 1
+    maximumInterval: 10
     visualizeSensitivity: 0
   targetCompatibility: {fileID: 0}
   acceleration: 25

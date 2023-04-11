@@ -1835,6 +1835,7 @@ public class FightManager : MonoBehaviour
                             item.shouldRotateToward = false;
                         } 
                         item.aiTarget.transform.position = item.destinationsList[0];
+                        item.SetAndSearchPath();
                         SetTransformOnGround(item.aiTarget.transform, "GroundForm");
 
                         item.CheckIfRotateOrNot();
@@ -1865,7 +1866,8 @@ public class FightManager : MonoBehaviour
                                 tempFormPos = item;
                             }
                         }
-                        tempFormPos.aiTarget.transform.position = pos; //tell closest formation to go there 
+                        tempFormPos.aiTarget.transform.position = pos; //tell closest formation to go there  
+                        tempFormPos.SetAndSearchPath();
                         SetTransformOnGround(tempFormPos.aiTarget.transform, "GroundForm");
                         tempFormPos.destinationsList.Clear();
                         tempFormPos.destinationsList.Add(pos);
@@ -1915,6 +1917,7 @@ public class FightManager : MonoBehaviour
                         Vector3 pos = dests[i].transform.position;
 
                         form.aiTarget.transform.position = pos; //tell closest formation to go there 
+                        form.SetAndSearchPath();
                         SetTransformOnGround(form.aiTarget.transform, "GroundForm");
                         form.destinationsList.Clear();
                         form.destinationsList.Add(pos);

@@ -139,7 +139,7 @@ public class SoldierModel : MonoBehaviour
     #region ShouldNotSet
     [HideInInspector] public GameObject self;
     private int currentIdleTimer = 0;
-    private float remainingDistanceThreshold = 0.1f;
+    private float remainingDistanceThreshold = 0.01f;
     [HideInInspector] public float getUpTimeCap = 8;
     [HideInInspector] private float speedSlow = 0;
     [HideInInspector] public float pendingDamage = 0;
@@ -272,8 +272,8 @@ public class SoldierModel : MonoBehaviour
         animator.SetFloat(AnimatorDefines.angleID, 0);  
         PlaceOnGround();
 
-        //animator.cullingMode = AnimatorCullingMode.CullCompletely;
-        animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
+        animator.cullingMode = AnimatorCullingMode.CullCompletely;
+        //animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
         pathfindingAI.enableRotation = true;
 
         GenerateDispersalVector(dispersalLevel);
@@ -300,8 +300,8 @@ public class SoldierModel : MonoBehaviour
     public void UpdateDestinationPosition()
     //public async void UpdateDestinationPosition() //call whenever you want path to be updated
     {
-        pathfindingAI.destination = target.position + dispersalVector; 
-        //await Task.Yield();
+        pathfindingAI.destination = target.position + dispersalVector; //sets destination, that's all. use search path to actually calculate and go to
+        //await Task.Yield();s
     }
     public void GenerateDispersalVector(float dispersalLevel)
     {
@@ -1459,7 +1459,7 @@ public class SoldierModel : MonoBehaviour
     {
         if (formPos.showSoldierModels)
         {
-            //animator.enabled = !farAway; //if faraway, disable animator
+            animator.enabled = !farAway; //if faraway, disable animator
         }
         else
         {

@@ -127,6 +127,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: visualInfantry
       objectReference: {fileID: 0}
+    - target: {fileID: 4742473837712756890, guid: a5d25902f1c8ae14e993877ba803f732, type: 3}
+      propertyPath: m_LODs.Array.data[0].screenRelativeHeight
+      value: 0.6650841
+      objectReference: {fileID: 0}
+    - target: {fileID: 4742473837712756890, guid: a5d25902f1c8ae14e993877ba803f732, type: 3}
+      propertyPath: m_LODs.Array.data[1].screenRelativeHeight
+      value: 0.391447
+      objectReference: {fileID: 0}
+    - target: {fileID: 4742473837712756890, guid: a5d25902f1c8ae14e993877ba803f732, type: 3}
+      propertyPath: m_LODs.Array.data[2].screenRelativeHeight
+      value: 0.21450603
+      objectReference: {fileID: 0}
+    - target: {fileID: 4742473837712756890, guid: a5d25902f1c8ae14e993877ba803f732, type: 3}
+      propertyPath: m_LODs.Array.data[3].screenRelativeHeight
+      value: 0.0053787204
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: a5d25902f1c8ae14e993877ba803f732, type: 3}
       propertyPath: m_Controller
       value: 

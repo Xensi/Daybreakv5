@@ -226,23 +226,142 @@ public class FormationPosition : MonoBehaviour
         cancelToken = new CancellationTokenSource();
     } 
     public void BeginUpdates()
-    {
-        PathfindingUpdate(cancelToken.Token); //in parallel
+    { 
+        PathfindingUpdate(cancelToken.Token); //in parallel  
+
         FastUpdate(100, cancelToken.Token);
+
         ReinforceUpdate(100, cancelToken.Token); //cycles through positions
         CheckEnemyUpdate(50, cancelToken.Token); //cycles through soldiers 1 by one
 
         SlowUpdate(500, cancelToken.Token);
         VerySlowUpdate(1000, cancelToken.Token);
-        InvokeRepeating("TimeFrameAdvance", 0, timeFrame);
-
-
-
+        InvokeRepeating("TimeFrameAdvance", 0, timeFrame);  
 
 
         //InvokeRepeating("LockSoldiers", 0, lockTime);
         //InvokeRepeating("LockSoldiersToTerrain", 0, terrainLockTime);
         //InvokeRepeating("UpdateFarAwayIconPos", 0, .1f);
+    }
+
+    #region FastUpdate 
+    private async void FastUpdate(int time, CancellationToken cancelToken)
+    {
+        FixFormationRotation();
+        UpdateFormationMovementStatus();
+
+        movingSpeed = Mathf.Sqrt(Mathf.Pow(aiPath.velocity.x, 2) + Mathf.Pow(aiPath.velocity.z, 2)); //calculate speed vector
+        float magic = 15;
+        transform.position = new Vector3(transform.position.x, magic, transform.position.z);
+        FastSoldierUpdate();
+        FollowFormation();
+
+
+        LockSoldiers();
+        LockSoldiersToTerrain();
+
+        UpdateFarAwayIconPos();
+
+        await Task.Delay(time, cancelToken);
+        FastUpdate(time, cancelToken);
+    }
+
+    private void FixFormationRotation()
+    {
+        if (!aiPath.canMove && !obeyingMovementOrder && !tangledUp && shouldRotateToward)
+        {
+            Vector3 targetDirection = rotTarget.position - transform.position;
+
+            float singleStep = finishedPathRotSpeed * Time.deltaTime;
+
+            Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
+
+            newDirection.y = 0; //so that our rotation is not vertical
+            //Debug.DrawRay(transform.position, newDirection, Color.red);
+
+            transform.rotation = Quaternion.LookRotation(newDirection);
+
+        }
+        float angle = 5;
+        if (Vector3.Angle(transform.forward, rotTarget.position - transform.position) < angle && !aiPath.canMove)
+        {
+            finishedChangedFacing = true;
+        }
+        else
+        {
+            finishedChangedFacing = false;
+        }
+    }
+
+    private void UpdateFormationMovementStatus()
+    {
+        float remainingDistance = Vector3.Distance(formationPositionBasedOnSoldierModels, aiTarget.transform.position);
+
+        if (movementManuallyStopped)
+        {
+            SetMoving(false);
+            obeyingMovementOrder = false;
+        }
+        else
+        {
+            if (chaseDetectedEnemies && enemyFormationToTarget != null && soldierBlock.melee)
+            {
+                SetMoving(true);
+            }
+            else
+            {
+                if (modelAttacking && !soldierBlock.melee) //if ranged and attacking, freeze formation
+                {
+                    SetMoving(false);
+                    obeyingMovementOrder = false;
+                }
+                else
+                {
+                    if (remainingDistance > threshold) // if there's still path to traverse
+                    {
+                        SetMoving(true);
+                    }
+                    else if (aiPath.reachedEndOfPath && remainingDistance <= threshold) //aiPath.reachedDestination && 
+                    {
+                        if (destinationsList.Count <= 1)
+                        {
+                            SetMoving(false);
+                            obeyingMovementOrder = false;
+                        }
+                        else if (destinationsList.Count > 1)
+                        {
+                            destinationsList.RemoveAt(0);
+                            if (destinationsList.Count > 0)
+                            {
+                                //Debug.Log("setting target to destination 1");
+                                aiTarget.transform.position = destinationsList[0];
+                                CheckIfRotateOrNot();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private void FastSoldierUpdate()
+    {
+        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+        {
+            SoldierModel model = soldierBlock.modelsArray[i];
+            if (model != null)
+            {
+                if (model.alive)
+                {
+                    model.UpdateModelState(cancelToken.Token);
+                    ////model.UpdateVisibility(); 
+                }
+            }
+        }
+    }
+    #endregion
+    private void TimeFrameAdvance()
+    {
+        deathsThisTimeFrame = 0;
     }
     private void OnDisable()
     {
@@ -303,28 +422,50 @@ public class FormationPosition : MonoBehaviour
         }
         await Task.Yield();
     }
-    public int pathfindingUpdateCurrentFrequency = 500;
+    private int pathfindingUpdateCurrentFrequency = 500;
     private int pathfindingUpdateFrequencyCap = 500;
     private int pathfindingUpdateFrequencyMin = 10;
-    private int pathfindingUpdateFrequencyIncrease = 50;
+    private int pathfindingUpdateFrequencyIncrease = 10;
 
     public void RapidUpdateDestinations()
     {
-        pathfindingUpdateCurrentFrequency = pathfindingUpdateFrequencyMin;
+        pathfindingUpdateCurrentFrequency = pathfindingUpdateFrequencyMin; 
     }
+    public void SetAndSearchPath()
+    { 
+        aiPath.destination = aiTarget.position;
+        aiPath.SearchPath();
+    }
+    /*private void AISearchPath() 
+    { 
+        if (!aiPath.reachedDestination)
+        {
+            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+            {
+                SoldierModel model = soldierBlock.modelsArray[i];
+                if (model != null)
+                {
+                    if (model.alive)
+                    {
+                        model.pathfindingAI.SearchPath();
+                    }
+                }
+            }
+        } 
+    }*/
     private async void PathfindingUpdate(CancellationToken cancelToken)
     {
         UpdatePathsOfSoldierModels();
         await Task.Delay(pathfindingUpdateCurrentFrequency, cancelToken);
-        if (pathfindingUpdateCurrentFrequency < pathfindingUpdateFrequencyCap)
+        /*if (pathfindingUpdateCurrentFrequency < pathfindingUpdateFrequencyCap)
         {
-            pathfindingUpdateCurrentFrequency += pathfindingUpdateFrequencyIncrease;
-            pathfindingUpdateCurrentFrequency = Mathf.Clamp(pathfindingUpdateCurrentFrequency, pathfindingUpdateFrequencyMin, pathfindingUpdateFrequencyCap);
-            /*if (team == GlobalDefines.Team.Altgard)
-            { 
+             pathfindingUpdateCurrentFrequency += pathfindingUpdateFrequencyIncrease;
+             pathfindingUpdateCurrentFrequency = Mathf.Clamp( pathfindingUpdateCurrentFrequency, pathfindingUpdateFrequencyMin, pathfindingUpdateFrequencyCap);
+            if (team == GlobalDefines.Team.Altgard)
+            {
                 Debug.Log(pathfindingUpdateCurrentFrequency);
-            }*/
-        }
+            }
+        }*/
         PathfindingUpdate(cancelToken);
         await Task.Yield();
     }
@@ -474,43 +615,6 @@ public class FormationPosition : MonoBehaviour
             engagedInMelee = false;
         }
     }
-    #endregion
-    #region FastUpdate 
-    private async void FastUpdate(int time, CancellationToken cancelToken)
-    {
-        FixFormationRotation();
-        UpdateFormationMovementStatus(); 
-
-        movingSpeed = Mathf.Sqrt(Mathf.Pow(aiPath.velocity.x, 2) + Mathf.Pow(aiPath.velocity.z, 2)); //calculate speed vector
-        float magic = 15;
-        transform.position = new Vector3(transform.position.x, magic, transform.position.z); 
-        FastSoldierUpdate();
-        FollowFormation();
-
-
-        //LockSoldiers();
-        LockSoldiersToTerrain();
-
-        UpdateFarAwayIconPos();
-
-        await Task.Delay(time, cancelToken);
-        FastUpdate(time, cancelToken);
-    }
-    private void FastSoldierUpdate()
-    {
-        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
-        {
-            SoldierModel model = soldierBlock.modelsArray[i];
-            if (model != null)
-            {
-                if (model.alive)
-                {
-                    model.UpdateModelState(cancelToken.Token);
-                    ////model.UpdateVisibility(); 
-                }
-            }
-        }
-    } 
     #endregion
     #region VerySlowUpdate
     private async void VerySlowUpdate(int time, CancellationToken cancelToken)
@@ -678,7 +782,7 @@ public class FormationPosition : MonoBehaviour
                 if (model.alive) //  && model.CheckIfRemainingDistanceOverThreshold(threshold) //&& !model.pathfindingAI.pathPending
                 {
                     model.UpdateAndCullAnimations();
-                    model.CheckIfTargetIsDead();
+                    model.CheckIfTargetIsDead(); 
 
                     if (model.attackType == SoldierModel.AttackType.Ranged)
                     {
@@ -825,12 +929,12 @@ public class FormationPosition : MonoBehaviour
                 //soldier.farAway = farAway;
                 if (soldier.formPos.showSoldierModels) //use rich ai
                 { 
-                    //soldier.animator.enabled = true; 
+                    soldier.animator.enabled = true; 
                 }
                 else //performant
                 {
                     //soldier.SwitchAI(SoldierModel.AIToUse.AILerp); 
-                    //soldier.animator.enabled = false; 
+                    soldier.animator.enabled = false; 
                 } 
             }
         } 
@@ -1097,10 +1201,6 @@ public class FormationPosition : MonoBehaviour
         float disappearTime = 30;
         Invoke("SelfDestruct", disappearTime);
     }
-    private void TimeFrameAdvance()
-    {
-        deathsThisTimeFrame = 0;
-    }
     private FormationPosition GetClosestFormationWithinRange(int targetType = 1, GlobalDefines.Team ourTeam = GlobalDefines.Team.Altgard, bool targetRouting = false, float range = 100) //targettype 0: any, targettype 1: enemy, targettype 2: ally
     {
         if (fightManager.allArray.Length <= 0)
@@ -1265,6 +1365,7 @@ public class FormationPosition : MonoBehaviour
     } 
     public void StartCharging()
     {
+        RapidUpdateDestinations();
         if (!isCavalry && chargeRecharged)
         {
             currentChargeTime = 0;
@@ -1613,56 +1714,6 @@ public class FormationPosition : MonoBehaviour
             StopCharging();
         }
     }
-    private void UpdateFormationMovementStatus()
-    {
-        float remainingDistance = Vector3.Distance(formationPositionBasedOnSoldierModels, aiTarget.transform.position);
-
-        if (movementManuallyStopped)
-        {
-            SetMoving(false);
-            obeyingMovementOrder = false;
-        }
-        else
-        {
-            if (chaseDetectedEnemies && enemyFormationToTarget != null && soldierBlock.melee)
-            {
-                SetMoving(true);
-            }   
-            else
-            {
-                if (modelAttacking && !soldierBlock.melee) //if ranged and attacking, freeze formation
-                {
-                    SetMoving(false);
-                    obeyingMovementOrder = false;
-                }
-                else
-                {
-                    if (remainingDistance > threshold) // if there's still path to traverse
-                    {
-                        SetMoving(true);
-                    }
-                    else if (aiPath.reachedEndOfPath && remainingDistance <= threshold) //aiPath.reachedDestination && 
-                    {
-                        if (destinationsList.Count <= 1)
-                        {
-                            SetMoving(false);
-                            obeyingMovementOrder = false;
-                        }
-                        else if (destinationsList.Count > 1)
-                        {
-                            destinationsList.RemoveAt(0);
-                            if (destinationsList.Count > 0)
-                            {
-                                //Debug.Log("setting target to destination 1");
-                                aiTarget.transform.position = destinationsList[0];
-                                CheckIfRotateOrNot();
-                            }
-                        }
-                    }
-                }
-            } 
-        }   
-    }
     private void CheckIfLowSoldiersRout()
     {
         if (numberOfAliveSoldiers <= 10 && !routing)
@@ -1744,9 +1795,9 @@ public class FormationPosition : MonoBehaviour
             //float centerOffset = 16.24f; 
             float offset = 0;
             posParentTransform.localPosition = new Vector3(-4.5f, offset, 3.5f - num * .5f);
-            int x = 10;
+            int x = 10+1;
             int y = 4;
-            math = z - num;
+            math = 1+z - num;
             if (formationCollider != null)
             {
                 formationCollider.size = new Vector3(x, y, math); 
@@ -2016,6 +2067,7 @@ public class FormationPosition : MonoBehaviour
         }
         //Debug.Log("chasing foe");
         aiTarget.transform.position = enemyFormationToTarget.transform.position;
+        SetAndSearchPath();
         rotTarget.transform.position = enemyFormationToTarget.transform.position;
         CheckIfRotateOrNot(); 
     }
@@ -2032,32 +2084,6 @@ public class FormationPosition : MonoBehaviour
     {
         movementManuallyStopped = false;
     }
-    private void FixFormationRotation()
-    {
-        if (!aiPath.canMove && !obeyingMovementOrder && !tangledUp && shouldRotateToward)
-        {
-            Vector3 targetDirection = rotTarget.position - transform.position; 
-
-            float singleStep = finishedPathRotSpeed * Time.deltaTime;
-
-            Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
-
-            newDirection.y = 0; //so that our rotation is not vertical
-            //Debug.DrawRay(transform.position, newDirection, Color.red);
-
-            transform.rotation = Quaternion.LookRotation(newDirection);
-
-        }
-        float angle = 5;
-        if (Vector3.Angle(transform.forward, rotTarget.position - transform.position) < angle && !aiPath.canMove)
-        {
-            finishedChangedFacing = true;
-        }
-        else
-        {
-            finishedChangedFacing = false;
-        }
-    } 
     
     void OnDrawGizmosSelected()
     {
