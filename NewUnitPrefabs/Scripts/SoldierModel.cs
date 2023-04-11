@@ -1010,29 +1010,29 @@ public class SoldierModel : MonoBehaviour
     {
         pathfindingAI.maxSpeed = speed; 
     }
-    /*public void UpdateVisibility(bool val) //true means visible. false is hidden
-    { 
-        *//*foreach (Renderer rend in renderers)
+    public void UpdateVisibility(bool val) //true means visible. false is hidden
+    {
+        foreach (Renderer rend in renderers)
         {
             rend.enabled = formPos.showSoldierModels;
             //rend.material.color = formPos.farAwayIcon.color;
-        }*//*
+        }
         for (int i = 0; i < renderersArray.Length; i++)
         {
             renderersArray[i].enabled = val;
         }
-        if (val)
+        /*if (val)
         {
             animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
 
         }
         else
-        { 
+        {
             animator.cullingMode = AnimatorCullingMode.CullCompletely;
-        }
+        }*/
         //animator.enabled = val;  
-    }*/
-    
+    }
+
     public void CheckForPendingDamage()
     {
         if (pendingDamage > 0 || pendingArmorPiercingDamage > 0)

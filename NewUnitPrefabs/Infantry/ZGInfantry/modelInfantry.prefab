@@ -35,6 +35,26 @@ PrefabInstance:
       propertyPath: timeUntilDamage
       value: 0.4
       objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: renderersArray.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: renderersArray.Array.data[0]
+      value: 
+      objectReference: {fileID: 4146680502396080055}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: renderersArray.Array.data[1]
+      value: 
+      objectReference: {fileID: 3758546445351309867}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: renderersArray.Array.data[2]
+      value: 
+      objectReference: {fileID: 6258603399350683759}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: renderersArray.Array.data[3]
+      value: 
+      objectReference: {fileID: 4688528291015301776}
     - target: {fileID: 7295892263859704113, guid: ea9127458b64e3645923071d64961f81, type: 3}
       propertyPath: circleRadius
       value: 3
@@ -155,3 +175,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8de224ef566183041ab2c56424e1363f, type: 3}
+--- !u!137 &3758546445351309867 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 9048864924896502790, guid: 8de224ef566183041ab2c56424e1363f, type: 3}
+  m_PrefabInstance: {fileID: 5313417020426581549}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &4146680502396080055 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8085926513688525210, guid: 8de224ef566183041ab2c56424e1363f, type: 3}
+  m_PrefabInstance: {fileID: 5313417020426581549}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &4688528291015301776 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 625423117876751549, guid: 8de224ef566183041ab2c56424e1363f, type: 3}
+  m_PrefabInstance: {fileID: 5313417020426581549}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &6258603399350683759 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2262506862317665858, guid: 8de224ef566183041ab2c56424e1363f, type: 3}
+  m_PrefabInstance: {fileID: 5313417020426581549}
+  m_PrefabAsset: {fileID: 0}

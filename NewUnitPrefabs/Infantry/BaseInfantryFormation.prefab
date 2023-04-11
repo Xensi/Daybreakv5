@@ -4916,7 +4916,7 @@ MonoBehaviour:
   engageEnemyRadius: 10
   rangedRadius: 100
   farAwayIcon: {fileID: 98565761933592747}
-  cameraCollider: {fileID: 0}
+  cameraCollider: {fileID: 7099927655301527777}
   routingIcon: {fileID: 6051024899164265752}
   shatteredIcon: {fileID: 3487017875655869845}
   farAwayIconMask: {fileID: 0}
@@ -5083,7 +5083,7 @@ MonoBehaviour:
   orientation: 0
   enableRotation: 1
   autoRepath:
-    mode: 0
+    mode: 2
     interval: 0.5
     sensitivity: 1
     maximumInterval: 10

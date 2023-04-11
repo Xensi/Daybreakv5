@@ -11,12 +11,13 @@ public class AttackBox : MonoBehaviour
     [SerializeField] private SoldierModel parentModel;
     private void Start()
     {
-        if (!isCavalry)
-        { 
-            ToggleAttackBox(false);
-        }
         SphereCollider[] array = GetComponents<SphereCollider>();
         colliders.AddRange(array);
+
+        if (!isCavalry)
+        {
+            ToggleAttackBox(false);
+        }
     }
     public void ToggleAttackBox(bool val)
     {

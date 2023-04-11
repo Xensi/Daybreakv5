@@ -60,7 +60,7 @@ public class CamRotate : MonoBehaviour
                 if (GeometryUtility.TestPlanesAABB(planes, form.cameraCollider.bounds)) //in bounds, check distance
                 {
                     float distance = Vector3.Distance(transform.position, form.transform.position);
-                    float reqDistance = QualitySettings.lodBias * 25;
+                    float reqDistance = QualitySettings.lodBias * 100;
                     Color color = form.farAwayIcon.color;
                     float gradual = 1000;
                     //form.showSoldierModels = true;
@@ -108,7 +108,7 @@ public class CamRotate : MonoBehaviour
     private void Update()
     { 
 
-        CheckVisibilityOfModelsInVisibleForms(); 
+        //CheckVisibilityOfModelsInVisibleForms(); 
 
         UpdateTerrainHeightValue();
         if (Input.GetKey("left"))
