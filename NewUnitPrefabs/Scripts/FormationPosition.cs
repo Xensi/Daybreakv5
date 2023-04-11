@@ -24,12 +24,12 @@ public class FormationPosition : MonoBehaviour
     #region MustBeSet 
 
     public Rigidbody rigid;
-    [SerializeField] private NavmeshCut navCutter; 
-    [SerializeField] private bool simultaneousPositionCheck = false; 
-    public SoldierBlock soldierBlock; 
+    [SerializeField] private NavmeshCut navCutter;
+    [SerializeField] private bool simultaneousPositionCheck = false;
+    public SoldierBlock soldierBlock;
     [Tooltip("Checks nearby formations. Nearby formations can be moved towards automatically.")]
     public float engageEnemyRadius = 10;
-    public float rangedRadius = 100; 
+    public float rangedRadius = 100;
     public SpriteRenderer farAwayIcon;
     public Collider cameraCollider;
     public SpriteRenderer routingIcon;
@@ -42,7 +42,7 @@ public class FormationPosition : MonoBehaviour
 
     #region AutoSet
     public ShakeSource shaker;
-    private FightManager fightManager; 
+    private FightManager fightManager;
 
     #endregion
 
@@ -54,11 +54,11 @@ public class FormationPosition : MonoBehaviour
     #region Status 
     [HideInInspector] public bool routing = false;
     public bool chargeRecharged = true;
-    [HideInInspector] public bool alive = true; 
+    [HideInInspector] public bool alive = true;
     [HideInInspector] public bool abilityCharged = true;
     [HideInInspector] public int shotsHit = 0;
     public bool showSoldierModels = true;
-    public GlobalDefines.Team team = GlobalDefines.Team.Altgard; 
+    public GlobalDefines.Team team = GlobalDefines.Team.Altgard;
     public List<FormationPosition> listOfNearbyEnemies;
     [HideInInspector] public float startingPursueRadius = 0; //do not modify manually
     public FormationPosition enemyFormationToTarget;
@@ -107,12 +107,12 @@ public class FormationPosition : MonoBehaviour
     #region EEE
     [Tooltip("When to stop moving when auto-engaging.")]
     [SerializeField] private float stoppingDistance = 10;
-    [SerializeField] private float moveStopDistance = 1; 
-    private bool oldEnableAnimations = false;  
+    [SerializeField] private float moveStopDistance = 1;
+    private bool oldEnableAnimations = false;
     public float movingSpeed = 0;
-    [SerializeField] private float currentSpeed = 0; 
+    [SerializeField] private float currentSpeed = 0;
     public LineRenderer lineRenderer;
-    public LineRenderer lineRenderer2; 
+    public LineRenderer lineRenderer2;
     [SerializeField] private bool weaponsDeployed = false;
     private bool oldWeaponsDeployed = false;
     [SerializeField] private float waitThreshold = 1;
@@ -122,30 +122,30 @@ public class FormationPosition : MonoBehaviour
     [SerializeField] private Vector3 offsetAmount;
     [SerializeField] private Vector3 deployedOffsetAmount;
     [SerializeField] private float requiredVelocity = 2;
-    [SerializeField] private float deployedRequiredVelocity = 4;  
+    [SerializeField] private float deployedRequiredVelocity = 4;
     [SerializeField] private float finishedPathRotSpeed = 1;
-    public bool pathSet = false; 
-    public List<Position> frontlinePositions; 
-    public bool obeyingMovementOrder; 
-    public int numberOfAliveSoldiers = 80; 
-    public int maxSoldiers = 80; 
+    public bool pathSet = false;
+    public List<Position> frontlinePositions;
+    public bool obeyingMovementOrder;
+    public int numberOfAliveSoldiers = 80;
+    public int maxSoldiers = 80;
     public bool tangledUp = false;
-    [SerializeField] private float slowRotate = 15; 
-    [SerializeField] private float normRotate = 30; 
-    [SerializeField] private float secondRowOffsetAmount = 0f;  
-    public BoxCollider formationCollider;  
+    [SerializeField] private float slowRotate = 15;
+    [SerializeField] private float normRotate = 30;
+    [SerializeField] private float secondRowOffsetAmount = 0f;
+    public BoxCollider formationCollider;
     public bool isCavalry = false;
-    [SerializeField] private bool freezeFormPos = false; 
+    [SerializeField] private bool freezeFormPos = false;
     [SerializeField] private float freezeTimer = 0;
-    [SerializeField] private float cohesionTimer = 0; 
-    public bool shouldRotateToward = false; 
+    [SerializeField] private float cohesionTimer = 0;
+    public bool shouldRotateToward = false;
     [SerializeField] private int soldierModelToCheck = 0;
-    [SerializeField] private bool checkForNearbyEnemies = true; 
-    [SerializeField] private bool swapRowsAfterFiring = false; 
+    [SerializeField] private bool checkForNearbyEnemies = true;
+    [SerializeField] private bool swapRowsAfterFiring = false;
     [SerializeField] private int requiredModelsThatFiredInRow = 5; //all of them
     [SerializeField] private int matched = 0;
     [SerializeField] private int lowerRow = 0;
-    [SerializeField] private int upperRow = 9; 
+    [SerializeField] private int upperRow = 9;
     [SerializeField] private List<SoldierModel> modelsInFrontRowThatFired;
     public GameObject missileTarget;
     [SerializeField] private bool alwaysRotateTowardMovementPos = false;
@@ -183,16 +183,16 @@ public class FormationPosition : MonoBehaviour
             shaker = GetComponentInChildren<ShakeSource>();
         }
         if (rigid == null)
-        { 
+        {
             rigid = GetComponent<Rigidbody>();
-        } 
+        }
         if (aiPath == null)
         {
             aiPath = GetComponent<RichAI>();
         }
         rigid.collisionDetectionMode = CollisionDetectionMode.Discrete;
-        rigid.drag = 50; 
-        
+        rigid.drag = 50;
+
 
         ShowSelected(false);
         PlaceThisOnGround();
@@ -207,7 +207,7 @@ public class FormationPosition : MonoBehaviour
         PlaceAITargetOnTerrain();
 
 
-        threshold = 1; 
+        threshold = 1;
 
         SetStandardEngagementRanges();
 
@@ -224,19 +224,20 @@ public class FormationPosition : MonoBehaviour
     private void OnEnable()
     {
         cancelToken = new CancellationTokenSource();
-    } 
+    }
     public void BeginUpdates()
-    { 
-        PathfindingUpdate(cancelToken.Token); //in parallel  
+    {
 
-        FastUpdate(100, cancelToken.Token);
+        PathfindingUpdate(cancelToken.Token); //in parallel //major fps improvement when removed, due to lack of pathfinding required since dest not set
 
-        ReinforceUpdate(100, cancelToken.Token); //cycles through positions
-        CheckEnemyUpdate(100, cancelToken.Token); //cycles through soldiers 1 by one
+        FastUpdate(100, cancelToken.Token); //minor fps improvement when removed
 
-        SlowUpdate(500, cancelToken.Token);
-        VerySlowUpdate(1000, cancelToken.Token);
-        InvokeRepeating("TimeFrameAdvance", 0, timeFrame);  
+        ReinforceUpdate(100, cancelToken.Token); //cycles through positions //very minor fps improvement when removed
+        CheckEnemyUpdate(50, cancelToken.Token); //cycles through soldiers 1 by one
+
+        SlowUpdate(500, cancelToken.Token); //no real fps improvement
+        VerySlowUpdate(1000, cancelToken.Token); //big FPS improvement when removed
+        InvokeRepeating("TimeFrameAdvance", 0, timeFrame);
 
 
         //InvokeRepeating("LockSoldiers", 0, lockTime);
@@ -369,7 +370,7 @@ public class FormationPosition : MonoBehaviour
     private void OnDisable()
     {
         cancelToken.Cancel();
-    } 
+    }
     public void CancelTasks()
     {
         cancelToken.Cancel();
@@ -400,23 +401,23 @@ public class FormationPosition : MonoBehaviour
         }
         if (checkingModel.alive)
         {
-            if (checkingModel.melee) //if model has a target in range, don't need to check more
+            if (checkingModel.melee) //melee should not need an enemyformationtotarget to detect nearby models
             {
-                if (enemyFormationToTarget != null && !checkingModel.HasTargetInRange())
-                { 
+                if (!checkingModel.HasTargetInRange())
+                {
                     if (checkingModel.currentModelState == SoldierModel.ModelState.Moving || checkingModel.currentModelState == SoldierModel.ModelState.Idle)
-                    { 
+                    {
                         checkingModel.CheckIfEnemyModelsNearby();
                     }
                 }
             }
             else
-            { 
-            } 
+            {
+            }
             checkingModel.SaveFromFallingInfinitely();
             //checkingModel.UpdateDestination();
-        } 
-        
+        }
+
         soldierModelToCheck++;
         int max = maxSoldiers;
         if (soldierModelToCheck >= max) //reset on 80 + 2
@@ -432,10 +433,10 @@ public class FormationPosition : MonoBehaviour
 
     public void RapidUpdateDestinations()
     {
-        pathfindingUpdateCurrentFrequency = pathfindingUpdateFrequencyMin; 
+        pathfindingUpdateCurrentFrequency = pathfindingUpdateFrequencyMin;
     }
     public void SetAndSearchPath()
-    { 
+    {
         aiPath.destination = aiTarget.position;
         aiPath.SearchPath();
     }
@@ -486,7 +487,7 @@ public class FormationPosition : MonoBehaviour
             }
         }
     }*/
-    private async void UpdatePathsOfSoldierModels() 
+    private async void UpdatePathsOfSoldierModels()
     {
         //float threshold = 1;
         /*Parallel.For(0, soldierBlock.modelsArray.Length, i =>
@@ -499,9 +500,9 @@ public class FormationPosition : MonoBehaviour
                     model.UpdateDestinationPosition();
                 }
             }
-        });*/ 
+        });*/
         if (!aiPath.reachedDestination)
-        { 
+        {
             for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
             {
                 SoldierModel model = soldierBlock.modelsArray[i];
@@ -513,7 +514,7 @@ public class FormationPosition : MonoBehaviour
                     }
                 }
             }
-        } 
+        }
         /*for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
         {
             SoldierModel model = soldierBlock.modelsArray[i];
@@ -566,30 +567,30 @@ public class FormationPosition : MonoBehaviour
 
         if (position != null) //found
         {
-            position.PlaceOnGround();
+            //position.PlaceOnGround();
             if (position.assignedSoldierModel == null) //if null, then dead
             {
                 position.SeekReplacement();
             }
         }
-        /*Parallel.For(0, soldierBlock.formationPositions.Length, i =>
+        Parallel.For(0, soldierBlock.formationPositions.Length, i =>
         {
             Position position = soldierBlock.formationPositions[i];
             if (position != null)
             {
                 position.PlaceOnGround();
-                if (position.assignedSoldierModel == null) //if null, then dead
+                /*if (position.assignedSoldierModel == null) //if null, then dead
                 {
                     position.SeekReplacement();
-                }
+                }*/
             }
-        });*/
+        });
         await Task.Yield();
     }
     #endregion 
     #region SlowUpdate
     private async void SlowUpdate(int time, CancellationToken cancelToken)
-    { 
+    {
         if (!routing)
         {
             CheckIfInMeleeRange();
@@ -638,7 +639,7 @@ public class FormationPosition : MonoBehaviour
     #region VerySlowUpdate
     private async void VerySlowUpdate(int time, CancellationToken cancelToken)
     {
-        if (swapRowsAfterFiring)
+        if (swapRowsAfterFiring) //only for musketeers
         {
             GeneralCheckIfSwapRows();
         }
@@ -740,7 +741,10 @@ public class FormationPosition : MonoBehaviour
         }
         else //default
         {
-            CheckForNearbyEnemyFormations(); //
+            //CheckForNearbyEnemyFormations(); //expensive
+            /*if (enemyFormationToTarget == null || enemyFormationToTarget.numberOfAliveSoldiers <= 0)
+            { 
+            }*/
             RegainCohesion();
             CheckIfLowSoldiersRout();
             foreach (SoldierModel model in soldierBlock.listMageModels)
@@ -753,14 +757,190 @@ public class FormationPosition : MonoBehaviour
             CheckIfInCombat(); //
             UnfreezeThis();
         }
-        VerySlowSoldierUpdate(); // 
+        VerySlowSoldierUpdate(); // not expensive
         UpdateDeployment();
         UpdateSpeed(); // 
         UpdateCollider(); // 
 
+
+
+
         await Task.Delay(time, cancelToken);
         VerySlowUpdate(time, cancelToken);
     }
+    private async void CheckForNearbyEnemyFormations() //PURELY AI now
+    {
+        //this block seems unnecessary; uses physics so expensive + getting closest formation doesn't even use the list
+        /* listOfNearbyEnemies.Clear();
+         LayerMask layerMask = LayerMask.GetMask("Formation");
+         int maxColliders = 40;
+         Collider[] hitColliders = new Collider[maxColliders];
+         int numColliders = Physics.OverlapSphereNonAlloc(transform.position, engageEnemyRadius, hitColliders, layerMask, QueryTriggerInteraction.Ignore); //nonalloc generates no garbage
+
+         numberOfFriendlyFormationsNearby = 0;
+         for (int i = 0; i < numColliders; i++)
+         {
+             if (hitColliders[i].gameObject.tag != "Formation")
+             {
+                 continue;
+             }
+             else
+             {
+                 if (hitColliders[i].gameObject == gameObject) //ignore own collider
+                 {
+                     continue;
+                 }
+                 FormationPosition form = hitColliders[i].gameObject.GetComponent<FormationPosition>();
+                 if (form.team == team)
+                 {
+                     numberOfFriendlyFormationsNearby++;
+                     continue;
+                 }
+                 if (form.routing || form.numberOfAliveSoldiers <= 0) //don't count routing or dead formations
+                 {
+                     continue;
+                 }
+                 listOfNearbyEnemies.Add(form);
+             }
+         }*/
+
+        /*if (obeyingMovementOrder)
+        {
+            return;
+        }*/
+        //enemyFormationToTarget = GetClosestFormationWithinRange(1, team, false, engageEnemyRadius); //grab enemy that isn't routing
+        enemyFormationToTarget = CycleThroughEnemyFormationsAndReturnClosestWithinRangeNotRouting(engageEnemyRadius); //grab enemy that isn't routing
+
+        if (chaseDetectedEnemies && enemyFormationToTarget != null)
+        {
+            EngageFoe(); //chase enemies
+        }
+        await Task.Yield();
+    }
+    public bool AIControlled = false; 
+    private int enemyFormationIterator = 0;
+    private FormationPosition CycleThroughEnemyFormationsAndReturnClosestWithinRangeNotRouting(float range)
+    {
+        //count up
+        enemyFormationIterator++;
+        if (enemyFormationIterator >= fightManager.playerControlledFormations.Count) //loop around
+        {
+            enemyFormationIterator = 0;
+        }
+        FormationPosition checkingEnemyFormation = fightManager.playerControlledFormations[enemyFormationIterator];
+
+        while (checkingEnemyFormation == enemyFormationToTarget || checkingEnemyFormation.routing || checkingEnemyFormation.numberOfAliveSoldiers <= 0) //skip over formations that are routing or dead or already targeting
+        {
+            enemyFormationIterator++;
+            if (enemyFormationIterator >= fightManager.playerControlledFormations.Count) //loop around
+            {
+                enemyFormationIterator = 0;
+            }
+            checkingEnemyFormation = fightManager.playerControlledFormations[enemyFormationIterator];
+        }
+
+        //compare distances
+
+        float initialDistance = Mathf.Infinity;
+        if (enemyFormationToTarget != null)
+        {
+            initialDistance = Helper.Instance.GetSquaredMagnitude(transform.position, enemyFormationToTarget.transform.position);
+        }
+        float newDistance = Helper.Instance.GetSquaredMagnitude(transform.position, checkingEnemyFormation.transform.position);
+        //check if new dist is in range
+        if (newDistance <= range && newDistance < initialDistance)
+        {
+            return checkingEnemyFormation;
+        }
+
+        return null;
+    }
+    private FormationPosition GetClosestFormationWithinRange(int targetType = 1, GlobalDefines.Team ourTeam = GlobalDefines.Team.Altgard, bool targetRouting = false, float range = 100) //targettype 0: any, targettype 1: enemy, targettype 2: ally
+    {
+        if (fightManager.allArray.Length <= 0)
+        {
+            return null;
+        }
+        FormationPosition closest = null;
+
+        if (targetType == 0)
+        {
+            closest = fightManager.allArray[0];
+        }
+        else if (targetType == 1 || targetType == 2)
+        {
+            for (int i = 0; i < fightManager.allArray.Length; i++) //go through until we get one that matches criteria
+            {
+                if (targetType == 1 && fightManager.allArray[i].team != ourTeam)
+                {
+                    closest = fightManager.allArray[i];
+                }
+                else if (targetType == 2 && fightManager.allArray[i].team == ourTeam)
+                {
+                    closest = fightManager.allArray[i];
+                }
+            }
+        }
+        if (closest == null)
+        {
+            return null;
+        }
+        float initDist = Helper.Instance.GetSquaredMagnitude(transform.position, closest.transform.position);
+        float compareDist = initDist;
+
+        for (int i = 0; i < fightManager.allArray.Length; i++)
+        {
+            FormationPosition item = fightManager.allArray[i];
+            if (targetType == 1 && item.team == ourTeam) //finding enemies but on ally
+            {
+                continue;
+            }
+            else if (targetType == 2 && item.team != ourTeam) //finding allies but on enemy
+            {
+                continue;
+            }
+            if (!targetRouting && item.routing)
+            {
+                continue;
+            }
+            float dist = Vector3.Distance(transform.position, item.transform.position);
+            if (dist > range)
+            {
+                continue;
+            }
+
+            //float dist = Helper.Instance.GetSquaredMagnitude(transform.position, item.transform.position);
+            if (dist < compareDist)
+            {
+                closest = item;
+                compareDist = dist;
+            }
+        }
+        return closest;
+    }
+    private async void EngageFoe()
+    {
+        if (routing)
+        {
+            return;
+        }
+        float distance = Vector3.Distance(transform.position, enemyFormationToTarget.transform.position);
+        if (!soldierBlock.melee && distance <= rangedRadius)
+        {
+            StopInPlace();
+        }
+        else if (distance <= stoppingDistance)
+        { //stop
+            //Debug.Log("stopping");
+            ResetAITarget();
+        }
+        else if (enemyFormationToTarget != null)
+        {   //chase
+            ChaseFoe();
+        }
+        await Task.Yield();
+    }
+
     private async void VerySlowSoldierUpdate()
     {
         /*for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
@@ -1021,7 +1201,7 @@ public class FormationPosition : MonoBehaviour
         }
         await Task.Yield();
     }
-    /*public void PlacePositionOnGround(Position itemPos)
+    public void PlacePositionOnGround(Position itemPos)
     {
         LayerMask layerMask = LayerMask.GetMask("Terrain");
         RaycastHit hit;
@@ -1031,7 +1211,7 @@ public class FormationPosition : MonoBehaviour
             itemPos.transform.position = hit.point;
         }
         //Debug.DrawRay(transform.position, Vector3.down*100, Color.yellow, 1);
-    }*/
+    }
     private void UpdateDeployment()
     {
         /*if (listOfNearbyEnemies.Count == 0) //no enemy
@@ -1113,81 +1293,7 @@ public class FormationPosition : MonoBehaviour
         canBeFrozenAgain = true;
     }
     private int numberOfFriendlyFormationsNearby;
-    private async void CheckForNearbyEnemyFormations()
-    {
-        listOfNearbyEnemies.Clear();
-        LayerMask layerMask = LayerMask.GetMask("Formation");
-        int maxColliders = 40;
-        Collider[] hitColliders = new Collider[maxColliders];
-        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, engageEnemyRadius, hitColliders, layerMask, QueryTriggerInteraction.Ignore); //nonalloc generates no garbage
-
-        numberOfFriendlyFormationsNearby = 0;
-        for (int i = 0; i < numColliders; i++)
-        {
-            if (hitColliders[i].gameObject.tag != "Formation")
-            {
-                continue;
-            }
-            else
-            {
-                if (hitColliders[i].gameObject == gameObject) //ignore own collider
-                {
-                    continue;
-                }
-                FormationPosition form = hitColliders[i].gameObject.GetComponent<FormationPosition>();
-                if (form.team == team)
-                {
-                    numberOfFriendlyFormationsNearby++;
-                    continue;
-                }
-                if (form.routing)
-                {
-                    continue;
-                }
-                listOfNearbyEnemies.Add(form);
-            }
-        }
-
-        if (obeyingMovementOrder)
-        {
-            return;
-        }
-        FindClosestFormation();
-        await Task.Yield();
-    }
-    private async void FindClosestFormation()
-    { 
-        enemyFormationToTarget = GetClosestFormationWithinRange(1, team, true, engageEnemyRadius);
-        if (chaseDetectedEnemies && enemyFormationToTarget != null)
-        {
-            EngageFoe();
-        }
-
-        await Task.Yield();
-    }
-    private async void EngageFoe()
-    {
-        if (routing)
-        {
-            return;
-        }
-        float distance = Vector3.Distance(transform.position, enemyFormationToTarget.transform.position);
-        if (!soldierBlock.melee && distance <= rangedRadius)
-        {
-            StopInPlace();
-        }
-        else if (distance <= stoppingDistance)
-        { //stop
-            //Debug.Log("stopping");
-            ResetAITarget();
-        }
-        else if (enemyFormationToTarget != null)
-        {   //chase
-            ChaseFoe();
-        }
-        await Task.Yield();
-    }
-
+    
     #endregion
 
 
@@ -1220,69 +1326,6 @@ public class FormationPosition : MonoBehaviour
         BeginFleeing();
         float disappearTime = 30;
         Invoke("SelfDestruct", disappearTime);
-    }
-    private FormationPosition GetClosestFormationWithinRange(int targetType = 1, GlobalDefines.Team ourTeam = GlobalDefines.Team.Altgard, bool targetRouting = false, float range = 100) //targettype 0: any, targettype 1: enemy, targettype 2: ally
-    {
-        if (fightManager.allArray.Length <= 0)
-        {
-            return null;
-        }
-        FormationPosition closest = null;
-
-        if (targetType == 0)
-        {
-            closest = fightManager.allArray[0];
-        }
-        else if (targetType == 1 || targetType == 2)
-        { 
-            for (int i = 0; i < fightManager.allArray.Length; i++) //go through until we get one that matches criteria
-            {
-                if (targetType == 1  && fightManager.allArray[i].team != ourTeam)
-                {
-                    closest = fightManager.allArray[i];
-                }
-                else if (targetType == 2 && fightManager.allArray[i].team == ourTeam)
-                {
-                    closest = fightManager.allArray[i];
-                }
-            }
-        }
-        if (closest == null)
-        {
-            return null;
-        }
-        float initDist = Helper.Instance.GetSquaredMagnitude(transform.position, closest.transform.position);
-        float compareDist = initDist;
-
-        for (int i = 0; i < fightManager.allArray.Length; i++)
-        {
-            FormationPosition item = fightManager.allArray[i]; 
-            if (targetType == 1 && item.team == ourTeam) //finding enemies but on ally
-            {
-                continue;
-            }
-            else if (targetType == 2 && item.team != ourTeam) //finding allies but on enemy
-            {
-                continue;
-            }
-            if (!targetRouting && item.routing)
-            {
-                continue;
-            }
-            float dist = Vector3.Distance(transform.position, item.transform.position);
-            if (dist > range)
-            {
-                continue;
-            }
-
-            //float dist = Helper.Instance.GetSquaredMagnitude(transform.position, item.transform.position);
-            if (dist < compareDist)
-            {
-                closest = item;
-                compareDist = dist;
-            } 
-        }
-        return closest; 
     }
     public void SoftRout(int time = 20) //rout in a direction for some time. after time, check if no enemies melee attacking us. if so, then become controllable again
     {
@@ -1817,7 +1860,7 @@ public class FormationPosition : MonoBehaviour
             //float centerOffset = 16.24f; 
             float offset = 0;
             posParentTransform.localPosition = new Vector3(-4.5f, offset, 3.5f - num * .5f);
-            int buffer = 2;
+            int buffer = 1;
             int x = 10+buffer;
             int y = 4;
             math = buffer+z - num;

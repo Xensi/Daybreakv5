@@ -284,6 +284,7 @@ public class FightManager : MonoBehaviour
             else
             {
                 enemyControlledFormations.Add(item);
+                item.AIControlled = true;
             }
             item.FixPositions();
             item.BeginUpdates();

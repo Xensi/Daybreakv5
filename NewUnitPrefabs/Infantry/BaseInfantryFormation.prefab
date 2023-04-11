@@ -5023,6 +5023,7 @@ MonoBehaviour:
   hardRoutOnSoftRoutThreshold: 40
   numKills: 0
   stamina: 100
+  AIControlled: 0
   modelHasAShot: 0
   positionToCheck: 0
   frontIcon: {fileID: 8784098199558271929}
@@ -5089,7 +5090,7 @@ MonoBehaviour:
     maximumInterval: 10
     visualizeSensitivity: 0
   targetCompatibility: {fileID: 0}
-  acceleration: 5
+  acceleration: 999
   rotationSpeed: 60
   slowdownTime: 1
   endReachedDistance: 1

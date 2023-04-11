@@ -950,7 +950,7 @@ public class SoldierModel : MonoBehaviour
     private void UpdateSpeed()
     {
         if (CheckIfRemainingDistanceOverThreshold(farDistanceThreshold)) //if far away, slow time isn't a factor
-        { 
+        {
             pathfindingAI.slowdownTime = veryFastSlowTime;
         }
         else if (currentModelState == ModelState.Charging || currentModelState == ModelState.Routing)
