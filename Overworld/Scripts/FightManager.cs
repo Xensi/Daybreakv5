@@ -1284,6 +1284,16 @@ public class FightManager : MonoBehaviour
         }
         formationToFocusFire = null;
     }
+    public void ChargeCommand()
+    {
+        foreach (FormationPosition item in selectedFormations)
+        { 
+            if (item.soldierBlock.melee)
+            {
+                item.StartCharging();
+            }
+        }
+    }
     private void ForceFireLeftClickCheck()
     {
         //

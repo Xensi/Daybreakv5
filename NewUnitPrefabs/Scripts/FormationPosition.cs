@@ -233,7 +233,7 @@ public class FormationPosition : MonoBehaviour
         FastUpdate(100, cancelToken.Token); //minor fps improvement when removed
 
         ReinforceUpdate(100, cancelToken.Token); //cycles through positions //very minor fps improvement when removed
-        CheckEnemyUpdate(50, cancelToken.Token); //cycles through soldiers 1 by one
+        //CheckEnemyUpdate(10, cancelToken.Token); //cycles through soldiers 1 by one
 
         SlowUpdate(500, cancelToken.Token); //no real fps improvement
         VerySlowUpdate(1000, cancelToken.Token); //big FPS improvement when removed
@@ -741,7 +741,10 @@ public class FormationPosition : MonoBehaviour
         }
         else //default
         {
-            //CheckForNearbyEnemyFormations(); //expensive
+            if (AIControlled)
+            {
+                CheckForNearbyEnemyFormations(); //expensive
+            }
             /*if (enemyFormationToTarget == null || enemyFormationToTarget.numberOfAliveSoldiers <= 0)
             { 
             }*/
@@ -808,8 +811,8 @@ public class FormationPosition : MonoBehaviour
         {
             return;
         }*/
-        //enemyFormationToTarget = GetClosestFormationWithinRange(1, team, false, engageEnemyRadius); //grab enemy that isn't routing
-        enemyFormationToTarget = CycleThroughEnemyFormationsAndReturnClosestWithinRangeNotRouting(engageEnemyRadius); //grab enemy that isn't routing
+        enemyFormationToTarget = GetClosestFormationWithinRange(1, team, false, engageEnemyRadius); //grab enemy that isn't routing
+        //enemyFormationToTarget = CycleThroughEnemyFormationsAndReturnClosestWithinRangeNotRouting(engageEnemyRadius); //grab enemy that isn't routing
 
         if (chaseDetectedEnemies && enemyFormationToTarget != null)
         {
@@ -996,6 +999,7 @@ public class FormationPosition : MonoBehaviour
     #endregion 
     private void Update()
     {
+        CheckModelsIndividually();
         //UpdatePathsOfSoldierModels();
         UpdateLineRenderer();
         if (selected)
@@ -1436,8 +1440,8 @@ public class FormationPosition : MonoBehaviour
             chargeRecharged = false;
             //Debug.Log("charging");
             movementManuallyStopped = false;
-            selectable = false;
-            SetSelected(false);
+            //selectable = false;
+            //SetSelected(false);
             charging = true;
             SetMoving(true);
             if (formationToFocusFire != null)
