@@ -151,7 +151,7 @@ public class FormationPosition : MonoBehaviour
     [SerializeField] private bool alwaysRotateTowardMovementPos = false;
     public SpriteRenderer selectedSprite;
     [SerializeField] private float chargeSpeed = 7;
-    [SerializeField] private float maxChargeTime = 15;
+    [SerializeField] private float maxChargeTime = 20;
     [SerializeField] private float currentChargeTime = 0;
     [SerializeField] private float chargeRechargeTime = 60;
     private float currentChargeRechargeTime = 0;
