@@ -1010,13 +1010,15 @@ public class SoldierModel : MonoBehaviour
     {
         pathfindingAI.maxSpeed = speed; 
     }
+    private bool visibleInFrustum = true;
     public void UpdateVisibility(bool val) //true means visible. false is hidden
     {
-        foreach (Renderer rend in renderers)
+        visibleInFrustum = val;
+        /*foreach (Renderer rend in renderers)
         {
             rend.enabled = formPos.showSoldierModels;
             //rend.material.color = formPos.farAwayIcon.color;
-        }
+        }*/
         for (int i = 0; i < renderersArray.Length; i++)
         {
             renderersArray[i].enabled = val;
@@ -1455,16 +1457,32 @@ public class SoldierModel : MonoBehaviour
         }
     }
     public bool farAway = false;
-    public async void UpdateAndCullAnimations()
+    public async void UpdateAndCullAnimations() //not fully working
     {
-        if (formPos.showSoldierModels)
+        bool shouldAnimate = false;
+        for (int i = 0; i < renderersArray.Length; i++)
+        { 
+            if (renderersArray[i].isVisible && renderersArray[i].tag != "DoNotAnimate")
+            {
+                shouldAnimate = true;
+            }
+        }
+        animator.enabled = shouldAnimate;
+        /*if (visibleInFrustum)
+        { 
+        }
+        else
+        {
+            animator.enabled = false;
+        }*/
+        /*if (formPos.showSoldierModels)
         {
             animator.enabled = !farAway; //if faraway, disable animator
         }
         else
         {
             animator.enabled = false;
-        }
+        }*/
         await Task.Yield();
     } 
     private void PointTowards(Vector3 targetDirection)

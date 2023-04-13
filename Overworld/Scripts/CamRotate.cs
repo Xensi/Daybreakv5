@@ -70,17 +70,17 @@ public class CamRotate : MonoBehaviour
                         color.a = math;
                         if (math >= 1)
                         {
-                            form.ShowHideSoldiers(false);
+                            form.SetVisibleInFrustum(false);
                         }
                         else if (math > 0)
                         {
-                            form.ShowHideSoldiers(true);
+                            form.SetVisibleInFrustum(true);
                         }
                     }
                     else
                     {
                         color.a = 0;
-                        form.ShowHideSoldiers(true);
+                        form.SetVisibleInFrustum(true);
                     }
                     form.farAwayIcon.color = color;
                     form.frontIcon.color = color;
@@ -93,7 +93,7 @@ public class CamRotate : MonoBehaviour
                 {
                     Color color = form.farAwayIcon.color;
                     color.a = 1;
-                    form.ShowHideSoldiers(false);
+                    form.SetVisibleInFrustum(false);
                     form.farAwayIcon.color = color;
                     form.frontIcon.color = color;
                     if (form.selectedSprite != null)

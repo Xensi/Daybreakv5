@@ -580,18 +580,18 @@ MonoBehaviour:
   enableRotation: 1
   autoRepath:
     mode: 2
-    interval: 10
+    interval: 1
     sensitivity: 1
-    maximumInterval: 10
+    maximumInterval: 5
     visualizeSensitivity: 0
   targetCompatibility: {fileID: 0}
   acceleration: 999
   rotationSpeed: 360
   slowdownTime: 3
   endReachedDistance: 0.01
-  wallForce: 3
-  wallDist: 1
-  funnelSimplification: 1
+  wallForce: 0
+  wallDist: 0
+  funnelSimplification: 0
   slowWhenNotFacingTarget: 0
   animCompatibility: {fileID: 0}
 --- !u!114 &7295892263859704113

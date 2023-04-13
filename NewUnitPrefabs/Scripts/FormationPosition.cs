@@ -227,7 +227,7 @@ public class FormationPosition : MonoBehaviour
     }
     public void BeginUpdates()
     {
-
+        //return;
         PathfindingUpdate(cancelToken.Token); //in parallel //major fps improvement when removed, due to lack of pathfinding required since dest not set
 
         FastUpdate(100, cancelToken.Token); //minor fps improvement when removed
@@ -236,7 +236,7 @@ public class FormationPosition : MonoBehaviour
         //CheckEnemyUpdate(10, cancelToken.Token); //cycles through soldiers 1 by one
 
         SlowUpdate(500, cancelToken.Token); //no real fps improvement
-        VerySlowUpdate(1000, cancelToken.Token); //big FPS improvement when removed
+        VerySlowUpdate(1000, cancelToken.Token); //no real improvement
         InvokeRepeating("TimeFrameAdvance", 0, timeFrame);
 
 
@@ -741,9 +741,9 @@ public class FormationPosition : MonoBehaviour
         }
         else //default
         {
-            if (AIControlled)
-            {
-                CheckForNearbyEnemyFormations(); //expensive
+            if (AIControlled || formationType == FormationType.RangedInfantry) //if AI, or a rangedu unit on our side
+            { 
+                CheckForNearbyEnemyFormations(); //probably expensive
             }
             /*if (enemyFormationToTarget == null || enemyFormationToTarget.numberOfAliveSoldiers <= 0)
             { 
@@ -771,7 +771,7 @@ public class FormationPosition : MonoBehaviour
         await Task.Delay(time, cancelToken);
         VerySlowUpdate(time, cancelToken);
     }
-    private async void CheckForNearbyEnemyFormations() //PURELY AI now
+    private async void CheckForNearbyEnemyFormations()
     {
         //this block seems unnecessary; uses physics so expensive + getting closest formation doesn't even use the list
         /* listOfNearbyEnemies.Clear();
@@ -807,10 +807,10 @@ public class FormationPosition : MonoBehaviour
              }
          }*/
 
-        /*if (obeyingMovementOrder)
+        if (obeyingMovementOrder)
         {
             return;
-        }*/
+        }
         enemyFormationToTarget = GetClosestFormationWithinRange(1, team, false, engageEnemyRadius); //grab enemy that isn't routing
         //enemyFormationToTarget = CycleThroughEnemyFormationsAndReturnClosestWithinRangeNotRouting(engageEnemyRadius); //grab enemy that isn't routing
 
@@ -820,44 +820,7 @@ public class FormationPosition : MonoBehaviour
         }
         await Task.Yield();
     }
-    public bool AIControlled = false; 
-    private int enemyFormationIterator = 0;
-    private FormationPosition CycleThroughEnemyFormationsAndReturnClosestWithinRangeNotRouting(float range)
-    {
-        //count up
-        enemyFormationIterator++;
-        if (enemyFormationIterator >= fightManager.playerControlledFormations.Count) //loop around
-        {
-            enemyFormationIterator = 0;
-        }
-        FormationPosition checkingEnemyFormation = fightManager.playerControlledFormations[enemyFormationIterator];
-
-        while (checkingEnemyFormation == enemyFormationToTarget || checkingEnemyFormation.routing || checkingEnemyFormation.numberOfAliveSoldiers <= 0) //skip over formations that are routing or dead or already targeting
-        {
-            enemyFormationIterator++;
-            if (enemyFormationIterator >= fightManager.playerControlledFormations.Count) //loop around
-            {
-                enemyFormationIterator = 0;
-            }
-            checkingEnemyFormation = fightManager.playerControlledFormations[enemyFormationIterator];
-        }
-
-        //compare distances
-
-        float initialDistance = Mathf.Infinity;
-        if (enemyFormationToTarget != null)
-        {
-            initialDistance = Helper.Instance.GetSquaredMagnitude(transform.position, enemyFormationToTarget.transform.position);
-        }
-        float newDistance = Helper.Instance.GetSquaredMagnitude(transform.position, checkingEnemyFormation.transform.position);
-        //check if new dist is in range
-        if (newDistance <= range && newDistance < initialDistance)
-        {
-            return checkingEnemyFormation;
-        }
-
-        return null;
-    }
+    public bool AIControlled = false;  
     private FormationPosition GetClosestFormationWithinRange(int targetType = 1, GlobalDefines.Team ourTeam = GlobalDefines.Team.Altgard, bool targetRouting = false, float range = 100) //targettype 0: any, targettype 1: enemy, targettype 2: ally
     {
         if (fightManager.allArray.Length <= 0)
@@ -997,8 +960,27 @@ public class FormationPosition : MonoBehaviour
         await Task.Yield();
     }
     #endregion 
+    private void UpdateSoldierMovements()
+    {
+        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+        {
+            SoldierModel model = soldierBlock.modelsArray[i];
+            if (model != null)
+            {
+                if (model.alive)
+                {
+                    model.pathfindingAI.UpdateMovement();
+                }
+            }
+        }
+    }
+    private void FixedUpdate()
+    {
+        aiPath.UpdateMovementInFixedUpdate();
+    }
     private void Update()
     {
+        UpdateSoldierMovements();
         CheckModelsIndividually();
         //UpdatePathsOfSoldierModels();
         UpdateLineRenderer();
@@ -1054,9 +1036,9 @@ public class FormationPosition : MonoBehaviour
     }
     private int fastModelCheck = 0; 
 
-    public void ShowHideSoldiers(bool val) //pretty expensive
+    public void SetVisibleInFrustum(bool val) //pretty expensive
     {
-        /*showSoldierModels = val;
+        showSoldierModels = val;
         for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
         {
             SoldierModel soldier = soldierBlock.modelsArray[i];
@@ -1064,11 +1046,11 @@ public class FormationPosition : MonoBehaviour
             {
                 soldier.UpdateVisibility(val);
             }
-            else if (soldier != null)
+            /*else if (soldier != null)
             {
                 soldier.UpdateVisibility(true);
-            }
-        }*/
+            }*/
+        }
         //Debug.Log("showing");
         /*if (showSoldierModels == false && val)
         { 
@@ -1076,6 +1058,7 @@ public class FormationPosition : MonoBehaviour
         }
         */
     }
+
     /*private void TeleportSoldiers()
     {
         if (!isCavalry && !charging) //nfantry that is not charging gets teleported
@@ -1418,7 +1401,7 @@ public class FormationPosition : MonoBehaviour
     private void GetMeOutOfHere()
     {
         //Debug.Log("Fleeing");
-        float detectionRange = 50;
+        float detectionRange = 999;
         FormationPosition closestEnemy = GetClosestFormationWithinRange(1, team, false, detectionRange);
         if (closestEnemy != null)
         { 
@@ -1427,7 +1410,8 @@ public class FormationPosition : MonoBehaviour
             float distanceToTravel = 100;
             Vector3 pos = transform.position + (heading * distanceToTravel);
             aiTarget.transform.position = pos;
-            PlaceAITargetOnTerrain();
+            PlaceAITargetOnTerrain(); 
+            SetAndSearchPath();
         }
     } 
     public void StartCharging()
@@ -1443,6 +1427,7 @@ public class FormationPosition : MonoBehaviour
             //selectable = false;
             //SetSelected(false);
             charging = true;
+            UpdateCollider();
             SetMoving(true);
             if (formationToFocusFire != null)
             {
@@ -1861,13 +1846,18 @@ public class FormationPosition : MonoBehaviour
         float num = 8f - (8f*ratioOfAliveToMax); //8 -7 = 1 
         if (!isCavalry)
         {
+            int chargeOffset = 0;
+            if (charging)
+            {
+                chargeOffset = -2;
+            }
             //float centerOffset = 16.24f; 
             float offset = 0;
             posParentTransform.localPosition = new Vector3(-4.5f, offset, 3.5f - num * .5f);
             int buffer = 1;
-            int x = 10+buffer;
+            int x = 10 +buffer + chargeOffset;
             int y = 4;
-            math = buffer+z - num;
+            math = buffer + chargeOffset + z - num;
             if (formationCollider != null)
             {
                 formationCollider.size = new Vector3(x, y, math); 

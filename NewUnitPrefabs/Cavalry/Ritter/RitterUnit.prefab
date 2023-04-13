@@ -27,6 +27,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 24, y: 0, z: 8}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3756553268361572605}
   m_RootOrder: 4
@@ -47,7 +48,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &58599248
@@ -77,6 +78,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 27, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1735944267290360768}
   m_RootOrder: 5
@@ -97,7 +99,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &64269296
@@ -127,6 +129,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 24, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3756553268361572605}
   m_RootOrder: 0
@@ -147,7 +150,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &374876338
@@ -177,6 +180,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 27, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1735944267290360768}
   m_RootOrder: 1
@@ -197,7 +201,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &407328939
@@ -227,6 +231,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 27, y: 0, z: 18}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1735944267290360768}
   m_RootOrder: 9
@@ -247,7 +252,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &460912148
@@ -277,6 +282,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 27, y: 0, z: 8}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1735944267290360768}
   m_RootOrder: 4
@@ -297,7 +303,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &621759933
@@ -327,6 +333,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 27, y: 0, z: 12}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1735944267290360768}
   m_RootOrder: 6
@@ -347,7 +354,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &681510984
@@ -377,6 +384,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 24, y: 0, z: 16}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3756553268361572605}
   m_RootOrder: 8
@@ -397,7 +405,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &711544803
@@ -427,6 +435,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 24, y: 0, z: 14}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3756553268361572605}
   m_RootOrder: 7
@@ -447,7 +456,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &732665048
@@ -477,6 +486,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 24, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3756553268361572605}
   m_RootOrder: 1
@@ -497,7 +507,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &868523732
@@ -527,6 +537,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 24, y: 0, z: 12}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3756553268361572605}
   m_RootOrder: 6
@@ -547,7 +558,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1033591555
@@ -577,6 +588,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 24, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3756553268361572605}
   m_RootOrder: 5
@@ -597,7 +609,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1078945162
@@ -627,6 +639,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 27, y: 0, z: 14}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1735944267290360768}
   m_RootOrder: 7
@@ -647,7 +660,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1393945457
@@ -677,6 +690,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 24, y: 0, z: 6}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3756553268361572605}
   m_RootOrder: 3
@@ -697,7 +711,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1403299894
@@ -727,6 +741,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 27, y: 0, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1735944267290360768}
   m_RootOrder: 2
@@ -747,7 +762,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1428965334
@@ -777,6 +792,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 27, y: 0, z: 16}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1735944267290360768}
   m_RootOrder: 8
@@ -797,7 +813,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1658071877
@@ -827,6 +843,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 27, y: 0, z: 6}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1735944267290360768}
   m_RootOrder: 3
@@ -847,7 +864,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1828628308
@@ -877,6 +894,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 24, y: 0, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3756553268361572605}
   m_RootOrder: 2
@@ -897,7 +915,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &1850306425
@@ -927,6 +945,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 27, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1735944267290360768}
   m_RootOrder: 0
@@ -947,7 +966,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &367495938408985312
@@ -977,6 +996,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.5, y: 0, z: 1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5955700110249152666}
   - {fileID: 5955700110890606710}
@@ -1033,6 +1053,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5955700109959981596}
   m_Father: {fileID: 5955700111764308538}
@@ -1083,6 +1104,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1, y: 0, z: 3.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5955700111470347212}
   - {fileID: 5955700111624399277}
@@ -1137,6 +1159,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2, y: 0, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5955700111290460513}
   - {fileID: 5955700110848617436}
@@ -1195,6 +1218,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3, y: 0, z: -1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5955700111695449075}
   - {fileID: 5955700110502578628}
@@ -1257,6 +1281,7 @@ RectTransform:
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3797619098322707983}
   m_RootOrder: 0
@@ -1277,6 +1302,7 @@ SpriteMask:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1342,6 +1368,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6115648996077219690}
   - {fileID: 3922173238774946116}
@@ -1376,6 +1403,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3.5, y: 0, z: -2.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5955700110029131285}
   - {fileID: 5955700110611704339}
@@ -1440,6 +1468,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4, y: 0, z: -3.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 64269297}
   - {fileID: 732665049}
@@ -1506,6 +1535,7 @@ RectTransform:
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 10, y: 10, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1806161171143477862}
   m_Father: {fileID: 3797619098322707983}
@@ -1527,6 +1557,7 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -1594,6 +1625,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 4.5, y: 0, z: -4.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1850306426}
   - {fileID: 374876339}
@@ -1662,6 +1694,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 15, y: 0, z: 6}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2611914852515767520}
   m_RootOrder: 3
@@ -1682,7 +1715,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700109959981597
@@ -1712,6 +1745,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 4.500001}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7106729365147889613}
   m_RootOrder: 0
@@ -1732,7 +1766,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110029131282
@@ -1762,6 +1796,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 21, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6400515138220652369}
   m_RootOrder: 0
@@ -1782,7 +1817,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110060338596
@@ -1812,6 +1847,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 18, y: 0, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8332457183604882391}
   m_RootOrder: 2
@@ -1832,7 +1868,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110249152667
@@ -1862,6 +1898,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 9, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9203245215635552849}
   m_RootOrder: 0
@@ -1882,7 +1919,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110317032630
@@ -1912,6 +1949,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 21, y: 0, z: 8}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6400515138220652369}
   m_RootOrder: 4
@@ -1932,7 +1970,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110327013245
@@ -1962,6 +2000,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 18, y: 0, z: 8}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8332457183604882391}
   m_RootOrder: 4
@@ -1982,7 +2021,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110328894852
@@ -2012,6 +2051,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 18, y: 0, z: 12}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8332457183604882391}
   m_RootOrder: 6
@@ -2032,7 +2072,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110394611148
@@ -2062,6 +2102,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 12, y: 0, z: 6}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2764807478575739467}
   m_RootOrder: 3
@@ -2082,7 +2123,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110404559320
@@ -2112,6 +2153,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 21, y: 0, z: 12}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6400515138220652369}
   m_RootOrder: 6
@@ -2132,7 +2174,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110420648599
@@ -2162,6 +2204,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 21, y: 0, z: 14}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6400515138220652369}
   m_RootOrder: 7
@@ -2182,7 +2225,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110491991422
@@ -2212,6 +2255,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 6, y: 0, z: 3}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 905079431663083954}
   m_RootOrder: 2
@@ -2232,7 +2276,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110502578629
@@ -2262,6 +2306,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 18, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8332457183604882391}
   m_RootOrder: 1
@@ -2282,7 +2327,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110595696069
@@ -2312,6 +2357,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 15, y: 0, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2611914852515767520}
   m_RootOrder: 2
@@ -2332,7 +2378,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110611704336
@@ -2362,6 +2408,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 21, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6400515138220652369}
   m_RootOrder: 1
@@ -2382,7 +2429,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110661961090
@@ -2412,6 +2459,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 18, y: 0, z: 6}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8332457183604882391}
   m_RootOrder: 3
@@ -2432,7 +2480,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110694762162
@@ -2462,6 +2510,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 21, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6400515138220652369}
   m_RootOrder: 5
@@ -2482,7 +2531,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110728819744
@@ -2511,6 +2560,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5955700111243193917}
   m_RootOrder: 2
@@ -2542,6 +2592,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 21, y: 0, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6400515138220652369}
   m_RootOrder: 2
@@ -2562,7 +2613,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110848617437
@@ -2592,6 +2643,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 12, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2764807478575739467}
   m_RootOrder: 1
@@ -2612,7 +2664,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110860795023
@@ -2642,6 +2694,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 9, y: 0, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9203245215635552849}
   m_RootOrder: 2
@@ -2662,7 +2715,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110890606711
@@ -2692,6 +2745,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 9, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9203245215635552849}
   m_RootOrder: 1
@@ -2712,7 +2766,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700110911429547
@@ -2742,6 +2796,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 12, y: 0, z: 8}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2764807478575739467}
   m_RootOrder: 4
@@ -2762,7 +2817,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700111103716312
@@ -2792,6 +2847,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 21, y: 0, z: 6}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6400515138220652369}
   m_RootOrder: 3
@@ -2812,7 +2868,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700111123590931
@@ -2842,6 +2898,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 9, y: 0, z: 6}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9203245215635552849}
   m_RootOrder: 3
@@ -2862,7 +2919,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700111234879874
@@ -2891,6 +2948,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 78.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5955700111539829869}
   m_RootOrder: 2
@@ -2922,6 +2980,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5955700111421230613}
   - {fileID: 5955700111539829869}
@@ -2954,7 +3013,7 @@ MonoBehaviour:
   - {fileID: 573367397163455965}
   - {fileID: 4966765393050376166}
   frontRow: {fileID: 0}
-  soldierPrefab: {fileID: 632593851823049858, guid: 7edce92b275978a40b19c81de4271250, type: 3}
+  soldierPrefab: {fileID: 1920991655536411845, guid: 5e8e78f532679444f8c8d2d5910c2613, type: 3}
   magePrefab: {fileID: 0}
   mageType: 
   modelParent: {fileID: 5955700110728819747}
@@ -3017,7 +3076,7 @@ MonoBehaviour:
   magePositions: []
   FormationTransform: {fileID: 5955700111539829869}
   angleToFace: {x: 0, y: -0.70710677, z: 0, w: 0.70710677}
-  team: Altgard
+  teamType: 0
   formPos: {fileID: 29422916108755641}
   listSoldierModels: []
   listMageModels: []
@@ -3034,6 +3093,8 @@ MonoBehaviour:
   useActualMaxSpeed: 0
   forcedMaxSpeed: 24
   manuallyAssignRows: 0
+  manager: {fileID: 0}
+  soldiersToCreate: 80
 --- !u!1 &5955700111290460574
 GameObject:
   m_ObjectHideFlags: 0
@@ -3061,6 +3122,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 12, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2764807478575739467}
   m_RootOrder: 0
@@ -3081,7 +3143,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700111303515792
@@ -3111,6 +3173,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 15, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2611914852515767520}
   m_RootOrder: 1
@@ -3131,7 +3194,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700111421230610
@@ -3160,6 +3223,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5955700111243193917}
   m_RootOrder: 0
@@ -3191,6 +3255,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 3, y: 0, z: 1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9131454677924282923}
   m_RootOrder: 1
@@ -3211,7 +3276,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700111470347213
@@ -3241,6 +3306,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 6, y: 0, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 905079431663083954}
   m_RootOrder: 0
@@ -3261,7 +3327,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700111539829866
@@ -3296,6 +3362,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3797619098322707983}
   - {fileID: 6626605449947695622}
@@ -3319,39 +3386,74 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee583770c7429a54c9bea6d01465e513, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AIIntelligence: 50
+  formationToFollow: {fileID: 0}
+  soldierType: 1
+  rigid: {fileID: 0}
+  navCutter: {fileID: 0}
+  simultaneousPositionCheck: 1
+  soldierBlock: {fileID: 5955700111243193916}
+  engageEnemyRadius: 10
+  rangedRadius: 100
+  farAwayIcon: {fileID: 1923413119139919519}
+  cameraCollider: {fileID: 0}
+  routingIcon: {fileID: 0}
+  shatteredIcon: {fileID: 0}
+  farAwayIconMask: {fileID: 2323659605289493989}
+  formationIconsParent: {fileID: 0}
   usesSpears: 1
+  formationType: 0
   shaker: {fileID: 6634925206132345977}
+  AIIntelligence: 50
+  aiBraceRadius: 75
+  routing: 0
+  chargeRecharged: 1
+  alive: 1
+  abilityCharged: 1
   shotsHit: 0
   showSoldierModels: 1
-  farAwayIcon: {fileID: 1923413119139919519}
-  farAwayIconMask: {fileID: 2323659605289493989}
-  type: 2
-  abilityCharged: 1
+  team: 0
+  listOfNearbyEnemies: []
+  startingPursueRadius: 0
+  enemyFormationToTarget: {fileID: 0}
+  holdFire: 0
+  chaseDetectedEnemies: 1
+  engagedInMelee: 0
+  focusFire: 0
+  deployedPikes: 0
+  modelAttacked: 0
+  modelTookDamage: 0
+  inCombat: 0
+  modelAttacking: 0
+  playingIdleChatter: 0
+  playingAttackChatter: 0
+  playingDeathReactionChatter: 0
+  playingMarchChatter: 0
+  focusFirePos: {x: 0, y: 0, z: 0}
+  formationToFocusFire: {fileID: 0}
+  movementManuallyStopped: 0
+  destinationsList: []
+  finishedChangedFacing: 1
+  averagePositionBasedOnSoldierModels: 0
+  formationPositionBasedOnSoldierModels: {x: 0, y: 0, z: 0}
+  charging: 0
+  selectable: 1
+  braced: 0
+  enableAnimations: 0
+  walkingSpeed: 3
+  sprintSpeed: 6.5
+  selected: 0
   abilityRechargeTime: 60
   currentAbilityRechargeTime: 0
   allowedToCastMagic: 1
   timeUntilAllowedToCastMagicAgain: 0
   canBrace: 0
-  braced: 0
-  team: Altgard
   aiPath: {fileID: 5955700111539829871}
-  listOfNearbyEnemies: []
   aiTarget: {fileID: 5955700111421230613}
   rotTarget: {fileID: 4907032232984804433}
-  engageEnemyRadius: 10
-  rangedRadius: 100
-  startingPursueRadius: 0
   stoppingDistance: 12.5
   moveStopDistance: 1
-  enemyFormationToTarget: {fileID: 0}
-  soldierBlock: {fileID: 5955700111243193916}
-  enableAnimations: 0
   movingSpeed: 0
   currentSpeed: 0
-  walkingSpeed: 3
-  sprintSpeed: 6.5
-  selected: 0
   lineRenderer: {fileID: 7488570103759001557}
   lineRenderer2: {fileID: 7891812092420572658}
   weaponsDeployed: 0
@@ -3366,42 +3468,19 @@ MonoBehaviour:
   finishedPathRotSpeed: 5
   pathSet: 0
   frontlinePositions: []
-  modelAttacking: 0
   obeyingMovementOrder: 0
   numberOfAliveSoldiers: 80
   maxSoldiers: 80
   tangledUp: 0
   slowRotate: 15
   normRotate: 30
-  playingIdleChatter: 0
-  playingAttackChatter: 0
-  playingDeathReactionChatter: 0
-  playingMarchChatter: 0
-  deployedPikes: 0
-  firstLineModels: []
-  modelAttacked: 0
-  modelTookDamage: 0
-  inCombat: 0
   secondRowOffsetAmount: 0
-  holdFire: 0
-  chaseDetectedEnemies: 1
-  engagedInMelee: 0
-  focusFire: 0
-  focusFirePos: {x: 0, y: 0, z: 0}
-  formationToFocusFire: {fileID: 0}
-  movementManuallyStopped: 0
-  destinationsList: []
-  finishedChangedFacing: 1
-  charController: {fileID: 0}
-  charCollider: {fileID: 0}
-  forwardControlZone: {fileID: 0}
-  charRadius: 4.5
+  formationCollider: {fileID: 0}
   isCavalry: 1
   freezeFormPos: 0
   freezeTimer: 0
   cohesionTimer: 0
   shouldRotateToward: 0
-  alive: 1
   soldierModelToCheck: 0
   checkForNearbyEnemies: 0
   swapRowsAfterFiring: 0
@@ -3410,24 +3489,25 @@ MonoBehaviour:
   lowerRow: 0
   upperRow: 9
   modelsInFrontRowThatFired: []
-  fleeing: 0
-  averagePositionBasedOnSoldierModels: 0
-  formationPositionBasedOnSoldierModels: {x: 0, y: 0, z: 0}
   missileTarget: {fileID: 0}
   alwaysRotateTowardMovementPos: 1
   selectedSprite: {fileID: 6030088573861348086}
   chargeSpeed: 7
-  charging: 0
-  selectable: 1
   maxChargeTime: 10
   currentChargeTime: 0
   chargeRechargeTime: 30
-  chargeRecharged: 1
-  rigid: {fileID: 0}
-  simultaneousPositionCheck: 1
-  aiBraceRadius: 75
-  navCutter: {fileID: 0}
+  maxToleratedDeaths: 30
+  deathsThisTimeFrame: 0
+  extremeRoutThreshold: 15
+  hardRoutOnSoftRoutThreshold: 40
+  numKills: 0
+  stamina: 100
+  AIControlled: 0
+  modelHasAShot: 0
   positionToCheck: 0
+  frontIcon: {fileID: 0}
+  ratioOfAliveToMax: 1
+  math: 8
 --- !u!114 &5955700111539829870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3568,6 +3648,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 15, y: 0, z: 8}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2611914852515767520}
   m_RootOrder: 4
@@ -3588,7 +3669,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700111624399274
@@ -3618,6 +3699,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 6, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 905079431663083954}
   m_RootOrder: 1
@@ -3638,7 +3720,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700111695449072
@@ -3668,6 +3750,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 18, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8332457183604882391}
   m_RootOrder: 0
@@ -3688,7 +3771,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700111715953655
@@ -3718,6 +3801,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 12, y: 0, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2764807478575739467}
   m_RootOrder: 2
@@ -3738,7 +3822,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700111764308539
@@ -3767,6 +3851,7 @@ Transform:
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: -4.500001, y: 0, z: 3.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7106729365147889613}
   - {fileID: 9131454677924282923}
@@ -3808,6 +3893,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 15, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2611914852515767520}
   m_RootOrder: 0
@@ -3828,7 +3914,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700111880371989
@@ -3858,6 +3944,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 18, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8332457183604882391}
   m_RootOrder: 5
@@ -3878,7 +3965,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700111981831670
@@ -3908,6 +3995,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 15, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2611914852515767520}
   m_RootOrder: 5
@@ -3928,7 +4016,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &5955700112042492968
@@ -3958,6 +4046,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 3, y: 0, z: -0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9131454677924282923}
   m_RootOrder: 0
@@ -3978,7 +4067,7 @@ MonoBehaviour:
   row: {fileID: 0}
   candidates: []
   numTimesSought: 0
-  team: Altgard
+  team: 0
   formPos: {fileID: 0}
   activeController: 0
 --- !u!1 &6203994076171800341
@@ -4008,6 +4097,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3922173238774946116}
   m_RootOrder: 0
@@ -4061,6 +4151,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.5, y: 0, z: -0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5955700111820458726}
   - {fileID: 5955700111303515795}
@@ -4121,6 +4212,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5955700111539829869}
   m_RootOrder: 4
@@ -4136,6 +4228,7 @@ LineRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 0
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
@@ -4250,6 +4343,7 @@ RectTransform:
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 11, y: 11, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3797619098322707983}
   m_RootOrder: 2
@@ -4270,6 +4364,7 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -4336,6 +4431,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5955700111539829869}
   m_RootOrder: 1
@@ -4368,6 +4464,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5955700111539829869}
   m_RootOrder: 6
@@ -4427,6 +4524,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 15.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6701943912799526805}
   - {fileID: 5955700111764308538}
@@ -4459,6 +4557,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5955700111243193917}
   m_RootOrder: 3
@@ -4490,6 +4589,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5955700111539829869}
   m_RootOrder: 5
@@ -4505,6 +4605,7 @@ LineRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 0
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
@@ -4618,6 +4719,7 @@ Transform:
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: -4.500001, y: 0, z: 3.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1889408432676090364}
   m_RootOrder: 0
@@ -4649,6 +4751,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.5, y: 0, z: 4}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5955700112042492971}
   - {fileID: 5955700111469577569}

@@ -203,8 +203,13 @@ public class ProjectileFromSoldier : MonoBehaviour
                 if (canDamage)
                 {
                     SoldierModel hitModel = other.GetComponentInParent<SoldierModel>();
-                    if (hitModel != null && hitModel.alive && hitModel.formPos != soldierParent.formPos && hitModel.team != soldierParent.team) //can't hit our own formation, but can hit any others
+                    if (hitModel != null && hitModel.alive && hitModel.formPos != soldierParent.formPos) //can't hit our own formation, but can hit any others
                     {
+                        if (hitModel.team == soldierParent.team) //no friendly fire, but arrows won't go through our own units
+                        {
+                            SelfDestruct();
+                            return;
+                        }
                         //canDamage = false;
 
                         if (soldierParent != null)
