@@ -10,6 +10,7 @@ public class FightManager : MonoBehaviour
 {
     public static FightManager Instance { get; private set; }
 
+    [SerializeField] private LineRenderer managerLineRenderer;
     public Transform virtualCamTransform;
 
     [SerializeField] private GameObject destPrefab;
@@ -34,7 +35,6 @@ public class FightManager : MonoBehaviour
 
     [SerializeField] private Transform rotationTarget;
     [SerializeField] private Vector3 heldPosition;
-    //[SerializeField] private LineRenderer
 
     [SerializeField] private GameObject battleUI;
 
@@ -1737,6 +1737,10 @@ public class FightManager : MonoBehaviour
             transform.position = hit.point;
         }
     }
+    private Vector3 firstClickPos;
+    private Vector3 secondClickPos;
+    public List<GameObject> dest;
+    public List<GameObject> list;
     private void RightClickCheck()
     {
         if (Input.GetMouseButtonDown(1)) //set movepos
@@ -1754,6 +1758,7 @@ public class FightManager : MonoBehaviour
 
             if (Physics.Raycast(ray.origin, ray.direction, out hit, Mathf.Infinity, layerMask))
             {
+                firstClickPos = hit.point;
                 clickPosition = hit.point;
                 //hit terrain, now check if formation here
                 LayerMask formMask = LayerMask.GetMask("Formation");
@@ -1817,8 +1822,8 @@ public class FightManager : MonoBehaviour
                     }
                 }
             }
-            else if (selectedFormations.Count > 1) //Hold and drag to create a line of positions for units to move to
-            { 
+            /*else if (selectedFormations.Count > 1) //Hold and drag to create a line of positions for units to move to
+            {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
                 float distanceSoFar = 9999;
@@ -1848,11 +1853,10 @@ public class FightManager : MonoBehaviour
                         else if (Vector3.Distance(lineFormationPosList[lineFormationPosList.Count - 1], candidateHit.point) >= lineOffset) //if distance between last and new is high enough
                         {
                             PlaceTargeter(candidateHit.point);
-                        }
-
-                    } 
+                        } 
+                    }
                 }
-            } 
+            }*/
         } 
         if (Input.GetMouseButtonUp(1) && !wasFocusFiring && !wasMagicTargeting) //CONFIRM MOVEMENT on release mouse
         { 
@@ -1909,38 +1913,119 @@ public class FightManager : MonoBehaviour
             }
             else if (selectedFormations.Count > 1)
             {
-                List<FormationPosition> formList = new List<FormationPosition>();
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                LayerMask layerMask = LayerMask.GetMask("Terrain");
+                RaycastHit hit; 
+
+                if (Physics.Raycast(ray.origin, ray.direction, out hit, Mathf.Infinity, layerMask))
+                {
+                    secondClickPos = hit.point; 
+                }
+
+                List <FormationPosition> formList = new List<FormationPosition>();
                 foreach (FormationPosition selForm in selectedFormations)
                 {
                     formList.Add(selForm);
                 }
-                if (lineFormationPosList.Count > 1) //everybody go to each point
-                { 
-                    foreach (Vector3 pos in lineFormationPosList) //for each point
+                //get distance between first and second clickpos
+                float dist = Vector3.Distance(firstClickPos, secondClickPos);
+                float distThreshold = 1;
+                if (dist > distThreshold) //units spread out across the line
+                {
+                    float num = selectedFormations.Count;//number of units selected
+                    //generate points along line and add to list
+                    list.Clear();
+                    for (int i = 0; i < num; i++) //two units: 0 to 1 0/1 =0, 1/1 = 1
                     {
-                        FormationPosition tempFormPos = null;
+                        Vector3 newPosition = Vector3.Lerp(firstClickPos, secondClickPos, i/(num-1));
+                        GameObject child = Instantiate(forceFireTargetPrefab, newPosition, Quaternion.identity);
+                        list.Add(child);
+                        child.name = i.ToString();
+                    }
+                    #region Averaging
+                    //get avg pos of selected formations
+                    float x = 0;
+                    float y = 0;
+                    float z = 0;
+                    for (int i = 0; i < selectedFormations.Count; i++)
+                    {
+                        x += selectedFormations[i].transform.position.x;
+                        y += selectedFormations[i].transform.position.y;
+                        z += selectedFormations[i].transform.position.z;
+                    }
+                    x /= selectedFormations.Count;
+                    y /= selectedFormations.Count;
+                    z /= selectedFormations.Count;
+                    Vector3 avg = new Vector3(x, y, z);
+                    #endregion
+                    #region Parent
+                    GameObject parent = Instantiate(destPrefab, avg, Quaternion.identity);
+                    //make gameobjects to represent our destination, starting at our position 
+                    List<FormationPosition> ordererdFormPos = new List<FormationPosition>();
+                    dest.Clear(); 
+                    foreach (FormationPosition form in selectedFormations)
+                    {
+                        ordererdFormPos.Add(form);
+                        GameObject child = Instantiate(forceFireTargetPrefab, form.transform.position, Quaternion.identity, parent.transform);
+                        //parent gameobjects to big one
+                        dest.Add(child); 
+                    }
+                    Vector3 averageOfFirstAndSecond = Vector3.Lerp(firstClickPos, secondClickPos, 0.5f);
+                    Vector3 heading = averageOfFirstAndSecond - avg;
+                    float threshold = 50;
+                    if (Vector3.Angle(heading, -transform.forward) > threshold) //only rotate if destination is not behind us
+                    {
+                        //rotate parent to face destination 
+                        parent.transform.rotation = Quaternion.LookRotation(heading, Vector3.up);
+                    }
+                    //move parent to destination
+                    parent.transform.position = averageOfFirstAndSecond;
+
+                    #endregion 
+                    List<FormationPosition> reorderedFormationPos = new List<FormationPosition>();
+                    FormationPosition tempForm = null; //note: formpos and dest are aligned in order
+                    GameObject tempDest = null;
+                    foreach (GameObject pos in list) //for each point, check which dest is closest and then tell the associated formation to come on over
+                    {
                         float currentDistance = 99999;
-                        foreach (FormationPosition item in formList) //get closest formation
+                        for (int i = 0; i < dest.Count; i++)
                         {
-                            float newDistance = Helper.Instance.GetSquaredMagnitude(item.transform.position, pos);
+                            float newDistance = Helper.Instance.GetSquaredMagnitude(dest[i].transform.position, pos.transform.position);
                             if (newDistance < currentDistance)
                             {
                                 currentDistance = newDistance;
-                                tempFormPos = item;
+                                tempForm = ordererdFormPos[i];
+                                tempDest = dest[i];
+                                tempDest.name = pos.name;
                             }
                         }
-                        tempFormPos.aiTarget.transform.position = pos; //tell closest formation to go there  
-                        tempFormPos.SetDestAndSearchPath();
-                        SetTransformOnGround(tempFormPos.aiTarget.transform, "GroundForm");
-                        tempFormPos.destinationsList.Clear();
-                        tempFormPos.destinationsList.Add(pos);
-                        tempFormPos.pathSet = true;
-                        tempFormPos.obeyingMovementOrder = true;
-                        tempFormPos.shouldRotateToward = false;
-                        formList.Remove(tempFormPos); //so it can't be chosen again //if this becomes a problem then make another list
+                        reorderedFormationPos.Add(tempForm);
+                        ordererdFormPos.Remove(tempForm); //so it can't be chosen again
+                        dest.Remove(tempDest);
                     }
+                    //reordered formpos is aligned with pos list
+                    for (int i = 0; i < reorderedFormationPos.Count; i++)
+                    {
+                        FormationPosition form = reorderedFormationPos[i];
+
+                        form.aiTarget.transform.position = list[i].transform.position; //tell closest formation to go there 
+                        SetTransformOnGround(form.aiTarget.transform, "GroundForm");
+                        form.SetDestAndSearchPath();
+                        form.destinationsList.Clear();
+                        form.destinationsList.Add(list[i].transform.position);
+                        form.pathSet = true;
+                        form.obeyingMovementOrder = true;
+                        form.shouldRotateToward = false;
+                    }
+                    Destroy(parent);
+                    foreach (GameObject item in list)
+                    {
+                        Destroy(item);
+                    }
+                    list.Clear();
                 }
-                else if (lineFormationPosList.Count == 1) //move everyone forward
+                else //move everyone forward
                 { 
                     //get avg pos of selected formations
                     float x = 0;
