@@ -65,20 +65,24 @@ public class AttackBox : MonoBehaviour
         }
     }
     private void Impact(Collider other)
-    { 
+    {
         //Debug.Log("collision");
+        float unitSpeed = parentModel.normalizedSpeed;
+        float speedThreshold = 0.5f;
+        if (unitSpeed < speedThreshold)
+        {
+            return;
+        }
         if (isCavalry)
         {
-            float unitSpeed = parentModel.normalizedSpeed;
-            float speedThreshold = 0.5f;
             if (other.gameObject.tag == "Hurtbox") //
             {
                  
-                if (canDamage && parentModel.currentModelState == SoldierModel.ModelState.Moving && unitSpeed > speedThreshold)
+                if (canDamage && parentModel.currentModelState == SoldierModel.ModelState.Moving)
                 {
                     float toleranceForKnockDown = 2;
                     SoldierModel hitModel = other.GetComponentInParent<SoldierModel>(); 
-                    if (hitModel != null && hitModel.alive && hitModel.team != parentModel.team && !hitModel.airborne && hitModel.getUpTime <= toleranceForKnockDown)
+                    if (hitModel != null && hitModel.alive && hitModel.team != parentModel.team && !hitModel.airborne && !hitModel.knockedDown && hitModel.getUpTime <= toleranceForKnockDown)
                     {
                         //Debug.Log("Launching");
                         Disarm();
@@ -111,8 +115,7 @@ public class AttackBox : MonoBehaviour
                 if (parentModel.braced)
                 {
                     if (canDamage)
-                    {
-                        float speedThreshold = 0.5f;
+                    { 
                         float toleranceForKnockDown = 2;
                         SoldierModel hitModel = other.GetComponentInParent<SoldierModel>();
                         if (hitModel != null && hitModel.alive && hitModel.team != parentModel.team && hitModel.normalizedSpeed > speedThreshold && !hitModel.airborne && hitModel.getUpTime <= toleranceForKnockDown)
@@ -129,13 +132,17 @@ public class AttackBox : MonoBehaviour
                     {
                         float toleranceForKnockDown = 2;
                         SoldierModel hitModel = other.GetComponentInParent<SoldierModel>();
-                        if (hitModel != null && hitModel.alive && hitModel.team != parentModel.team && !hitModel.airborne && hitModel.getUpTime <= toleranceForKnockDown)
+                        if (hitModel != null && hitModel.alive && hitModel.team != parentModel.team && !hitModel.airborne && !hitModel.knockedDown && hitModel.getUpTime <= toleranceForKnockDown)
                         {
                             Disarm();
                             bool canWeLaunchThem = false;
                             if (hitModel.formPos.formationType != FormationPosition.FormationType.Cavalry)
                             {
                                 canWeLaunchThem = true;
+                            }
+                            else //stop charging if we hit cavalry
+                            {
+                                parentModel.formPos.StopCharging();
                             }
                             parentModel.DealDamage(hitModel, canWeLaunchThem, false);
                             parentModel.currentAttackTime = 0;

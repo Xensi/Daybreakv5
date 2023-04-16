@@ -57,7 +57,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
       propertyPath: hitThreshold
-      value: 30
+      value: 35
       objectReference: {fileID: 0}
     - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
       propertyPath: dispersalLevel

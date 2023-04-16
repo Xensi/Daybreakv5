@@ -61,16 +61,21 @@ public class ProjectileFromSoldier : MonoBehaviour
         isFlying = true;
     }
     public void LaunchBullet(Vector3 direction, float velocity)
-    {   
-        
+    { 
         float reqForce = rigid.mass * (velocity / Time.fixedDeltaTime);
-
         rigid.AddForce(direction.normalized * reqForce);
         isFlying = true;
     }
     public void LaunchProjectileRevised(ProjectileDataClass data)
     {
-        rigid.velocity = data.InitialVelocity;
+        if (!float.IsNaN(data.InitialVelocity.x))
+        { 
+            rigid.velocity = data.InitialVelocity;
+        }
+        else
+        {
+            SelfDestruct();
+        }
     }
     public void LaunchProjectile(Vector3 targetPos, float LaunchAngle, float deviationAmount)
     {
@@ -188,7 +193,7 @@ public class ProjectileFromSoldier : MonoBehaviour
                 isFlying = false;
                 finalRotation = transform.rotation;
                 transform.rotation = finalRotation;
-                soldierParent.pathfindingAI.enabled = true;
+                //soldierParent.pathfindingAI.enabled = true;
                 soldierParent.transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, 0, 999), transform.position.z);
                 Vector3 heading = startingPos - transform.position;
                 soldierParent.transform.rotation = Quaternion.LookRotation(heading, Vector3.up);

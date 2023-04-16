@@ -4957,7 +4957,8 @@ MonoBehaviour:
   extremeRoutThreshold: 15
   hardRoutOnSoftRoutThreshold: 40
   numKills: 0
-  stamina: 100
+  stamina: 4000
+  maxStamina: 4000
   AIControlled: 0
   modelHasAShot: 0
   positionToCheck: 0
@@ -5077,13 +5078,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   graphMask:
-    value: 8
+    value: 12
   type: 1
   mesh: {fileID: 0}
   rectangleSize: {x: 10, y: 8}
   circleRadius: 7
   circleResolution: 10
-  height: 100
+  height: 900
   meshScale: 1
   center: {x: 0, y: 0, z: 0}
   updateDistance: 0.4

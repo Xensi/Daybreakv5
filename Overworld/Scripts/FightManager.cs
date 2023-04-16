@@ -265,7 +265,10 @@ public class FightManager : MonoBehaviour
         allArray = new FormationPosition[30];
 
         battleUI.SetActive(false);
-        InvokeRepeating("AIBrain", 0f, 1f);
+        AIRaisePursueRadius();
+        InvokeRepeating("FastUpdate", .1f, .1f);
+        InvokeRepeating("AIBrain", 1f, 1f);
+        InvokeRepeating("AIBrainSlow", 10f, 10f);
         InvokeRepeating("AIBrainMage", 5f, 5f); //don't do immediately, not urgent
 
         allFormationsList.Clear();
@@ -299,14 +302,31 @@ public class FightManager : MonoBehaviour
         MusicManager.Instance.PlayCombatMusicBasedOnBattleSize();
         InvokeRepeating("GameOverCheck", 2, 2);
     } 
+    private void FastUpdate()
+    {
+        UpdateGUI();
+    }
     private void AIBrain()
     {
         switch (aiState)
         {
             case combatStrategy.Attack:
-                AIRaisePursueRadius();
-                AITryToCharge();
                 AICheckIfBraceNeeded();
+                break;
+            case combatStrategy.Defend:
+                AISetDefaultPursueRadius();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void AIBrainSlow()
+    {
+        switch (aiState)
+        {
+            case combatStrategy.Attack: 
+                AITryToCharge(); 
                 break;
             case combatStrategy.Defend:
                 AISetDefaultPursueRadius();
@@ -645,7 +665,7 @@ public class FightManager : MonoBehaviour
         UpdateGUI();
     }
     public void UpdateGUI()
-    { 
+    {
         bool isSelectedRanged = false;
         bool isSelectedMelee = false;
         int numberOfRanged = 0;
@@ -670,7 +690,17 @@ public class FightManager : MonoBehaviour
         int numActuallySelected = 0;
 
         foreach (FormationPosition formation in selectedFormations)
-        { 
+        {
+            if (selectedFormations.Count == 1)
+            { 
+                staminaSlider.value = formation.stamina;
+                staminaSlider.maxValue = formation.maxStamina;
+                staminaSlider.enabled = true;
+            }
+            else
+            {
+                staminaSlider.enabled = false;
+            }
             if (formation.chargeRecharged)
             {
                 setChargeButton.interactable = true;
@@ -708,7 +738,7 @@ public class FightManager : MonoBehaviour
                 }
             }
 
-            if (formation.soldierBlock.mageType == "Gallowglass")
+            if (formation.soldierBlock.mageType == SoldierBlock.MageTypes.Gallowglass)
             { 
                 magicUI.SetActive(true);
                 if (formation.abilityCharged)
@@ -719,32 +749,32 @@ public class FightManager : MonoBehaviour
             }
 
             // change abilities 
-            mageHeader.text = formation.soldierBlock.mageType;
+            mageHeader.text = formation.soldierBlock.mageType.ToString();
             TMP_Text text = mageAbility1.GetComponentInChildren<TMP_Text>();
             TMP_Text text2 = mageAbility2.GetComponentInChildren<TMP_Text>();
             mageAbility1.enabled = true;
             mageAbility2.enabled = true;
-            if (formation.soldierBlock.mageType == "Pyromancer")
+            if (formation.soldierBlock.mageType == SoldierBlock.MageTypes.Pyromancer)
             { 
                 text.text = "Fireball";
                 text2.text = "Smokescreen";
             }
-            if (formation.soldierBlock.mageType == "Gallowglass")
+            if (formation.soldierBlock.mageType == SoldierBlock.MageTypes.Gallowglass)
             {
                 text.text = "Chaff Bombs";
                 mageAbility2.gameObject.SetActive(false);
             }
-            if (formation.soldierBlock.mageType == "Eldritch")
+            if (formation.soldierBlock.mageType == SoldierBlock.MageTypes.Eldritch)
             {
                 text.text = "Eldritch Morass";
                 text2.text = "Auroral Barrier";
             }
-            if (formation.soldierBlock.mageType == "Seele")
+            if (formation.soldierBlock.mageType == SoldierBlock.MageTypes.Seele)
             {
                 text.text = "Raise Dead";
                 text2.text = "Curse Foe";
             }
-            if (formation.soldierBlock.mageType == "Flammen")
+            if (formation.soldierBlock.mageType == SoldierBlock.MageTypes.Flammen)
             {
                 text.text = "Disgorge Flame";
                 mageAbility2.gameObject.SetActive(false);
@@ -917,6 +947,7 @@ public class FightManager : MonoBehaviour
     {
         if (OverworldToFieldBattleManager.Instance.state == OverworldToFieldBattleManager.possibleGameStates.FieldBattle)
         {
+            //UpdateGUI();
             if (placingSoldiers)
             {
                 if (!hoveringUI)
@@ -1145,14 +1176,34 @@ public class FightManager : MonoBehaviour
         if (selectedFormations.Count == 1)
         { 
             if (Input.GetMouseButtonDown(0))
-            {
+            {  
                 foreach (FormationPosition item in selectedFormations)
                 {
-                    item.CastMagic(forceFireTarget.transform.position, abilityNumber);
+                    if (item.soldierBlock.mageType != SoldierBlock.MageTypes.None)
+                    { 
+                        float dist = Vector3.Distance(item.transform.position, forceFireTarget.transform.position);
+                        if (abilityNumber == 0)
+                        { 
+                            if (dist < item.soldierBlock.ability1Range)
+                            {
+                                item.CastMagic(forceFireTarget.transform.position, abilityNumber); 
+                                UpdateGUI();
+                                magicTargeting = false;
+                                forceFireTarget.SetActive(false);
+                            }
+                        }
+                        else
+                        { 
+                            if (dist < item.soldierBlock.ability2Range)
+                            {
+                                item.CastMagic(forceFireTarget.transform.position, abilityNumber);
+                                UpdateGUI();
+                                magicTargeting = false;
+                                forceFireTarget.SetActive(false);
+                            }
+                        }
+                    }
                 }
-                UpdateGUI();
-                magicTargeting = false;
-                forceFireTarget.SetActive(false);
             }
         }
         else
@@ -1295,13 +1346,7 @@ public class FightManager : MonoBehaviour
         }
         UpdateGUI();
     }
-    public Slider staminaSlider;
-    public void UpdateStamina(int stamina, int maxStamina)
-    {
-        staminaSlider.value = stamina;
-        staminaSlider.maxValue = maxStamina;
-        UpdateGUI();
-    }
+    public Slider staminaSlider; 
     private void ForceFireLeftClickCheck()
     {
         //
@@ -1745,7 +1790,7 @@ public class FightManager : MonoBehaviour
         }
         if (Input.GetMouseButton(1) && !wasFocusFiring && !wasMagicTargeting) //update lines while held
         { 
-            if (selectedFormations.Count == 1)
+            if (selectedFormations.Count == 1) //Hold and drag to set direction to face (not currently working)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
                 float distanceSoFar = 9999;
@@ -1772,7 +1817,7 @@ public class FightManager : MonoBehaviour
                     }
                 }
             }
-            else if (selectedFormations.Count > 1)
+            else if (selectedFormations.Count > 1) //Hold and drag to create a line of positions for units to move to
             { 
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -1808,9 +1853,8 @@ public class FightManager : MonoBehaviour
                     } 
                 }
             } 
-        }
-
-        if (Input.GetMouseButtonUp(1) && !wasFocusFiring && !wasMagicTargeting) //set rotation and confirm movement
+        } 
+        if (Input.GetMouseButtonUp(1) && !wasFocusFiring && !wasMagicTargeting) //CONFIRM MOVEMENT on release mouse
         { 
             if (selectedFormations.Count == 1)
             {
@@ -1870,8 +1914,8 @@ public class FightManager : MonoBehaviour
                 {
                     formList.Add(selForm);
                 }
-                if (lineFormationPosList.Count > 1)
-                {
+                if (lineFormationPosList.Count > 1) //everybody go to each point
+                { 
                     foreach (Vector3 pos in lineFormationPosList) //for each point
                     {
                         FormationPosition tempFormPos = null;
@@ -1896,9 +1940,9 @@ public class FightManager : MonoBehaviour
                         formList.Remove(tempFormPos); //so it can't be chosen again //if this becomes a problem then make another list
                     }
                 }
-                else if (lineFormationPosList.Count == 1)
+                else if (lineFormationPosList.Count == 1) //move everyone forward
                 { 
-                    //get avg pos
+                    //get avg pos of selected formations
                     float x = 0;
                     float y = 0;
                     float z = 0;
@@ -1919,13 +1963,19 @@ public class FightManager : MonoBehaviour
                     foreach (FormationPosition form in selectedFormations)
                     {
                         GameObject child = Instantiate(forceFireTargetPrefab, form.transform.position, Quaternion.identity, parent.transform);
+                        child.name = "AVERAGEDESTINATIONMARKER";
                         dests.Add(child);
                     }
                     //parent gameobjects to big one
 
                     Vector3 heading = lineFormationPosList[0] - avg;
-                    //rotate parent to face destination 
-                    parent.transform.rotation = Quaternion.LookRotation(heading, Vector3.up);
+                     
+                    float threshold = 50;
+                    if (Vector3.Angle(heading, -transform.forward) > threshold) //only rotate if destination is not behind us
+                    {
+                        //rotate parent to face destination 
+                        parent.transform.rotation = Quaternion.LookRotation(heading, Vector3.up);
+                    } 
 
                     //move parent to destination
                     parent.transform.position = lineFormationPosList[0];
@@ -1944,8 +1994,8 @@ public class FightManager : MonoBehaviour
                         form.obeyingMovementOrder = true;
                         form.shouldRotateToward = false;
                     } 
-                }
-
+                    Destroy(parent);
+                } 
             }
         }
     }

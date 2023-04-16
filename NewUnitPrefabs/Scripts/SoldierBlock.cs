@@ -9,7 +9,13 @@ public class SoldierBlock : MonoBehaviour
     public Row frontRow; 
     [SerializeField] private GameObject soldierPrefab;
     [SerializeField] private GameObject magePrefab; 
-    public string mageType = ""; //Pyromancer, Gallowglass
+    public enum MageTypes {
+        None, Pyromancer, Gallowglass, Eldritch, Flammen, Seele
+    }
+    public MageTypes mageType;
+    public float ability1Range = 25;
+    public float ability2Range = 25;
+
     public Transform modelParent; 
     public Position[] formationPositions; //all, max 80
     public List<Position> magePositions;
@@ -29,7 +35,7 @@ public class SoldierBlock : MonoBehaviour
 
     public List<Position> retreatPositions;
 
-    public float modelAttackRange = 4.5f;
+    [HideInInspector] public float modelAttackRange = 4.5f;
 
     public float desiredWalkingSpeed = 3;
     public bool melee = true;
@@ -98,6 +104,14 @@ public class SoldierBlock : MonoBehaviour
                     formPos.numberOfAliveSoldiers++;
                     //getmodel
                     SoldierModel model = soldier.GetComponentInChildren<SoldierModel>();
+                    if (model.attackType == SoldierModel.AttackType.Melee || model.attackType == SoldierModel.AttackType.CavalryCharge)
+                    { 
+                        modelAttackRange = model.meleeAttackRange;
+                    }
+                    else
+                    { 
+                        modelAttackRange = model.rangedAttackRange;
+                    }
                     model.target = position.transform;
                     model.modelPosition = position;
                     rowItem.modelsInRow.Add(model);

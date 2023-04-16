@@ -6,7 +6,8 @@ using Pathfinding;
 using System.Threading;
 using System.Threading.Tasks;
 public class SoldierModel : MonoBehaviour
-{  
+{
+    public MagicModule magicModule;
     #region AssignedAtStart
 
     private NavmeshCut navMeshCutter;
@@ -68,10 +69,12 @@ public class SoldierModel : MonoBehaviour
     //[SerializeField] private bool stopWhenAttacking = true;
     [SerializeField] private bool whenDamagedSwitchToDamagedState = true;
     //[SerializeField] private bool stopWhenLoading = true;  
-    [SerializeField] private bool attacksBreakEnemyCohesion = false; //when hitting an enemy, can we then pass through them?
+    [SerializeField] private bool attacksBreakEnemyCohesion = false; //when hitting an enemy, can we then pass through them? //cavalry ability
+    [SerializeField] private bool attacksSplinterEnemyCohesion = false; //hitting enemies lowers their collider size
+    [SerializeField] private int inflictSplinterAmount = 1;
     //[SerializeField] private bool directionalAttacks = false;
     //[SerializeField] private float angleOfAttack = 20; 
-    
+
     [SerializeField] private float defaultStoppingDistance = 0.01f; //could deprecate 
     public float meleeAttackRange = 1;
     public float rangedAttackRange = 160;
@@ -163,7 +166,8 @@ public class SoldierModel : MonoBehaviour
     public Transform target;
 
     [Range(0, 1f)]
-    [SerializeField] private float dispersalLevel;
+    public float dispersalLevel;
+    public float oldDispersalLevel;
     private Vector3 dispersalVector;
 
     public void PlaceOnGround()
@@ -180,6 +184,7 @@ public class SoldierModel : MonoBehaviour
 
     private void Awake()
     {
+        magicModule = GetComponent<MagicModule>();
         modelLayerMask = LayerMask.GetMask("Model");
         #region Initializations 
         if (attackType == AttackType.Ranged)
@@ -255,12 +260,14 @@ public class SoldierModel : MonoBehaviour
 
         if (attackType == AttackType.Melee)
         {
+            attackRange = meleeAttackRange;
             SetDeployed(false);
             animator.SetBool(AnimatorDefines.meleeID, true);
             animator.SetInteger(AnimatorDefines.ammoID, 999);
         }
         else
         {
+            attackRange = rangedAttackRange;
             SetDeployed(true); //ranged is always deployed . . . ? for now.
             animator.SetBool(AnimatorDefines.meleeID, false);
         }
@@ -271,37 +278,38 @@ public class SoldierModel : MonoBehaviour
         animator.cullingMode = AnimatorCullingMode.CullCompletely;
         //animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
         pathfindingAI.enableRotation = true;
-
+        oldDispersalLevel = dispersalLevel;
         GenerateDispersalVector(dispersalLevel);
         //animator.enabled = false;
     }
-    private void OnEnable()
+    /* private void OnEnable()
+     {
+         if (pathfindingAI != null)
+         {
+             pathfindingAI.onSearchPath += UpdateDestinationPosition; //subscribe to event
+         } 
+     }
+     private void OnDisable()
+     {
+         if (pathfindingAI != null)
+         {
+             pathfindingAI.onSearchPath -= UpdateDestinationPosition;
+         } 
+     } 
+     *//*void Update()
+     {
+         pathfindingAI.destination = target.position + dispersalVector;
+     }*/
+    /// <summary>
+    /// Sets destination, that's all. use search path to actually calculate and go to 
+    /// </summary>
+    public void UpdateDestinationPosition() 
     {
-        if (pathfindingAI != null)
-        {
-            pathfindingAI.onSearchPath += UpdateDestinationPosition; //subscribe to event
-        } 
+        pathfindingAI.destination = target.position + dispersalVector; 
     }
-    private void OnDisable()
+    public void GenerateDispersalVector(float dispersal)
     {
-        if (pathfindingAI != null)
-        {
-            pathfindingAI.onSearchPath -= UpdateDestinationPosition;
-        } 
-    } 
-    /*void Update()
-    {
-        pathfindingAI.destination = target.position + dispersalVector;
-    }*/
-    public void UpdateDestinationPosition()
-    //public async void UpdateDestinationPosition() //call whenever you want path to be updated
-    {
-        pathfindingAI.destination = target.position + dispersalVector; //sets destination, that's all. use search path to actually calculate and go to
-        //await Task.Yield();s
-    }
-    public void GenerateDispersalVector(float dispersalLevel)
-    {
-        dispersalVector = new Vector3(UnityEngine.Random.Range(-dispersalLevel, dispersalLevel), 0, UnityEngine.Random.Range(-dispersalLevel, dispersalLevel));
+        dispersalVector = new Vector3(UnityEngine.Random.Range(-dispersal, dispersal), 0, UnityEngine.Random.Range(-dispersal, dispersal));
     }
     public bool IsVisible()
     {
@@ -867,8 +875,7 @@ public class SoldierModel : MonoBehaviour
         }
     }
     private bool CheckIfInAttackRange()
-    {
-        //return (Vector3.Distance(transform.position, targetEnemy.transform.position) <= attackRange);
+    { 
         return Helper.Instance.GetSquaredMagnitude(transform.position, targetEnemy.transform.position) <= Mathf.Pow(attackRange, 2);
     }
     private bool HasTarget()
@@ -1059,7 +1066,7 @@ public class SoldierModel : MonoBehaviour
             if (pendingLaunched)
             { 
                 float maxDistance = 0.01f;
-                Vector3 heading = (pendingDamageSource.position - transform.position).normalized;
+                Vector3 heading = (transform.position-pendingDamageSource.position).normalized;
                 //Vector3 pos = transform.position + (-heading * maxDistance); //launch them in the opposite direction please
                 LaunchModel(heading, 1, pendingDamageSource.position);
                 pendingLaunched = false;
@@ -1156,14 +1163,14 @@ public class SoldierModel : MonoBehaviour
                     force = normalizedSpeed * 2; 
                 } 
                 
-                if (braced) //if we're braced, and they're charging
+                /*if (braced) //if we're braced, and they're charging
                 {
                     if (enemy.formPos.charging || enemy.formPos.formationType == FormationPosition.FormationType.Cavalry)
                     {
                         float stunTime = 3;
                         enemy.formPos.FreezeMovement(stunTime);
                     }
-                }
+                }*/
             }
             else if (attackType == AttackType.CavalryCharge)
             {
@@ -1186,6 +1193,10 @@ public class SoldierModel : MonoBehaviour
             if (attacksBreakEnemyCohesion && !enemy.braced)
             {
                 enemy.formPos.BreakCohesion();
+            }
+            if (attacksSplinterEnemyCohesion && !enemy.braced)
+            { 
+                enemy.formPos.SplinterCohesion(inflictSplinterAmount);
             }
             if (launchEnemy && !enemy.formPos.braced) //attacksCanLaunchEnemies && launchEnemy
             {
@@ -1210,7 +1221,7 @@ public class SoldierModel : MonoBehaviour
             impactSource.PlayOneShot(attackSounds[UnityEngine.Random.Range(0, attackSounds.Count)]);
         }
     }
-    public void SufferDamage(float dmg, float armorPiercingDmg, SoldierModel origin, float damageMultiplier = 1)
+    public void SufferDamage(float dmg, float armorPiercingDmg, SoldierModel origin = null, float damageMultiplier = 1)
     {  
         float damageAfterArmor = dmg - armor;
         damageAfterArmor = Mathf.Clamp(damageAfterArmor, 0, 999);
@@ -1282,7 +1293,7 @@ public class SoldierModel : MonoBehaviour
         missile.formPosParent = formPos; //communicate some info to the missile
         missile.soldierParent = this;
         missile.startingPos = startingPos;
-        pathfindingAI.enabled = false; //disable pathing for now 
+        //pathfindingAI.enabled = false; //disable pathing for now 
         //missile.LaunchProjectile(targetPos, angle, deviation); //fire at the position of the target with a clamped angle and deviation based on distance 
         missile.LaunchBullet(dir, power);
     } 
@@ -1457,10 +1468,15 @@ public class SoldierModel : MonoBehaviour
     {
         /*Gizmos.DrawWireSphere(transform.position, attackRange);
         Gizmos.color = Color.green; */
-        if (targetEnemy != null)
+        if (attackType == AttackType.Melee)
         { 
-            Gizmos.DrawWireSphere(targetEnemy.transform.position, 1);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, meleeAttackRange);
+        }
+        if (targetEnemy != null)
+        {
             Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(targetEnemy.transform.position, 1);
         }
     }
     public void StopAttackingWhenNoEnemiesNearby()

@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 29422916108755641, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
+      propertyPath: soldierType
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 98565761933592747, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -18,7 +22,7 @@ PrefabInstance:
     - target: {fileID: 5955700111243193916, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: soldierPrefab
       value: 
-      objectReference: {fileID: 4185766575847687319, guid: 28476b1f70859e442a186902caebe826, type: 3}
+      objectReference: {fileID: 6304145186899354199, guid: e62d4c6728e46c84cb0751fb985b1049, type: 3}
     - target: {fileID: 5955700111243193917, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: m_RootOrder
       value: 0

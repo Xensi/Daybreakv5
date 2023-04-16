@@ -21,15 +21,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
       propertyPath: armor
-      value: 2.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
-      propertyPath: damage
-      value: 7.5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
       propertyPath: health
       value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: hitThreshold
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
       propertyPath: timeUntilDamage

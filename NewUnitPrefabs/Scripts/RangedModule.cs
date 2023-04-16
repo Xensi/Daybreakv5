@@ -243,7 +243,7 @@ public class RangedModule : MonoBehaviour
         ManualUpdateTargetPosition(); 
         await Task.Yield();
     }
-    public void MageCastProjectile(Vector3 targetPos, int abilityNum, string mageType) //let's fire projectiles at a target
+    public void MageCastProjectile(Vector3 targetPos, int abilityNum, SoldierBlock.MageTypes mageType) //let's fire projectiles at a target
     {
         model.magicCharged = false;
         model.formPos.modelAttacked = true;
@@ -257,14 +257,14 @@ public class RangedModule : MonoBehaviour
         float angle = 0;
         angle = dist * 0.5f;
         float clamped = Mathf.Clamp(angle, 0, 45);
-        if (mageType == "Pyromancer")
+        if (mageType == SoldierBlock.MageTypes.Pyromancer)
         {
             if (abilityNum == 0)
             {
                 clamped = 60;
             }
         }
-        if (mageType == "Gallowglass")
+        if (mageType == SoldierBlock.MageTypes.Gallowglass)
         {
             if (abilityNum == 0)
             {
@@ -446,11 +446,11 @@ public class RangedModule : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if (model.alive && !model.formPos.routing && hasTarget && model.hasClearLineOfSight)
+        /*if (model.alive && !model.formPos.routing && hasTarget && model.hasClearLineOfSight)
         { 
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(targetPos, 1);
-        }
+        }*/
     }
     private ProjectileDataClass CalculateProjectileInformation(Vector3 startPos, Vector3 targetPos)
     {
