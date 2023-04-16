@@ -38,9 +38,7 @@ public class SoldierBlock : MonoBehaviour
 
     public bool hasSpecialVeterans = false;
 
-    public List<ProjectileFromSoldier> listProjectiles;
-
-    public bool useActualMaxSpeed = true;
+    public List<ProjectileFromSoldier> listProjectiles; 
     public float forcedMaxSpeed = 0;
 
     [SerializeField] private bool manuallyAssignRows = false;
@@ -70,7 +68,7 @@ public class SoldierBlock : MonoBehaviour
         formPos.team = teamType;
         int num = 0;
         int increment = 0;
-        if (formPos.isCavalry)
+        if (formPos.formationType == FormationPosition.FormationType.Cavalry)
         {
             formPos.walkingSpeed = desiredWalkingSpeed * .75f;
         }

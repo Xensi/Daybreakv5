@@ -1284,15 +1284,23 @@ public class FightManager : MonoBehaviour
         }
         formationToFocusFire = null;
     }
-    public void ChargeCommand()
+    public void OrderCharge()
     {
         foreach (FormationPosition item in selectedFormations)
         { 
-            if (item.soldierBlock.melee)
+            if (item.soldierBlock.melee && item.chargeRecharged)
             {
                 item.StartCharging();
             }
         }
+        UpdateGUI();
+    }
+    public Slider staminaSlider;
+    public void UpdateStamina(int stamina, int maxStamina)
+    {
+        staminaSlider.value = stamina;
+        staminaSlider.maxValue = maxStamina;
+        UpdateGUI();
     }
     private void ForceFireLeftClickCheck()
     {
@@ -1846,7 +1854,7 @@ public class FightManager : MonoBehaviour
                             item.shouldRotateToward = false;
                         } 
                         item.aiTarget.transform.position = item.destinationsList[0];
-                        item.SetAndSearchPath();
+                        item.SetDestAndSearchPath();
                         SetTransformOnGround(item.aiTarget.transform, "GroundForm");
 
                         item.CheckIfRotateOrNot();
@@ -1878,7 +1886,7 @@ public class FightManager : MonoBehaviour
                             }
                         }
                         tempFormPos.aiTarget.transform.position = pos; //tell closest formation to go there  
-                        tempFormPos.SetAndSearchPath();
+                        tempFormPos.SetDestAndSearchPath();
                         SetTransformOnGround(tempFormPos.aiTarget.transform, "GroundForm");
                         tempFormPos.destinationsList.Clear();
                         tempFormPos.destinationsList.Add(pos);
@@ -1928,7 +1936,7 @@ public class FightManager : MonoBehaviour
                         Vector3 pos = dests[i].transform.position;
 
                         form.aiTarget.transform.position = pos; //tell closest formation to go there 
-                        form.SetAndSearchPath();
+                        form.SetDestAndSearchPath();
                         SetTransformOnGround(form.aiTarget.transform, "GroundForm");
                         form.destinationsList.Clear();
                         form.destinationsList.Add(pos);

@@ -14,21 +14,7 @@ public class AttackBox : MonoBehaviour
         SphereCollider[] array = GetComponents<SphereCollider>();
         colliders.AddRange(array);
 
-        if (!isCavalry)
-        {
-            ToggleAttackBox(false);
-        }
-    }
-    public void ToggleAttackBox(bool val)
-    {
-        foreach (SphereCollider col in colliders)
-        {
-            col.enabled = val;
-        }
-    }
-    public void Rearm()
-    {
-        canDamage = true;
+        ToggleAttackBox(isCavalry);
     }
 
     public void ApproximateCharge()
@@ -58,31 +44,60 @@ public class AttackBox : MonoBehaviour
         }
     }
 
-    private void Impact(Collider other)
+    public void Rearm()
     {
+        canDamage = true; 
+        if (isCavalry || parentModel.formPos.charging) //if we are cavalry or they are charging we should turn the collider on
+        {
+            ToggleAttackBox(true);
+        }
+    }
+    public void Disarm()
+    {
+        canDamage = false;
+        ToggleAttackBox(false);
+    }
+    public void ToggleAttackBox(bool val)
+    {
+        foreach (SphereCollider col in colliders)
+        {
+            col.enabled = val;
+        }
+    }
+    private void Impact(Collider other)
+    { 
+        //Debug.Log("collision");
         if (isCavalry)
         {
             float unitSpeed = parentModel.normalizedSpeed;
             float speedThreshold = 0.5f;
             if (other.gameObject.tag == "Hurtbox") //
             {
-                if (canDamage && parentModel.moving && unitSpeed > speedThreshold)
+                 
+                if (canDamage && parentModel.currentModelState == SoldierModel.ModelState.Moving && unitSpeed > speedThreshold)
                 {
                     float toleranceForKnockDown = 2;
-                    SoldierModel hitModel = other.GetComponentInParent<SoldierModel>();
+                    SoldierModel hitModel = other.GetComponentInParent<SoldierModel>(); 
                     if (hitModel != null && hitModel.alive && hitModel.team != parentModel.team && !hitModel.airborne && hitModel.getUpTime <= toleranceForKnockDown)
                     {
-                        canDamage = false;
-                        parentModel.DealDamage(hitModel, true, true);
+                        //Debug.Log("Launching");
+                        Disarm();
+                        bool canWeLaunchThem = false;
+                        if (hitModel.formPos.formationType != FormationPosition.FormationType.Cavalry)
+                        {
+                            canWeLaunchThem = true;
+                        }
+                        parentModel.DealDamage(hitModel, canWeLaunchThem, true, false);
                         parentModel.currentAttackTime = 0;
                     }
                 }
-                else if (!canDamage && parentModel.moving && unitSpeed > speedThreshold) //trample
+                else if (!canDamage && parentModel.currentModelState == SoldierModel.ModelState.Moving && unitSpeed > speedThreshold) //trample
                 {
                     SoldierModel hitModel = other.GetComponentInParent<SoldierModel>();
                     if (hitModel != null && hitModel.alive && hitModel.team != parentModel.team && !hitModel.airborne && !hitModel.knockedDown)
                     {
-                        canDamage = false;
+                        //Debug.Log("Trampling");
+                        Disarm();
                         parentModel.DealDamage(hitModel, false, true, true);
                         parentModel.currentAttackTime = 0;
                     }
@@ -102,7 +117,7 @@ public class AttackBox : MonoBehaviour
                         SoldierModel hitModel = other.GetComponentInParent<SoldierModel>();
                         if (hitModel != null && hitModel.alive && hitModel.team != parentModel.team && hitModel.normalizedSpeed > speedThreshold && !hitModel.airborne && hitModel.getUpTime <= toleranceForKnockDown)
                         {
-                            canDamage = false;
+                            Disarm();
                             parentModel.DealDamage(hitModel, false, false);
                             parentModel.currentAttackTime = 0;
                         }
@@ -116,8 +131,13 @@ public class AttackBox : MonoBehaviour
                         SoldierModel hitModel = other.GetComponentInParent<SoldierModel>();
                         if (hitModel != null && hitModel.alive && hitModel.team != parentModel.team && !hitModel.airborne && hitModel.getUpTime <= toleranceForKnockDown)
                         {
-                            canDamage = false;
-                            parentModel.DealDamage(hitModel, true, false);
+                            Disarm();
+                            bool canWeLaunchThem = false;
+                            if (hitModel.formPos.formationType != FormationPosition.FormationType.Cavalry)
+                            {
+                                canWeLaunchThem = true;
+                            }
+                            parentModel.DealDamage(hitModel, canWeLaunchThem, false);
                             parentModel.currentAttackTime = 0;
                         }
                     }

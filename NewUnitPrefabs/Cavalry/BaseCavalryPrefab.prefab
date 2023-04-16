@@ -7,9 +7,93 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 147310995378209704, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: maxSpeed
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 147310995378209704, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: acceleration
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 147310995378209704, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: slowdownTime
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 147310995378209704, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: funnelSimplification
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 147310995378209704, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: slowWhenNotFacingTarget
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 516568650834671651, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: graphMask.value
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2760982560612019990, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: canDamage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2760982560612019990, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: isCavalry
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3971422626699966185, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4765765097325646491, guid: ea9127458b64e3645923071d64961f81, type: 3}
       propertyPath: m_Name
-      value: BaseInfantryPrefab
+      value: BaseCavalryPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: damage
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: health
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: attackType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: impactAttacks
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: stopWhenLoading
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: currentAttackTime
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: stopWhenAttacking
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: attacksFaceEnemies
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: armorPiercingDamage
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: canOnlyAttackWhileMoving
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: attacksBreakEnemyCohesion
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6543225988548055444, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: whenDamagedSwitchToDamagedState
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7675737144119584954, guid: ea9127458b64e3645923071d64961f81, type: 3}
       propertyPath: m_RootOrder
@@ -55,5 +139,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7295892263859704113, guid: ea9127458b64e3645923071d64961f81, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ea9127458b64e3645923071d64961f81, type: 3}

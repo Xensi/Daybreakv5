@@ -4749,7 +4749,6 @@ MonoBehaviour:
   canBeRanged: 0
   hasSpecialVeterans: 1
   listProjectiles: []
-  useActualMaxSpeed: 1
   forcedMaxSpeed: 0
   manuallyAssignRows: 0
   manager: {fileID: 0}
@@ -4861,7 +4860,7 @@ MonoBehaviour:
   usesSpears: 1
   formationType: 0
   shaker: {fileID: 0}
-  AIIntelligence: 50
+  AIIntelligence: 10
   aiBraceRadius: 75
   routing: 0
   chargeRecharged: 1
@@ -4934,7 +4933,6 @@ MonoBehaviour:
   normRotate: 30
   secondRowOffsetAmount: 0
   formationCollider: {fileID: 7099927655301527777}
-  isCavalry: 0
   freezeFormPos: 0
   freezeTimer: 0
   cohesionTimer: 0

@@ -28,6 +28,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3751644116555195528}
   m_Father: {fileID: 0}
@@ -66,7 +67,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   graphMask:
-    value: 1
+    value: 5
   type: 1
   mesh: {fileID: 0}
   rectangleSize: {x: 1, y: 1}
@@ -141,13 +142,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 97e4bb11fd981cc4a9e5ec509fd0e562, type: 3}
---- !u!4 &3751644116555195528 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: 97e4bb11fd981cc4a9e5ec509fd0e562, type: 3}
-  m_PrefabInstance: {fileID: 8172398061778980754}
-  m_PrefabAsset: {fileID: 0}
 --- !u!23 &1907005775628214855 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: -1504981713932161579, guid: 97e4bb11fd981cc4a9e5ec509fd0e562, type: 3}
+  m_PrefabInstance: {fileID: 8172398061778980754}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &3751644116555195528 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -4216859302048453862, guid: 97e4bb11fd981cc4a9e5ec509fd0e562, type: 3}
   m_PrefabInstance: {fileID: 8172398061778980754}
   m_PrefabAsset: {fileID: 0}

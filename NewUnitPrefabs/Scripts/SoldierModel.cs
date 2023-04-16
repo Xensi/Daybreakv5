@@ -64,17 +64,13 @@ public class SoldierModel : MonoBehaviour
     private float currentRecoveryTime = 0;
     [SerializeField] private float requiredAttackTime = 3;
     public float currentAttackTime = 3; 
-
-    [SerializeField] private bool usesChargeDamage = false;
-    [SerializeField] private bool stopWhenAttacking = true;
-    [SerializeField] private bool stopWhenDamaged = true;
-    [SerializeField] private bool stopWhenLoading = true; 
-    [SerializeField] private bool canOnlyAttackWhileMoving = false;
-    [SerializeField] private bool attacksBreakEnemyCohesion = false;
-    [SerializeField] private bool directionalAttacks = false;
-    [SerializeField] private float angleOfAttack = 20;
-    [SerializeField] private bool attacksFaceEnemies = true;
-    [SerializeField] private bool impactAttacks = false;
+     
+    //[SerializeField] private bool stopWhenAttacking = true;
+    [SerializeField] private bool whenDamagedSwitchToDamagedState = true;
+    //[SerializeField] private bool stopWhenLoading = true;  
+    [SerializeField] private bool attacksBreakEnemyCohesion = false; //when hitting an enemy, can we then pass through them?
+    //[SerializeField] private bool directionalAttacks = false;
+    //[SerializeField] private float angleOfAttack = 20; 
     
     [SerializeField] private float defaultStoppingDistance = 0.01f; //could deprecate 
     public float meleeAttackRange = 1;
@@ -97,12 +93,12 @@ public class SoldierModel : MonoBehaviour
     public float movingSpeed = 0;
     [HideInInspector] public bool alive = true;
     [HideInInspector] public bool attacking = false;
-    [HideInInspector] public bool moving = false;
+    //public bool moving = false;
     public bool damaged = false;
     private bool deployed = false;
     private bool idle = false;
-    [HideInInspector] public bool knockedDown = false;
-    [HideInInspector] public bool airborne = false;
+    public bool knockedDown = false;
+    public bool airborne = false;
     public SoldierModel targetEnemy;
     [HideInInspector] public bool pendingLaunched = false;
     public bool hasClearLineOfSight = false; 
@@ -333,7 +329,7 @@ public class SoldierModel : MonoBehaviour
             navMeshCutter.enabled = val;
         }
     }
-    public void Rout()
+    public void ModelStartRouting()
     {
         float dispersalModifier = 4;
         GenerateDispersalVector(dispersalLevel * dispersalModifier);
@@ -368,12 +364,7 @@ public class SoldierModel : MonoBehaviour
         animator.SetBool(AnimatorDefines.attackingID, val); //and animations will match 
         animator.SetInteger(AnimatorDefines.randomAttackID, UnityEngine.Random.Range(0, numRandAttackAnims-1));
         formPos.modelAttacking = val;
-    }
-    private void SetDamaged(bool val)
-    {
-        damaged = val;
-        animator.SetBool(AnimatorDefines.damagedID, val); //and animations will match 
-    }
+    } 
     private void SetAlive(bool val)
     {
         alive = val;
@@ -430,7 +421,7 @@ public class SoldierModel : MonoBehaviour
             case ModelState.Attacking: //swinging
                 CheckIfCanDealDamage();
                 break;
-            case ModelState.Moving:
+            case ModelState.Moving: 
                 //UpdateDestination();
                 UpdateSpeed();
                 //if destination close enough
@@ -467,8 +458,11 @@ public class SoldierModel : MonoBehaviour
             case ModelState.Charging:
                 //UpdateDestination();
                 UpdateSpeed();
+                CheckIfCanSwitchToAttacking();
                 break; 
-            case ModelState.Routing: //just run! 
+            case ModelState.Routing: //just run!
+                pathfindingAI.enableRotation = true;
+                deployed = false;
                 UpdateSpeed();
                 break;
             case ModelState.Dead:
@@ -566,8 +560,8 @@ public class SoldierModel : MonoBehaviour
         }
         else
         { 
-            PlayAttackChatter(); 
-            BeginAttack();
+            PlayAttackChatter();
+            BeginAttack(); 
         } 
     }
     private void CheckIfShouldDeploy()
@@ -654,8 +648,33 @@ public class SoldierModel : MonoBehaviour
     }
     private void CheckIfCanSwitchToAttacking()
     {
+        if (attackType == AttackType.CavalryCharge)
+        {
+            //if attack box is not armed, then get ready to rearm it
+            if (!attackBox.canDamage && !IfAttackIsReady())
+            {
+                currentAttackTime += deltaTime;
+            }
+            else
+            {
+                currentAttackTime = 0;
+                attackBox.Rearm();
+            }
+        }
+        else if (attackType == AttackType.Melee && formPos.charging)
+        {
+            if (!attackBox.canDamage && !IfAttackIsReady())
+            {
+                currentAttackTime += deltaTime;
+            }
+            else
+            {
+                currentAttackTime = 0;
+                attackBox.Rearm();
+            }
+        }
         //if melee
-        if (attackType == AttackType.Melee && deployed)
+        else if (attackType == AttackType.Melee && deployed)
         {  
             if (!IfAttackIsReady()) //if not ready to attack, start getting ready
             {
@@ -895,7 +914,7 @@ public class SoldierModel : MonoBehaviour
     }
     public void TargetClosestEnemyModel()
     {
-        if (directionalAttacks)
+        /*if (directionalAttacks)
         {
             //rule out any that aren't in our viewing angle
 
@@ -911,7 +930,7 @@ public class SoldierModel : MonoBehaviour
                     model.ignoreAsNearby = false;
                 }
             }
-        }
+        }*/
         float initDist = Helper.Instance.GetSquaredMagnitude(transform.position, nearbyEnemyModels[0].transform.position);
         float compareDist = initDist;
 
@@ -930,13 +949,7 @@ public class SoldierModel : MonoBehaviour
             }
         }
     }
-    /*if (impactAttacks || formPos.charging)
-        {
-            if (attackBox != null)
-            {
-                attackBox.Rearm();
-            }
-        }*/ 
+    
     private void SetSpeedNull()
     {
         float dampTime = .1f;
@@ -1080,10 +1093,10 @@ public class SoldierModel : MonoBehaviour
     }
     public void SetMoving(bool val)
     {
-        moving = val;
+        /*moving = val;
         pathfindingAI.canMove = val; //we can move 
         //animator.SetBool("moving", val); //and animations will match 
-        animator.SetBool(AnimatorDefines.movingID, val);
+        animator.SetBool(AnimatorDefines.movingID, val);*/
     }
     public void UpdateMageTimer()
     { 
@@ -1137,21 +1150,24 @@ public class SoldierModel : MonoBehaviour
                         int time = 10;
                         enemy.formPos.SoftRout(time);
                     }
+                }  
+                if (formPos.charging)
+                {
+                    force = normalizedSpeed * 2; 
                 } 
-
-                if (usesChargeDamage)
+                
+                if (braced) //if we're braced, and they're charging
                 {
-                    force = normalizedSpeed;
+                    if (enemy.formPos.charging || enemy.formPos.formationType == FormationPosition.FormationType.Cavalry)
+                    {
+                        float stunTime = 3;
+                        enemy.formPos.FreezeMovement(stunTime);
+                    }
                 }
-                else if (formPos.charging)
-                {
-                    force = normalizedSpeed * 2;
-                    //Debug.Log(damage * force);
-                }
-                if (attacksBreakEnemyCohesion && !enemy.braced)
-                {
-                    enemy.formPos.BreakCohesion();
-                }
+            }
+            else if (attackType == AttackType.CavalryCharge)
+            {
+                force = normalizedSpeed;
                 if (knockDown && !enemy.formPos.braced) //can't knock down braced units
                 {
                     float getUpTime = knockDownForSecondsMax;
@@ -1163,19 +1179,14 @@ public class SoldierModel : MonoBehaviour
                     float trampleDebuff = .25f;
                     force = normalizedSpeed * trampleDebuff;
                     float slowMax = startingMaxSpeed * 0.1f;
-                    float minSlow = 0.1f;
+                    float minSlow = 0.01f;
                     SlowDown(slowMax - force, minSlow);
                 }
-                if (braced) //if we're braced, and they're charging
-                {
-                    if (enemy.formPos.charging || enemy.formPos.isCavalry)
-                    {
-                        float stunTime = 3;
-                        enemy.formPos.FreezeMovement(stunTime);
-                    }
-                }
-            } 
-            
+            }
+            if (attacksBreakEnemyCohesion && !enemy.braced)
+            {
+                enemy.formPos.BreakCohesion();
+            }
             if (launchEnemy && !enemy.formPos.braced) //attacksCanLaunchEnemies && launchEnemy
             {
                 //Debug.Log("attempting to launch enemy");
@@ -1210,7 +1221,10 @@ public class SoldierModel : MonoBehaviour
 
         currentDamageTime = 0;
         currentFinishedAttackingTime = 0;
-        SwitchState(ModelState.Damaged);
+        if (whenDamagedSwitchToDamagedState)
+        {
+            SwitchState(ModelState.Damaged); 
+        }
 
         if (hurtVoiceLines.Count > 0)
         {
@@ -1353,7 +1367,7 @@ public class SoldierModel : MonoBehaviour
         PlayDeathChatter();
         if (formPos.numberOfAliveSoldiers <= 0)
         {
-            formPos.soldierBlock.SelfDestruct();
+            //formPos.soldierBlock.SelfDestruct();
         }
         pathfindingAI.enabled = false; 
         if (renderers.Count > 0)
@@ -1456,7 +1470,7 @@ public class SoldierModel : MonoBehaviour
             SetAttacking(false);
         }
     }
-    public bool farAway = false;
+    public bool farAway = false; 
     public async void UpdateAndCullAnimations() //not fully working
     {
         bool shouldAnimate = false;
@@ -1485,13 +1499,13 @@ public class SoldierModel : MonoBehaviour
         }*/
         await Task.Yield();
     } 
-    private void PointTowards(Vector3 targetDirection)
+    /*private void PointTowards(Vector3 targetDirection)
     {
         Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, 100 * deltaTime * Time.deltaTime, 0.0f);
         newDirection.y = 0; //keep level
         transform.rotation = Quaternion.LookRotation(newDirection);
         //transform.rotation = Quaternion.LookRotation(targetDirection);
-    } 
+    } */
     public void FaceEnemy()
     {
         if (targetEnemy != null) //HasTargetInRange()
@@ -1507,11 +1521,11 @@ public class SoldierModel : MonoBehaviour
             pathfindingAI.enableRotation = true;
         }
     }
-    public void FixRotation()
+    /*public void FixRotation()
     {
         if (attacksFaceEnemies && !knockedDown && !airborne) //if our attacks face enemy, and we're not knocked down or in the air, and not moving
         {
-            /*if (formPos.focusFire && !formPos.holdFire && !formPos.obeyingMovementOrder) //if we're focus firing
+            *//*if (formPos.focusFire && !formPos.holdFire && !formPos.obeyingMovementOrder) //if we're focus firing
             {
                 Vector3 targetDirection = new Vector3(0, 0, 0);
                 if (formPos.formationToFocusFire != null)
@@ -1533,9 +1547,9 @@ public class SoldierModel : MonoBehaviour
             {
                 Vector3 targetDirection = formPos.enemyFormationToTarget.transform.position - transform.position;
                 PointTowards(targetDirection);
-            }*/
+            }*//*
         }
-        /*if (formPos.listOfNearbyEnemies.Count > 0) //makes guys face forward
+        *//*if (formPos.listOfNearbyEnemies.Count > 0) //makes guys face forward
         {
             richAI.enableRotation = false;
             Vector3 targetDirection = formPos.soldierBlock.target.transform.position - transform.position; 
@@ -1543,6 +1557,6 @@ public class SoldierModel : MonoBehaviour
         /*if (!richAI.canMove)
         {
             transform.rotation = Quaternion.RotateTowards(transform.rotation, formPos.gameObject.transform.rotation, finishedPathRotSpeed * Time.deltaTime);
-        }*/
-    }
+        }*//*
+    }*/
 }

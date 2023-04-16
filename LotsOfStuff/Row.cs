@@ -8,7 +8,8 @@ public class Row : MonoBehaviour
     public int rowNum = 1;
     public int rowPositionInList = 0;
     public List<Position> positionsInRow = new List<Position>();
-    public List<SoldierModel> modelsInRow = new List<SoldierModel>(); 
+    public List<SoldierModel> modelsInRow = new List<SoldierModel>();
+     
     public void UpdateModelsInRow()
     {
         modelsInRow.Clear();
