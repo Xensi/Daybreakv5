@@ -12,6 +12,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 29422916108755641, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
+      propertyPath: navCutter
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 29422916108755641, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: checkRadius
       value: 160
       objectReference: {fileID: 0}
@@ -151,5 +155,6 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 3.5
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5268160359136011892, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}

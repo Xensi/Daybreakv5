@@ -12,6 +12,10 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 29422916108755641, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
+      propertyPath: formationType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 29422916108755641, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: abilityRechargeTime
       value: 30
       objectReference: {fileID: 0}

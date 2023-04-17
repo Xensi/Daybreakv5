@@ -63,9 +63,10 @@ public class SoldierModel : MonoBehaviour
     private float currentFinishedAttackingTime = 0;
     [SerializeField] private float requiredTimeUntilRecovery = 1f;
     private float currentRecoveryTime = 0;
-    [SerializeField] private float requiredAttackTime = 3;
-    public float currentAttackTime = 3; 
-     
+    public float requiredAttackTime = 3;
+    public float currentAttackTime = 3;
+    [HideInInspector] public float oldRequiredAttackTime = 3;
+
     //[SerializeField] private bool stopWhenAttacking = true;
     [SerializeField] private bool whenDamagedSwitchToDamagedState = true;
     //[SerializeField] private bool stopWhenLoading = true;  
@@ -280,6 +281,7 @@ public class SoldierModel : MonoBehaviour
         pathfindingAI.enableRotation = true;
         oldDispersalLevel = dispersalLevel;
         GenerateDispersalVector(dispersalLevel);
+        oldRequiredAttackTime = requiredAttackTime;
         //animator.enabled = false;
     }
     /* private void OnEnable()
@@ -403,7 +405,7 @@ public class SoldierModel : MonoBehaviour
         {
             targetEnemy = null;
         }
-    }
+    } 
     public async void UpdateModelState(CancellationToken cancelToken)
     {
         switch (currentModelState)
@@ -427,7 +429,7 @@ public class SoldierModel : MonoBehaviour
                 SetSpeedNull(); //force animation walking speed to zero;
                 break;
             case ModelState.Attacking: //swinging
-                CheckIfCanDealDamage();
+                CheckIfCanDealDamage(); 
                 break;
             case ModelState.Moving: 
                 //UpdateDestination();
@@ -582,7 +584,7 @@ public class SoldierModel : MonoBehaviour
                 PlayDeployChatter();
             }
         }
-        else if (formPos.listOfNearbyEnemies.Count > 0) //check if enemies nearby
+        /*else if (formPos.listOfNearbyEnemies.Count > 0) //check if enemies nearby
         {
             if (modelPosition != null && modelPosition.row != null && modelPosition.row.rowNum <= 2)
             {
@@ -592,7 +594,7 @@ public class SoldierModel : MonoBehaviour
                     PlayDeployChatter();
                 }
             }
-        } 
+        } */
     }
     private void PlayDeployChatter()
     {

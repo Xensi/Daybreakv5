@@ -16,6 +16,14 @@ PrefabInstance:
       value: 160
       objectReference: {fileID: 0}
     - target: {fileID: 29422916108755641, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
+      propertyPath: soldierType
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 29422916108755641, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
+      propertyPath: formationType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 29422916108755641, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: colliderBoxRange
       value: 8
       objectReference: {fileID: 0}
@@ -45,7 +53,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5955700111243193914, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: m_Name
-      value: MusketeerUnit
+      value: MusketeerUnit - Copy - Copy
       objectReference: {fileID: 0}
     - target: {fileID: 5955700111243193914, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: m_IsActive

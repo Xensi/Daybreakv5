@@ -17,7 +17,8 @@ public class FormationPosition : MonoBehaviour
         Infantry,
         RangedInfantry,
         Cavalry,
-        RangedCavalry
+        RangedCavalry,
+        SpearInfantry
     }
     public GlobalDefines.SoldierTypes soldierType = GlobalDefines.SoldierTypes.conscript;
     #endregion
@@ -37,7 +38,7 @@ public class FormationPosition : MonoBehaviour
     public SpriteRenderer shatteredIcon;
     public GameObject farAwayIconMask;
     public GameObject formationIconsParent;
-    public bool usesSpears = true;
+    //public bool usesSpears = true;
     public FormationType formationType = FormationType.Infantry; //just by default
     #endregion
 
@@ -168,8 +169,9 @@ public class FormationPosition : MonoBehaviour
 
     public float stamina = 2000;
     public float maxStamina = 2000;
+    private float originalAttackTime;
     private void Start()
-    {
+    { 
         Color color = farAwayIcon.color;
         color.a = 0;
         farAwayIcon.color = color;
@@ -404,13 +406,13 @@ public class FormationPosition : MonoBehaviour
     }
     #region Updates 
     #region Async
-    private async void CheckEnemyUpdate(int time, CancellationToken cancelToken)
+    /*private async void CheckEnemyUpdate(int time, CancellationToken cancelToken)
     {
         CheckModelsIndividually();
         await Task.Delay(time, cancelToken);
         CheckEnemyUpdate(time, cancelToken);
         await Task.Yield();
-    }
+    }*/
     private async void CheckModelsIndividually()
     {
         SoldierModel checkingModel = soldierBlock.modelsArray[soldierModelToCheck];
@@ -437,10 +439,7 @@ public class FormationPosition : MonoBehaviour
                         checkingModel.CheckIfEnemyModelsNearby();
                     }
                 }
-            }
-            else
-            {
-            }
+            } 
             checkingModel.SaveFromFallingInfinitely();
             //checkingModel.UpdateDestination();
         }
@@ -731,6 +730,7 @@ public class FormationPosition : MonoBehaviour
     }
     private async void VerySlowUpdate(int time, CancellationToken cancelToken)
     {
+        //CheckModelsBurst();
         if (numberOfAliveSoldiers <= 0) //if all soldiers dead, then goodbye
         {
             /*foreach (FormationPosition item in listOfNearbyEnemies)
@@ -892,6 +892,10 @@ public class FormationPosition : MonoBehaviour
             {
                 continue;
             }
+            if (!item.enabled || item.numberOfAliveSoldiers <= 0) //skip dead formations
+            {
+                continue;
+            }
             float dist = Vector3.Distance(transform.position, item.transform.position);
             if (dist > range)
             {
@@ -976,7 +980,10 @@ public class FormationPosition : MonoBehaviour
                     if (model.attackType == SoldierModel.AttackType.Ranged)
                     {
                         model.rangedModule.RepeatingUpdateTargetPosition();
-                        model.rangedModule.LineOfSightUpdate();
+                        if (!routing && movingSpeed <= 0)
+                        { 
+                            model.rangedModule.LineOfSightUpdate();
+                        }
                     }
                 }
             }
@@ -1003,68 +1010,61 @@ public class FormationPosition : MonoBehaviour
     {
         aiPath.UpdateMovementInFixedUpdate();
     }
+
+    private async void IndicatorUpdateBurst()
+    {
+        if (selected)
+        {
+            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+            {
+                SoldierModel model = soldierBlock.modelsArray[i];
+                if (model != null && model.alive && model.attackType == SoldierModel.AttackType.Ranged)
+                {
+                    if (model.lineOfSightIndicator != null)
+                    {
+                        model.lineOfSightIndicator.transform.LookAt(model.lineOfSightIndicator.transform.position + fightManager.cam.transform.forward);
+                    }
+                    if (model.reloadingIndicator != null)
+                    {
+                        model.reloadingIndicator.transform.LookAt(model.reloadingIndicator.transform.position + fightManager.cam.transform.forward);
+                    }
+                    if (model.rangedModule != null)
+                    {
+                        model.reloadingIndicator.enabled = model.rangedModule.loadingRightNow;
+                    }
+                }
+            }
+        } 
+        await Task.Yield();
+    }
     private void Update()
     { 
         UpdateSoldierMovements();
-        CheckModelsIndividually();
-        //UpdatePathsOfSoldierModels();
+        CheckModelsIndividually(); 
         UpdateLineRenderer();
-        if (selected)
+        IndicatorUpdateBurst(); 
+        SoldiersFaceEnemyUpdate();
+    }
+    private async void SoldiersFaceEnemyUpdate()
+    {
+        if (formationType != FormationType.Cavalry)
         {
-            Parallel.For(0, soldierBlock.modelsArray.Length, i => {
+            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+            {
                 SoldierModel model = soldierBlock.modelsArray[i];
                 if (model != null)
                 {
                     if (model.alive)
                     {
-                        if (!model.melee)
+                        if (model.currentModelState != SoldierModel.ModelState.Routing && model.attackType != SoldierModel.AttackType.CavalryCharge)
                         {
-                            if (model.lineOfSightIndicator != null)
-                            {
-                                model.lineOfSightIndicator.transform.LookAt(model.lineOfSightIndicator.transform.position + fightManager.cam.transform.forward);
-                            }
-                            if (model.reloadingIndicator != null)
-                            {
-                                model.reloadingIndicator.transform.LookAt(model.reloadingIndicator.transform.position + fightManager.cam.transform.forward);
-                            }
-                            if (model.rangedModule != null)
-                            {
-                                model.reloadingIndicator.enabled = model.rangedModule.loadingRightNow;
-                            }
+                            model.FaceEnemy();
                         }
                     }
                 }
-            });
-            /*for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
-            {
-                
-            }*/
-        }
-        /*Parallel.For(0, soldierBlock.modelsArray.Length, i =>
-        {
-            
-        });*/
-        if (formationType != FormationType.Cavalry)
-        { 
-            SoldiersFaceEnemyUpdate();
-        }
-    }
-    private void SoldiersFaceEnemyUpdate()
-    {
-        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
-        {
-            SoldierModel model = soldierBlock.modelsArray[i];
-            if (model != null)
-            {
-                if (model.alive)
-                {
-                    if (model.currentModelState != SoldierModel.ModelState.Routing && model.attackType != SoldierModel.AttackType.CavalryCharge)
-                    {
-                        model.FaceEnemy();
-                    }
-                }
             }
-        }
+        } 
+        await Task.Yield();
     }
     private int fastModelCheck = 0; 
 
@@ -1472,7 +1472,7 @@ public class FormationPosition : MonoBehaviour
             SetMoving(true); 
             for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
             {
-                if (soldierBlock.modelsArray[i] != null)
+                if (soldierBlock.modelsArray[i] != null && soldierBlock.modelsArray[i].alive)
                 {
                     soldierBlock.modelsArray[i].SwitchState(SoldierModel.ModelState.Charging);
                     soldierBlock.modelsArray[i].attackBox.Rearm(); 
@@ -1493,10 +1493,10 @@ public class FormationPosition : MonoBehaviour
             //chargeRecharged = false;
             for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
             {
-                if (soldierBlock.modelsArray[i] != null)
+                if (soldierBlock.modelsArray[i] != null && soldierBlock.modelsArray[i].alive)
                 {
                     soldierBlock.modelsArray[i].SwitchState(SoldierModel.ModelState.Idle);
-                    soldierBlock.modelsArray[i].ToggleAttackBox(false);
+                    soldierBlock.modelsArray[i].ToggleAttackBox(false); 
                 }
             }
             maxToleratedDeaths = originalToleratedDeaths;
@@ -1633,7 +1633,7 @@ public class FormationPosition : MonoBehaviour
         float dist = 0; 
         for (int i = 0; i < fightManager.allArray.Length; i++) //go through until we get one that matches criteria
         {
-            if (fightManager.allArray[i].formationType != FormationType.Cavalry || fightManager.allArray[i].team == team) //skip noncav and our team
+            if ((fightManager.allArray[i].formationType != FormationType.Cavalry && fightManager.allArray[i].formationType != FormationType.SpearInfantry) || fightManager.allArray[i].team == team) //skip noncav and our team
             {
                 continue;
             }

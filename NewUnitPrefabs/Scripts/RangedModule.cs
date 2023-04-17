@@ -66,14 +66,21 @@ public class RangedModule : MonoBehaviour
         }
     }
 
-
+    public bool useRayCasts = false;
     public void TriggerRangedAttack()
     {
         if (ammo > 0)
         { 
             if (directFire)
             {
-                LaunchBullet();
+                if (useRayCasts)
+                {
+                    RayCastBullet();
+                }
+                else
+                { 
+                    LaunchBullet();
+                }
             }
             else
             {
@@ -81,6 +88,62 @@ public class RangedModule : MonoBehaviour
                 FireProjectileRevised();
             }
             ModifyAmmo(-1);
+        }
+    }
+    private void RayCastBullet()
+    {
+        Vector3 target = targetPos;
+        Vector3 start = projectileSpawn.transform.position;
+        float distance = Vector3.Distance(target, start); 
+
+        Vector3 heading = (target - start).normalized; //vector from here to there 
+        LayerMask layerMask;
+        float range;
+
+        layerMask = LayerMask.GetMask("Model", "Terrain");
+        range = Vector3.Distance(start, target);
+
+        Vector3 sightLine = transform.position;
+
+        if (eyeline != null)
+        {
+            sightLine = eyeline.position;
+        }
+
+        RaycastHit hit;
+        if (Physics.Raycast(sightLine, heading, out hit, range, layerMask)) //hit something
+        {
+            if (hit.collider.gameObject.tag == "Hurtbox") //if model
+            {
+                SoldierModel hitModel = hit.collider.gameObject.GetComponentInParent<SoldierModel>();
+                if (hitModel != null)
+                {
+                    if (LOSblockedByAllies && hitModel.team == model.team)
+                    {
+                        UpdateLOSIndicator();
+                        model.hasClearLineOfSight = false;
+                        Debug.DrawRay(sightLine, heading * range, Color.red, 1, true);
+                    }
+                    else
+                    {
+                        UpdateLOSIndicator(true);
+                        model.hasClearLineOfSight = true;
+                        Debug.DrawRay(sightLine, heading * range, Color.green, 1, true);
+                    }
+                }
+            }
+            else if (hit.collider.gameObject.tag == "Terrain") //terrain blocks shots
+            {
+                UpdateLOSIndicator();
+                model.hasClearLineOfSight = false;
+                Debug.DrawRay(sightLine, heading * range, Color.red, 1, true);
+            }
+        }
+        else
+        {
+            Debug.DrawRay(sightLine, heading * range, Color.green, 1, true);
+            UpdateLOSIndicator(true);
+            model.hasClearLineOfSight = true;
         }
     }
     public void FinishReload()
@@ -197,11 +260,11 @@ public class RangedModule : MonoBehaviour
         }
         else //muskets, cannons
         {
+            float centerOfMassOffset = 0;
             if (model.formPos.focusFire)
             {
                 if (model.formPos.formationToFocusFire != null)
-                {
-                    float centerOfMassOffset = 1;
+                { 
                     model.TargetClosestEnemyInFormation(model.formPos.formationToFocusFire);
                     Vector3 pos = model.targetEnemy.transform.position;
                     targetPos = new Vector3(pos.x, pos.y + centerOfMassOffset, pos.z);
@@ -219,9 +282,8 @@ public class RangedModule : MonoBehaviour
             {
                 if (model.formPos.enemyFormationToTarget != null)
                 {
-                    float centerOfMassOffset = 1;
                     model.TargetClosestEnemyInFormation(model.formPos.enemyFormationToTarget);
-                    Vector3 pos = model.targetEnemy.transform.position;
+                    Vector3 pos = model.targetEnemy.transform.position; //not available sometimes
                     targetPos = new Vector3(pos.x, pos.y + centerOfMassOffset, pos.z);
                     //Vector3 vec = formPos.enemyFormationToTarget.formationPositionBasedOnSoldierModels;
                     //targetPos = new Vector3(vec.x, vec.y, vec.z); 
@@ -279,7 +341,7 @@ public class RangedModule : MonoBehaviour
 
         missile.LaunchProjectile(targetPos, clamped, clampedDeviation); //fire at the position of the target with a clamped angle and deviation based on distance
     }
-
+    public bool LOSblockedByAllies = true;
     private async void CheckIfLOSObstructed(Vector3 target) 
     {
         Vector3 start = projectileSpawn.transform.position;
@@ -329,13 +391,13 @@ public class RangedModule : MonoBehaviour
                 SoldierModel hitModel = hit.collider.gameObject.GetComponentInParent<SoldierModel>();
                 if (hitModel != null)
                 {
-                    if (hitModel.team == model.team)
-                    { 
+                    if (LOSblockedByAllies && hitModel.team == model.team)
+                    {
                         UpdateLOSIndicator();
                         model.hasClearLineOfSight = false;
                         Debug.DrawRay(sightLine, heading * range, Color.red, 1, true);
                     }
-                    else //enemies are fair game
+                    else
                     {
                         UpdateLOSIndicator(true);
                         model.hasClearLineOfSight = true;
@@ -400,7 +462,7 @@ public class RangedModule : MonoBehaviour
             if (model.attackSounds.Count > 0)
             {
                 //Debug.Log("playing bulelt sound");
-                model.impactSource.PlayOneShot(model.attackSounds[UnityEngine.Random.Range(0, model.attackSounds.Count)]);
+                model.impactSource.PlayOneShot(model.attackSounds[Random.Range(0, model.attackSounds.Count)]);
             }
             model.animator.SetFloat(AnimatorDefines.angleID, 0);
 
@@ -408,8 +470,8 @@ public class RangedModule : MonoBehaviour
 
             //FIRE
             Vector3 heading = targetPos - transform.position;
-            float deviation = UnityEngine.Random.Range(-projectileDeviationAmount, projectileDeviationAmount);
-            float deviationUp = UnityEngine.Random.Range(-projectileDeviationAmountVertical, projectileDeviationAmountVertical);
+            float deviation = Random.Range(-projectileDeviationAmount, projectileDeviationAmount);
+            float deviationUp = Random.Range(-projectileDeviationAmountVertical, projectileDeviationAmountVertical);
             //Debug.Log(deviationUp);
 
             heading = Quaternion.AngleAxis(deviation, Vector3.up) * heading;

@@ -21,6 +21,8 @@ public static class GlobalDefines
         gallowglass,
         footKnight,
         lancer,
-        mountedKnight
+        mountedKnight,
+        musketeer,
+        cannoneer
     }
 }

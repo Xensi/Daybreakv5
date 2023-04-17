@@ -13,8 +13,8 @@ public class MusicManager : MonoBehaviour
     [SerializeField] private List<AudioClip> mediumTracks;
     [SerializeField] private List<AudioClip> largeTracks;
     [SerializeField] private Slider volumeSlider;
-    private int mediumBattleSize = 11; //10 or less small 5-5, 8-8 16 medium
-    private int largeBattleSize = 17;
+    private int mediumBattleSize = 9; //8 or less small 4-4, 7-7 14 medium
+    private int largeBattleSize = 15;
     public float volume = 1;
     private void Awake()
     {

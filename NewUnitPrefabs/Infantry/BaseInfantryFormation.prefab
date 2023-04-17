@@ -4727,7 +4727,9 @@ MonoBehaviour:
   frontRow: {fileID: 9091176574485561105}
   soldierPrefab: {fileID: 520886974553824443, guid: 908c4cb5ec5c9984fae0c577cf9eabbb, type: 3}
   magePrefab: {fileID: 0}
-  mageType: 
+  mageType: 0
+  ability1Range: 25
+  ability2Range: 25
   modelParent: {fileID: 5955700110728819747}
   formationPositions: []
   magePositions:
@@ -4857,8 +4859,7 @@ MonoBehaviour:
   shatteredIcon: {fileID: 3487017875655869845}
   farAwayIconMask: {fileID: 0}
   formationIconsParent: {fileID: 6310091824402392462}
-  usesSpears: 1
-  formationType: 0
+  formationType: 4
   shaker: {fileID: 0}
   AIIntelligence: 10
   aiBraceRadius: 75
@@ -4961,6 +4962,7 @@ MonoBehaviour:
   maxStamina: 4000
   AIControlled: 0
   modelHasAShot: 0
+  splinterLevel: 0
   positionToCheck: 0
   frontIcon: {fileID: 8784098199558271929}
   ratioOfAliveToMax: 1
@@ -5323,9 +5325,9 @@ LineRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6288200040760361686}
   m_Enabled: 0
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
+  m_DynamicOccludee: 0
   m_StaticShadowCaster: 0
   m_MotionVectors: 0
   m_LightProbeUsage: 0
@@ -7455,9 +7457,9 @@ LineRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8662906131483449148}
   m_Enabled: 0
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
+  m_DynamicOccludee: 0
   m_StaticShadowCaster: 0
   m_MotionVectors: 0
   m_LightProbeUsage: 0

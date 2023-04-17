@@ -357,7 +357,7 @@ public class FightManager : MonoBehaviour
     {
         foreach (FormationPosition formPos in enemyControlledFormations)
         {
-            if (formPos.soldierBlock.melee && formPos.usesSpears)
+            if (formPos.formationType == FormationPosition.FormationType.SpearInfantry)
             {
                 formPos.AICheckIfNeedToBrace();
             } 
@@ -657,7 +657,7 @@ public class FightManager : MonoBehaviour
     {
         foreach (FormationPosition formation in selectedFormations)
         {
-            if (formation.canBrace)
+            if (formation.formationType == FormationPosition.FormationType.SpearInfantry)
             {
                 formation.SetBrace(val);
             }
@@ -709,7 +709,7 @@ public class FightManager : MonoBehaviour
             {
                 numActuallySelected++;
             }
-            if (formation.canBrace)
+            if (formation.formationType == FormationPosition.FormationType.SpearInfantry)
             {
                 braceUI.SetActive(true);
             }
@@ -1741,6 +1741,7 @@ public class FightManager : MonoBehaviour
     private Vector3 secondClickPos;
     public List<GameObject> dest;
     public List<GameObject> list;
+    private FormationPosition formToFollow;
     private void RightClickCheck()
     {
         if (Input.GetMouseButtonDown(1)) //set movepos
@@ -1754,11 +1755,14 @@ public class FightManager : MonoBehaviour
             LayerMask layerMask = LayerMask.GetMask("Terrain");
             RaycastHit hit;
 
-            FormationPosition formToFollow = null;
+            formToFollow = null;
 
             if (Physics.Raycast(ray.origin, ray.direction, out hit, Mathf.Infinity, layerMask))
-            {
+            { 
                 firstClickPos = hit.point;
+                managerLineRenderer.enabled = true;
+                managerLineRenderer.SetPosition(0, firstClickPos);
+                managerLineRenderer.SetPosition(1, firstClickPos);
                 clickPosition = hit.point;
                 //hit terrain, now check if formation here
                 LayerMask formMask = LayerMask.GetMask("Formation");
@@ -1767,25 +1771,32 @@ public class FightManager : MonoBehaviour
                 if (Physics.Raycast(vec, Vector3.down, out formHit, Mathf.Infinity, formMask))
                 {
                     formToFollow = formHit.transform.gameObject.GetComponentInParent<FormationPosition>();
-                } 
+                }
+                /*if (selectedFormations.Count > 1)
+                { 
+                    list.Clear();
+                    for (int i = 0; i < selectedFormations.Count; i++) //two units: 0 to 1 0/1 =0, 1/1 = 1
+                    {
+                        GameObject child = Instantiate(forceFireTargetPrefab, hit.point, Quaternion.identity);
+                        list.Add(child);
+                    }
+                }*/
             } 
-
             foreach (FormationPosition item in selectedFormations) //selected formations, go there plox
             {
                 Vector3 pos = item.transform.position;
                 item.lineRenderer2.enabled = true;
                 item.lineRenderer2.SetPosition(0, clickPosition);
-                item.lineRenderer2.SetPosition(1, clickPosition); 
+                item.lineRenderer2.SetPosition(1, clickPosition);
                 item.pathSet = false;
-                 
+
                 if (!Input.GetKey(KeyCode.LeftShift)) //if not holding shift, clear destinations
                 {
                     item.destinationsList.Clear();
-                } 
+                }
                 item.destinationsList.Add(clickPosition);
                 item.formationToFollow = formToFollow;
-            }
-             
+            } 
             UpdateGUI();
             forceFiring = false;
             forceFireTarget.SetActive(false);
@@ -1822,9 +1833,24 @@ public class FightManager : MonoBehaviour
                     }
                 }
             }
-            /*else if (selectedFormations.Count > 1) //Hold and drag to create a line of positions for units to move to
+            else if (selectedFormations.Count > 1) //Hold and drag to create a line of positions for units to move to
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                LayerMask layerMask = LayerMask.GetMask("Terrain");
+                RaycastHit hit; 
+
+                if (Physics.Raycast(ray.origin, ray.direction, out hit, Mathf.Infinity, layerMask))
+                {   
+                    managerLineRenderer.SetPosition(1, hit.point); 
+                }
+                /*int num = selectedFormations.Count;
+                for (int i = 0; i < num; i++) //two units: 0 to 1 0/1 =0, 1/1 = 1
+                {
+                    Vector3 newPosition = Vector3.Lerp(firstClickPos, secondClickPos, i / (num - 1));
+                    list[i].transform.position = newPosition;
+                }*/
+                /*Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
                 float distanceSoFar = 9999;
                 var hits = Physics.RaycastAll(ray, distanceSoFar);
@@ -1853,235 +1879,266 @@ public class FightManager : MonoBehaviour
                         else if (Vector3.Distance(lineFormationPosList[lineFormationPosList.Count - 1], candidateHit.point) >= lineOffset) //if distance between last and new is high enough
                         {
                             PlaceTargeter(candidateHit.point);
-                        } 
+                        }
                     }
-                }
-            }*/
+                }*/
+            }
         } 
         if (Input.GetMouseButtonUp(1) && !wasFocusFiring && !wasMagicTargeting) //CONFIRM MOVEMENT on release mouse
         { 
-            if (selectedFormations.Count == 1)
+            if (formToFollow != null) //if we have a target to go after
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-                float distanceSoFar = 9999;
-                var hits = Physics.RaycastAll(ray, distanceSoFar);
-                bool haveHit = false;
-                foreach (RaycastHit hit in hits)
+                foreach (FormationPosition item in selectedFormations)
                 {
-                    if (hit.collider.tag == "Terrain")
-                    {
-                        if (hit.distance < distanceSoFar)
-                        {
-                            clickPosition = hit.point;
-                            heldPosition = clickPosition;
-                            distanceSoFar = hit.distance;
-                            haveHit = true;
-                        }
-                    }
-                }
-                if (haveHit)
-                {
-                    foreach (FormationPosition item in selectedFormations)
-                    {
-                        item.rotTarget.transform.position = heldPosition;
+                    if (item.formationType != FormationPosition.FormationType.RangedInfantry || item.formationType != FormationPosition.FormationType.RangedCavalry) //Melee should chase target
+                    { 
                         item.pathSet = true;
-                        item.obeyingMovementOrder = true;
-                        /*foreach (SoldierModel model in item.soldierBlock.listSoldierModels)
-                        {
-                            model.GenerateDispersalVector();
-                        }*/
-
-                        float distanceReq = 1;
-                        if (Vector3.Distance(heldPosition, item.destinationsList[0]) >= distanceReq)
-                        {
-                            item.shouldRotateToward = true;
-                        }
-                        else
-                        {
-                            item.shouldRotateToward = false;
-                        } 
-                        item.aiTarget.transform.position = item.destinationsList[0];
-                        item.SetDestAndSearchPath();
-                        SetTransformOnGround(item.aiTarget.transform, "GroundForm");
-
-                        item.CheckIfRotateOrNot();
-
+                        item.obeyingMovementOrder = true;   
+                    }
+                    else //ranged should focus fire on target
+                    {
+                        item.formationToFocusFire = null;//need to clear this first 
+                        item.focusFire = true;
+                        item.formationToFocusFire = formToFollow;  
                     }
                 }
-                
             }
-            else if (selectedFormations.Count > 1)
+            else
             {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-                LayerMask layerMask = LayerMask.GetMask("Terrain");
-                RaycastHit hit; 
-
-                if (Physics.Raycast(ray.origin, ray.direction, out hit, Mathf.Infinity, layerMask))
+                if (selectedFormations.Count == 1)
                 {
-                    secondClickPos = hit.point; 
-                }
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-                List <FormationPosition> formList = new List<FormationPosition>();
-                foreach (FormationPosition selForm in selectedFormations)
-                {
-                    formList.Add(selForm);
-                }
-                //get distance between first and second clickpos
-                float dist = Vector3.Distance(firstClickPos, secondClickPos);
-                float distThreshold = 1;
-                if (dist > distThreshold) //units spread out across the line
-                {
-                    float num = selectedFormations.Count;//number of units selected
-                    //generate points along line and add to list
-                    list.Clear();
-                    for (int i = 0; i < num; i++) //two units: 0 to 1 0/1 =0, 1/1 = 1
+                    float distanceSoFar = 9999;
+                    var hits = Physics.RaycastAll(ray, distanceSoFar);
+                    bool haveHit = false;
+                    foreach (RaycastHit hit in hits)
                     {
-                        Vector3 newPosition = Vector3.Lerp(firstClickPos, secondClickPos, i/(num-1));
-                        GameObject child = Instantiate(forceFireTargetPrefab, newPosition, Quaternion.identity);
-                        list.Add(child);
-                        child.name = i.ToString();
-                    }
-                    #region Averaging
-                    //get avg pos of selected formations
-                    float x = 0;
-                    float y = 0;
-                    float z = 0;
-                    for (int i = 0; i < selectedFormations.Count; i++)
-                    {
-                        x += selectedFormations[i].transform.position.x;
-                        y += selectedFormations[i].transform.position.y;
-                        z += selectedFormations[i].transform.position.z;
-                    }
-                    x /= selectedFormations.Count;
-                    y /= selectedFormations.Count;
-                    z /= selectedFormations.Count;
-                    Vector3 avg = new Vector3(x, y, z);
-                    #endregion
-                    #region Parent
-                    GameObject parent = Instantiate(destPrefab, avg, Quaternion.identity);
-                    //make gameobjects to represent our destination, starting at our position 
-                    List<FormationPosition> ordererdFormPos = new List<FormationPosition>();
-                    dest.Clear(); 
-                    foreach (FormationPosition form in selectedFormations)
-                    {
-                        ordererdFormPos.Add(form);
-                        GameObject child = Instantiate(forceFireTargetPrefab, form.transform.position, Quaternion.identity, parent.transform);
-                        //parent gameobjects to big one
-                        dest.Add(child); 
-                    }
-                    Vector3 averageOfFirstAndSecond = Vector3.Lerp(firstClickPos, secondClickPos, 0.5f);
-                    Vector3 heading = averageOfFirstAndSecond - avg;
-                    float threshold = 50;
-                    if (Vector3.Angle(heading, -transform.forward) > threshold) //only rotate if destination is not behind us
-                    {
-                        //rotate parent to face destination 
-                        parent.transform.rotation = Quaternion.LookRotation(heading, Vector3.up);
-                    }
-                    //move parent to destination
-                    parent.transform.position = averageOfFirstAndSecond;
-
-                    #endregion 
-                    List<FormationPosition> reorderedFormationPos = new List<FormationPosition>();
-                    FormationPosition tempForm = null; //note: formpos and dest are aligned in order
-                    GameObject tempDest = null;
-                    foreach (GameObject pos in list) //for each point, check which dest is closest and then tell the associated formation to come on over
-                    {
-                        float currentDistance = 99999;
-                        for (int i = 0; i < dest.Count; i++)
+                        if (hit.collider.tag == "Terrain")
                         {
-                            float newDistance = Helper.Instance.GetSquaredMagnitude(dest[i].transform.position, pos.transform.position);
-                            if (newDistance < currentDistance)
+                            if (hit.distance < distanceSoFar)
                             {
-                                currentDistance = newDistance;
-                                tempForm = ordererdFormPos[i];
-                                tempDest = dest[i];
-                                tempDest.name = pos.name;
+                                clickPosition = hit.point;
+                                heldPosition = clickPosition;
+                                distanceSoFar = hit.distance;
+                                haveHit = true;
                             }
                         }
-                        reorderedFormationPos.Add(tempForm);
-                        ordererdFormPos.Remove(tempForm); //so it can't be chosen again
-                        dest.Remove(tempDest);
                     }
-                    //reordered formpos is aligned with pos list
-                    for (int i = 0; i < reorderedFormationPos.Count; i++)
+                    if (haveHit)
                     {
-                        FormationPosition form = reorderedFormationPos[i];
+                        foreach (FormationPosition item in selectedFormations)
+                        {
+                            item.rotTarget.transform.position = heldPosition;
+                            item.pathSet = true;
+                            item.obeyingMovementOrder = true;
+                            /*foreach (SoldierModel model in item.soldierBlock.listSoldierModels)
+                            {
+                                model.GenerateDispersalVector();
+                            }*/
 
-                        form.aiTarget.transform.position = list[i].transform.position; //tell closest formation to go there 
-                        SetTransformOnGround(form.aiTarget.transform, "GroundForm");
-                        form.SetDestAndSearchPath();
-                        form.destinationsList.Clear();
-                        form.destinationsList.Add(list[i].transform.position);
-                        form.pathSet = true;
-                        form.obeyingMovementOrder = true;
-                        form.shouldRotateToward = false;
+                            float distanceReq = 1;
+                            if (Vector3.Distance(heldPosition, item.destinationsList[0]) >= distanceReq)
+                            {
+                                item.shouldRotateToward = true;
+                            }
+                            else
+                            {
+                                item.shouldRotateToward = false;
+                            }
+                            item.aiTarget.transform.position = item.destinationsList[0];
+                            item.SetDestAndSearchPath();
+                            SetTransformOnGround(item.aiTarget.transform, "GroundForm");
+
+                            item.CheckIfRotateOrNot();
+
+                        }
                     }
-                    Destroy(parent);
-                    foreach (GameObject item in list)
-                    {
-                        Destroy(item);
-                    }
-                    list.Clear();
+
                 }
-                else //move everyone forward
-                { 
-                    //get avg pos of selected formations
-                    float x = 0;
-                    float y = 0;
-                    float z = 0;
-                    for (int i = 0; i < selectedFormations.Count; i++)
+                else if (selectedFormations.Count > 1)
+                {
+                    managerLineRenderer.enabled = false;
+
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                    LayerMask layerMask = LayerMask.GetMask("Terrain");
+                    RaycastHit hit;
+
+                    if (Physics.Raycast(ray.origin, ray.direction, out hit, Mathf.Infinity, layerMask))
                     {
-                        x += selectedFormations[i].transform.position.x;
-                        y += selectedFormations[i].transform.position.y;
-                        z += selectedFormations[i].transform.position.z;
+                        secondClickPos = hit.point;
                     }
-                    x /= selectedFormations.Count;
-                    y /= selectedFormations.Count;
-                    z /= selectedFormations.Count;
-                    Vector3 avg = new Vector3(x, y, z);
 
-                    GameObject parent = Instantiate(destPrefab, avg, Quaternion.identity);
-                    //make gameobjects to represent our destination, starting at our position
-                    List<GameObject> dests = new List<GameObject>();
-                    foreach (FormationPosition form in selectedFormations)
+                    List<FormationPosition> formList = new List<FormationPosition>();
+                    foreach (FormationPosition selForm in selectedFormations)
                     {
-                        GameObject child = Instantiate(forceFireTargetPrefab, form.transform.position, Quaternion.identity, parent.transform);
-                        child.name = "AVERAGEDESTINATIONMARKER";
-                        dests.Add(child);
+                        formList.Add(selForm);
                     }
-                    //parent gameobjects to big one
+                    //get distance between first and second clickpos
+                    float dist = Vector3.Distance(firstClickPos, secondClickPos);
+                    float distThreshold = 1;
 
-                    Vector3 heading = lineFormationPosList[0] - avg;
-                     
-                    float threshold = 50;
-                    if (Vector3.Angle(heading, -transform.forward) > threshold) //only rotate if destination is not behind us
+                    if (dist > distThreshold) //units spread out across the line
                     {
-                        //rotate parent to face destination 
-                        parent.transform.rotation = Quaternion.LookRotation(heading, Vector3.up);
-                    } 
+                        float num = selectedFormations.Count;//number of units selected
+                                                             //generate points along line and add to list
+                        /*foreach (GameObject item in list)
+                        {
+                            Destroy(item);
+                        }*/
+                        list.Clear();
+                        for (int i = 0; i < num; i++) //two units: 0 to 1 0/1 =0, 1/1 = 1
+                        {
+                            Vector3 newPosition = Vector3.Lerp(firstClickPos, secondClickPos, i / (num - 1));
+                            GameObject child = Instantiate(forceFireTargetPrefab, newPosition, Quaternion.identity);
+                            list.Add(child);
+                            child.name = i.ToString();
+                        }
+                        #region Averaging
+                        //get avg pos of selected formations
+                        float x = 0;
+                        float y = 0;
+                        float z = 0;
+                        for (int i = 0; i < selectedFormations.Count; i++)
+                        {
+                            x += selectedFormations[i].transform.position.x;
+                            y += selectedFormations[i].transform.position.y;
+                            z += selectedFormations[i].transform.position.z;
+                        }
+                        x /= selectedFormations.Count;
+                        y /= selectedFormations.Count;
+                        z /= selectedFormations.Count;
+                        Vector3 avg = new Vector3(x, y, z);
+                        #endregion
+                        #region Parent
+                        GameObject parent = Instantiate(destPrefab, avg, Quaternion.identity);
+                        //make gameobjects to represent our destination, starting at our position 
+                        List<FormationPosition> ordererdFormPos = new List<FormationPosition>();
+                        dest.Clear();
+                        foreach (FormationPosition form in selectedFormations)
+                        {
+                            ordererdFormPos.Add(form);
+                            GameObject child = Instantiate(forceFireTargetPrefab, form.transform.position, Quaternion.identity, parent.transform);
+                            //parent gameobjects to big one
+                            dest.Add(child);
+                        }
+                        Vector3 averageOfFirstAndSecond = Vector3.Lerp(firstClickPos, secondClickPos, 0.5f);
+                        Vector3 heading = averageOfFirstAndSecond - avg;
+                        float threshold = 50;
+                        if (Vector3.Angle(heading, -transform.forward) > threshold) //only rotate if destination is not behind us
+                        {
+                            //rotate parent to face destination 
+                            parent.transform.rotation = Quaternion.LookRotation(heading, Vector3.up);
+                        }
+                        //move parent to destination
+                        parent.transform.position = averageOfFirstAndSecond;
 
-                    //move parent to destination
-                    parent.transform.position = lineFormationPosList[0];
+                        #endregion
+                        #region CalculateClosest
+                        List<FormationPosition> reorderedFormationPos = new List<FormationPosition>();
+                        FormationPosition tempForm = null; //note: formpos and dest are aligned in order
+                        GameObject tempDest = null;
+                        foreach (GameObject pos in list) //for each point, check which dest is closest and then tell the associated formation to come on over
+                        {
+                            float currentDistance = 99999;
+                            for (int i = 0; i < dest.Count; i++)
+                            {
+                                float newDistance = Helper.Instance.GetSquaredMagnitude(dest[i].transform.position, pos.transform.position);
+                                if (newDistance < currentDistance)
+                                {
+                                    currentDistance = newDistance;
+                                    tempForm = ordererdFormPos[i];
+                                    tempDest = dest[i];
+                                    tempDest.name = pos.name;
+                                }
+                            }
+                            reorderedFormationPos.Add(tempForm);
+                            ordererdFormPos.Remove(tempForm); //so it can't be chosen again
+                            dest.Remove(tempDest);
+                        }
+                        //reordered formpos is aligned with pos list
+                        for (int i = 0; i < reorderedFormationPos.Count; i++)
+                        {
+                            FormationPosition form = reorderedFormationPos[i];
 
-                    for (int i = 0; i < selectedFormations.Count; i++)
+                            form.aiTarget.transform.position = list[i].transform.position; //tell closest formation to go there 
+                            SetTransformOnGround(form.aiTarget.transform, "GroundForm");
+                            form.SetDestAndSearchPath();
+                            form.destinationsList.Clear();
+                            form.destinationsList.Add(list[i].transform.position);
+                            form.pathSet = true;
+                            form.obeyingMovementOrder = true;
+                            form.shouldRotateToward = false;
+                        }
+                        Destroy(parent);
+                        foreach (GameObject item in list)
+                        {
+                            Destroy(item);
+                        }
+                        list.Clear();
+                        #endregion
+                    }
+                    else //move everyone forward
                     {
-                        FormationPosition form = selectedFormations[i];
-                        Vector3 pos = dests[i].transform.position;
+                        Debug.Log("move forward");
+                        //get avg pos of selected formations
+                        float x = 0;
+                        float y = 0;
+                        float z = 0;
+                        for (int i = 0; i < selectedFormations.Count; i++)
+                        {
+                            x += selectedFormations[i].transform.position.x;
+                            y += selectedFormations[i].transform.position.y;
+                            z += selectedFormations[i].transform.position.z;
+                        }
+                        x /= selectedFormations.Count;
+                        y /= selectedFormations.Count;
+                        z /= selectedFormations.Count;
+                        Vector3 avg = new Vector3(x, y, z);
 
-                        form.aiTarget.transform.position = pos; //tell closest formation to go there 
-                        form.SetDestAndSearchPath();
-                        SetTransformOnGround(form.aiTarget.transform, "GroundForm");
-                        form.destinationsList.Clear();
-                        form.destinationsList.Add(pos);
-                        form.pathSet = true;
-                        form.obeyingMovementOrder = true;
-                        form.shouldRotateToward = false;
-                    } 
-                    Destroy(parent);
-                } 
+                        GameObject parent = Instantiate(destPrefab, avg, Quaternion.identity);
+                        //make gameobjects to represent our destination, starting at our position
+                        List<GameObject> dests = new List<GameObject>();
+                        foreach (FormationPosition form in selectedFormations)
+                        {
+                            GameObject child = Instantiate(forceFireTargetPrefab, form.transform.position, Quaternion.identity, parent.transform);
+                            child.name = "AVERAGEDESTINATIONMARKER";
+                            dests.Add(child);
+                        }
+                        //parent gameobjects to big one
+
+                        Vector3 heading = firstClickPos - avg;
+
+                        float threshold = 50;
+                        if (Vector3.Angle(heading, -transform.forward) > threshold) //only rotate if destination is not behind us
+                        {
+                            //rotate parent to face destination 
+                            parent.transform.rotation = Quaternion.LookRotation(heading, Vector3.up);
+                        }
+
+                        //move parent to destination
+                        parent.transform.position = firstClickPos;
+
+                        for (int i = 0; i < selectedFormations.Count; i++)
+                        {
+                            FormationPosition form = selectedFormations[i];
+                            Vector3 pos = dests[i].transform.position;
+
+                            form.aiTarget.transform.position = pos; //tell closest formation to go there 
+                            form.SetDestAndSearchPath();
+                            SetTransformOnGround(form.aiTarget.transform, "GroundForm");
+                            form.destinationsList.Clear();
+                            form.destinationsList.Add(pos);
+                            form.pathSet = true;
+                            form.obeyingMovementOrder = true;
+                            form.shouldRotateToward = false;
+                        }
+                        Destroy(parent);
+                    }
+                }
             }
+            
         }
     }
 }

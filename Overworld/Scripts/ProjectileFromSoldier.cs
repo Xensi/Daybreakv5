@@ -178,7 +178,7 @@ public class ProjectileFromSoldier : MonoBehaviour
     }
     private void DisableThis()
     {
-        CapsuleCollider capsule = GetComponent<CapsuleCollider>();
+        SphereCollider capsule = GetComponent<SphereCollider>();
         capsule.enabled = false;
         audioSource.enabled = false;
         Invoke("SelfDestruct", 5);
