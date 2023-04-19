@@ -109,11 +109,11 @@ public class FightManager : MonoBehaviour
     private void Start()
     {
 
-        Instance = this;
-        if (testing)
+        //Instance = this;
+        /*if (testing)
         {
             UpdateAllFormArrayAndStartAIToBeginBattle();
-        }
+        }*/
         finishedPlacingButton.interactable = false;
         
     }
@@ -130,6 +130,39 @@ public class FightManager : MonoBehaviour
             friendlyPlacementZone.gameObject.SetActive(true);
         }
         placingSoldiers = true;
+    }
+    public void StartPlacingSoldiersFromLevel()
+    {
+        UpdateFormationArrays();
+        SetUpAllFormations();
+        GenerateSoldierButtonsFromLevel();
+
+        placerUI.SetActive(true);
+        if (friendlyPlacementZone != null)
+        {
+            friendlyPlacementZone.gameObject.SetActive(true);
+        }
+        placingSoldiers = true;
+        finishedPlacingButton.interactable = true;
+    }
+    private void GenerateSoldierButtonsFromLevel()
+    { 
+        PurgeSoldierButtons();
+        int i = 0;
+        foreach (FormationPosition unit in playerControlledFormations)
+        {
+            Button soldierButton = Instantiate(soldierButtonPrefab, Vector3.zero, Quaternion.identity, placerUI.transform);
+            TMP_Text text = soldierButton.GetComponentInChildren<TMP_Text>();
+            text.text = unit.soldierType.ToString() + ": " + unit.numberOfAliveSoldiers.ToString();
+            soldierButton.transform.localPosition = new Vector3(-890, 460 - 45 * i, 0);
+            soldierButton.onClick.AddListener(() => ChooseSoldierToPlace(unit.soldierType.ToString()));
+            int tempID = i;
+            soldierButton.onClick.AddListener(() => UpdateButtonID(tempID));
+            soldierButton.onClick.AddListener(() => UpdateSoldierCount(unit.numberOfAliveSoldiers));
+            soldierButtonsList.Add(soldierButton);
+            soldierButton.interactable = false;
+            i++;
+        }
     }
     private void RandomPlacePlayerFormations()
     {
@@ -260,27 +293,27 @@ public class FightManager : MonoBehaviour
     } 
     [SerializeField] private Button finishedPlacingButton;
     #endregion 
-    public void UpdateAllFormArrayAndStartAIToBeginBattle()
+    public void SetUpAllFormations()
+    {
+        foreach (FormationPosition item in allArray)
+        {
+            item.soldierBlock.SetUpSoldiers();
+        }
+    }
+    public void UpdateFormationArrays()
     { 
         allArray = new FormationPosition[30];
-
-        battleUI.SetActive(false);
-        AIRaisePursueRadius();
-        InvokeRepeating("FastUpdate", .1f, .1f);
-        InvokeRepeating("AIBrain", 1f, 1f);
-        InvokeRepeating("AIBrainSlow", 10f, 10f);
-        InvokeRepeating("AIBrainMage", 5f, 5f); //don't do immediately, not urgent
-
-        allFormationsList.Clear();
         FormationPosition[] array = FindObjectsOfType<FormationPosition>();
         allArray = array;
-        int id = 0;
+
+        allFormationsList.Clear();
         playerControlledFormations.Clear();
         enemyControlledFormations.Clear();
-        foreach (FormationPosition item in array)
+        int id = 0;
+        foreach (FormationPosition item in allArray)
         {
             allFormationsList.Add(item);
-            if (item.team == team)
+            if (item.soldierBlock.teamType == team)
             {
                 playerControlledFormations.Add(item);
             }
@@ -289,8 +322,7 @@ public class FightManager : MonoBehaviour
                 enemyControlledFormations.Add(item);
                 item.AIControlled = true;
             }
-            item.FixPositions();
-            item.BeginUpdates();
+            item.FixPositions(); 
             if (item.shaker != null)
             {
                 item.shaker.id = id;
@@ -298,8 +330,29 @@ public class FightManager : MonoBehaviour
             //item.ClearOrders(); //resets targets
             id++;
         }
+    }
+    public void BeginUpdatesForAllFormations()
+    {
+        foreach (FormationPosition item in allArray)
+        { 
+            item.BeginUpdates(); 
+        }
+    }
+    public void UpdateAllFormArrayAndStartAIToBeginBattle() //
+    {
+
+        battleUI.SetActive(false);
+        AIRaisePursueRadius();
+
+        UpdateFormationArrays();
+        BeginUpdatesForAllFormations();
 
         MusicManager.Instance.PlayCombatMusicBasedOnBattleSize();
+
+        InvokeRepeating("FastUpdate", .1f, .1f);
+        InvokeRepeating("AIBrain", 1f, 1f);
+        InvokeRepeating("AIBrainSlow", 10f, 10f);
+        InvokeRepeating("AIBrainMage", 5f, 5f); //don't do immediately, not urgent
         InvokeRepeating("GameOverCheck", 2, 2);
     } 
     private void FastUpdate()

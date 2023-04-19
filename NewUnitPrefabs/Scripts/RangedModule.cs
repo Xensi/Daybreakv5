@@ -73,14 +73,14 @@ public class RangedModule : MonoBehaviour
         { 
             if (directFire)
             {
-                if (useRayCasts)
+                LaunchBullet();
+                /*if (useRayCasts)
                 {
                     RayCastBullet();
                 }
                 else
                 { 
-                    LaunchBullet();
-                }
+                }*/
             }
             else
             {
@@ -94,57 +94,37 @@ public class RangedModule : MonoBehaviour
     {
         Vector3 target = targetPos;
         Vector3 start = projectileSpawn.transform.position;
-        float distance = Vector3.Distance(target, start); 
+        //float distance = Vector3.Distance(target, start); 
 
-        Vector3 heading = (target - start).normalized; //vector from here to there 
+        Vector3 heading = (target - start).normalized; //direction vector from here to there 
+
+        Vector3 shootDirection = heading + new Vector3(Random.Range(-projectileDeviationAmount, projectileDeviationAmount), Random.Range(-projectileDeviationAmount, projectileDeviationAmount), Random.Range(-projectileDeviationAmount, projectileDeviationAmount));
         LayerMask layerMask;
-        float range;
-
         layerMask = LayerMask.GetMask("Model", "Terrain");
+        float range; 
         range = Vector3.Distance(start, target);
-
-        Vector3 sightLine = transform.position;
-
-        if (eyeline != null)
-        {
-            sightLine = eyeline.position;
-        }
-
-        RaycastHit hit;
-        if (Physics.Raycast(sightLine, heading, out hit, range, layerMask)) //hit something
+        range *= 2;
+         
+        var hits = Physics.RaycastAll(start, shootDirection, range, layerMask);  
+        foreach (RaycastHit hit in hits)
         {
             if (hit.collider.gameObject.tag == "Hurtbox") //if model
             {
                 SoldierModel hitModel = hit.collider.gameObject.GetComponentInParent<SoldierModel>();
-                if (hitModel != null)
+                if (hitModel != null && hitModel.alive)
                 {
-                    if (LOSblockedByAllies && hitModel.team == model.team)
+                    if (hitModel.team == model.team)
                     {
-                        UpdateLOSIndicator();
-                        model.hasClearLineOfSight = false;
-                        Debug.DrawRay(sightLine, heading * range, Color.red, 1, true);
+                        Debug.DrawRay(start, heading * range, Color.white, 1, true);
                     }
-                    else
+                    else //Hit Enemy
                     {
-                        UpdateLOSIndicator(true);
-                        model.hasClearLineOfSight = true;
-                        Debug.DrawRay(sightLine, heading * range, Color.green, 1, true);
+                        Debug.DrawRay(start, heading * range, Color.black, 1, true);
+                        hitModel.SufferDamage(model.damage, model.armorPiercingDamage);
                     }
                 }
-            }
-            else if (hit.collider.gameObject.tag == "Terrain") //terrain blocks shots
-            {
-                UpdateLOSIndicator();
-                model.hasClearLineOfSight = false;
-                Debug.DrawRay(sightLine, heading * range, Color.red, 1, true);
-            }
-        }
-        else
-        {
-            Debug.DrawRay(sightLine, heading * range, Color.green, 1, true);
-            UpdateLOSIndicator(true);
-            model.hasClearLineOfSight = true;
-        }
+            } 
+        } 
     }
     public void FinishReload()
     {

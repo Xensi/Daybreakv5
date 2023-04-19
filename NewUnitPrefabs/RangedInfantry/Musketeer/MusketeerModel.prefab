@@ -17,7 +17,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6659657395095191367, guid: 704c1e41638517b47b7f453453ced3ed, type: 3}
       propertyPath: power
-      value: 50
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6659657395095191367, guid: 704c1e41638517b47b7f453453ced3ed, type: 3}
       propertyPath: forceRatio
@@ -28,6 +28,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8333262704199657843, guid: 1d6bc55b500fd244caac29b6f6ced6f1, type: 3}
     - target: {fileID: 6659657395095191367, guid: 704c1e41638517b47b7f453453ced3ed, type: 3}
+      propertyPath: useRayCasts
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6659657395095191367, guid: 704c1e41638517b47b7f453453ced3ed, type: 3}
       propertyPath: minFiringAngle
       value: 0
       objectReference: {fileID: 0}
@@ -36,12 +40,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7733637698068014190}
     - target: {fileID: 6659657395095191367, guid: 704c1e41638517b47b7f453453ced3ed, type: 3}
+      propertyPath: LOSblockedByAllies
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6659657395095191367, guid: 704c1e41638517b47b7f453453ced3ed, type: 3}
       propertyPath: maxProjectileForce
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6659657395095191367, guid: 704c1e41638517b47b7f453453ced3ed, type: 3}
       propertyPath: requiredLoadingTime
-      value: 30
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6659657395095191367, guid: 704c1e41638517b47b7f453453ced3ed, type: 3}
       propertyPath: volleyFireAndRetreat
@@ -49,11 +57,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6659657395095191367, guid: 704c1e41638517b47b7f453453ced3ed, type: 3}
       propertyPath: projectileDeviationAmount
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6659657395095191367, guid: 704c1e41638517b47b7f453453ced3ed, type: 3}
       propertyPath: projectileDeviationAmountVertical
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6867855893604792553, guid: 704c1e41638517b47b7f453453ced3ed, type: 3}
       propertyPath: armor

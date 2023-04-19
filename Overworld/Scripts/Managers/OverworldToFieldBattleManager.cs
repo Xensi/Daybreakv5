@@ -80,17 +80,39 @@ public class OverworldToFieldBattleManager : MonoBehaviour
         PauseParent.SetActive(false);
         MusicManager.Instance.UnpauseMusic();
     }
-    public void StartFieldBattleWithEnemyBattleGroup(BattleGroup battleGroup)
+    public void StartFieldBattleWithEnemyBattleGroup(BattleGroup enemyBattleGroup)
     {
-        OverworldManager.Instance.enemyBattleGroup = battleGroup;
-        UnitManager.Instance.unitsInEnemyArmyList = battleGroup.listOfUnitsInThisArmy;
+        Debug.Log("Starting field battle");
+        OverworldManager.Instance.enemyBattleGroup = enemyBattleGroup;
+        UnitManager.Instance.unitsInEnemyArmyList = enemyBattleGroup.listOfUnitsInThisArmy;
         state = possibleGameStates.FieldBattle;
         OverworldParent.SetActive(false);
         FieldBattleParent.SetActive(true);
         ResetCamera();
         LoadScenario();
-        AllowPlacementOfPlayerTroops();
-    } 
+        AllowPlacementOfPlayerTroops(); //places player's troops randomly
+    }
+    public void StartFieldBattleFromLevel() //starting a battle that was loaded from preset level setup
+    { 
+        state = possibleGameStates.FieldBattle;
+        OverworldParent.SetActive(false);
+        FieldBattleParent.SetActive(true);
+        ResetCamera();
+        LoadScenario();
+        Invoke("AllowPlacementOfPlayerTroops", 1);
+        //AllowPlacementOfPlayerTroops(); //places player's troops randomly
+    }
+    private void AllowPlacementOfPlayerTroops()
+    {
+        if (LevelManager.Instance.currentLevel != LevelManager.Level.None)
+        {
+            FightManager.Instance.StartPlacingSoldiersFromLevel(); 
+        }
+        else //overworld
+        { 
+            FightManager.Instance.StartPlacingSoldiers();
+        }
+    }
     private void ResetCamera()
     {
         CinemachineShake.Instance.HaltShakes();
@@ -149,8 +171,4 @@ public class OverworldToFieldBattleManager : MonoBehaviour
     {
         FightManager.Instance.LoadScenario();
     } 
-    private void AllowPlacementOfPlayerTroops()
-    {
-        FightManager.Instance.StartPlacingSoldiers();
-    }
 }

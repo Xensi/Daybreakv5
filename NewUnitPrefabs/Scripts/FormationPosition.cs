@@ -240,6 +240,7 @@ public class FormationPosition : MonoBehaviour
     {
         cancelToken = new CancellationTokenSource();
     }
+    private bool updatesBegun = false;
     public void BeginUpdates()
     {
         //return;
@@ -258,6 +259,7 @@ public class FormationPosition : MonoBehaviour
         //InvokeRepeating("LockSoldiers", 0, lockTime);
         //InvokeRepeating("LockSoldiersToTerrain", 0, terrainLockTime);
         //InvokeRepeating("UpdateFarAwayIconPos", 0, .1f);
+        updatesBegun = true;
     }
 
     #region FastUpdate 
@@ -1008,7 +1010,10 @@ public class FormationPosition : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        aiPath.UpdateMovementInFixedUpdate();
+        if (updatesBegun)
+        { 
+            aiPath.UpdateMovementInFixedUpdate();
+        }
     }
 
     private async void IndicatorUpdateBurst()
@@ -1039,11 +1044,14 @@ public class FormationPosition : MonoBehaviour
     }
     private void Update()
     { 
-        UpdateSoldierMovements();
-        CheckModelsIndividually(); 
-        UpdateLineRenderer();
-        IndicatorUpdateBurst(); 
-        SoldiersFaceEnemyUpdate();
+        if (updatesBegun)
+        { 
+            UpdateSoldierMovements();
+            CheckModelsIndividually();
+            UpdateLineRenderer();
+            IndicatorUpdateBurst();
+            SoldiersFaceEnemyUpdate();
+        }
     }
     private async void SoldiersFaceEnemyUpdate()
     {

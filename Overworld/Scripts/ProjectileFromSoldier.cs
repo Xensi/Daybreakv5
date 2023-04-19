@@ -186,8 +186,7 @@ public class ProjectileFromSoldier : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         if (isModelProj)
-        {
-
+        { 
             if (other.gameObject.tag == "Terrain" || other.gameObject.tag == "TreeTerrain")
             {
                 isFlying = false;

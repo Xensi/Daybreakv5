@@ -165,7 +165,10 @@ public class CamRotate : MonoBehaviour
         {
             foreach (FormationPosition form in fightManager.allArray)
             {
-                form.formationIconsParent.transform.forward = -transform.forward;
+                if (form.formationIconsParent != null && form.formationIconsParent.activeInHierarchy)
+                {  
+                    form.formationIconsParent.transform.forward = -transform.forward;
+                }
 
                 float distance = Vector3.Distance(transform.position, form.transform.position);
                 float reqDistance = 40;

@@ -26,9 +26,34 @@ public class LoadScreen : MonoBehaviour
             levelLoad = menu.levelLoad;
             loadingOperation = SceneManager.LoadSceneAsync(sceneToLoad, LoadSceneMode.Additive);
             //loadingOperation = SceneManager.LoadSceneAsync(sceneToLoad); //load overworld, of course  
-            //loadOp2 = SceneManager.LoadSceneAsync("Level" + levelLoad, LoadSceneMode.Additive);
+            loadOp2 = SceneManager.LoadSceneAsync("Level" + levelLoad, LoadSceneMode.Additive); //load in units in preset spots
             menu.ui.SetActive(false);
+
+
+
+            //must be last
             SceneManager.UnloadSceneAsync("MainMenu");
+        }
+    }
+    void Update()
+    {
+        progressBar.value = Mathf.Clamp01((loadingOperation.progress + loadOp2.progress) / 0.9f); //
+        if (loadingOperation.progress >= 1 && !finishedLoad) //&& loadOp2.progress >= 1 
+        {
+            finishedLoad = true;
+
+            LevelManager.Instance.NoteLevel(levelLoad);
+            //FightManager fightmanager = FindObjectOfType<FightManager>();
+            //FightManager.Instance.UpdateAllFormArrayAndStartAIToBeginBattle();
+
+
+
+            SceneManager.UnloadSceneAsync("LoadGame"); //remove loading screen
+
+            if (menu.loadSavedGame)
+            {
+                GameDataManager.Instance.readFile();
+            }
         }
     }
     IEnumerator FadeLoadingScreen(float duration, float startValue = 0, float endValue = 1)
@@ -41,21 +66,5 @@ public class LoadScreen : MonoBehaviour
             yield return null;
         }
         canvasGroup.alpha = endValue;
-    }
-    void Update()
-    {
-        progressBar.value = Mathf.Clamp01(loadingOperation.progress / 0.9f); //+ loadOp2.progress
-        if (loadingOperation.progress >= 1 && !finishedLoad) //&& loadOp2.progress >= 1 
-        {
-            finishedLoad = true;
-
-            //FightManager fightmanager = FindObjectOfType<FightManager>();
-            FightManager.Instance.UpdateAllFormArrayAndStartAIToBeginBattle();
-            SceneManager.UnloadSceneAsync("LoadGame");
-            if (menu.loadSavedGame)
-            {
-                GameDataManager.Instance.readFile();
-            }
-        }
     }
 }

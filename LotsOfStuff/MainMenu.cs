@@ -9,8 +9,7 @@ public class MainMenu : MonoBehaviour
     public string sceneToLoad = "LoadGame";
     public int levelLoad = 1;
     public GameObject ui;
-    public bool loadSavedGame = false;
-    // Start is called before the first frame update
+    public bool loadSavedGame = false;  
     void Start()
     { 
         //DontDestroyOnLoad(gameObject);
@@ -28,6 +27,7 @@ public class MainMenu : MonoBehaviour
     { 
         SceneManager.LoadScene(sceneToLoad, LoadSceneMode.Additive);
         levelLoad = level; 
+        //go to loadscreen to check what else
     }
     public void ExitGame()
     { 
