@@ -90,7 +90,7 @@ public class FormationPosition : MonoBehaviour
     public bool braced = false;
     [HideInInspector] public bool enableAnimations = false;
     [HideInInspector] public float walkingSpeed = 3.5f;
-    [HideInInspector] public float sprintSpeed = 6.5f;
+    public float sprintSpeed = 6.5f;
     [HideInInspector] public bool selected = false;
     #endregion
 
@@ -218,7 +218,7 @@ public class FormationPosition : MonoBehaviour
         lineRenderer2.SetPosition(0, new Vector3(transform.position.x, -100, transform.position.z));
         lineRenderer2.SetPosition(1, new Vector3(transform.position.x, -100, transform.position.z));
         currentSpeed = walkingSpeed;
-        chargeSpeed = walkingSpeed * 3;
+        chargeSpeed = walkingSpeed * 2; // * 3;
         aiPath.maxSpeed = currentSpeed;
         originalToleratedDeaths = maxToleratedDeaths;
         //PlaceAITargetOnTerrain(); 
@@ -1353,8 +1353,12 @@ public class FormationPosition : MonoBehaviour
         routingIcon.gameObject.SetActive(false);
         StartFleeing();
         float disappearTime = 30;
-        Invoke("SelfDestruct", disappearTime);
+        //Invoke("SelfDestruct", disappearTime);
     }
+    /*private void SelfDestruct()
+    {
+        soldierBlock.SelfDestruct();
+    }*/
     public void SoftRout(int time = 20) //rout in a direction for some time. after time, check if no enemies melee attacking us. if so, then become controllable again
     {
         shatteredIcon.gameObject.SetActive(false);
@@ -1435,10 +1439,6 @@ public class FormationPosition : MonoBehaviour
             }
         }
     }
-    /*private void SelfDestruct()
-    {
-        soldierBlock.SelfDestruct();
-    }*/
 
     private void GetMeOutOfHere()
     {

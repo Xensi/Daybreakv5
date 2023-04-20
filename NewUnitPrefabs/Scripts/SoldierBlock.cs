@@ -81,7 +81,7 @@ public class SoldierBlock : MonoBehaviour
         else
         {
 
-            formPos.walkingSpeed = desiredWalkingSpeed * .5f; /// 2;
+            formPos.walkingSpeed = desiredWalkingSpeed * .5f;
         }
         formPos.sprintSpeed = desiredWalkingSpeed;
         int arrayInc = 0;

@@ -203,10 +203,10 @@ MonoBehaviour:
   m_height: 10
   m_rotation: 0
   m_isWorldmapSpawner: 0
-  m_spawnRange: 128
+  m_spawnRange: 256
   m_generateRandomSeed: 0
   m_randomSeed: 0
-  m_spawnDensity: 1
+  m_spawnDensity: 0.8
   m_resourcesPath: 
   m_spawnerRules:
   - m_name: New Tree 1
@@ -243,7 +243,7 @@ MonoBehaviour:
     m_inactiveInstanceCnt: 0
     m_resourceSettingsFoldedOut: 0
     m_isHelpActive: 0
-    m_spawnedInstances: 0
+    m_spawnedInstances: 6706
     m_goSpawnTargetMode: 0
     m_goSpawnTarget: {fileID: 0}
     m_terrainGOSpawnTargetName: Gaia Game Object Spawns
@@ -292,9 +292,9 @@ MonoBehaviour:
     m_currInstanceCnt: 0
     m_activeInstanceCnt: 0
     m_inactiveInstanceCnt: 0
-    m_resourceSettingsFoldedOut: 1
+    m_resourceSettingsFoldedOut: 0
     m_isHelpActive: 0
-    m_spawnedInstances: 0
+    m_spawnedInstances: 6718
     m_goSpawnTargetMode: 0
     m_goSpawnTarget: {fileID: 0}
     m_terrainGOSpawnTargetName: Gaia Game Object Spawns
@@ -345,7 +345,7 @@ MonoBehaviour:
     m_inactiveInstanceCnt: 0
     m_resourceSettingsFoldedOut: 0
     m_isHelpActive: 0
-    m_spawnedInstances: 0
+    m_spawnedInstances: 6724
     m_goSpawnTargetMode: 0
     m_goSpawnTarget: {fileID: 0}
     m_terrainGOSpawnTargetName: Gaia Game Object Spawns
@@ -396,7 +396,7 @@ MonoBehaviour:
     m_inactiveInstanceCnt: 0
     m_resourceSettingsFoldedOut: 0
     m_isHelpActive: 0
-    m_spawnedInstances: 0
+    m_spawnedInstances: 6706
     m_goSpawnTargetMode: 0
     m_goSpawnTarget: {fileID: 0}
     m_terrainGOSpawnTargetName: Gaia Game Object Spawns
@@ -447,7 +447,7 @@ MonoBehaviour:
     m_inactiveInstanceCnt: 0
     m_resourceSettingsFoldedOut: 0
     m_isHelpActive: 0
-    m_spawnedInstances: 0
+    m_spawnedInstances: 6711
     m_goSpawnTargetMode: 0
     m_goSpawnTarget: {fileID: 0}
     m_terrainGOSpawnTargetName: Gaia Game Object Spawns
