@@ -958,8 +958,59 @@ public class SoldierModel : MonoBehaviour
             }
         }
     }
-    
-    private void SetSpeedNull()
+    #region Deprecated
+    /*targetEnemy = null;
+        targetAttackable = null;
+        float initDist = 9999;
+    SoldierModel closest = null;
+    AttackableObject closestObject = null;
+    float compareDist = initDist;
+        foreach (SoldierModel item in nearbyEnemyModels)
+        {
+            //float dist = GetDistance(transform, item.gameObject.transform);
+            //float dist = GetSquaredMagnitude(transform.position, item.gameObject.transform.position);
+            float dist = Helper.Instance.GetSquaredMagnitude(transform.position, item.transform.position);
+            if (dist<compareDist)
+            {
+                closest = item;
+                compareDist = dist;
+            }
+        }
+        compareDist = initDist;
+foreach (AttackableObject item in nearbyAttackableObjects)
+{
+    float dist = Helper.Instance.GetSquaredMagnitude(transform.position, item.transform.position);
+    if (dist < compareDist)
+    {
+        closestObject = item;
+        compareDist = dist;
+    }
+}
+if (closest != null && closestObject != null) // get closest
+{
+    float dist1 = Helper.Instance.GetSquaredMagnitude(transform.position, closest.transform.position);
+    float dist2 = Helper.Instance.GetSquaredMagnitude(transform.position, closestObject.transform.position);
+    if (dist1 < dist2)
+    {
+        targetEnemy = closest;
+    }
+    else
+    {
+        targetAttackable = closestObject;
+    }
+}
+else if (closest != null)
+{
+
+    targetEnemy = closest;
+}
+else if (closestObject != null)
+{
+    targetAttackable = closestObject;
+}*/
+#endregion
+
+private void SetSpeedNull()
     {
         float dampTime = .1f;
         float deltaTime = .1f;

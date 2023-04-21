@@ -8,7 +8,9 @@ public static class GlobalDefines
     {
         Altgard,
         Maukland,
-        Zhanguo
+        Zhanguo,
+        EnemyOfAll,
+        AllyOfAll
     }
     public enum SoldierTypes
     {

@@ -434,19 +434,22 @@ public class FightManager : MonoBehaviour
             } 
         }
     }
-    private void AIRaisePursueRadius()
+    private void AIRaisePursueRadius() //so that ai knows where player is
     {
-        float newRadius = 999;
-        foreach (FormationPosition formPos in enemyControlledFormations)
-        {
-            if (formPos.soldierBlock.melee)
-            { 
-                formPos.engageEnemyRadius = newRadius;
-            }
-            else
+        if (LevelManager.Instance.currentLevel != LevelManager.Level.DayOfGlory) //this level has people sleeping
+        { 
+            float newRadius = 9999;
+            foreach (FormationPosition formPos in enemyControlledFormations)
             {
-                formPos.engageEnemyRadius = newRadius;
-                //formPos.engageEnemyRadius = formPos.soldierBlock.modelAttackRange;
+                if (formPos.soldierBlock.melee)
+                {
+                    formPos.engageEnemyRadius = newRadius;
+                }
+                else
+                {
+                    formPos.engageEnemyRadius = newRadius;
+                    //formPos.engageEnemyRadius = formPos.soldierBlock.modelAttackRange;
+                }
             }
         }
     }

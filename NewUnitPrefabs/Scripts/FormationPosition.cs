@@ -703,7 +703,7 @@ public class FormationPosition : MonoBehaviour
         }
     }
     private float staminaRegain = 3;
-    private float staminaLoss = 10;
+    private float staminaLoss = 15;
     private void UpdateStaminaFormation(int time) //time in ms
     {
         if (!charging && !routing) //regain stamina if not moving fast
