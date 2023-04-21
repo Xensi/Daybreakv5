@@ -91,7 +91,7 @@ public class AttackBox : MonoBehaviour
                         {
                             canWeLaunchThem = true;
                         }
-                        parentModel.DealDamage(hitModel, canWeLaunchThem, true, false);
+                        parentModel.DealDamageToModel(hitModel, canWeLaunchThem, true, false);
                         parentModel.currentAttackTime = 0;
                     }
                 }
@@ -102,7 +102,7 @@ public class AttackBox : MonoBehaviour
                     {
                         //Debug.Log("Trampling");
                         Disarm();
-                        parentModel.DealDamage(hitModel, false, true, true);
+                        parentModel.DealDamageToModel(hitModel, false, true, true);
                         parentModel.currentAttackTime = 0;
                     }
                 }
@@ -121,7 +121,7 @@ public class AttackBox : MonoBehaviour
                         if (hitModel != null && hitModel.alive && hitModel.team != parentModel.team && hitModel.normalizedSpeed > speedThreshold && !hitModel.airborne && hitModel.getUpTime <= toleranceForKnockDown)
                         {
                             Disarm();
-                            parentModel.DealDamage(hitModel, false, false);
+                            parentModel.DealDamageToModel(hitModel, false, false);
                             parentModel.currentAttackTime = 0;
                         }
                     }
@@ -144,7 +144,7 @@ public class AttackBox : MonoBehaviour
                             {
                                 parentModel.formPos.StopCharging();
                             }
-                            parentModel.DealDamage(hitModel, canWeLaunchThem, false);
+                            parentModel.DealDamageToModel(hitModel, canWeLaunchThem, false);
                             parentModel.currentAttackTime = 0;
                         }
                     }

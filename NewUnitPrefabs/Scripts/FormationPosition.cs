@@ -438,7 +438,8 @@ public class FormationPosition : MonoBehaviour
                 {
                     if (checkingModel.currentModelState == SoldierModel.ModelState.Moving || checkingModel.currentModelState == SoldierModel.ModelState.Idle)
                     {
-                        checkingModel.CheckIfEnemyModelsNearby();
+                        //checkingModel.CheckIfEnemyModelsNearby();
+                        checkingModel.CheckIfDamageablesNearby();
                     }
                 }
             } 
@@ -462,6 +463,7 @@ public class FormationPosition : MonoBehaviour
     }
     public void SetDestAndSearchPath()
     {
+        Debug.Log("Searching: " + name);
         aiPath.destination = aiTarget.position;
         aiPath.SearchPath();
     }

@@ -5,7 +5,7 @@ using UnityEngine;
 using Pathfinding;
 using System.Threading;
 using System.Threading.Tasks;
-public class SoldierModel : MonoBehaviour
+public class SoldierModel : DamageableEntity
 {
     public MagicModule magicModule;
     #region AssignedAtStart
@@ -52,10 +52,10 @@ public class SoldierModel : MonoBehaviour
     [SerializeField] public float startingMaxSpeed = 3; //defined by richai starting maxspeed settings, typically walk speed
     [SerializeField] private float adjustWalkSpeedVisually = 1;
     [SerializeField] private bool playIdleAnims = false;
-    [SerializeField] private float health = 10;
+    //[SerializeField] private float health = 10;
     public float damage = 1;
     public float armorPiercingDamage = 0;
-    [SerializeField] private float armor = 0;
+    //[SerializeField] private float armor = 0;
 
     [SerializeField] private float requiredDamageTime = .8f;
     [SerializeField] private float currentDamageTime = 0;
@@ -95,7 +95,7 @@ public class SoldierModel : MonoBehaviour
     private bool allowedToDealDamage = true;
     [HideInInspector] public Position modelPosition;
     public float movingSpeed = 0;
-    [HideInInspector] public bool alive = true;
+    //[HideInInspector] public bool alive = true;
     [HideInInspector] public bool attacking = false;
     //public bool moving = false;
     public bool damaged = false;
@@ -103,10 +103,11 @@ public class SoldierModel : MonoBehaviour
     private bool idle = false;
     public bool knockedDown = false;
     public bool airborne = false;
+    public DamageableEntity targetDamageable;
     public SoldierModel targetEnemy;
     [HideInInspector] public bool pendingLaunched = false;
     public bool hasClearLineOfSight = false; 
-    public GlobalDefines.Team team = GlobalDefines.Team.Altgard;
+    //public GlobalDefines.Team team = GlobalDefines.Team.Altgard;
     [HideInInspector] public float attackRange = 1;
     [HideInInspector] public bool animate = false;
     [HideInInspector] public float currentSpeed = 0;
@@ -583,18 +584,7 @@ public class SoldierModel : MonoBehaviour
             {
                 PlayDeployChatter();
             }
-        }
-        /*else if (formPos.listOfNearbyEnemies.Count > 0) //check if enemies nearby
-        {
-            if (modelPosition != null && modelPosition.row != null && modelPosition.row.rowNum <= 2)
-            {
-                SwitchState(ModelState.Deploying);
-                if (!formPos.inCombat && !formPos.playingAttackChatter)
-                {
-                    PlayDeployChatter();
-                }
-            }
-        } */
+        } 
     }
     private void PlayDeployChatter()
     {
@@ -616,9 +606,10 @@ public class SoldierModel : MonoBehaviour
             }
         }
     }
+    private SoldierModel targetDamageableModel;
     private void BeginAttack()
     {
-        if (targetEnemy == null && attackType == AttackType.Melee) //if we don't have a target and we're melee go back
+        if (targetDamageable == null && attackType == AttackType.Melee) //if we don't have a target and we're melee go back
         {
             SwitchState(lastState);
             return;
@@ -627,16 +618,19 @@ public class SoldierModel : MonoBehaviour
         if (attackType == AttackType.Melee)
         {
             int rand = UnityEngine.Random.Range(1, 100);
-            /*if ()
-            {
-                hitThreshold *= 2; //melee is doubly effective against ranged units
-            }*/
-
-            if (rand <= hitThreshold || targetEnemy.attackType == AttackType.Ranged) //if target is ranged guaranteed hit because no way for them to defend against
-            {
-                DealDamage(targetEnemy, formPos.charging); //change based on if charging or not
+            targetDamageableModel = targetDamageable.GetComponentInParent<SoldierModel>();
+            if (targetDamageableModel != null)
+            { 
+                if (rand <= hitThreshold || targetDamageableModel.attackType == AttackType.Ranged)
+                { 
+                    DealDamageToModel(targetDamageableModel, formPos.charging); //if target is ranged guaranteed hit because no way for them to defend against
+                }
             }
-            //DealDamage(targetEnemy, formPos.charging);
+            else
+            {
+                DealDamageToDamageable(targetDamageable); //always hit damageables?
+            } 
+            targetDamageableModel = null; 
         }
         else if (rangedModule != null)
         {
@@ -711,7 +705,22 @@ public class SoldierModel : MonoBehaviour
     }
     public bool HasTargetInRange()
     {
-        if (targetEnemy != null && CheckIfInAttackRange())
+        if (targetDamageable != null && targetDamageable.alive && CheckIfInAttackRange())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    } 
+    private bool CheckIfInAttackRange()
+    {
+        return Helper.Instance.GetSquaredMagnitude(transform.position, targetDamageable.transform.position) <= Mathf.Pow(attackRange, 2);
+    }
+    private bool HasTarget()
+    {
+        if (targetDamageable != null || formPos.focusFire || formPos.enemyFormationToTarget != null)
         {
             return true;
         }
@@ -876,19 +885,52 @@ public class SoldierModel : MonoBehaviour
             return false;
         }
     }
-    private bool CheckIfInAttackRange()
-    { 
-        return Helper.Instance.GetSquaredMagnitude(transform.position, targetEnemy.transform.position) <= Mathf.Pow(attackRange, 2);
-    }
-    private bool HasTarget()
+    public List<DamageableEntity> nearbyDamageables;
+    public void CheckIfDamageablesNearby()
     {
-        if (targetEnemy != null || formPos.focusFire || formPos.enemyFormationToTarget != null)
+        nearbyDamageables.Clear(); //wipe the list  
+        int maxColliders = 320; //lower numbers stop working
+        Collider[] colliders = new Collider[maxColliders];
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, attackRange, colliders, modelLayerMask, QueryTriggerInteraction.Ignore);
+        for (int i = 0; i < numColliders; i++) //go for hurtboxes
         {
-            return true;
+            if (colliders[i].gameObject == self)
+            {
+                continue;
+            }
+            if (colliders[i].gameObject.tag == "Hurtbox") //if is hurtbox
+            {
+                DamageableEntity entity = colliders[i].GetComponentInParent<DamageableEntity>();
+                if (entity != null)
+                {
+                    if (entity.alive && entity.team != team) //alive and enemy
+                    {
+                        nearbyDamageables.Add(entity);
+                    }
+                }
+            }
         }
-        else
+        targetDamageable = null;
+        if (nearbyDamageables.Count > 0)
         {
-            return false;
+            TargetClosestDamageable(); //set target enemy to be closest model
+        }
+    }
+    public void TargetClosestDamageable()
+    {
+        float initDist = Mathf.Infinity;
+        float compareDist = initDist;
+        foreach (DamageableEntity item in nearbyDamageables)
+        {
+            if (item.alive)
+            { 
+                float dist = Helper.Instance.GetSquaredMagnitude(transform.position, item.transform.position);
+                if (dist < compareDist)
+                {
+                    targetDamageable = item;
+                    compareDist = dist;
+                }
+            }
         }
     }
     public void CheckIfEnemyModelsNearby()
@@ -1191,24 +1233,22 @@ private void SetSpeedNull()
     [Range(1, 100)]
     [SerializeField] int hitThreshold = 50; //higher numbers are better. wider range of good hits
     
-    public void DealDamage(SoldierModel enemy, bool launchEnemy = false, bool knockDown = false, bool trampling = false)
-    {
-        //check if in range, otherwise whiff ?
-        formPos.modelAttacked = true;
-        if (enemy != null && enemy.alive)
+    public void DealDamageToModel(SoldierModel model, bool launchEnemy = false, bool knockDown = false, bool trampling = false)
+    { 
+        formPos.modelAttacked = true; 
+        if (model != null && model.alive)
         {
             float force = 1; 
             if (attackType == AttackType.Melee)
             {
                 PlayAttackSound();
-
-                if (enemy.attackType == AttackType.Ranged) //melee breaks ranged cohesion
+                if (model.attackType == AttackType.Ranged) //melee breaks ranged cohesion
                 {
-                    enemy.formPos.BreakCohesion();
+                    model.formPos.BreakCohesion();
                     if (formPos.charging) //rout them if charging
                     {
                         int time = 10;
-                        enemy.formPos.SoftRout(time);
+                        model.formPos.SoftRout(time);
                     }
                 }  
                 if (formPos.charging)
@@ -1228,11 +1268,11 @@ private void SetSpeedNull()
             else if (attackType == AttackType.CavalryCharge)
             {
                 force = normalizedSpeed;
-                if (knockDown && !enemy.formPos.braced) //can't knock down braced units
+                if (knockDown && !model.formPos.braced) //can't knock down braced units
                 {
                     float getUpTime = knockDownForSecondsMax;
-                    enemy.KnockDown();
-                    enemy.getUpTimeCap = getUpTime * force;
+                    model.KnockDown();
+                    model.getUpTimeCap = getUpTime * force;
                 }
                 if (trampling)
                 {
@@ -1243,15 +1283,15 @@ private void SetSpeedNull()
                     SlowDown(slowMax - force, minSlow);
                 }
             }
-            if (attacksBreakEnemyCohesion && !enemy.braced)
+            if (attacksBreakEnemyCohesion && !model.braced)
             {
-                enemy.formPos.BreakCohesion();
+                model.formPos.BreakCohesion();
             }
-            if (attacksSplinterEnemyCohesion && !enemy.braced)
+            if (attacksSplinterEnemyCohesion && !model.braced)
             { 
-                enemy.formPos.SplinterCohesion(inflictSplinterAmount);
+                model.formPos.SplinterCohesion(inflictSplinterAmount);
             }
-            if (launchEnemy && !enemy.formPos.braced) //attacksCanLaunchEnemies && launchEnemy
+            if (launchEnemy && !model.formPos.braced) //attacksCanLaunchEnemies && launchEnemy
             {
                 //Debug.Log("attempting to launch enemy");
                 force = Mathf.Clamp(force, 0, 1);
@@ -1261,11 +1301,25 @@ private void SetSpeedNull()
                 float slowMax = startingMaxSpeed * 0.9f;
                 float minSlow = 0.1f;
                 SlowDown(slowMax - force, minSlow);
-                Vector3 startPos = new Vector3(enemy.transform.position.x, enemy.transform.position.y + 1, enemy.transform.position.z);
-                enemy.LaunchModel(heading, force * maxDistance, enemy.transform.position);
+                Vector3 startPos = new Vector3(model.transform.position.x, model.transform.position.y + 1, model.transform.position.z);
+                model.LaunchModel(heading, force * maxDistance, model.transform.position);
             } 
-            enemy.SufferDamage(damage * force, armorPiercingDamage * force, this, 1);
+            model.SufferDamage(damage * force, armorPiercingDamage * force, this, 1);
         }
+    }
+
+    public void DealDamageToDamageable(DamageableEntity entity)
+    {
+        if (attackType == AttackType.Melee)
+        {
+            PlayAttackSound();
+        }
+        formPos.modelAttacked = true;
+        //check if soldiermodel or not 
+        if (entity != null && entity.alive)
+        {
+            entity.InflictDamageOnThis(damage);
+        } 
     }
     private void PlayAttackSound()
     { 
@@ -1534,7 +1588,7 @@ private void SetSpeedNull()
     }
     public void StopAttackingWhenNoEnemiesNearby()
     {
-        if (nearbyEnemyModels.Count <= 0) //if no nearby enemies formPos.listOfNearbyEnemies.Count <= 0 && 
+        if (nearbyDamageables.Count <= 0) //if no nearby enemies formPos.listOfNearbyEnemies.Count <= 0 && 
         {
             SetAttacking(false);
         }

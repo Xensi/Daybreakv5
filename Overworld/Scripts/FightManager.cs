@@ -418,21 +418,24 @@ public class FightManager : MonoBehaviour
     }
     private void AITryToCharge()
     {
-        foreach (FormationPosition formPos in enemyControlledFormations)
+        if (LevelManager.Instance.currentLevel != LevelManager.Level.DayOfGlory) //reinforcements should take longer to arrive
         {
-            if (formPos.soldierBlock.melee && formPos.chargeRecharged)
+            foreach (FormationPosition formPos in enemyControlledFormations)
             {
-                if (formPos.enemyFormationToTarget != null && formPos.enemyFormationToTarget.alive && !formPos.enemyFormationToTarget.routing)
-                { 
-                    formPos.formationToFocusFire = formPos.enemyFormationToTarget; 
-                    formPos.StartCharging();
-                }
-                else
+                if (formPos.soldierBlock.melee && formPos.chargeRecharged)
                 {
-                    formPos.formationToFocusFire = null;
+                    if (formPos.enemyFormationToTarget != null && formPos.enemyFormationToTarget.alive && !formPos.enemyFormationToTarget.routing)
+                    {
+                        formPos.formationToFocusFire = formPos.enemyFormationToTarget;
+                        formPos.StartCharging();
+                    }
+                    else
+                    {
+                        formPos.formationToFocusFire = null;
+                    }
                 }
-            } 
-        }
+            }
+        } 
     }
     private void AIRaisePursueRadius() //so that ai knows where player is
     {
