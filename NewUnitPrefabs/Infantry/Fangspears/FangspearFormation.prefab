@@ -37,7 +37,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5955700111243193914, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: m_Name
-      value: InfantryUnit
+      value: FangspearFormation
       objectReference: {fileID: 0}
     - target: {fileID: 5955700111243193914, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: m_IsActive
@@ -54,7 +54,7 @@ PrefabInstance:
     - target: {fileID: 5955700111243193916, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: soldierPrefab
       value: 
-      objectReference: {fileID: 487653131395647955, guid: d4e2f2ec39db27344ab6f61e788e4d4f, type: 3}
+      objectReference: {fileID: 487653131395647955, guid: 62b07af332e40ef459b772bcd0f35f00, type: 3}
     - target: {fileID: 5955700111243193916, guid: 3ebe40290d4d2c942bb711bf464632cb, type: 3}
       propertyPath: modelAttackRange
       value: 3

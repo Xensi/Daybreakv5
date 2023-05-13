@@ -1,65 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3171561541954152508
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7219251137590844722}
-  - component: {fileID: 4866119310156644663}
-  - component: {fileID: 875779385246416925}
-  m_Layer: 24
-  m_Name: Body
-  m_TagString: Hurtbox
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7219251137590844722
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3171561541954152508}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7192488739686180119}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4866119310156644663
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3171561541954152508}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15eb3c5e0a6ba2a47b4f742ddc40ccd2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  multiplierDamage: 2
-  type: 1
---- !u!135 &875779385246416925
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3171561541954152508}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.32
-  m_Center: {x: 0, y: 0.31, z: 0}
 --- !u!1 &8703863504565669321
 GameObject:
   m_ObjectHideFlags: 0
@@ -180,11 +120,6 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 5aa1b1050d1c6ab4d86f55d971817e51, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 26910dc1185e9054fb39415b0794ff1f, type: 3}
---- !u!4 &7192488739686180119 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -3483377961399715842, guid: 26910dc1185e9054fb39415b0794ff1f, type: 3}
-  m_PrefabInstance: {fileID: 3204403861400163049}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7811740742314197721 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4616388099309572144, guid: 26910dc1185e9054fb39415b0794ff1f, type: 3}

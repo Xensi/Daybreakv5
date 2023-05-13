@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1591030023456474169, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: m_RootOrder
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 3971422626699966185, guid: ea9127458b64e3645923071d64961f81, type: 3}
       propertyPath: m_Center.z
       value: 1.33
@@ -95,6 +99,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9064945550150930334, guid: ea9127458b64e3645923071d64961f81, type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7295892263859704113, guid: ea9127458b64e3645923071d64961f81, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ea9127458b64e3645923071d64961f81, type: 3}
@@ -120,13 +128,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b295b5590a29fbf41a7a4edad01dfe2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectileSpawn: {fileID: 7213940796857715581}
+  projectileSpawn: {fileID: 7410568895892475838}
   projectile: {fileID: 8333262704199657843, guid: eabbea967cb3d3b4ca41216766f6bd8a, type: 3}
   model: {fileID: 0}
   projectileDeviationAmount: 10
   forceRatio: 1
   maxProjectileForce: 50
   maxRange: 10
+--- !u!4 &7410568895892475838 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8324927667995017074, guid: ea9127458b64e3645923071d64961f81, type: 3}
+  m_PrefabInstance: {fileID: 1540148328146350284}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3632728576843860762
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -136,7 +149,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6007080249104698513, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 6007080249104698513, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
       propertyPath: m_LocalPosition.x
@@ -184,8 +197,3 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
---- !u!4 &7213940796857715581 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6230478896649158759, guid: cf1a52a10a22c7f4aa071251489674f8, type: 3}
-  m_PrefabInstance: {fileID: 3632728576843860762}
-  m_PrefabAsset: {fileID: 0}

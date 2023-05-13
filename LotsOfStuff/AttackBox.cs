@@ -136,11 +136,11 @@ public class AttackBox : MonoBehaviour
                         {
                             Disarm();
                             bool canWeLaunchThem = false;
-                            if (hitModel.formPos.formationType != FormationPosition.FormationType.Cavalry)
+                            if (hitModel.formPos != null && hitModel.formPos.formationType != FormationPosition.FormationType.Cavalry)
                             {
                                 canWeLaunchThem = true;
                             }
-                            else //stop charging if we hit cavalry
+                            else if (hitModel.formPos != null) //stop charging if we hit cavalry
                             {
                                 parentModel.formPos.StopCharging();
                             }

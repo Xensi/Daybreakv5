@@ -4741,12 +4741,11 @@ MonoBehaviour:
   formPos: {fileID: 29422916108755641}
   listSoldierModels: []
   listMageModels: []
-  modelsArray: []
   arbiter: {fileID: 0}
   reinforceablePositions: []
   retreatPositions: []
   modelAttackRange: 4.5
-  desiredWalkingSpeed: 3
+  desiredWalkingSpeed: 3.5
   melee: 1
   canBeRanged: 0
   hasSpecialVeterans: 1
@@ -4755,6 +4754,7 @@ MonoBehaviour:
   manuallyAssignRows: 0
   manager: {fileID: 0}
   soldiersToCreate: 80
+  modelsArray: []
 --- !u!1 &5955700111421230610
 GameObject:
   m_ObjectHideFlags: 0
@@ -4861,6 +4861,7 @@ MonoBehaviour:
   formationIconsParent: {fileID: 6310091824402392462}
   formationType: 4
   shaker: {fileID: 0}
+  fightManager: {fileID: 0}
   AIIntelligence: 10
   aiBraceRadius: 75
   routing: 0
@@ -4955,13 +4956,15 @@ MonoBehaviour:
   chargeRechargeTime: 60
   maxToleratedDeaths: 30
   deathsThisTimeFrame: 0
-  extremeRoutThreshold: 15
+  shatterThreshold: 15
   hardRoutOnSoftRoutThreshold: 40
   numKills: 0
   stamina: 4000
   maxStamina: 4000
+  updatesBegun: 0
   AIControlled: 0
   modelHasAShot: 0
+  canRout: 1
   splinterLevel: 0
   positionToCheck: 0
   frontIcon: {fileID: 8784098199558271929}

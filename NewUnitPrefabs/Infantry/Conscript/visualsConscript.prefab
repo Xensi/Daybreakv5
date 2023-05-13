@@ -96,66 +96,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ce0931eda016384881f9f95d02f5d85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &7881065826739682999
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8013356173352666803}
-  - component: {fileID: 2922872725374779902}
-  - component: {fileID: 5683698966048534000}
-  m_Layer: 24
-  m_Name: Body
-  m_TagString: Hurtbox
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8013356173352666803
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7881065826739682999}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1941401021877552619}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2922872725374779902
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7881065826739682999}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15eb3c5e0a6ba2a47b4f742ddc40ccd2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  multiplierDamage: 2
-  type: 1
---- !u!135 &5683698966048534000
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7881065826739682999}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.28
-  m_Center: {x: 0, y: -0.34, z: 0}
 --- !u!1001 &903545256281950000
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -461,11 +401,6 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 5aa1b1050d1c6ab4d86f55d971817e51, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4d97fa77396d1b941a474415281336e7, type: 3}
---- !u!4 &1941401021877552619 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1619946138368688859, guid: 4d97fa77396d1b941a474415281336e7, type: 3}
-  m_PrefabInstance: {fileID: 903545256281950000}
-  m_PrefabAsset: {fileID: 0}
 --- !u!137 &2515696176131579052 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 3342662444526689180, guid: 4d97fa77396d1b941a474415281336e7, type: 3}

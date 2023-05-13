@@ -346,7 +346,10 @@ public class RangedModule : MonoBehaviour
             Vector3 displacement = new Vector3(target.x, start.y, target.z) - start;
 
             ProjectileDataClass data = CalculateProjectileInformation(start, target);
-            data = CalculatePredictedPositionData(data, start, target);
+            if (model.formPos.enemyFormationToTarget != null)
+            { 
+                data = CalculatePredictedPositionData(data, start, target);
+            }
             float angle = data.Angle;
             //float angle = AngleCalculation(target);
             //var a = angle;// * Mathf.Deg2Rad;
@@ -530,13 +533,13 @@ public class RangedModule : MonoBehaviour
             DeltaY = deltaY
         };
     }
-    private ProjectileDataClass CalculatePredictedPositionData(ProjectileDataClass directData, Vector3 startPos, Vector3 targetPos)
+    private ProjectileDataClass CalculatePredictedPositionData(ProjectileDataClass directData, Vector3 startPos, Vector3 targetPos) //account for target's movement
     {
         Vector3 projectileVelocity = directData.InitialVelocity;
         projectileVelocity.y = 0;
         float time = directData.DeltaXZ / projectileVelocity.magnitude;
 
-        IAstarAI targetRigid = model.formPos.enemyFormationToTarget.aiPath;
+        IAstarAI targetRigid = model.formPos.enemyFormationToTarget.aiPath; //fix this
 
         Vector3 targetMovement = targetRigid.velocity * time;
 

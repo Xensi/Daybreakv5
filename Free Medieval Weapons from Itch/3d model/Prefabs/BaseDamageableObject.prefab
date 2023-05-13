@@ -90,9 +90,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d60b27b20b118f44ba58528c1bdd022d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 5
+  health: 18
   alive: 1
   team: 2
   armor: 0
-  enableOnDeath: []
+  fireDamageMultiplier: 1
+  enableOnDeathFromBeingFlamed: []
+  enableOnDeathFromBeingAttacked: []
   soundOnDeath: {fileID: 0}
+  spawner: {fileID: 0}
+  inc: 0

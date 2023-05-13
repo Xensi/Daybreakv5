@@ -178,7 +178,7 @@ public class ProjectileFromSoldier : MonoBehaviour
     }
     private void DisableThis()
     {
-        SphereCollider capsule = GetComponent<SphereCollider>();
+        Collider capsule = GetComponent<Collider>();
         capsule.enabled = false;
         audioSource.enabled = false;
         Invoke("SelfDestruct", 5);
@@ -224,7 +224,7 @@ public class ProjectileFromSoldier : MonoBehaviour
                             }
                         }
                         float damageMult = 1;
-                        BodyPart bodyPart = other.GetComponent<BodyPart>();
+                        //BodyPart bodyPart = other.GetComponent<BodyPart>();
                         /*if (bodyPart != null) //blood
                         {
                             damageMult = bodyPart.multiplierDamage;

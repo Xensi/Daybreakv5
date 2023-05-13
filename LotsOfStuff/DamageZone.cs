@@ -17,6 +17,7 @@ public class DamageZone : MonoBehaviour
     [SerializeField] private bool knocksBack = false;
     [SerializeField] private bool damageFromThisPreventsCastingMagic = false;
     [SerializeField] private float denyMagicForTime = 60;
+    public bool fireDamage = true;
     void Start()
     { 
     }
@@ -52,8 +53,30 @@ public class DamageZone : MonoBehaviour
         for (int i = 0; i < numColliders; i++)
         {
             if (colliders[i].gameObject.tag == "Hurtbox")
-            { 
-                SoldierModel model = colliders[i].GetComponentInParent<SoldierModel>(); 
+            {
+                DamageableEntity entity = colliders[i].GetComponentInParent<DamageableEntity>();
+                if (entity == null)
+                {
+                    entity = colliders[i].GetComponent<DamageableEntity>();
+                }
+                if (entity != null && entity.alive)
+                {
+                    entity.InflictDamageOnThis(damage, armorPiercingDamage, fireDamage);
+                }
+                SoldierModel model = entity.GetComponent<SoldierModel>();
+                if (model != null)
+                { 
+                    model.pendingLaunched = knocksBack;
+                    model.pendingDamageSource = transform;
+                    if (damageFromThisPreventsCastingMagic)
+                    {
+                        model.formPos.allowedToCastMagic = false;
+                        model.formPos.timeUntilAllowedToCastMagicAgain = denyMagicForTime;
+
+                        FightManager.Instance.UpdateGUI();
+                    }
+                }
+                /*SoldierModel model = colliders[i].GetComponentInParent<SoldierModel>(); 
                 if (model != null)
                 {
                     if (model.alive)
@@ -71,7 +94,7 @@ public class DamageZone : MonoBehaviour
                             obj.UpdateGUI();
                         }
                     }
-                }
+                }*/
             }
         }  
     } 

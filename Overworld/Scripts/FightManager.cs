@@ -353,7 +353,7 @@ public class FightManager : MonoBehaviour
         InvokeRepeating("AIBrain", 1f, 1f);
         InvokeRepeating("AIBrainSlow", 10f, 10f);
         InvokeRepeating("AIBrainMage", 5f, 5f); //don't do immediately, not urgent
-        InvokeRepeating("GameOverCheck", 2, 2);
+        //InvokeRepeating("GameOverCheck", 2, 2);
     } 
     private void FastUpdate()
     {
@@ -364,7 +364,7 @@ public class FightManager : MonoBehaviour
         switch (aiState)
         {
             case combatStrategy.Attack:
-                AICheckIfBraceNeeded();
+                //AICheckIfBraceNeeded();
                 break;
             case combatStrategy.Defend:
                 AISetDefaultPursueRadius();
@@ -797,7 +797,7 @@ public class FightManager : MonoBehaviour
                 }
             }
 
-            if (formation.soldierBlock.mageType == SoldierBlock.MageTypes.Gallowglass)
+            if (formation.soldierBlock.mageType == SoldierBlock.MageTypes.Torches || formation.soldierBlock.mageType == SoldierBlock.MageTypes.Gallowglass)
             { 
                 magicUI.SetActive(true);
                 if (formation.abilityCharged)
@@ -813,31 +813,37 @@ public class FightManager : MonoBehaviour
             TMP_Text text2 = mageAbility2.GetComponentInChildren<TMP_Text>();
             mageAbility1.enabled = true;
             mageAbility2.enabled = true;
-            if (formation.soldierBlock.mageType == SoldierBlock.MageTypes.Pyromancer)
-            { 
-                text.text = "Fireball";
-                text2.text = "Smokescreen";
-            }
-            if (formation.soldierBlock.mageType == SoldierBlock.MageTypes.Gallowglass)
+            switch (formation.soldierBlock.mageType)
             {
-                text.text = "Chaff Bombs";
-                mageAbility2.gameObject.SetActive(false);
-            }
-            if (formation.soldierBlock.mageType == SoldierBlock.MageTypes.Eldritch)
-            {
-                text.text = "Eldritch Morass";
-                text2.text = "Auroral Barrier";
-            }
-            if (formation.soldierBlock.mageType == SoldierBlock.MageTypes.Seele)
-            {
-                text.text = "Raise Dead";
-                text2.text = "Curse Foe";
-            }
-            if (formation.soldierBlock.mageType == SoldierBlock.MageTypes.Flammen)
-            {
-                text.text = "Disgorge Flame";
-                mageAbility2.gameObject.SetActive(false);
-            }
+                case SoldierBlock.MageTypes.None:
+                    break;
+                case SoldierBlock.MageTypes.Pyromancer:
+                    text.text = "Fireball";
+                    text2.text = "Smokescreen";
+                    break;
+                case SoldierBlock.MageTypes.Gallowglass:
+                    text.text = "Chaff Bombs";
+                    mageAbility2.gameObject.SetActive(false);
+                    break;
+                case SoldierBlock.MageTypes.Eldritch:
+                    text.text = "Eldritch Morass";
+                    text2.text = "Auroral Barrier";
+                    break;
+                case SoldierBlock.MageTypes.Flammen:
+                    text.text = "Disgorge Flame";
+                    mageAbility2.gameObject.SetActive(false);
+                    break;
+                case SoldierBlock.MageTypes.Seele:
+                    text.text = "Raise Dead";
+                    text2.text = "Curse Foe";
+                    break;
+                case SoldierBlock.MageTypes.Torches:
+                    text.text = "Throw Torches";
+                    mageAbility2.gameObject.SetActive(false);
+                    break;
+                default:
+                    break;
+            } 
             //
             if (formation.holdFire)
             {

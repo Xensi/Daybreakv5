@@ -25,7 +25,8 @@ public class SoldierModel : DamageableEntity
     {
         Melee,
         Ranged,
-        CavalryCharge
+        CavalryCharge,
+        None
     }
     public AttackType attackType = AttackType.Melee;
     #endregion
@@ -308,7 +309,10 @@ public class SoldierModel : DamageableEntity
     /// </summary>
     public void UpdateDestinationPosition() 
     {
-        pathfindingAI.destination = target.position + dispersalVector; 
+        if (target != null)
+        { 
+            pathfindingAI.destination = target.position + dispersalVector;
+        }
     }
     public void GenerateDispersalVector(float dispersal)
     {
@@ -493,6 +497,92 @@ public class SoldierModel : DamageableEntity
                 break;
         }
         await Task.Yield();
+    }
+    public void UpdateModelStateManual()
+    {
+        switch (currentModelState)
+        {
+            case ModelState.Idle:
+                //do nothing unless
+                //if our destination is far enough away from us
+                if (CheckIfRemainingDistanceOverThreshold(remainingDistanceThreshold))
+                {
+                    SwitchState(ModelState.Moving);  //start moving
+                }
+                if (!deployed)
+                {
+                    CheckIfShouldDeploy();
+                }
+                CheckIfCanSwitchToAttacking();
+                if (attackType == AttackType.Ranged)
+                {
+                    CheckIfCanSwitchToReloading();
+                }
+                SetSpeedNull(); //force animation walking speed to zero;
+                break;
+            case ModelState.Attacking: //swinging
+                CheckIfCanDealDamage();
+                break;
+            case ModelState.Moving:
+                //UpdateDestination();
+                UpdateSpeed();
+                //if destination close enough
+                if (CheckIfRemainingDistanceUnderThreshold(remainingDistanceThreshold))
+                {
+                    SwitchState(ModelState.Idle);
+                }
+                if (!deployed)
+                {
+                    CheckIfShouldDeploy();
+                }
+                CheckIfCanSwitchToAttacking();
+                break;
+            case ModelState.Damaged:
+                CheckIfRecoveredFromDamage();
+                break;
+            case ModelState.Braced:
+                break;
+            case ModelState.Deploying:
+                if (lastState == ModelState.Moving)
+                {
+                    //UpdateDestination();
+                    UpdateSpeed();
+                }
+                CheckIfFinishedDeploying();
+                break;
+            case ModelState.KnockedDown:
+                break;
+            case ModelState.Airborne:
+                break;
+            case ModelState.Reloading: //reloading ranged weapon
+                CheckIfFinishedReloading();
+                break;
+            case ModelState.Charging:
+                //UpdateDestination();
+                UpdateSpeed();
+                CheckIfCanSwitchToAttacking();
+                break;
+            case ModelState.Routing: //just run!
+                pathfindingAI.enableRotation = true;
+                deployed = false;
+                UpdateSpeed();
+                break;
+            case ModelState.Dead:
+                break;
+            case ModelState.Undeploying:
+                if (lastState == ModelState.Moving)
+                {
+                    //UpdateDestination();
+                    UpdateSpeed();
+                }
+                CheckIfFinishedDeploying();
+                break;
+            case ModelState.FinishingAttack:
+                CheckIfAttackFinished();
+                break;
+            default:
+                break;
+        } 
     }
     private float deltaTime = 0.1f;
     private void CheckIfRecoveredFromDamage()
@@ -901,11 +991,16 @@ public class SoldierModel : DamageableEntity
             if (colliders[i].gameObject.tag == "Hurtbox") //if is hurtbox
             {
                 DamageableEntity entity = colliders[i].GetComponentInParent<DamageableEntity>();
+                if (entity == null)
+                {
+                    entity = colliders[i].GetComponent<DamageableEntity>();
+                }
                 if (entity != null)
                 {
                     if (entity.alive && entity.team != team) //alive and enemy
                     {
                         nearbyDamageables.Add(entity);
+                        //Debug.Log("adding nearby enemy to damageables");
                     }
                 }
             }
@@ -1083,7 +1178,7 @@ private void SetSpeedNull()
         float deltaTime = .1f; 
         if (currentModelState != ModelState.Routing)
         { 
-            if (formPos.charging)
+            if (formPos != null && formPos.charging)
             {
                 newMaxSpeed = startingMaxSpeed * 2 - speedSlow;
             }
@@ -1235,7 +1330,10 @@ private void SetSpeedNull()
     
     public void DealDamageToModel(SoldierModel model, bool launchEnemy = false, bool knockDown = false, bool trampling = false)
     { 
-        formPos.modelAttacked = true; 
+        if (formPos != null)
+        { 
+            formPos.modelAttacked = true;
+        }
         if (model != null && model.alive)
         {
             float force = 1; 
@@ -1244,14 +1342,20 @@ private void SetSpeedNull()
                 PlayAttackSound();
                 if (model.attackType == AttackType.Ranged) //melee breaks ranged cohesion
                 {
-                    model.formPos.BreakCohesion();
-                    if (formPos.charging) //rout them if charging
+                    if (model.formPos != null)
+                    { 
+                        model.formPos.BreakCohesion();
+                    }
+                    if (formPos != null && formPos.charging) //rout them if charging
                     {
                         int time = 10;
-                        model.formPos.SoftRout(time);
+                        if (model.formPos != null)
+                        { 
+                            model.formPos.SoftRout(time);
+                        }
                     }
                 }  
-                if (formPos.charging)
+                if (formPos != null && formPos.charging)
                 {
                     force = normalizedSpeed * 2; 
                 } 
@@ -1285,13 +1389,19 @@ private void SetSpeedNull()
             }
             if (attacksBreakEnemyCohesion && !model.braced)
             {
-                model.formPos.BreakCohesion();
+                if (model.formPos != null)
+                {  
+                    model.formPos.BreakCohesion();
+                }
             }
             if (attacksSplinterEnemyCohesion && !model.braced)
-            { 
-                model.formPos.SplinterCohesion(inflictSplinterAmount);
+            {
+                if (model.formPos != null)
+                { 
+                    model.formPos.SplinterCohesion(inflictSplinterAmount);
+                }
             }
-            if (launchEnemy && !model.formPos.braced) //attacksCanLaunchEnemies && launchEnemy
+            if (launchEnemy && model.formPos != null && !model.formPos.braced) //attacksCanLaunchEnemies && launchEnemy
             {
                 //Debug.Log("attempting to launch enemy");
                 force = Mathf.Clamp(force, 0, 1);
@@ -1318,7 +1428,7 @@ private void SetSpeedNull()
         //check if soldiermodel or not 
         if (entity != null && entity.alive)
         {
-            entity.InflictDamageOnThis(damage);
+            entity.InflictDamageOnThis(damage, armorPiercingDamage);
         } 
     }
     private void PlayAttackSound()
@@ -1363,8 +1473,10 @@ private void SetSpeedNull()
                 obj.UpdateGUI();
             }
         }
-
-        formPos.modelTookDamage = true;
+        if (formPos != null)
+        {  
+            formPos.modelTookDamage = true;
+        }
         if (origin != null)
         {
             if (origin.attackType == AttackType.Melee && attackType == AttackType.Melee) //if attacked by melee and we're melee
@@ -1465,8 +1577,17 @@ private void SetSpeedNull()
     {
         SwitchState(ModelState.Dead);
         PlaceOnGround();
-        formPos.LoseMorale();
-        formPos.numberOfAliveSoldiers -= 1;
+        if (formPos != null)
+        {
+            formPos.LoseMorale();
+            formPos.numberOfAliveSoldiers = Mathf.Clamp(formPos.numberOfAliveSoldiers-1, 0, 999);
+
+            if (formPos.numberOfAliveSoldiers <= 0)
+            {
+                //Destroy(formPos.soldierBlock);
+                    //SelfDestruct();
+            }
+        }
         if (attackBox != null)
         {
             attackBox.enabled = false; 
@@ -1483,10 +1604,6 @@ private void SetSpeedNull()
         //
         animator.Play("WeaponUpDie");
         PlayDeathChatter();
-        if (formPos.numberOfAliveSoldiers <= 0)
-        {
-            //formPos.soldierBlock.SelfDestruct();
-        }
         pathfindingAI.enabled = false; 
         if (renderers.Count > 0)
         { 

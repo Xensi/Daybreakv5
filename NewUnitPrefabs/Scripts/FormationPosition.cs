@@ -44,7 +44,7 @@ public class FormationPosition : MonoBehaviour
 
     #region AutoSet
     public ShakeSource shaker;
-    private FightManager fightManager;
+    public FightManager fightManager;
 
     #endregion
 
@@ -162,7 +162,7 @@ public class FormationPosition : MonoBehaviour
     [SerializeField] private float maxToleratedDeaths = 30;
     [SerializeField] private int deathsThisTimeFrame = 0;
     private float timeFrame = 30;
-    [SerializeField] private int extremeRoutThreshold = 15;
+    [SerializeField] private int shatterThreshold = 15;
     [SerializeField] private int hardRoutOnSoftRoutThreshold = 40;
 
     public int numKills = 0;
@@ -178,7 +178,8 @@ public class FormationPosition : MonoBehaviour
         frontIcon.color = color;
         if (fightManager == null)
         {
-            fightManager = FindObjectOfType<FightManager>();
+            fightManager = FightManager.Instance;
+            //fightManager = FindObjectOfType<FightManager>();
         }
         if (shaker == null)
         {
@@ -240,9 +241,14 @@ public class FormationPosition : MonoBehaviour
     {
         cancelToken = new CancellationTokenSource();
     }
-    private bool updatesBegun = false;
+    public bool updatesBegun = false;
     public void BeginUpdates()
     {
+        if (updatesBegun)
+        {
+            return;
+        }
+        Debug.Log("Beginning Updates: " + team);
         //return;
         //PathfindingUpdate(cancelToken.Token); //in parallel //major fps improvement when removed, due to lack of pathfinding required since dest not set
 
@@ -285,7 +291,10 @@ public class FormationPosition : MonoBehaviour
 
     private void CalculateMovingSpeed()
     {
-        movingSpeed = Mathf.Sqrt(Mathf.Pow(aiPath.velocity.x, 2) + Mathf.Pow(aiPath.velocity.z, 2)); //calculate speed vector 
+        if (aiPath != null)
+        { 
+            movingSpeed = Mathf.Sqrt(Mathf.Pow(aiPath.velocity.x, 2) + Mathf.Pow(aiPath.velocity.z, 2)); //calculate speed vector 
+        }
         float min = .01f;
         if (movingSpeed < min)
         {
@@ -417,11 +426,19 @@ public class FormationPosition : MonoBehaviour
     }*/
     private async void CheckModelsIndividually()
     {
+        if (numberOfAliveSoldiers <= 0)
+        {
+            return;
+        }
         SoldierModel checkingModel = soldierBlock.modelsArray[soldierModelToCheck];
         if (checkingModel == null)
         {
             while (checkingModel == null || !checkingModel.alive) //let us skip over those that have died
             {
+                if (numberOfAliveSoldiers <= 0)
+                {
+                    break;
+                }
                 soldierModelToCheck++;
                 if (soldierModelToCheck >= maxSoldiers) //reset on 80
                 {
@@ -430,9 +447,10 @@ public class FormationPosition : MonoBehaviour
                 checkingModel = soldierBlock.modelsArray[soldierModelToCheck];
             }
         }
-        if (checkingModel.alive)
+
+        if (checkingModel != null && checkingModel.alive)
         {
-            if (checkingModel.melee) //melee should not need an enemyformationtotarget to detect nearby models
+            if (checkingModel.attackType == SoldierModel.AttackType.Melee) //melee should not need an enemyformationtotarget to detect nearby models
             {
                 if (!checkingModel.HasTargetInRange())
                 {
@@ -442,11 +460,10 @@ public class FormationPosition : MonoBehaviour
                         checkingModel.CheckIfDamageablesNearby();
                     }
                 }
-            } 
+            }
             checkingModel.SaveFromFallingInfinitely();
             //checkingModel.UpdateDestination();
         }
-
         soldierModelToCheck++;
         int max = maxSoldiers;
         if (soldierModelToCheck >= max) //reset on 80 + 2
@@ -463,7 +480,7 @@ public class FormationPosition : MonoBehaviour
     }
     public void SetDestAndSearchPath()
     {
-        Debug.Log("Searching: " + name);
+        //Debug.Log("Searching: " + team);
         aiPath.destination = aiTarget.position;
         aiPath.SearchPath();
     }
@@ -735,16 +752,16 @@ public class FormationPosition : MonoBehaviour
     private async void VerySlowUpdate(int time, CancellationToken cancelToken)
     {
         //CheckModelsBurst();
-        if (numberOfAliveSoldiers <= 0) //if all soldiers dead, then goodbye
+        /*if (numberOfAliveSoldiers <= 0) //if all soldiers dead, then goodbye
         {
-            /*foreach (FormationPosition item in listOfNearbyEnemies)
+            *//*foreach (FormationPosition item in listOfNearbyEnemies)
             {
                 item.listOfNearbyEnemies.Remove(this);
 
-            }*/
+            }*//*
             gameObject.SetActive(false);
             return;
-        }
+        }*/
         if (formationType == FormationType.RangedInfantry && swapRowsAfterFiring) //only for musketeers
         {
             GeneralCheckIfSwapRows();
@@ -757,6 +774,7 @@ public class FormationPosition : MonoBehaviour
         {
             if (AIControlled || formationType == FormationType.RangedInfantry) //if AI, or a rangedu unit on our side
             {
+                Debug.Log("Checking for nearby forms");
                 CheckForNearbyEnemyFormations(); //probably expensive
             }
             /*if (enemyFormationToTarget == null || enemyFormationToTarget.numberOfAliveSoldiers <= 0)
@@ -834,7 +852,7 @@ public class FormationPosition : MonoBehaviour
              }
          }*/
 
-        if (obeyingMovementOrder)
+        if (obeyingMovementOrder && !AIControlled)
         {
             return;
         }
@@ -1231,7 +1249,7 @@ public class FormationPosition : MonoBehaviour
         }
         await Task.Yield();
     }
-    public void PlacePositionOnGround(Position itemPos)
+    /*public void PlacePositionOnGround(Position itemPos)
     {
         LayerMask layerMask = LayerMask.GetMask("Terrain");
         RaycastHit hit;
@@ -1241,7 +1259,7 @@ public class FormationPosition : MonoBehaviour
             itemPos.transform.position = hit.point;
         }
         //Debug.DrawRay(transform.position, Vector3.down*100, Color.yellow, 1);
-    }
+    }*/
     private void UpdateDeployment()
     {
         /*if (listOfNearbyEnemies.Count == 0) //no enemy
@@ -1329,7 +1347,7 @@ public class FormationPosition : MonoBehaviour
 
     public void LoseMorale()
     {
-        if (numberOfAliveSoldiers <= extremeRoutThreshold)
+        if (numberOfAliveSoldiers <= shatterThreshold)
         {
             HardRout();
         }
@@ -1351,6 +1369,10 @@ public class FormationPosition : MonoBehaviour
     }
     private void HardRout()
     {
+        if (!canRout)
+        {
+            return;
+        }
         shatteredIcon.gameObject.SetActive(true);
         routingIcon.gameObject.SetActive(false);
         StartFleeing();
@@ -1363,14 +1385,19 @@ public class FormationPosition : MonoBehaviour
     }*/
     public void SoftRout(int time = 20) //rout in a direction for some time. after time, check if no enemies melee attacking us. if so, then become controllable again
     {
+        if (!canRout)
+        {
+            return;
+        }
         shatteredIcon.gameObject.SetActive(false);
         routingIcon.gameObject.SetActive(true);
         StartFleeing(); 
         Invoke("StopFleeing", time);
     } //maybe stop fleeing if no enemies nearby?
-    private void StopFleeing()
+    public bool canRout = true;
+    public async void StopFleeing()
     {
-        if (numberOfAliveSoldiers <= extremeRoutThreshold)
+        if (numberOfAliveSoldiers <= shatterThreshold && canRout)
         {
             HardRout();
         }
@@ -1399,10 +1426,15 @@ public class FormationPosition : MonoBehaviour
                     }
                 }
             }
-        } 
+        }
+        await Task.Yield();
     } 
     private void StartFleeing()
     {
+        if (!canRout)
+        {
+            return;
+        }
         formationToFollow = null;
         fightManager.DeselectFormation(this);
         selectable = false;
@@ -1642,17 +1674,16 @@ public class FormationPosition : MonoBehaviour
         bool enemyInBraceRadius = false;
         float dist = 0; 
         for (int i = 0; i < fightManager.allArray.Length; i++) //go through until we get one that matches criteria
-        {
-            if ((fightManager.allArray[i].formationType != FormationType.Cavalry && fightManager.allArray[i].formationType != FormationType.SpearInfantry) || fightManager.allArray[i].team == team) //skip noncav and our team
-            {
-                continue;
-            }
-            float distance = Vector3.Distance(fightManager.allArray[i].transform.position, transform.position);
-            if (distance <= aiBraceRadius)
-            {
-                enemyInBraceRadius = true;
-                dist = distance;
-                break;
+        { 
+            if (((fightManager.allArray[i].formationType == FormationType.SpearInfantry && fightManager.allArray[i].charging) || (fightManager.allArray[i].formationType != FormationType.Cavalry)) && fightManager.allArray[i].team != team)
+            { 
+                float distance = Vector3.Distance(fightManager.allArray[i].transform.position, transform.position);
+                if (distance <= aiBraceRadius)
+                {
+                    enemyInBraceRadius = true;
+                    dist = distance;
+                    break;
+                }
             }
         }
         float intelligence = AIIntelligence;
@@ -1664,9 +1695,9 @@ public class FormationPosition : MonoBehaviour
         }
         else
         {
-            chance = intelligence * 2 * normalizedDistance;
+            chance = intelligence * 100 * normalizedDistance;
         }
-        int rand = UnityEngine.Random.Range(0, 100); //chance to do the optimal action
+        int rand = Random.Range(0, 100); //chance to do the optimal action
         if (rand <= chance)
         {
             //Debug.Log("Brace!");
@@ -1688,8 +1719,8 @@ public class FormationPosition : MonoBehaviour
         tangledUp = true;
         freezeTimer++;
         freezeTimer = Mathf.Clamp(freezeTimer, 0, 3);
-        //StopCharging();
-        Invoke("StopCharging", 1);
+        StopCharging();
+        //Invoke("StopCharging", 1);
     } 
     private void FullUnfreeze()
     { 
@@ -1869,7 +1900,11 @@ public class FormationPosition : MonoBehaviour
     
     private void SetMoving(bool val)
     { 
-        aiPath.canMove = val; 
+        if (aiPath != null)
+        {
+            aiPath.canMove = val;
+        }
+        
         //aiPath.enableRotation = val;
         if (val == false && charging)
         { 
@@ -2136,40 +2171,70 @@ public class FormationPosition : MonoBehaviour
     }
     
     public void CastMagic(Vector3 targetPos, int abilityNum)
-    { 
-        if (soldierBlock.mageType == SoldierBlock.MageTypes.Pyromancer)
+    {
+        switch (soldierBlock.mageType)
         {
-            if (abilityNum == 0)
-            {
-                foreach(SoldierModel mage in soldierBlock.listMageModels)
+            case SoldierBlock.MageTypes.None:
+                break;
+            case SoldierBlock.MageTypes.Pyromancer:
+
+                if (abilityNum == 0)
                 {
-                    if (mage.magicCharged && mage.alive && mage.rangedModule != null)
-                    { 
-                        mage.rangedModule.MageCastProjectile(targetPos, abilityNum, soldierBlock.mageType); //magic charged equals false
-                        break;
-                    }
-                }
-            }
-        }
-        if (soldierBlock.mageType == SoldierBlock.MageTypes.Gallowglass)
-        {
-            float chance = 25; 
-            if (abilityNum == 0)
-            { 
-                foreach (SoldierModel model in soldierBlock.listSoldierModels)
-                {
-                    if (model.alive && model.magicModule != null && model.currentModelState != SoldierModel.ModelState.Attacking)
+                    foreach (SoldierModel mage in soldierBlock.listMageModels)
                     {
-                        int rand = UnityEngine.Random.Range(0, 100);
-                        if (rand <= chance)
+                        if (mage.magicCharged && mage.alive && mage.rangedModule != null)
                         {
-                            model.magicModule.CastMagic(targetPos, abilityNum, soldierBlock.mageType); //magic charged equals false
-                        } 
+                            mage.rangedModule.MageCastProjectile(targetPos, abilityNum, soldierBlock.mageType); //magic charged equals false
+                            break;
+                        }
                     }
                 }
-                abilityCharged = false;
-            }
-        }
+                break;
+            case SoldierBlock.MageTypes.Gallowglass: 
+                if (abilityNum == 0)
+                {
+                    float chance = 25;
+                    foreach (SoldierModel model in soldierBlock.listSoldierModels)
+                    {
+                        if (model.alive && model.magicModule != null && model.currentModelState != SoldierModel.ModelState.Attacking)
+                        {
+                            int rand = Random.Range(0, 100);
+                            if (rand <= chance)
+                            {
+                                model.magicModule.CastMagic(targetPos, abilityNum, soldierBlock.mageType); //magic charged equals false
+                            }
+                        }
+                    }
+                    abilityCharged = false;
+                }
+                break;
+            case SoldierBlock.MageTypes.Eldritch:
+                break;
+            case SoldierBlock.MageTypes.Flammen:
+                break;
+            case SoldierBlock.MageTypes.Seele:
+                break;
+            case SoldierBlock.MageTypes.Torches: 
+                if (abilityNum == 0)
+                {
+                    float chance = 10;
+                    foreach (SoldierModel model in soldierBlock.listSoldierModels)
+                    {
+                        if (model.alive && model.magicModule != null && model.currentModelState != SoldierModel.ModelState.Attacking)
+                        {
+                            int rand = Random.Range(0, 100);
+                            if (rand <= chance)
+                            {
+                                model.magicModule.CastMagic(targetPos, abilityNum, soldierBlock.mageType); //magic charged equals false
+                            }
+                        }
+                    }
+                    abilityCharged = false;
+                }
+                break;
+            default:
+                break;
+        } 
     }
     public void SetSelected(bool val)
     {
@@ -2251,7 +2316,7 @@ public class FormationPosition : MonoBehaviour
         {
             return;
         }
-        //Debug.Log("chasing foe");
+        Debug.Log("chasing foe");
         aiTarget.transform.position = enemyFormationToTarget.transform.position;
         SetDestAndSearchPath();
         rotTarget.transform.position = enemyFormationToTarget.transform.position;
