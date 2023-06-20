@@ -332,8 +332,7 @@ public class DialogueManager : MonoBehaviour
             case DialogueScriptableObject.Commands.CheckHelped: 
                 return CharactersManager.Instance.HasHelpedCharacter(num); 
             case DialogueScriptableObject.Commands.CheckImprisoned:
-                return CharactersManager.Instance.CharacterIsImprisoned(num); 
-                break;
+                return CharactersManager.Instance.CharacterIsImprisoned(num);  
             case DialogueScriptableObject.Commands.PutPrisonerOnTrial:
                 CharacterClass prisoner = null;
                 foreach (CharacterClass item in CharactersManager.Instance.characters)

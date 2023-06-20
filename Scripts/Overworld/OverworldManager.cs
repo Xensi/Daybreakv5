@@ -246,9 +246,8 @@ public class OverworldManager : MonoBehaviour
         }*/
         if (Input.GetMouseButtonDown(0))
         {
-            RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-             
+            //RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
         } 
     }
     public void HideArmyInfo()

@@ -239,9 +239,7 @@ public class SoldierModel : DamageableEntity
         if (seeker == null)
         {
             seeker = GetComponent<Seeker>();
-        }
-
-
+        } 
         if (lineOfSightIndicator == null)
         {
             lineOfSightIndicator = transform.Find("LOSIndicator").GetComponent<SpriteRenderer>();
@@ -291,25 +289,7 @@ public class SoldierModel : DamageableEntity
         GenerateDispersalVector(dispersalLevel);
         oldRequiredAttackTime = requiredAttackTime;
         //animator.enabled = false;
-    }
-    /* private void OnEnable()
-     {
-         if (pathfindingAI != null)
-         {
-             pathfindingAI.onSearchPath += UpdateDestinationPosition; //subscribe to event
-         } 
-     }
-     private void OnDisable()
-     {
-         if (pathfindingAI != null)
-         {
-             pathfindingAI.onSearchPath -= UpdateDestinationPosition;
-         } 
-     } 
-     *//*void Update()
-     {
-         pathfindingAI.destination = target.position + dispersalVector;
-     }*/
+    } 
     /// <summary>
     /// Sets destination, that's all. use search path to actually calculate and go to 
     /// </summary>
@@ -1155,7 +1135,7 @@ else if (closestObject != null)
 }*/
 #endregion
 
-private void SetSpeedNull()
+    private void SetSpeedNull()
     {
         float dampTime = .1f;
         float deltaTime = .1f;
@@ -1178,9 +1158,7 @@ private void SetSpeedNull()
         else
         {
             pathfindingAI.slowdownTime = slowTime;
-        }
-
-
+        } 
 
         float dampTime = .1f;
         float deltaTime = .1f; 
@@ -1263,7 +1241,7 @@ private void SetSpeedNull()
 
             if (pendingLaunched)
             { 
-                float maxDistance = 0.01f;
+                //float maxDistance = 0.01f;
                 Vector3 heading = (transform.position-pendingDamageSource.position).normalized;
                 //Vector3 pos = transform.position + (-heading * maxDistance); //launch them in the opposite direction please
                 LaunchModel(heading, 1, pendingDamageSource.position);
@@ -1295,14 +1273,7 @@ private void SetSpeedNull()
         {
             attackBox.ToggleAttackBox(val);
         }
-    }
-    public void SetMoving(bool val)
-    {
-        /*moving = val;
-        pathfindingAI.canMove = val; //we can move 
-        //animator.SetBool("moving", val); //and animations will match 
-        animator.SetBool(AnimatorDefines.movingID, val);*/
-    }
+    } 
     public void UpdateMageTimer()
     { 
         if (!magicCharged)
@@ -1317,22 +1288,7 @@ private void SetSpeedNull()
                 currentMagicRecharge = 0;
             }
         }
-    }
-    /*
-    private void SetMelee(bool val)
-    {
-        if (val)
-        { 
-            attackType = AttackType.Melee;
-        }
-        else
-        { 
-            attackType = AttackType.Ranged;
-        }
-        melee = val;
-        animator.SetBool(AnimatorDefines.meleeID, val); 
-    } */
-
+    } 
     [Range(1, 100)]
     [SerializeField] int hitThreshold = 50; //higher numbers are better. wider range of good hits
     
@@ -1523,31 +1479,7 @@ private void SetSpeedNull()
         //pathfindingAI.enabled = false; //disable pathing for now 
         //missile.LaunchProjectile(targetPos, angle, deviation); //fire at the position of the target with a clamped angle and deviation based on distance 
         missile.LaunchBullet(dir, power);
-    } 
-    /*public void UpdateRecoveryTimer()
-    {
-        if (damaged) //increment only if attacking
-        {
-            currentRecoveryTime += .1f;
-
-            if (currentRecoveryTime >= requiredTimeUntilRecovery)
-            {
-                currentRecoveryTime = 0; //reset damage time 
-                SetDamaged(false);
-                //SetMoving(true);
-            }
-        }
-        if (knockedDown)
-        {
-            getUpTime += .1f;
-
-            if (getUpTime >= getUpTimeCap)
-            {
-                getUpTime = 0;
-                SetKnockedDown(false);
-            }
-        }
-    }*/
+    }  
     private void ClearReferencesInPositionAndRow()
     { 
         //remove from pos 
@@ -1746,14 +1678,7 @@ private void SetSpeedNull()
             animator.enabled = false;
         }*/
         await Task.Yield();
-    } 
-    /*private void PointTowards(Vector3 targetDirection)
-    {
-        Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, 100 * deltaTime * Time.deltaTime, 0.0f);
-        newDirection.y = 0; //keep level
-        transform.rotation = Quaternion.LookRotation(newDirection);
-        //transform.rotation = Quaternion.LookRotation(targetDirection);
-    } */
+    }  
     public void FaceEnemy()
     {
         if (targetEnemy != null) //HasTargetInRange()
@@ -1766,45 +1691,8 @@ private void SetSpeedNull()
         }
         else
         {
-            pathfindingAI.enableRotation = true;
+            //pathfindingAI.enableRotation = true;
+            pathfindingAI.enableRotation = false;
         }
-    }
-    /*public void FixRotation()
-    {
-        if (attacksFaceEnemies && !knockedDown && !airborne) //if our attacks face enemy, and we're not knocked down or in the air, and not moving
-        {
-            *//*if (formPos.focusFire && !formPos.holdFire && !formPos.obeyingMovementOrder) //if we're focus firing
-            {
-                Vector3 targetDirection = new Vector3(0, 0, 0);
-                if (formPos.formationToFocusFire != null)
-                {
-                    targetDirection = formPos.formationToFocusFire.transform.position - transform.position;
-                }
-                else
-                {
-                    targetDirection = formPos.focusFirePos - transform.position;
-                }
-                PointTowards(targetDirection);
-            }
-            else if (targetEnemy != null)  //target enemy
-            {
-                Vector3 targetDirection = targetEnemy.transform.position - transform.position;
-                PointTowards(targetDirection);
-            }
-            else if (targetEnemy == null && formPos.enemyFormationToTarget != null) //formation
-            {
-                Vector3 targetDirection = formPos.enemyFormationToTarget.transform.position - transform.position;
-                PointTowards(targetDirection);
-            }*//*
-        }
-        *//*if (formPos.listOfNearbyEnemies.Count > 0) //makes guys face forward
-        {
-            richAI.enableRotation = false;
-            Vector3 targetDirection = formPos.soldierBlock.target.transform.position - transform.position; 
-        }*/
-        /*if (!richAI.canMove)
-        {
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, formPos.gameObject.transform.rotation, finishedPathRotSpeed * Time.deltaTime);
-        }*//*
-    }*/
+    } 
 }

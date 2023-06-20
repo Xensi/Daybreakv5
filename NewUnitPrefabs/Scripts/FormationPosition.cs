@@ -1391,7 +1391,7 @@ public class FormationPosition : MonoBehaviour
         shatteredIcon.gameObject.SetActive(true);
         routingIcon.gameObject.SetActive(false);
         StartFleeing();
-        float disappearTime = 30;
+        //float disappearTime = 30;
         //Invoke("SelfDestruct", disappearTime);
     }
     /*private void SelfDestruct()

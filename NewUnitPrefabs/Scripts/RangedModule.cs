@@ -149,11 +149,9 @@ public class RangedModule : MonoBehaviour
         {
             case MoveTreatment.DoNotChange:
                 break;
-            case MoveTreatment.Halt:
-                model.SetMoving(false);
+            case MoveTreatment.Halt: 
                 break;
-            case MoveTreatment.Move:
-                model.SetMoving(true);
+            case MoveTreatment.Move: 
                 break;
             default:
                 break;
