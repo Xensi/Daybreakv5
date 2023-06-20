@@ -27,7 +27,6 @@ public class AnimatedMesh : MonoBehaviour
     {
         Filter = GetComponent<MeshFilter>();
     }
-
     public void Play(string AnimationName)
     {
         if (AnimationName != this.AnimationName)
@@ -43,8 +42,7 @@ public class AnimatedMesh : MonoBehaviour
             }
         }
     }
-
-    private void Update()
+    public void ManualUpdate()
     {
         if (AnimationMeshes != null)
         {
@@ -63,4 +61,23 @@ public class AnimatedMesh : MonoBehaviour
             Tick++;
         }
     }
+    /*private void Update() //optimize
+    {
+        if (AnimationMeshes != null)
+        {
+            if (Time.time >= LastTickTime + (1f / AnimationSO.AnimationFPS))
+            {
+                Filter.mesh = AnimationMeshes[AnimationIndex];
+
+                AnimationIndex++;
+                if (AnimationIndex >= AnimationMeshes.Count)
+                {
+                    OnAnimationEnd?.Invoke(AnimationName);
+                    AnimationIndex = 0;
+                }
+                LastTickTime = Time.time;
+            }
+            Tick++;
+        }
+    }*/
 }

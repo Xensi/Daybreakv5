@@ -173,6 +173,8 @@ public class SoldierModel : DamageableEntity
     public float oldDispersalLevel;
     private Vector3 dispersalVector;
 
+    public AnimatedMesh animatedMesh;
+
     public void PlaceOnGround()
     {
         transform.rotation = Quaternion.Euler(0, transform.rotation.y, 0);
@@ -216,6 +218,10 @@ public class SoldierModel : DamageableEntity
             renderersArray = renderers.ToArray();
         }
 
+        if (animatedMesh == null)
+        {
+            animatedMesh = GetComponentInChildren<AnimatedMesh>();
+        }
         if (navMeshCutter == null)
         {
             navMeshCutter = GetComponent<NavmeshCut>();
@@ -901,12 +907,14 @@ public class SoldierModel : DamageableEntity
         {
             case ModelState.Idle:
                 animator.SetBool(AnimatorDefines.idleID, true);
+                animatedMesh.Play("upIdleConscript");
                 break;
             case ModelState.Attacking:
                 animator.SetBool(AnimatorDefines.attackingID, true);
                 break;
             case ModelState.Moving:
                 animator.SetBool(AnimatorDefines.movingID, true);
+                animatedMesh.Play("upMoveConscript");
                 break;
             case ModelState.Damaged:
                 animator.SetBool(AnimatorDefines.damagedID, true);

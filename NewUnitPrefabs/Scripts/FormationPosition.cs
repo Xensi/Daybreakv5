@@ -1065,12 +1065,27 @@ public class FormationPosition : MonoBehaviour
     private void Update()
     { 
         if (updatesBegun)
-        { 
+        {
+            UpdateSoldierMesh();
             UpdateSoldierMovements();
             CheckModelsIndividually();
             UpdateLineRenderer();
             IndicatorUpdateBurst();
             SoldiersFaceEnemyUpdate();
+        }
+    }
+    private void UpdateSoldierMesh()
+    { 
+        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+        {
+            SoldierModel model = soldierBlock.modelsArray[i];
+            if (model != null)
+            {
+                if (model.alive)
+                {
+                    model.animatedMesh.ManualUpdate();
+                }
+            }
         }
     }
     private async void SoldiersFaceEnemyUpdate()
