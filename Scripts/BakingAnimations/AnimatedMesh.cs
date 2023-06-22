@@ -21,20 +21,14 @@ public class AnimatedMesh : MonoBehaviour
     public event AnimationEndEvent OnAnimationEnd;
 
     private float LastTickTime;
-
-    public AnimatedMesh linkedMesh; //optional
-    public MeshRenderer meshRenderer;
-    public GameObject optionalSelectionCircle;
+     
+    public MeshRenderer meshRenderer; 
 
 
     private void Awake()
-    {
+    { 
         meshRenderer = GetComponent<MeshRenderer>();
-        Filter = GetComponent<MeshFilter>();
-        if (linkedMesh != null)
-        {
-            linkedMesh.AnimationSO = AnimationSO; 
-        }
+        Filter = GetComponent<MeshFilter>(); 
     }
     public void Play(string AnimationName, bool loop = true)
     {
@@ -51,11 +45,7 @@ public class AnimatedMesh : MonoBehaviour
             {
                 Debug.LogError($"Animated model {name} does not have an animation baked for {AnimationName}!");
             }
-        }
-        if (linkedMesh != null)
-        {
-            linkedMesh.Play(AnimationName, loop);
-        }
+        } 
     }
     public bool animationFinished = false;
     public bool loopAnimation = true;
@@ -87,12 +77,7 @@ public class AnimatedMesh : MonoBehaviour
                 }
                 Tick++;
             } 
-        }
-
-        if (linkedMesh != null)
-        {
-            linkedMesh.ManualUpdate();
-        }
+        } 
     }
     /*private void Update() //optimize
     {

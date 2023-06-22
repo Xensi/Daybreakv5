@@ -10,8 +10,7 @@ public class SoldierModel : DamageableEntity
     public MagicModule magicModule;
     #region AssignedAtStart
 
-    private NavmeshCut navMeshCutter;
-    [HideInInspector] public RichAI pathfindingAI; 
+    private NavmeshCut navMeshCutter; 
     private Seeker seeker;
     [HideInInspector] public Animator animator; 
     [HideInInspector] public FormationPosition formPos;
@@ -186,7 +185,9 @@ public class SoldierModel : DamageableEntity
             transform.position = hit.point;
         } 
     }
-
+    public List<Vector3> trail;
+    public Vector3 lastModelPositionPosition;
+    public float falter = 1; //1.1 means 10% fallback
     private void Awake()
     {
         magicModule = GetComponent<MagicModule>();
@@ -225,11 +226,6 @@ public class SoldierModel : DamageableEntity
         if (navMeshCutter == null)
         {
             navMeshCutter = GetComponent<NavmeshCut>();
-        }
-
-        if (pathfindingAI == null)
-        {
-            pathfindingAI = GetComponent<RichAI>();
         } 
 
         if (animator == null)
@@ -257,8 +253,7 @@ public class SoldierModel : DamageableEntity
         if (reloadingIndicator != null)
         {
             reloadingIndicator.enabled = false;
-        }
-        startingMaxSpeed = pathfindingAI.maxSpeed; 
+        } 
         //
         currentIdleTimer = UnityEngine.Random.Range(0, reqIdleTimer);
         animator.SetBool(AnimatorDefines.walkingID, true);
@@ -283,23 +278,11 @@ public class SoldierModel : DamageableEntity
         PlaceOnGround();
 
         animator.cullingMode = AnimatorCullingMode.CullCompletely;
-        //animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
-        pathfindingAI.enableRotation = true;
+        //animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms; 
         oldDispersalLevel = dispersalLevel;
         oldRequiredAttackTime = requiredAttackTime;
         //animator.enabled = false;
-    } 
-    /// <summary>
-    /// Sets destination, that's all. use search path to actually calculate and go to 
-    /// </summary>
-    public void UpdateDestinationPosition() 
-    {
-        if (target != null)
-        {
-            //pathfindingAI.destination = formPos.destinationsList[0];
-            pathfindingAI.destination = target.position + dispersalVector;
-        }
-    }
+    }  
     public Vector3 GenerateDispersalVector(float dispersal)
     {
         return dispersalVector = new Vector3(UnityEngine.Random.Range(-dispersal, dispersal), 0, UnityEngine.Random.Range(-dispersal, dispersal));
@@ -397,9 +380,11 @@ public class SoldierModel : DamageableEntity
         {
             targetEnemy = null;
         }
-    } 
+    }
+    public Vector3 travelDispersal = Vector3.zero;
+    public Vector3 travelDest;
     public async void UpdateModelState(CancellationToken cancelToken)
-    {
+    { 
         switch (currentModelState)
         {
             case ModelState.Idle:
@@ -462,8 +447,7 @@ public class SoldierModel : DamageableEntity
                 UpdateSpeed();
                 CheckIfCanSwitchToAttacking();
                 break; 
-            case ModelState.Routing: //just run!
-                pathfindingAI.enableRotation = true;
+            case ModelState.Routing: //just run! 
                 deployed = false;
                 UpdateSpeed();
                 break;
@@ -549,8 +533,7 @@ public class SoldierModel : DamageableEntity
                 UpdateSpeed();
                 CheckIfCanSwitchToAttacking();
                 break;
-            case ModelState.Routing: //just run!
-                pathfindingAI.enableRotation = true;
+            case ModelState.Routing: //just run! 
                 deployed = false;
                 UpdateSpeed();
                 break;
@@ -807,11 +790,7 @@ public class SoldierModel : DamageableEntity
         }
     }
     private void SwitchPathfinderMovement(bool val)
-    { 
-        if (pathfindingAI.enabled)
-        { 
-            pathfindingAI.canMove = val;
-        } 
+    {  
     }
     public void SwitchState(ModelState state)
     {
@@ -1218,16 +1197,13 @@ else if (closestObject != null)
     private void UpdateSpeed()
     {
         if (CheckIfRemainingDistanceOverThreshold(farDistanceThreshold)) //if far away, slow time isn't a factor
-        {
-            pathfindingAI.slowdownTime = veryFastSlowTime;
+        { 
         }
         else if (currentModelState == ModelState.Charging || currentModelState == ModelState.Routing)
-        {
-            pathfindingAI.slowdownTime = fasterSlowTime;
+        { 
         }
         else
-        {
-            pathfindingAI.slowdownTime = slowTime;
+        { 
         } 
 
         float dampTime = .1f;
@@ -1250,8 +1226,7 @@ else if (closestObject != null)
         SetPathfindingSpeed(newMaxSpeed); 
         speedSlow -= 0.1f;
         speedSlow = Mathf.Clamp(speedSlow, 0, documentedMaxSpeed * 0.5f);
-
-        movingSpeed = Mathf.Sqrt(Mathf.Pow(pathfindingAI.velocity.x, 2) + Mathf.Pow(pathfindingAI.velocity.z, 2)); //calculate speed vector 
+         
         float threshold = .01f; 
         float min = .01f;
         if (movingSpeed < min)
@@ -1273,8 +1248,7 @@ else if (closestObject != null)
         } 
     }
     private void SetPathfindingSpeed(float speed)
-    {
-        pathfindingAI.maxSpeed = speed; 
+    { 
     }
     private bool visibleInFrustum = true;
     public void UpdateVisibility(bool val) //true means visible. false is hidden
@@ -1319,23 +1293,18 @@ else if (closestObject != null)
             }  
         } 
     }
+    public float t = 0;
+    public bool readyToLerp = false;
     public Vector3 previousLocation;
     public float newMaxSpeed; 
     public bool CheckIfRemainingDistanceUnderThreshold(float threshold)
     {
-        if (pathfindingAI.enabled && pathfindingAI.remainingDistance <= threshold)
-        {
-            return true;
-        } 
-        return false;
+         
+        return true;
     }
     public bool CheckIfRemainingDistanceOverThreshold(float threshold)
-    {
-        if (pathfindingAI.enabled && pathfindingAI.remainingDistance > threshold)
-        {
-            return true;
-        } 
-        return false; 
+    { 
+        return true; 
     } 
     public void ToggleAttackBox(bool val)
     {
@@ -1546,7 +1515,7 @@ else if (closestObject != null)
         missile.formPosParent = formPos; //communicate some info to the missile
         missile.soldierParent = this;
         missile.startingPos = startingPos;
-        //pathfindingAI.enabled = false; //disable pathing for now 
+        // .enabled = false; //disable pathing for now 
         //missile.LaunchProjectile(targetPos, angle, deviation); //fire at the position of the target with a clamped angle and deviation based on distance 
         missile.LaunchBullet(dir, power);
     }  
@@ -1573,11 +1542,9 @@ else if (closestObject != null)
     {
         switch (ai)
         {
-            case AIToUse.RichAI:
-                pathfindingAI.enabled = true; 
+            case AIToUse.RichAI: 
                 break;
-            case AIToUse.AILerp:
-                pathfindingAI.enabled = false; 
+            case AIToUse.AILerp: 
                 break;
             default:
                 break;
@@ -1619,15 +1586,12 @@ else if (closestObject != null)
         //animator.enabled = true;
         //animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
         SetAlive(false);
-
-        pathfindingAI.canMove = false; 
-        pathfindingAI.enableRotation = false; 
+         
 
         ClearReferencesInPositionAndRow();
         //
         animator.Play("WeaponUpDie");
-        PlayDeathChatter();
-        pathfindingAI.enabled = false; 
+        PlayDeathChatter(); 
         if (renderers.Count > 0)
         { 
             foreach (Renderer item in renderers)
@@ -1704,11 +1668,7 @@ else if (closestObject != null)
         return closest;
     }
     public bool PathfindingCanMove()
-    {
-        if (pathfindingAI.enabled)
-        {
-            return pathfindingAI.canMove;
-        } 
+    { 
         return true;
     }  
     void OnDrawGizmos()
@@ -1761,21 +1721,19 @@ else if (closestObject != null)
             animator.enabled = false;
         }*/
         await Task.Yield();
-    }  
+    }
+    public Vector3 savedPosition;
     public void FaceEnemy()
     {
         if (targetEnemy != null) //HasTargetInRange()
-        {
-            pathfindingAI.enableRotation = false;
+        { 
             Vector3 dir = targetEnemy.transform.position - transform.position;
             Vector3 newDirection = Vector3.RotateTowards(transform.forward, dir, Time.deltaTime, 0.0f);
             newDirection.y = 0; //keep level
             transform.rotation = Quaternion.LookRotation(newDirection);
         }
         else
-        {
-            pathfindingAI.enableRotation = true;
-            //pathfindingAI.enableRotation = false;
+        {  
         }
     } 
 }

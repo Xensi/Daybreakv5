@@ -248,6 +248,18 @@ public class FormationPosition : MonoBehaviour
         {
             return;
         }
+        /*for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+        {
+            SoldierModel model = soldierBlock.modelsArray[i];
+            if (model != null)
+            {
+                if (model.alive)
+                {
+                    model.transform.localPosition = new Vector3(model.transform.localPosition.x, 0, model.transform.localPosition.z);
+                    model.savedPosition = model.transform.position;
+                }
+            }
+        }*/
         Debug.Log("Beginning Updates: " + team);
         //return;
         //PathfindingUpdate(cancelToken.Token); //in parallel //major fps improvement when removed, due to lack of pathfinding required since dest not set
@@ -259,8 +271,7 @@ public class FormationPosition : MonoBehaviour
 
         SlowUpdate(500, cancelToken.Token); //no real fps improvement
         VerySlowUpdate(1000, cancelToken.Token); //no real improvement
-        InvokeRepeating("TimeFrameAdvance", 0, timeFrame);
-        ToggleVisualsAndPathing(false);
+        InvokeRepeating("TimeFrameAdvance", 0, timeFrame); 
         //InvokeRepeating("LockSoldiers", 0, lockTime);
         //InvokeRepeating("LockSoldiersToTerrain", 0, terrainLockTime);
         //InvokeRepeating("UpdateFarAwayIconPos", 0, .1f);
@@ -816,41 +827,7 @@ public class FormationPosition : MonoBehaviour
         VerySlowUpdate(time, cancelToken);
     }
     private async void CheckForNearbyEnemyFormations()
-    {
-        //this block seems unnecessary; uses physics so expensive + getting closest formation doesn't even use the list
-        /* listOfNearbyEnemies.Clear();
-         LayerMask layerMask = LayerMask.GetMask("Formation");
-         int maxColliders = 40;
-         Collider[] hitColliders = new Collider[maxColliders];
-         int numColliders = Physics.OverlapSphereNonAlloc(transform.position, engageEnemyRadius, hitColliders, layerMask, QueryTriggerInteraction.Ignore); //nonalloc generates no garbage
-
-         numberOfFriendlyFormationsNearby = 0;
-         for (int i = 0; i < numColliders; i++)
-         {
-             if (hitColliders[i].gameObject.tag != "Formation")
-             {
-                 continue;
-             }
-             else
-             {
-                 if (hitColliders[i].gameObject == gameObject) //ignore own collider
-                 {
-                     continue;
-                 }
-                 FormationPosition form = hitColliders[i].gameObject.GetComponent<FormationPosition>();
-                 if (form.team == team)
-                 {
-                     numberOfFriendlyFormationsNearby++;
-                     continue;
-                 }
-                 if (form.routing || form.numberOfAliveSoldiers <= 0) //don't count routing or dead formations
-                 {
-                     continue;
-                 }
-                 listOfNearbyEnemies.Add(form);
-             }
-         }*/
-
+    {  
         if (obeyingMovementOrder && !AIControlled)
         {
             return;
@@ -1049,8 +1026,7 @@ public class FormationPosition : MonoBehaviour
     private void Update() //real update
     { 
         if (updatesBegun)
-        {
-            UpdatePerformance();
+        { 
             UpdateSoldierMesh();
             UpdateSoldierMovements(); //by far the most expensive
             CheckModelsIndividually();
@@ -1058,104 +1034,18 @@ public class FormationPosition : MonoBehaviour
             IndicatorUpdateBurst();
             SoldiersFaceEnemyUpdate();
         }
-    }
-    private void UpdatePerformance()
-    {
-        framesToSkip = CalculateFramesToSkip();
-        if (true) //status true  framesToSkip > 2
-        { 
-            if (performanceStatus != true)
-            {
-                performanceStatus = true;
-                ToggleVisualsAndPathing(true);
-            }
-        }
-        else //status false
-        { 
-            if (performanceStatus != false)
-            {
-                performanceStatus = false;
-                for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
-                {
-                    SoldierModel model = soldierBlock.modelsArray[i];
-                    if (model != null)
-                    { 
-                        if (model.alive)
-                        {
-                            if (model.modelPosition != null)
-                            {
-                                model.transform.position = model.modelPosition.transform.position;
-                            }
-                            model.UpdateDestinationPosition(); //fast
-
-                            model.pathfindingAI.UpdateMovement(); //not fast ... can we get away with updating every other frame? 
-                            model.startingMaxSpeed = infantrySpeed; //if skipping 1 frame, twice the speed. skip 2 frames, thrice * (framesToSkip + 1)
-                        }
-                    }
-                }
-                ToggleVisualsAndPathing(false);
-            }
-        }
-        /*if (updateMovement < framesToSkip)
-        {
-            updateMovement++;
-        }
-        else
-        {
-            updateMovement = 0;
-        }*/
-    }
-    bool performanceStatus = false; 
-    private void ToggleVisualsAndPathing(bool enable)
+    } 
+    bool performanceStatus = false;  
+    private void UpdateSoldierMesh()
     {
         for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
         {
             SoldierModel model = soldierBlock.modelsArray[i];
-            AnimatedMesh mesh = soldierBlock.fixedMeshArray[i];
             if (model != null)
             {
                 if (model.animatedMesh != null)
                 {
-                    model.animatedMesh.meshRenderer.enabled = !enable;
-                }
-                model.pathfindingAI.canMove = !enable;
-                //model.selectionCircle.SetActive(!enable);
-
-            }
-            if (mesh != null)
-            {
-                if (mesh.meshRenderer != null)
-                {
-                    mesh.meshRenderer.enabled = enable;
-                }
-            }
-        } 
-        TriggerSelectionCircles(selected);
-    }
-    private void UpdateSoldierMesh()
-    { 
-        if (performanceStatus)
-        { 
-            for (int i = 0; i < soldierBlock.fixedMeshArray.Length; i++)
-            {
-                AnimatedMesh model = soldierBlock.fixedMeshArray[i];
-                if (model != null)
-                {
-                    model.ManualUpdate();
-                }
-            }
-        }
-        else
-        { 
-            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
-            {
-                SoldierModel model = soldierBlock.modelsArray[i];
-                if (model != null)
-                {
-                    if (model.animatedMesh != null)
-                    {
-                        model.animatedMesh.ManualUpdate();
-                    }
+                    model.animatedMesh.ManualUpdate();
                 }
             }
         }
@@ -1170,32 +1060,73 @@ public class FormationPosition : MonoBehaviour
         return Mathf.RoundToInt(p);
     }
     public float infantrySpeed = 12;
-    private void UpdateSoldierMovements()
+    public int trailDelay = 1; //add random spread to trail delay or increment?
+    public float travelCohesion = 0.1f;
+    public float waypointGenerationDist = .01f;
+    //public float travelDispersal = 0.25f; //make this generate less often
+    //public int waypointsUntilNewDispersal = 1000;
+    //public int waypointCount = 0;
+    private async void UpdateSoldierMovements()
     {
-        if (!performanceStatus)
+        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
         {
-            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+            SoldierModel model = soldierBlock.modelsArray[i];
+            if (model != null)
             {
-                SoldierModel model = soldierBlock.modelsArray[i];
-                if (model != null)
+                if (model.alive)
                 {
-                    if (model.alive)
+                    float waypointDist = Vector3.Distance(model.lastModelPositionPosition, model.modelPosition.transform.position);
+                    if (waypointDist > waypointGenerationDist)
+                    { 
+                        model.trail.Insert(0, model.modelPosition.transform.position);
+                        model.lastModelPositionPosition = model.modelPosition.transform.position;
+                    }
+                    if (model.trail.Count >= trailDelay) //buffer
                     {
-                        model.UpdateDestinationPosition(); //fast
-
-                        if (updateMovement == 0)
+                        if (!model.readyToLerp) //save model position once and get destination with random spread
                         {
-                            model.pathfindingAI.UpdateMovement(); //not fast ... can we get away with updating every other frame?
+                            model.readyToLerp = true;
+                            model.previousLocation = model.transform.position;
+                            model.t = 0;
+                            /*waypointCount++;
+                            if (waypointCount >= waypointsUntilNewDispersal)
+                            {
+                                waypointCount = 0;
+
+                                model.travelDispersal = new Vector3(UnityEngine.Random.Range(-travelDispersal, travelDispersal), 0, UnityEngine.Random.Range(-travelDispersal, travelDispersal));
+                            }*/
+                            model.travelDest = model.trail[model.trail.Count - 1];// + model.travelDispersal; //
                         }
-                        model.startingMaxSpeed = infantrySpeed; //if skipping 1 frame, twice the speed. skip 2 frames, thrice * (framesToSkip + 1)
+                        else
+                        {
+                            float travelDist = Vector3.Distance(model.transform.position, model.travelDest);
+                            if (travelDist > 0.05f)
+                            {
+                                float dist = Vector3.Distance(model.previousLocation, model.travelDest);
+                                if (dist >= 1)
+                                {
+
+                                    model.t += (travelCohesion + Random.Range(-0.05f, 0.05f)) / dist;
+                                }
+                                else
+                                { 
+                                    model.t += (travelCohesion + Random.Range(-travelCohesion * model.falter * 0.9f, travelCohesion)); //*dist
+                                }
+                                model.t = Mathf.Clamp(model.t, 0, 1);
+                                model.transform.position = Vector3.Lerp(model.previousLocation, model.travelDest, model.t);
+                            }
+                            else
+                            {
+                                model.transform.position = model.travelDest;
+                                model.readyToLerp = false;
+                                model.trail.RemoveAt(model.trail.Count - 1);
+                            }
+                        } 
                     }
                 }
             }
         }
-        else
-        {
-              
-        }
+        await Task.Yield();
     }
     private async void SoldiersFaceEnemyUpdate()
     {
@@ -2076,27 +2007,16 @@ public class FormationPosition : MonoBehaviour
         
         for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
         {
-            SoldierModel model = soldierBlock.modelsArray[i];
-            AnimatedMesh mesh = soldierBlock.fixedMeshArray[i];
+            SoldierModel model = soldierBlock.modelsArray[i]; 
             if (model != null)
             {
                 if (model.alive)
                 {
-                    if (performanceStatus)
-                    {
-                        model.selectionCircle.SetActive(false);
-                        mesh.optionalSelectionCircle.SetActive(on);
-                    }
-                    else
-                    { 
-                        model.selectionCircle.SetActive(on);
-                        mesh.optionalSelectionCircle.SetActive(false);
-                    }
+                    model.selectionCircle.SetActive(on);
                 }
                 else
                 {
-                    model.selectionCircle.SetActive(false);
-                    mesh.optionalSelectionCircle.SetActive(false);
+                    model.selectionCircle.SetActive(false); 
                 }
             }
         } 

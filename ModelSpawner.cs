@@ -114,9 +114,7 @@ public class ModelSpawner : MonoBehaviour
         foreach (SoldierModel item in extant)
         {
             if (item != null)
-            {
-                item.UpdateDestinationPosition();
-                item.pathfindingAI.UpdateMovement();
+            { 
                 item.UpdateModelStateManual();
             }
             else

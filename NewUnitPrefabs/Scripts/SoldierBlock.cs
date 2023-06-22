@@ -9,8 +9,7 @@ public class SoldierBlock : MonoBehaviour
 {
     public List<Row> rows; 
     public Row frontRow; 
-    [SerializeField] private GameObject soldierPrefab;
-    [SerializeField] private GameObject fixedPrefab;
+    [SerializeField] private GameObject soldierPrefab; 
     [SerializeField] private GameObject magePrefab; 
     public enum MageTypes {
         None, Pyromancer, Gallowglass, Eldritch, Flammen, Seele, Torches
@@ -56,8 +55,7 @@ public class SoldierBlock : MonoBehaviour
     public FightManager manager;
 
     public int soldiersToCreate = 80;
-    public SoldierModel[] modelsArray; //all, max 80  
-    public AnimatedMesh[] fixedMeshArray; //all, max 80  
+    public SoldierModel[] modelsArray; //all, max 80   
 
     private void OnEnable()
     {
@@ -118,7 +116,11 @@ public class SoldierBlock : MonoBehaviour
         }
         return false;
     }
-    
+    public Vector3 GenerateDispersalVector(float dispersal)
+    {
+        return new Vector3(UnityEngine.Random.Range(-dispersal, dispersal), 0, UnityEngine.Random.Range(-dispersal, dispersal));
+    }
+    private float dispersalLevel = .25f;
     public async void SetUpSoldiers()
     { 
         if (initialized)
@@ -126,8 +128,7 @@ public class SoldierBlock : MonoBehaviour
             return;
         }
         initialized = true;
-        modelsArray = new SoldierModel[82];
-        fixedMeshArray = new AnimatedMesh[82];
+        modelsArray = new SoldierModel[82]; 
         formationPositions = new Position[80];
 
         formPos = GetComponentInChildren<FormationPosition>(); 
@@ -161,20 +162,15 @@ public class SoldierBlock : MonoBehaviour
                     increment++;
                     num++;
                     if (formPos.numberOfAliveSoldiers < soldiersToCreate)
-                    { 
+                    {
+                        Vector3 dispersal = GenerateDispersalVector(dispersalLevel); 
                         //spawn soldier
-                        GameObject soldier = Instantiate(soldierPrefab, position.transform.position, angleToFace, modelParent);//position.transform
+                        GameObject soldier = Instantiate(soldierPrefab, position.transform.position + dispersal, angleToFace, modelParent);//position.transform
                         SoldierModel model = soldier.GetComponentInChildren<SoldierModel>();
 
-                        Vector3 dispersal = model.GenerateDispersalVector(model.dispersalLevel);
-                        model.dispersalVector = dispersal;
-
-                        GameObject fixedSoldier = Instantiate(fixedPrefab, position.transform.position + dispersal, angleToFace, position.transform);
-                        AnimatedMesh animatedMesh = fixedSoldier.GetComponentInChildren<AnimatedMesh>();
-                        fixedMeshArray[arrayInc] = animatedMesh;
+                           
                         formPos.numberOfAliveSoldiers++;
-                        //getmodel
-                        model.animatedMesh.linkedMesh = animatedMesh;
+                        //getmodel 
                         if (model.attackType == SoldierModel.AttackType.Melee || model.attackType == SoldierModel.AttackType.CavalryCharge)
                         {
                             modelAttackRange = model.meleeAttackRange;
@@ -189,13 +185,13 @@ public class SoldierBlock : MonoBehaviour
                         modelsArray[arrayInc] = model;
                         model.startingMaxSpeed = desiredWalkingSpeed;
                         model.walkSpeed = desiredWalkingSpeed;
-                        model.runSpeed = desiredWalkingSpeed * 2;
-                        model.pathfindingAI.maxSpeed = desiredWalkingSpeed;
+                        model.runSpeed = desiredWalkingSpeed * 2; 
                         model.team = teamType;
                         model.formPos = formPos;
                         model.melee = melee;
                         listSoldierModels.Add(model);
                         position.assignedSoldierModel = model;
+                        model.falter = 1 + (rowItem.rowNum) * 0.1f;
                     }
                     position.formPos = formPos;
                     position.row = rowItem;
@@ -216,8 +212,7 @@ public class SoldierBlock : MonoBehaviour
                 model.target = position.transform;
                 modelsArray[arrayInc] = model;
                 model.walkSpeed = desiredWalkingSpeed;
-                model.runSpeed = desiredWalkingSpeed * 2;
-                model.pathfindingAI.maxSpeed = desiredWalkingSpeed; 
+                model.runSpeed = desiredWalkingSpeed * 2; 
                 model.team = teamType;
                 model.formPos = formPos;
                 model.melee = melee;

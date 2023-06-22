@@ -4966,6 +4966,9 @@ MonoBehaviour:
   framesToSkip: 0
   distanceToCamera: 0
   infantrySpeed: 12
+  trailDelay: 1
+  travelCohesion: 0.1
+  waypointGenerationDist: 0.05
   modelHasAShot: 0
   canRout: 1
   splinterLevel: 0
