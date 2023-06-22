@@ -1061,12 +1061,17 @@ public class FormationPosition : MonoBehaviour
     }
     public float infantrySpeed = 12;
     public int trailDelay = 1; //add random spread to trail delay or increment?
-    public float travelCohesion = 0.1f;
+    public float travelCohesion = 2f;
     public float waypointGenerationDist = .01f;
+    public float falterModifier = 1; //drilled units have less
     //public float travelDispersal = 0.25f; //make this generate less often
     //public int waypointsUntilNewDispersal = 1000;
     //public int waypointCount = 0;
-    private async void UpdateSoldierMovements()
+
+    //if far behind, allow skipping some waypoints
+    private float leftBehindDistance = 4;
+    private int leftBehindRemoveAmount = 2;
+    private void UpdateSoldierMovements()
     {
         for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
         {
@@ -1095,10 +1100,19 @@ public class FormationPosition : MonoBehaviour
 
                                 model.travelDispersal = new Vector3(UnityEngine.Random.Range(-travelDispersal, travelDispersal), 0, UnityEngine.Random.Range(-travelDispersal, travelDispersal));
                             }*/
-                            model.travelDest = model.trail[model.trail.Count - 1];// + model.travelDispersal; //
+                            model.travelDest = model.trail[model.trail.Count - 1] + model.dispersalVector;// ; //
                         }
                         else
                         {
+                            float actualCohesion;
+                            if (charging)
+                            {
+                                actualCohesion = travelCohesion * 2;
+                            }
+                            else
+                            {
+                                actualCohesion = travelCohesion;
+                            }
                             float travelDist = Vector3.Distance(model.transform.position, model.travelDest);
                             if (travelDist > 0.05f)
                             {
@@ -1106,11 +1120,12 @@ public class FormationPosition : MonoBehaviour
                                 if (dist >= 1)
                                 {
 
-                                    model.t += (travelCohesion + Random.Range(-0.05f, 0.05f)) / dist;
+                                    model.t += (actualCohesion + Random.Range(-actualCohesion * model.falter * 0.5f * falterModifier, actualCohesion)) / dist;
                                 }
                                 else
-                                { 
-                                    model.t += (travelCohesion + Random.Range(-travelCohesion * model.falter * 0.9f, travelCohesion)); //*dist
+                                {
+                                    model.t += (actualCohesion + Random.Range(-actualCohesion * model.falter * 0.5f * falterModifier, actualCohesion)); //*dist
+                                    //model.t += actualCohesion; //*dist
                                 }
                                 model.t = Mathf.Clamp(model.t, 0, 1);
                                 model.transform.position = Vector3.Lerp(model.previousLocation, model.travelDest, model.t);
@@ -1120,13 +1135,30 @@ public class FormationPosition : MonoBehaviour
                                 model.transform.position = model.travelDest;
                                 model.readyToLerp = false;
                                 model.trail.RemoveAt(model.trail.Count - 1);
+                                if (!charging)
+                                {
+                                    if (Vector3.Distance(model.transform.position, model.modelPosition.transform.position) > leftBehindDistance)
+                                    {
+                                        int j = 0;
+                                        while (model.trail.Count > 0)
+                                        {
+                                            model.trail.RemoveAt(model.trail.Count - 1);
+                                            j++;
+                                            if (j >= leftBehindRemoveAmount)
+                                            {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                
                             }
                         } 
                     }
                 }
             }
         }
-        await Task.Yield();
+        //await Task.Yield();
     }
     private async void SoldiersFaceEnemyUpdate()
     {

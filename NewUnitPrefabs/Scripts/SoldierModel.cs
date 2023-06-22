@@ -280,6 +280,7 @@ public class SoldierModel : DamageableEntity
         animator.cullingMode = AnimatorCullingMode.CullCompletely;
         //animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms; 
         oldDispersalLevel = dispersalLevel;
+        GenerateDispersalVector(dispersalLevel);
         oldRequiredAttackTime = requiredAttackTime;
         //animator.enabled = false;
     }  
