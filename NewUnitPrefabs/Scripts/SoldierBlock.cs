@@ -10,6 +10,7 @@ public class SoldierBlock : MonoBehaviour
     public List<Row> rows; 
     public Row frontRow; 
     [SerializeField] private GameObject soldierPrefab;
+    [SerializeField] private GameObject fixedPrefab;
     [SerializeField] private GameObject magePrefab; 
     public enum MageTypes {
         None, Pyromancer, Gallowglass, Eldritch, Flammen, Seele, Torches
@@ -56,6 +57,7 @@ public class SoldierBlock : MonoBehaviour
 
     public int soldiersToCreate = 80;
     public SoldierModel[] modelsArray; //all, max 80  
+    public AnimatedMesh[] fixedMeshArray; //all, max 80  
 
     private void OnEnable()
     {
@@ -125,6 +127,7 @@ public class SoldierBlock : MonoBehaviour
         }
         initialized = true;
         modelsArray = new SoldierModel[82];
+        fixedMeshArray = new AnimatedMesh[82];
         formationPositions = new Position[80];
 
         formPos = GetComponentInChildren<FormationPosition>(); 
@@ -145,6 +148,7 @@ public class SoldierBlock : MonoBehaviour
 
         //
         formPos.numberOfAliveSoldiers = 0;
+        formPos.infantrySpeed = desiredWalkingSpeed*5;
         if (rows.Count > 0)
         {
             foreach (Row rowItem in rows)
@@ -157,12 +161,20 @@ public class SoldierBlock : MonoBehaviour
                     increment++;
                     num++;
                     if (formPos.numberOfAliveSoldiers < soldiersToCreate)
-                    {
+                    { 
                         //spawn soldier
-                        GameObject soldier = Instantiate(soldierPrefab, position.transform.position, angleToFace, modelParent);
+                        GameObject soldier = Instantiate(soldierPrefab, position.transform.position, angleToFace, modelParent);//position.transform
+                        SoldierModel model = soldier.GetComponentInChildren<SoldierModel>();
+
+                        Vector3 dispersal = model.GenerateDispersalVector(model.dispersalLevel);
+                        model.dispersalVector = dispersal;
+
+                        GameObject fixedSoldier = Instantiate(fixedPrefab, position.transform.position + dispersal, angleToFace, position.transform);
+                        AnimatedMesh animatedMesh = fixedSoldier.GetComponentInChildren<AnimatedMesh>();
+                        fixedMeshArray[arrayInc] = animatedMesh;
                         formPos.numberOfAliveSoldiers++;
                         //getmodel
-                        SoldierModel model = soldier.GetComponentInChildren<SoldierModel>();
+                        model.animatedMesh.linkedMesh = animatedMesh;
                         if (model.attackType == SoldierModel.AttackType.Melee || model.attackType == SoldierModel.AttackType.CavalryCharge)
                         {
                             modelAttackRange = model.meleeAttackRange;
@@ -175,6 +187,7 @@ public class SoldierBlock : MonoBehaviour
                         model.modelPosition = position;
                         rowItem.modelsInRow.Add(model);
                         modelsArray[arrayInc] = model;
+                        model.startingMaxSpeed = desiredWalkingSpeed;
                         model.walkSpeed = desiredWalkingSpeed;
                         model.runSpeed = desiredWalkingSpeed * 2;
                         model.pathfindingAI.maxSpeed = desiredWalkingSpeed;

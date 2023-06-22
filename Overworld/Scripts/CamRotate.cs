@@ -29,7 +29,7 @@ public class CamRotate : MonoBehaviour
     private void Start()
     { 
         fightManager = FindObjectOfType<FightManager>().GetComponent<FightManager>();
-        InvokeRepeating("FindFormationsNearMe", 0f, 1f);
+        InvokeRepeating("FindFormationsNearMe", 0f, .5f);
         //InvokeRepeating("UpdateFarAwayIcons", 0.1f, 0.1f);
 
         Cursor.lockState = CursorLockMode.Confined;
@@ -42,7 +42,8 @@ public class CamRotate : MonoBehaviour
         {
             for (int i = 0; i < fightManager.allArray.Length; i++)
             {
-                float distance = Vector3.Distance(transform.position, fightManager.allArray[i].formationPositionBasedOnSoldierModels); 
+                float distance = Vector3.Distance(transform.position, fightManager.allArray[i].formationPositionBasedOnSoldierModels);
+                fightManager.allArray[i].distanceToCamera = distance;
             }
         } 
     }
@@ -106,8 +107,7 @@ public class CamRotate : MonoBehaviour
         } 
     } 
     private void Update()
-    { 
-
+    {
         //CheckVisibilityOfModelsInVisibleForms(); 
 
         UpdateTerrainHeightValue();

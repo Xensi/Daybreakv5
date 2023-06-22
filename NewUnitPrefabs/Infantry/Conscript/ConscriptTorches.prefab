@@ -15,6 +15,18 @@ PrefabInstance:
       propertyPath: mageType
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 7749522890595354336, guid: 9bce809f7434f1e44a5c9ab8ac035fb8, type: 3}
+      propertyPath: fixedPrefab
+      value: 
+      objectReference: {fileID: 7934379962851433308, guid: 753c89c298b7a894d9cbde791d26cfee, type: 3}
+    - target: {fileID: 7749522890595354336, guid: 9bce809f7434f1e44a5c9ab8ac035fb8, type: 3}
+      propertyPath: angleToFace.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7749522890595354336, guid: 9bce809f7434f1e44a5c9ab8ac035fb8, type: 3}
+      propertyPath: angleToFace.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7749522890595354337, guid: 9bce809f7434f1e44a5c9ab8ac035fb8, type: 3}
       propertyPath: m_RootOrder
       value: 0

@@ -22,15 +22,26 @@ public class AnimatedMesh : MonoBehaviour
 
     private float LastTickTime;
 
+    public AnimatedMesh linkedMesh; //optional
+    public MeshRenderer meshRenderer;
+    public GameObject optionalSelectionCircle;
+
 
     private void Awake()
     {
+        meshRenderer = GetComponent<MeshRenderer>();
         Filter = GetComponent<MeshFilter>();
+        if (linkedMesh != null)
+        {
+            linkedMesh.AnimationSO = AnimationSO; 
+        }
     }
-    public void Play(string AnimationName)
+    public void Play(string AnimationName, bool loop = true)
     {
         if (AnimationName != this.AnimationName)
         {
+            animationFinished = false;
+            loopAnimation = loop;
             this.AnimationName = AnimationName;
             Tick = 1;
             AnimationIndex = 0;
@@ -41,24 +52,46 @@ public class AnimatedMesh : MonoBehaviour
                 Debug.LogError($"Animated model {name} does not have an animation baked for {AnimationName}!");
             }
         }
+        if (linkedMesh != null)
+        {
+            linkedMesh.Play(AnimationName, loop);
+        }
     }
+    public bool animationFinished = false;
+    public bool loopAnimation = true;
     public void ManualUpdate()
     {
         if (AnimationMeshes != null)
         {
-            if (Time.time >= LastTickTime + (1f / AnimationSO.AnimationFPS))
+            if (!animationFinished)
             {
-                Filter.mesh = AnimationMeshes[AnimationIndex];
-
-                AnimationIndex++;
-                if (AnimationIndex >= AnimationMeshes.Count)
+                if (Time.time >= LastTickTime + (1f / AnimationSO.AnimationFPS))
                 {
-                    OnAnimationEnd?.Invoke(AnimationName);
-                    AnimationIndex = 0;
+                    Filter.mesh = AnimationMeshes[AnimationIndex];
+
+                    AnimationIndex++;
+                    if (AnimationIndex >= AnimationMeshes.Count)
+                    {
+                        OnAnimationEnd?.Invoke(AnimationName);
+                        if (loopAnimation)
+                        {
+                            AnimationIndex = 0;
+                            animationFinished = false;
+                        }
+                        else
+                        {
+                            animationFinished = true;
+                        }
+                    }
+                    LastTickTime = Time.time;
                 }
-                LastTickTime = Time.time;
-            }
-            Tick++;
+                Tick++;
+            } 
+        }
+
+        if (linkedMesh != null)
+        {
+            linkedMesh.ManualUpdate();
         }
     }
     /*private void Update() //optimize

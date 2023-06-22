@@ -260,8 +260,7 @@ public class FormationPosition : MonoBehaviour
         SlowUpdate(500, cancelToken.Token); //no real fps improvement
         VerySlowUpdate(1000, cancelToken.Token); //no real improvement
         InvokeRepeating("TimeFrameAdvance", 0, timeFrame);
-
-
+        ToggleVisualsAndPathing(false);
         //InvokeRepeating("LockSoldiers", 0, lockTime);
         //InvokeRepeating("LockSoldiersToTerrain", 0, terrainLockTime);
         //InvokeRepeating("UpdateFarAwayIconPos", 0, .1f);
@@ -1013,21 +1012,6 @@ public class FormationPosition : MonoBehaviour
         await Task.Yield();
     }
     #endregion 
-    private void UpdateSoldierMovements()
-    {
-        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
-        {
-            SoldierModel model = soldierBlock.modelsArray[i];
-            if (model != null)
-            {
-                if (model.alive)
-                {
-                    model.UpdateDestinationPosition();
-                    model.pathfindingAI.UpdateMovement();
-                }
-            }
-        }
-    }
     private void FixedUpdate()
     {
         if (updatesBegun)
@@ -1062,30 +1046,155 @@ public class FormationPosition : MonoBehaviour
         } 
         await Task.Yield();
     }
-    private void Update()
+    private void Update() //real update
     { 
         if (updatesBegun)
         {
+            UpdatePerformance();
             UpdateSoldierMesh();
-            UpdateSoldierMovements();
+            UpdateSoldierMovements(); //by far the most expensive
             CheckModelsIndividually();
             UpdateLineRenderer();
             IndicatorUpdateBurst();
             SoldiersFaceEnemyUpdate();
         }
     }
-    private void UpdateSoldierMesh()
-    { 
+    private void UpdatePerformance()
+    {
+        framesToSkip = CalculateFramesToSkip();
+        if (true) //status true  framesToSkip > 2
+        { 
+            if (performanceStatus != true)
+            {
+                performanceStatus = true;
+                ToggleVisualsAndPathing(true);
+            }
+        }
+        else //status false
+        { 
+            if (performanceStatus != false)
+            {
+                performanceStatus = false;
+                for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+                {
+                    SoldierModel model = soldierBlock.modelsArray[i];
+                    if (model != null)
+                    { 
+                        if (model.alive)
+                        {
+                            if (model.modelPosition != null)
+                            {
+                                model.transform.position = model.modelPosition.transform.position;
+                            }
+                            model.UpdateDestinationPosition(); //fast
+
+                            model.pathfindingAI.UpdateMovement(); //not fast ... can we get away with updating every other frame? 
+                            model.startingMaxSpeed = infantrySpeed; //if skipping 1 frame, twice the speed. skip 2 frames, thrice * (framesToSkip + 1)
+                        }
+                    }
+                }
+                ToggleVisualsAndPathing(false);
+            }
+        }
+        /*if (updateMovement < framesToSkip)
+        {
+            updateMovement++;
+        }
+        else
+        {
+            updateMovement = 0;
+        }*/
+    }
+    bool performanceStatus = false; 
+    private void ToggleVisualsAndPathing(bool enable)
+    {
         for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
         {
             SoldierModel model = soldierBlock.modelsArray[i];
+            AnimatedMesh mesh = soldierBlock.fixedMeshArray[i];
             if (model != null)
             {
-                if (model.alive)
+                if (model.animatedMesh != null)
                 {
-                    model.animatedMesh.ManualUpdate();
+                    model.animatedMesh.meshRenderer.enabled = !enable;
+                }
+                model.pathfindingAI.canMove = !enable;
+                //model.selectionCircle.SetActive(!enable);
+
+            }
+            if (mesh != null)
+            {
+                if (mesh.meshRenderer != null)
+                {
+                    mesh.meshRenderer.enabled = enable;
                 }
             }
+        } 
+        TriggerSelectionCircles(selected);
+    }
+    private void UpdateSoldierMesh()
+    { 
+        if (performanceStatus)
+        { 
+            for (int i = 0; i < soldierBlock.fixedMeshArray.Length; i++)
+            {
+                AnimatedMesh model = soldierBlock.fixedMeshArray[i];
+                if (model != null)
+                {
+                    model.ManualUpdate();
+                }
+            }
+        }
+        else
+        { 
+            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+            {
+                SoldierModel model = soldierBlock.modelsArray[i];
+                if (model != null)
+                {
+                    if (model.animatedMesh != null)
+                    {
+                        model.animatedMesh.ManualUpdate();
+                    }
+                }
+            }
+        }
+    }
+    int updateMovement = 0;
+    public int framesToSkip = 0; //close should be 0, far should increase
+    public float distanceToCamera = 0;
+    private int CalculateFramesToSkip()
+    {
+        float j = distanceToCamera / 125;
+        float p = Mathf.Exp(j)-1;
+        return Mathf.RoundToInt(p);
+    }
+    public float infantrySpeed = 12;
+    private void UpdateSoldierMovements()
+    {
+        if (!performanceStatus)
+        {
+            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+            {
+                SoldierModel model = soldierBlock.modelsArray[i];
+                if (model != null)
+                {
+                    if (model.alive)
+                    {
+                        model.UpdateDestinationPosition(); //fast
+
+                        if (updateMovement == 0)
+                        {
+                            model.pathfindingAI.UpdateMovement(); //not fast ... can we get away with updating every other frame?
+                        }
+                        model.startingMaxSpeed = infantrySpeed; //if skipping 1 frame, twice the speed. skip 2 frames, thrice * (framesToSkip + 1)
+                    }
+                }
+            }
+        }
+        else
+        {
+              
         }
     }
     private async void SoldiersFaceEnemyUpdate()
@@ -1383,7 +1492,7 @@ public class FormationPosition : MonoBehaviour
         }
     }
     private void HardRout()
-    {
+    { 
         if (!canRout)
         {
             return;
@@ -1399,7 +1508,7 @@ public class FormationPosition : MonoBehaviour
         soldierBlock.SelfDestruct();
     }*/
     public void SoftRout(int time = 20) //rout in a direction for some time. after time, check if no enemies melee attacking us. if so, then become controllable again
-    {
+    { 
         if (!canRout)
         {
             return;
@@ -1445,7 +1554,7 @@ public class FormationPosition : MonoBehaviour
         await Task.Yield();
     } 
     private void StartFleeing()
-    {
+    { 
         if (!canRout)
         {
             return;
@@ -1964,21 +2073,33 @@ public class FormationPosition : MonoBehaviour
     
     public void TriggerSelectionCircles(bool on)
     { 
+        
         for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
         {
             SoldierModel model = soldierBlock.modelsArray[i];
+            AnimatedMesh mesh = soldierBlock.fixedMeshArray[i];
             if (model != null)
             {
                 if (model.alive)
                 {
-                    model.selectionCircle.SetActive(on);
+                    if (performanceStatus)
+                    {
+                        model.selectionCircle.SetActive(false);
+                        mesh.optionalSelectionCircle.SetActive(on);
+                    }
+                    else
+                    { 
+                        model.selectionCircle.SetActive(on);
+                        mesh.optionalSelectionCircle.SetActive(false);
+                    }
                 }
                 else
                 {
                     model.selectionCircle.SetActive(false);
+                    mesh.optionalSelectionCircle.SetActive(false);
                 }
             }
-        }
+        } 
     }
 
     public void PursueCommand()

@@ -94,7 +94,7 @@ public class SoldierModel : DamageableEntity
     #region Status 
     [HideInInspector] public bool braced = false;
     private bool allowedToDealDamage = true;
-    [HideInInspector] public Position modelPosition;
+    public Position modelPosition;
     public float movingSpeed = 0;
     //[HideInInspector] public bool alive = true;
     [HideInInspector] public bool attacking = false;
@@ -171,9 +171,9 @@ public class SoldierModel : DamageableEntity
     [Range(0, 1f)]
     public float dispersalLevel;
     public float oldDispersalLevel;
-    private Vector3 dispersalVector;
+    public Vector3 dispersalVector;
 
-    public AnimatedMesh animatedMesh;
+    public AnimatedMesh animatedMesh; 
 
     public void PlaceOnGround()
     {
@@ -221,7 +221,7 @@ public class SoldierModel : DamageableEntity
         if (animatedMesh == null)
         {
             animatedMesh = GetComponentInChildren<AnimatedMesh>();
-        }
+        } 
         if (navMeshCutter == null)
         {
             navMeshCutter = GetComponent<NavmeshCut>();
@@ -286,7 +286,6 @@ public class SoldierModel : DamageableEntity
         //animator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
         pathfindingAI.enableRotation = true;
         oldDispersalLevel = dispersalLevel;
-        GenerateDispersalVector(dispersalLevel);
         oldRequiredAttackTime = requiredAttackTime;
         //animator.enabled = false;
     } 
@@ -296,13 +295,14 @@ public class SoldierModel : DamageableEntity
     public void UpdateDestinationPosition() 
     {
         if (target != null)
-        { 
+        {
+            //pathfindingAI.destination = formPos.destinationsList[0];
             pathfindingAI.destination = target.position + dispersalVector;
         }
     }
-    public void GenerateDispersalVector(float dispersal)
+    public Vector3 GenerateDispersalVector(float dispersal)
     {
-        dispersalVector = new Vector3(UnityEngine.Random.Range(-dispersal, dispersal), 0, UnityEngine.Random.Range(-dispersal, dispersal));
+        return dispersalVector = new Vector3(UnityEngine.Random.Range(-dispersal, dispersal), 0, UnityEngine.Random.Range(-dispersal, dispersal));
     }
     public bool IsVisible()
     {
@@ -386,7 +386,8 @@ public class SoldierModel : DamageableEntity
         Routing,
         Dead,
         Undeploying,
-        FinishingAttack
+        FinishingAttack,
+        Throwing
     }
     public ModelState currentModelState = ModelState.Idle;
     private ModelState lastState;
@@ -886,25 +887,59 @@ public class SoldierModel : DamageableEntity
         switch (state)
         {
             case ModelState.Idle:
-                animator.SetBool(AnimatorDefines.idleID, true);
-                animatedMesh.Play("upIdleConscript");
+                animator.SetBool(AnimatorDefines.idleID, true); 
+                if (animatedMesh != null)
+                {
+
+                    if (deployed)
+                    {
+                        animatedMesh.Play("downIdle");
+                    }
+                    else
+                    {
+                        animatedMesh.Play("upIdle");
+                    }
+                }
                 break;
             case ModelState.Attacking:
                 animator.SetBool(AnimatorDefines.attackingID, true);
+                if (animatedMesh != null)
+                {
+
+                    animatedMesh.Play("attack");
+                }
                 break;
             case ModelState.Moving:
                 animator.SetBool(AnimatorDefines.movingID, true);
-                animatedMesh.Play("upMoveConscript");
+                if (animatedMesh != null)
+                {
+
+                    if (deployed)
+                    {
+                        animatedMesh.Play("downWalk");
+                    }
+                    else
+                    {
+                        animatedMesh.Play("upWalk");
+
+                    }
+                }
                 break;
             case ModelState.Damaged:
                 animator.SetBool(AnimatorDefines.damagedID, true);
-                if (deployed)
+                if (animatedMesh != null)
                 {
-                    animator.Play("WeaponDownDamaged");
-                }
-                else
-                {
-                    animator.Play("WeaponUpDamaged");
+
+                    if (deployed)
+                    {
+                        animator.Play("WeaponDownDamaged");
+                        animatedMesh.Play("downOuch");
+                    }
+                    else
+                    {
+                        animator.Play("WeaponUpDamaged");
+                        animatedMesh.Play("upOuch");
+                    }
                 }
                 break;
             case ModelState.Braced:
@@ -912,6 +947,11 @@ public class SoldierModel : DamageableEntity
                 break;
             case ModelState.Deploying:
                 animator.SetBool(AnimatorDefines.deployedID, true);
+                if (animatedMesh != null)
+                {
+
+                    animatedMesh.Play("deploy");
+                }
                 break;
             case ModelState.KnockedDown:
                 animator.SetBool(AnimatorDefines.knockedDownID, true);
@@ -924,9 +964,34 @@ public class SoldierModel : DamageableEntity
                 break;
             case ModelState.Charging:
                 animator.SetBool(AnimatorDefines.movingID, true);
+                if (animatedMesh != null)
+                {
+
+                    if (deployed)
+                    {
+
+                        animatedMesh.Play("downRun");
+                    }
+                    else
+                    {
+                        animatedMesh.Play("upRun");
+                    }
+                }
                 break;
             case ModelState.Routing:
                 animator.SetBool(AnimatorDefines.movingID, true);
+                if (animatedMesh != null)
+                {
+
+                    if (deployed)
+                    {
+                        animatedMesh.Play("downRun");
+                    }
+                    else
+                    {
+                        animatedMesh.Play("upRun");
+                    }
+                }
                 break;
             case ModelState.Dead:
                 animator.SetBool(AnimatorDefines.aliveID, false);
@@ -936,6 +1001,11 @@ public class SoldierModel : DamageableEntity
                 break;
             case ModelState.FinishingAttack:
                 animator.SetBool(AnimatorDefines.attackingID, true);
+                if (animatedMesh != null)
+                {
+                    animatedMesh.Play("attack");
+
+                }
                 break;
             default:
                 break;
@@ -1516,6 +1586,19 @@ else if (closestObject != null)
     public void KillThis()
     {
         SwitchState(ModelState.Dead);
+
+        if (animatedMesh != null)
+        {
+            if (deployed)
+            {
+                animatedMesh.Play("upDeath", false);
+            }
+            else
+            {
+                animatedMesh.Play("upDeath", false);
+            }
+
+        } 
         PlaceOnGround();
         if (formPos != null)
         {
@@ -1533,8 +1616,8 @@ else if (closestObject != null)
             attackBox.enabled = false; 
         } 
         selectionCircle.SetActive(false);
-        animator.enabled = true;
-        animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+        //animator.enabled = true;
+        //animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
         SetAlive(false);
 
         pathfindingAI.canMove = false; 
@@ -1549,7 +1632,7 @@ else if (closestObject != null)
         { 
             foreach (Renderer item in renderers)
             {
-                item.enabled = true;
+                //item.enabled = true;
                 item.material.color = Color.gray;
             } 
         }
@@ -1691,8 +1774,8 @@ else if (closestObject != null)
         }
         else
         {
-            //pathfindingAI.enableRotation = true;
-            pathfindingAI.enableRotation = false;
+            pathfindingAI.enableRotation = true;
+            //pathfindingAI.enableRotation = false;
         }
     } 
 }

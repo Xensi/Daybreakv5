@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc4795284186ed54c9f07d529c2ed952, type: 3}
   m_Name: FogOfWarURP
   m_EditorClassIdentifier: 
-  active: 1
-  m_AdvancedMode: 0
+  active: 0
   team:
     m_OverrideState: 1
     m_Value: 0
@@ -29,12 +28,10 @@ MonoBehaviour:
   fogColor:
     m_OverrideState: 1
     m_Value: {r: 0, g: 0, b: 0, a: 1}
-    hdr: 0
-    showAlpha: 1
-    showEyeDropper: 1
   fogColorTexture:
     m_OverrideState: 0
     m_Value: {fileID: 0}
+    dimension: 1
   fogTextureScreenSpace:
     m_OverrideState: 0
     m_Value: 0
