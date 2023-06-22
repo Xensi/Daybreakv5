@@ -19,7 +19,6 @@ public class SoldierBlock : MonoBehaviour
     public float ability2Range = 25;
 
     public Transform modelParent; 
-    public Position[] formationPositions; //all, max 80
     public List<Position> magePositions;
     [SerializeField] private Transform FormationTransform;
     [SerializeField] private Quaternion angleToFace;
@@ -55,7 +54,9 @@ public class SoldierBlock : MonoBehaviour
     public FightManager manager;
 
     public int soldiersToCreate = 80;
-    public SoldierModel[] modelsArray; //all, max 80   
+    public SoldierModel[] modelsArray; //all, max 80
+    public Transform[] modelTransformArray;
+    public Position[] formationPositions; //all, max 80
 
     private void OnEnable()
     {
@@ -128,7 +129,8 @@ public class SoldierBlock : MonoBehaviour
             return;
         }
         initialized = true;
-        modelsArray = new SoldierModel[82]; 
+        modelsArray = new SoldierModel[80];
+        modelTransformArray = new Transform[80];
         formationPositions = new Position[80];
 
         formPos = GetComponentInChildren<FormationPosition>(); 
@@ -182,7 +184,6 @@ public class SoldierBlock : MonoBehaviour
                         model.target = position.transform;
                         model.modelPosition = position;
                         rowItem.modelsInRow.Add(model);
-                        modelsArray[arrayInc] = model;
                         model.startingMaxSpeed = desiredWalkingSpeed;
                         model.walkSpeed = desiredWalkingSpeed;
                         model.runSpeed = desiredWalkingSpeed * 2; 
@@ -192,6 +193,8 @@ public class SoldierBlock : MonoBehaviour
                         listSoldierModels.Add(model);
                         position.assignedSoldierModel = model;
                         model.falter = 1 + (rowItem.rowNum) * 0.1f;
+                        modelsArray[arrayInc] = model;
+                        modelTransformArray[arrayInc] = model.transform;
                     }
                     position.formPos = formPos;
                     position.row = rowItem;

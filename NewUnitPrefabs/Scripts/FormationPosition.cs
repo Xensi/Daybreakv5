@@ -4,6 +4,10 @@ using UnityEngine;
 using Pathfinding;
 using System.Threading.Tasks;
 using System.Threading;
+using Unity.Collections;
+using Unity.Jobs;
+using UnityEngine.Jobs;
+using Unity.Burst;
 public class FormationPosition : MonoBehaviour
 {
 
@@ -170,6 +174,10 @@ public class FormationPosition : MonoBehaviour
     public float stamina = 2000;
     public float maxStamina = 2000;
     private float originalAttackTime;
+    private void Awake()
+    {
+
+    }
     private void Start()
     { 
         Color color = farAwayIcon.color;
@@ -261,6 +269,7 @@ public class FormationPosition : MonoBehaviour
             }
         }*/
         Debug.Log("Beginning Updates: " + team);
+        JobInitial();
         //return;
         //PathfindingUpdate(cancelToken.Token); //in parallel //major fps improvement when removed, due to lack of pathfinding required since dest not set
 
@@ -426,14 +435,7 @@ public class FormationPosition : MonoBehaviour
         cancelToken.Cancel();
     }
     #region Updates 
-    #region Async
-    /*private async void CheckEnemyUpdate(int time, CancellationToken cancelToken)
-    {
-        CheckModelsIndividually();
-        await Task.Delay(time, cancelToken);
-        CheckEnemyUpdate(time, cancelToken);
-        await Task.Yield();
-    }*/
+    #region Async 
     private async void CheckModelsIndividually()
     {
         if (numberOfAliveSoldiers <= 0)
@@ -493,115 +495,7 @@ public class FormationPosition : MonoBehaviour
         //Debug.Log("Searching: " + team);
         aiPath.destination = aiTarget.position;
         aiPath.SearchPath();
-    }
-    /*private void AISearchPath() 
-    { 
-        if (!aiPath.reachedDestination)
-        {
-            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
-            {
-                SoldierModel model = soldierBlock.modelsArray[i];
-                if (model != null)
-                {
-                    if (model.alive)
-                    {
-                        model.pathfindingAI.SearchPath();
-                    }
-                }
-            }
-        } 
-    }*/
-    /*private async void PathfindingUpdate(CancellationToken cancelToken)
-    {
-        UpdatePathsOfSoldierModels();
-        await Task.Delay(pathfindingUpdateCurrentFrequency, cancelToken);
-        *//*if (pathfindingUpdateCurrentFrequency < pathfindingUpdateFrequencyCap)
-        {
-             pathfindingUpdateCurrentFrequency += pathfindingUpdateFrequencyIncrease;
-             pathfindingUpdateCurrentFrequency = Mathf.Clamp( pathfindingUpdateCurrentFrequency, pathfindingUpdateFrequencyMin, pathfindingUpdateFrequencyCap);
-            if (team == GlobalDefines.Team.Altgard)
-            {
-                Debug.Log(pathfindingUpdateCurrentFrequency);
-            }
-        }*//*
-        PathfindingUpdate(cancelToken);
-        await Task.Yield();
-    }*/
-    /*public void ForceUpdateSoldiersDestinations()
-    {
-        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
-        {
-            SoldierModel model = soldierBlock.modelsArray[i];
-            if (model != null)
-            {
-                if (model.alive)
-                {
-                    model.UpdateDestinationPosition();
-                }
-            }
-        }
-    }*/
-    /*private async void UpdatePathsOfSoldierModels()
-    {
-        //float threshold = 1;
-        *//*Parallel.For(0, soldierBlock.modelsArray.Length, i =>
-        {
-            SoldierModel model = soldierBlock.modelsArray[i];
-            if (model != null)
-            {
-                if (model.alive) //  && model.CheckIfRemainingDistanceOverThreshold(threshold) //&& !model.pathfindingAI.pathPending
-                {
-                    model.UpdateDestinationPosition();
-                }
-            }
-        });*//*
-        if (!aiPath.reachedDestination)
-        {
-            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
-            {
-                SoldierModel model = soldierBlock.modelsArray[i];
-                if (model != null)
-                {
-                    if (model.alive)
-                    {
-                        model.UpdateDestinationPosition();
-                    }
-                }
-            }
-        }
-        *//*for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
-        {
-            SoldierModel model = soldierBlock.modelsArray[i];
-            if (model != null)
-            {
-                if (model.alive) // && model.CheckIfRemainingDistanceOverThreshold(threshold)
-                {
-                    model.UpdateDestinationPosition();
-                }
-            }
-        }*//*
-        await Task.Yield();
-    }*/
-    /*private async void ModelRotationUpdate(int time, CancellationToken cancelToken)
-    {
-        FixModelRotation();
-        await Task.Delay(time, cancelToken);
-        ModelRotationUpdate(time, cancelToken);
-    }
-    private async void FixModelRotation()
-    {
-        Parallel.For(0, soldierBlock.modelsArray.Length, i => {
-            SoldierModel model = soldierBlock.modelsArray[i];
-            if (model != null)
-            {
-                if (model.alive)
-                {
-                    model.FixRotation();
-                }
-            }
-        });
-        await Task.Yield();
-    }*/
+    } 
     private async void ReinforceUpdate(int time, CancellationToken cancelToken)
     {
         ReinforceEmptyPositions();
@@ -620,28 +514,23 @@ public class FormationPosition : MonoBehaviour
         }
 
         if (position != null) //found
-        {
-            //position.PlaceOnGround();
+        { 
             if (position.assignedSoldierModel == null) //if null, then dead
             {
                 position.SeekReplacement();
             }
         }
-        if (movingSpeed != 0)
+        /*if (movingSpeed != 0)
         { 
             Parallel.For(0, soldierBlock.formationPositions.Length, i =>
             {
                 Position position = soldierBlock.formationPositions[i];
                 if (position != null)
                 {
-                    position.PlaceOnGround();
-                    /*if (position.assignedSoldierModel == null) //if null, then dead
-                    {
-                        position.SeekReplacement();
-                    }*/
+                    position.PlaceOnGround(); 
                 }
             });
-        }
+        }*/
         await Task.Yield();
     }
     #endregion 
@@ -995,47 +884,98 @@ public class FormationPosition : MonoBehaviour
         { 
             aiPath.UpdateMovementInFixedUpdate();
         }
-    }
-
-    private async void IndicatorUpdateBurst()
-    {
-        if (selected)
-        {
-            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
-            {
-                SoldierModel model = soldierBlock.modelsArray[i];
-                if (model != null && model.alive && model.attackType == SoldierModel.AttackType.Ranged)
-                {
-                    if (model.lineOfSightIndicator != null)
-                    {
-                        model.lineOfSightIndicator.transform.LookAt(model.lineOfSightIndicator.transform.position + fightManager.cam.transform.forward);
-                    }
-                    if (model.reloadingIndicator != null)
-                    {
-                        model.reloadingIndicator.transform.LookAt(model.reloadingIndicator.transform.position + fightManager.cam.transform.forward);
-                    }
-                    if (model.rangedModule != null)
-                    {
-                        model.reloadingIndicator.enabled = model.rangedModule.loadingRightNow;
-                    }
-                }
-            }
-        } 
-        await Task.Yield();
-    }
+    } 
+    
     private void Update() //real update
     { 
         if (updatesBegun)
-        { 
-            UpdateSoldierMesh();
-            UpdateSoldierMovements(); //by far the most expensive
-            CheckModelsIndividually();
-            UpdateLineRenderer();
-            IndicatorUpdateBurst();
-            SoldiersFaceEnemyUpdate();
+        {
+            HandleJobs();
+            //UpdateSoldierMesh();
+            //UpdateSoldierMovements(); //by far the most expensive
+            //CheckModelsIndividually();
+            //UpdateLineRenderer();
+            //IndicatorUpdateBurst();
+            //SoldiersFaceEnemyUpdate();
         }
-    } 
-    bool performanceStatus = false;  
+    }
+    [BurstCompile(CompileSynchronously = true)]
+    public struct MoveToFormationPositionJob : IJobParallelForTransform
+    {
+        // Jobs declare all data that will be accessed in the job
+        // By declaring it as read only, multiple jobs are allowed to access the data in parallel        
+        [ReadOnly]
+        public NativeArray<Vector3> tar;
+
+        // Delta time must be copied to the job since jobs generally don't have a concept of a frame.
+        // The main thread waits for the job same frame or next frame, but the job should do work deterministically
+        // independent on when the job happens to run on the worker threads.        
+        public float deltaTime; 
+        public float speed;
+
+        // The code actually running on the job
+        public void Execute(int index, TransformAccess transform)
+        {
+            // Move the transforms based on delta time and velocity
+            //var pos = transform.position;
+            //pos += velocity[index] * deltaTime;
+            //transform.position = pos;
+            Vector3 target = tar[index];
+            transform.position = Vector3.MoveTowards(transform.position, target, speed * deltaTime);
+
+        }
+    }
+
+    // Assign transforms in the inspector to be acted on by the job 
+    TransformAccessArray modelTransformAccessArray;  
+    private void JobInitial()
+    { 
+        // Store the transforms inside a TransformAccessArray instance,
+        // so that the transforms can be accessed inside a job. 
+        modelTransformAccessArray = new TransformAccessArray(soldierBlock.modelTransformArray);
+    }
+    private void OnDestroy()
+    {
+        JobDispose();
+    }
+    private void JobDispose()
+    { 
+        // TransformAccessArrays must be disposed manually. 
+        modelTransformAccessArray.Dispose();
+    }
+    private void HandleJobs()
+    { 
+        //build target array (formation positions
+        var tar = new NativeArray<Vector3>(soldierBlock.modelsArray.Length, Allocator.Persistent);
+
+        for (var i = 0; i < soldierBlock.modelsArray.Length; ++i)
+        {
+            tar[i] = soldierBlock.formationPositions[i].transform.position;
+        }
+
+        // Initialize the job data
+        var job = new MoveToFormationPositionJob()
+        {
+            speed = infantrySpeed,
+            deltaTime = Time.deltaTime,
+            tar = tar
+        };
+
+        // Schedule a parallel-for-transform job.
+        // The method takes a TransformAccessArray which contains the Transforms that will be acted on in the job.
+        JobHandle jobHandle = job.Schedule(modelTransformAccessArray);
+
+        // Ensure the job has completed.
+        // It is not recommended to Complete a job immediately,
+        // since that reduces the chance of having other jobs run in parallel with this one.
+        // You optimally want to schedule a job early in a frame and then wait for it later in the frame.        
+        jobHandle.Complete();
+
+        //Debug.Log(m_Transforms[0].position);
+
+        // Native arrays must be disposed manually.
+        tar.Dispose();
+    }
     private void UpdateSoldierMesh()
     {
         for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
@@ -1159,6 +1099,32 @@ public class FormationPosition : MonoBehaviour
             }
         }
         //await Task.Yield();
+    }
+    private async void IndicatorUpdateBurst()
+    {
+        if (selected)
+        {
+            for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
+            {
+                SoldierModel model = soldierBlock.modelsArray[i];
+                if (model != null && model.alive && model.attackType == SoldierModel.AttackType.Ranged)
+                {
+                    if (model.lineOfSightIndicator != null)
+                    {
+                        model.lineOfSightIndicator.transform.LookAt(model.lineOfSightIndicator.transform.position + fightManager.cam.transform.forward);
+                    }
+                    if (model.reloadingIndicator != null)
+                    {
+                        model.reloadingIndicator.transform.LookAt(model.reloadingIndicator.transform.position + fightManager.cam.transform.forward);
+                    }
+                    if (model.rangedModule != null)
+                    {
+                        model.reloadingIndicator.enabled = model.rangedModule.loadingRightNow;
+                    }
+                }
+            }
+        }
+        await Task.Yield();
     }
     private async void SoldiersFaceEnemyUpdate()
     {
