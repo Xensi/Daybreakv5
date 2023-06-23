@@ -520,17 +520,7 @@ public class FormationPosition : MonoBehaviour
                 position.SeekReplacement();
             }
         }
-        /*if (movingSpeed != 0)
-        { 
-            Parallel.For(0, soldierBlock.formationPositions.Length, i =>
-            {
-                Position position = soldierBlock.formationPositions[i];
-                if (position != null)
-                {
-                    position.PlaceOnGround(); 
-                }
-            });
-        }*/
+        
         await Task.Yield();
     }
     #endregion 
@@ -890,13 +880,42 @@ public class FormationPosition : MonoBehaviour
     { 
         if (updatesBegun)
         {
+            framesToSkip = CalculateFramesToSkip();
             HandleJobs();
-            //UpdateSoldierMesh();
-            //UpdateSoldierMovements(); //by far the most expensive
-            //CheckModelsIndividually();
-            //UpdateLineRenderer();
-            //IndicatorUpdateBurst();
-            //SoldiersFaceEnemyUpdate();
+            UpdateSoldierMesh();
+            UpdatePositions(); 
+            CheckModelsIndividually();
+            UpdateLineRenderer();
+            IndicatorUpdateBurst();
+            FixSoldierFacing();
+        }
+    }
+    int frameUpdate = 0;
+    public int framesToSkip = 0; //close should be 0, far should increase
+    public float distanceToCamera = 0;
+    private int CalculateFramesToSkip()
+    {
+        float j = distanceToCamera/125;
+        float p = Mathf.Exp(j) - 1;
+        return Mathf.RoundToInt(p);
+    }
+    private void UpdatePositions()
+    {
+        if (frameUpdate == 0)
+        { 
+            for (int i = 0; i < soldierBlock.formationPositions.Length; i++)
+            {
+                Position position = soldierBlock.formationPositions[i];
+                if (position != null)
+                {
+                    position.PlaceOnGround();
+                }
+            }
+        }
+        frameUpdate++;
+        if (frameUpdate > framesToSkip)
+        {
+            frameUpdate = 0;
         }
     }
     [BurstCompile(CompileSynchronously = true)]
@@ -911,7 +930,7 @@ public class FormationPosition : MonoBehaviour
         // The main thread waits for the job same frame or next frame, but the job should do work deterministically
         // independent on when the job happens to run on the worker threads.        
         public float deltaTime; 
-        public float speed;
+        public NativeArray<float> speed;
 
         // The code actually running on the job
         public void Execute(int index, TransformAccess transform)
@@ -921,10 +940,20 @@ public class FormationPosition : MonoBehaviour
             //pos += velocity[index] * deltaTime;
             //transform.position = pos;
             Vector3 target = tar[index];
-            transform.position = Vector3.MoveTowards(transform.position, target, speed * deltaTime);
-
+            float spd = speed[index];
+            float distance = Vector3.Distance(transform.position, target);
+            float stopDistance = 0.1f;
+            if (distance > stopDistance)
+            { 
+                transform.position = Vector3.MoveTowards(transform.position, target, spd * deltaTime);
+            }
+            else
+            {
+                transform.position = Vector3.MoveTowards(transform.position, target, spd * deltaTime * distance);
+            }
         }
     }
+    public float remainingDistanceThreshold = 0.1f; 
 
     // Assign transforms in the inspector to be acted on by the job 
     TransformAccessArray modelTransformAccessArray;  
@@ -943,20 +972,49 @@ public class FormationPosition : MonoBehaviour
         // TransformAccessArrays must be disposed manually. 
         modelTransformAccessArray.Dispose();
     }
+    public float infantrySpeed = 3.5f;
+    public float falterAmount = 0.25f; //how much people will fall out of formation
+    public float drilledAmount = 0.5f; //amount of catch up, ability to stay in formation
     private void HandleJobs()
     { 
         //build target array (formation positions
         var tar = new NativeArray<Vector3>(soldierBlock.modelsArray.Length, Allocator.Persistent);
 
+        
+        //float useSpeed = (infantrySpeed + Random.Range(-infantrySpeed, infantrySpeed));
+        var speed = new NativeArray<float>(soldierBlock.modelsArray.Length, Allocator.Persistent);
         for (var i = 0; i < soldierBlock.modelsArray.Length; ++i)
         {
-            tar[i] = soldierBlock.formationPositions[i].transform.position;
+            SoldierModel model = soldierBlock.modelsArray[i];
+            if (model.modelPosition != null)
+            { 
+                tar[i] = model.modelPosition.transform.position + soldierBlock.modelsArray[i].dispersalVector;
+            }
+            else
+            {
+                tar[i] = Vector3.zero;
+            }
+            if (model.currentModelState == SoldierModel.ModelState.Attacking || model.currentModelState == SoldierModel.ModelState.Dead)
+            {
+                speed[i] = 0;
+            }
+            else if (model.currentModelState == SoldierModel.ModelState.Charging)
+            { 
+                float speedModifier = Random.Range(-0.1f, .1f);
+                model.savedSpeedModifier = Mathf.Clamp(model.savedSpeedModifier + speedModifier, -infantrySpeed * falterAmount, infantrySpeed * drilledAmount);
+                speed[i] = infantrySpeed*2 + model.savedSpeedModifier;
+            }
+            else //can move
+            {
+                float speedModifier = Random.Range(-0.1f, .1f);
+                model.savedSpeedModifier = Mathf.Clamp(model.savedSpeedModifier + speedModifier, -infantrySpeed * falterAmount, infantrySpeed * drilledAmount);
+                speed[i] = infantrySpeed + model.savedSpeedModifier;
+            }
         }
-
         // Initialize the job data
         var job = new MoveToFormationPositionJob()
         {
-            speed = infantrySpeed,
+            speed = speed,
             deltaTime = Time.deltaTime,
             tar = tar
         };
@@ -975,6 +1033,7 @@ public class FormationPosition : MonoBehaviour
 
         // Native arrays must be disposed manually.
         tar.Dispose();
+        speed.Dispose();
     }
     private void UpdateSoldierMesh()
     {
@@ -989,116 +1048,6 @@ public class FormationPosition : MonoBehaviour
                 }
             }
         }
-    }
-    int updateMovement = 0;
-    public int framesToSkip = 0; //close should be 0, far should increase
-    public float distanceToCamera = 0;
-    private int CalculateFramesToSkip()
-    {
-        float j = distanceToCamera / 125;
-        float p = Mathf.Exp(j)-1;
-        return Mathf.RoundToInt(p);
-    }
-    public float infantrySpeed = 12;
-    public int trailDelay = 1; //add random spread to trail delay or increment?
-    public float travelCohesion = 2f;
-    public float waypointGenerationDist = .01f;
-    public float falterModifier = 1; //drilled units have less
-    //public float travelDispersal = 0.25f; //make this generate less often
-    //public int waypointsUntilNewDispersal = 1000;
-    //public int waypointCount = 0;
-
-    //if far behind, allow skipping some waypoints
-    private float leftBehindDistance = 4;
-    private int leftBehindRemoveAmount = 2;
-    private void UpdateSoldierMovements()
-    {
-        for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
-        {
-            SoldierModel model = soldierBlock.modelsArray[i];
-            if (model != null)
-            {
-                if (model.alive)
-                {
-                    float waypointDist = Vector3.Distance(model.lastModelPositionPosition, model.modelPosition.transform.position);
-                    if (waypointDist > waypointGenerationDist)
-                    { 
-                        model.trail.Insert(0, model.modelPosition.transform.position);
-                        model.lastModelPositionPosition = model.modelPosition.transform.position;
-                    }
-                    if (model.trail.Count >= trailDelay) //buffer
-                    {
-                        if (!model.readyToLerp) //save model position once and get destination with random spread
-                        {
-                            model.readyToLerp = true;
-                            model.previousLocation = model.transform.position;
-                            model.t = 0;
-                            /*waypointCount++;
-                            if (waypointCount >= waypointsUntilNewDispersal)
-                            {
-                                waypointCount = 0;
-
-                                model.travelDispersal = new Vector3(UnityEngine.Random.Range(-travelDispersal, travelDispersal), 0, UnityEngine.Random.Range(-travelDispersal, travelDispersal));
-                            }*/
-                            model.travelDest = model.trail[model.trail.Count - 1] + model.dispersalVector;// ; //
-                        }
-                        else
-                        {
-                            float actualCohesion;
-                            if (charging)
-                            {
-                                actualCohesion = travelCohesion * 2;
-                            }
-                            else
-                            {
-                                actualCohesion = travelCohesion;
-                            }
-                            float travelDist = Vector3.Distance(model.transform.position, model.travelDest);
-                            if (travelDist > 0.05f)
-                            {
-                                float dist = Vector3.Distance(model.previousLocation, model.travelDest);
-                                if (dist >= 1)
-                                {
-
-                                    model.t += (actualCohesion + Random.Range(-actualCohesion * model.falter * 0.5f * falterModifier, actualCohesion)) / dist;
-                                }
-                                else
-                                {
-                                    model.t += (actualCohesion + Random.Range(-actualCohesion * model.falter * 0.5f * falterModifier, actualCohesion)); //*dist
-                                    //model.t += actualCohesion; //*dist
-                                }
-                                model.t = Mathf.Clamp(model.t, 0, 1);
-                                model.transform.position = Vector3.Lerp(model.previousLocation, model.travelDest, model.t);
-                            }
-                            else
-                            {
-                                model.transform.position = model.travelDest;
-                                model.readyToLerp = false;
-                                model.trail.RemoveAt(model.trail.Count - 1);
-                                if (!charging)
-                                {
-                                    if (Vector3.Distance(model.transform.position, model.modelPosition.transform.position) > leftBehindDistance)
-                                    {
-                                        int j = 0;
-                                        while (model.trail.Count > 0)
-                                        {
-                                            model.trail.RemoveAt(model.trail.Count - 1);
-                                            j++;
-                                            if (j >= leftBehindRemoveAmount)
-                                            {
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                                
-                            }
-                        } 
-                    }
-                }
-            }
-        }
-        //await Task.Yield();
     }
     private async void IndicatorUpdateBurst()
     {
@@ -1126,8 +1075,9 @@ public class FormationPosition : MonoBehaviour
         }
         await Task.Yield();
     }
-    private async void SoldiersFaceEnemyUpdate()
-    {
+    public float modelRotationSpeed = 5;
+    private async void FixSoldierFacing()
+    { 
         if (formationType != FormationType.Cavalry)
         {
             for (int i = 0; i < soldierBlock.modelsArray.Length; i++)
@@ -1137,10 +1087,34 @@ public class FormationPosition : MonoBehaviour
                 {
                     if (model.alive)
                     {
-                        if (model.currentModelState != SoldierModel.ModelState.Routing && model.attackType != SoldierModel.AttackType.CavalryCharge)
-                        {
-                            model.FaceEnemy();
+                        if (model.targetDamageable != null)
+                        { 
+                            Vector3 dir = model.targetDamageable.transform.position - model.transform.position;
+                            Vector3 newDirection = Vector3.RotateTowards(model.transform.forward, dir, modelRotationSpeed * Time.deltaTime, 0.0f);
+                            newDirection.y = 0; //keep level
+                            model.transform.rotation = Quaternion.LookRotation(newDirection);
                         }
+                        else
+                        { 
+                            if (model.modelPosition != null)
+                            {
+                                float distance = Helper.Instance.GetSquaredMagnitude(model.transform.position, model.modelPosition.transform.position + model.dispersalVector);
+                                if (distance > 0.1f) //rotate to model pos
+                                { 
+                                    Vector3 dir = model.modelPosition.transform.position + model.dispersalVector - model.transform.position;
+                                    Vector3 newDirection = Vector3.RotateTowards(model.transform.forward, dir, modelRotationSpeed * Time.deltaTime, 0.0f);
+                                    newDirection.y = 0; //keep level
+                                    model.transform.rotation = Quaternion.LookRotation(newDirection);
+                                }
+                                else //rotate in formation direction
+                                { 
+                                    Vector3 newDirection = Vector3.RotateTowards(model.transform.forward, transform.forward, modelRotationSpeed * Time.deltaTime, 0.0f);
+                                    newDirection.y = 0; //keep level
+                                    model.transform.rotation = Quaternion.LookRotation(newDirection);
+                                }
+                            }
+                        }
+
                     }
                 }
             }

@@ -140,7 +140,6 @@ public class SoldierModel : DamageableEntity
     #region ShouldNotSet
     [HideInInspector] public GameObject self;
     private int currentIdleTimer = 0;
-    private float remainingDistanceThreshold = 0.01f;
     [HideInInspector] public float getUpTimeCap = 8;
     [HideInInspector] private float speedSlow = 0;
     [HideInInspector] public float pendingDamage = 0;
@@ -283,10 +282,11 @@ public class SoldierModel : DamageableEntity
         GenerateDispersalVector(dispersalLevel);
         oldRequiredAttackTime = requiredAttackTime;
         //animator.enabled = false;
-    }  
-    public Vector3 GenerateDispersalVector(float dispersal)
+    }
+    public float savedSpeedModifier;
+    public void GenerateDispersalVector(float dispersal)
     {
-        return dispersalVector = new Vector3(UnityEngine.Random.Range(-dispersal, dispersal), 0, UnityEngine.Random.Range(-dispersal, dispersal));
+        dispersalVector = new Vector3(UnityEngine.Random.Range(-dispersal, dispersal), 0, UnityEngine.Random.Range(-dispersal, dispersal));
     }
     public bool IsVisible()
     {
@@ -374,7 +374,7 @@ public class SoldierModel : DamageableEntity
         Throwing
     }
     public ModelState currentModelState = ModelState.Idle;
-    private ModelState lastState;
+    public ModelState lastState;
     public void CheckIfTargetIsDead()
     {
         if (targetEnemy != null && !targetEnemy.alive)
@@ -391,7 +391,7 @@ public class SoldierModel : DamageableEntity
             case ModelState.Idle:
                 //do nothing unless
                 //if our destination is far enough away from us
-                if (CheckIfRemainingDistanceOverThreshold(remainingDistanceThreshold))
+                if (CheckIfRemainingDistanceOverThreshold(formPos.remainingDistanceThreshold))
                 {  
                     SwitchState(ModelState.Moving);  //start moving
                 } 
@@ -413,7 +413,7 @@ public class SoldierModel : DamageableEntity
                 //UpdateDestination();
                 UpdateSpeed();
                 //if destination close enough
-                if (CheckIfRemainingDistanceUnderThreshold(remainingDistanceThreshold))
+                if (CheckIfRemainingDistanceUnderThreshold(formPos.remainingDistanceThreshold))
                 {
                     SwitchState(ModelState.Idle);
                 }
@@ -477,7 +477,7 @@ public class SoldierModel : DamageableEntity
             case ModelState.Idle:
                 //do nothing unless
                 //if our destination is far enough away from us
-                if (CheckIfRemainingDistanceOverThreshold(remainingDistanceThreshold))
+                if (CheckIfRemainingDistanceOverThreshold(formPos.remainingDistanceThreshold))
                 {
                     SwitchState(ModelState.Moving);  //start moving
                 }
@@ -499,7 +499,7 @@ public class SoldierModel : DamageableEntity
                 //UpdateDestination();
                 UpdateSpeed();
                 //if destination close enough
-                if (CheckIfRemainingDistanceUnderThreshold(remainingDistanceThreshold))
+                if (CheckIfRemainingDistanceUnderThreshold(formPos.remainingDistanceThreshold))
                 {
                     SwitchState(ModelState.Idle);
                 }
@@ -757,7 +757,7 @@ public class SoldierModel : DamageableEntity
             {
                 currentAttackTime += deltaTime;
             }
-            else if (HasTarget() && hasClearLineOfSight && CheckIfRemainingDistanceUnderThreshold(remainingDistanceThreshold)) //has target, line of sight, and is at formation position
+            else if (HasTarget() && hasClearLineOfSight && CheckIfRemainingDistanceUnderThreshold(formPos.remainingDistanceThreshold)) //has target, line of sight, and is at formation position
             {
                 currentAttackTime = 0; //reset attack time
                 SwitchState(ModelState.Attacking);
@@ -886,7 +886,7 @@ public class SoldierModel : DamageableEntity
                 if (animatedMesh != null)
                 {
 
-                    animatedMesh.Play("attack");
+                    animatedMesh.Play("attack", false);
                 }
                 break;
             case ModelState.Moving:
@@ -930,7 +930,7 @@ public class SoldierModel : DamageableEntity
                 if (animatedMesh != null)
                 {
 
-                    animatedMesh.Play("deploy");
+                    animatedMesh.Play("deploy", false);
                 }
                 break;
             case ModelState.KnockedDown:
@@ -1300,12 +1300,21 @@ else if (closestObject != null)
     public float newMaxSpeed; 
     public bool CheckIfRemainingDistanceUnderThreshold(float threshold)
     {
-         
-        return true;
+        float distance = Helper.Instance.GetSquaredMagnitude(transform.position, modelPosition.transform.position + dispersalVector);
+        if (distance <= threshold)
+        {
+            return true;
+        }
+        return false;
     }
     public bool CheckIfRemainingDistanceOverThreshold(float threshold)
-    { 
-        return true; 
+    {
+        float distance = Helper.Instance.GetSquaredMagnitude(transform.position, modelPosition.transform.position + dispersalVector);
+        if (distance > threshold)
+        {
+            return true;
+        }
+        return false;
     } 
     public void ToggleAttackBox(bool val)
     {
@@ -1705,36 +1714,7 @@ else if (closestObject != null)
                 shouldAnimate = true;
             }
         }
-        animator.enabled = shouldAnimate;
-        /*if (visibleInFrustum)
-        { 
-        }
-        else
-        {
-            animator.enabled = false;
-        }*/
-        /*if (formPos.showSoldierModels)
-        {
-            animator.enabled = !farAway; //if faraway, disable animator
-        }
-        else
-        {
-            animator.enabled = false;
-        }*/
+        animator.enabled = shouldAnimate; 
         await Task.Yield();
-    }
-    public Vector3 savedPosition;
-    public void FaceEnemy()
-    {
-        if (targetEnemy != null) //HasTargetInRange()
-        { 
-            Vector3 dir = targetEnemy.transform.position - transform.position;
-            Vector3 newDirection = Vector3.RotateTowards(transform.forward, dir, Time.deltaTime, 0.0f);
-            newDirection.y = 0; //keep level
-            transform.rotation = Quaternion.LookRotation(newDirection);
-        }
-        else
-        {  
-        }
-    } 
+    }  
 }

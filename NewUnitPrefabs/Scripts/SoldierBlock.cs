@@ -151,7 +151,8 @@ public class SoldierBlock : MonoBehaviour
 
         //
         formPos.numberOfAliveSoldiers = 0;
-        formPos.infantrySpeed = desiredWalkingSpeed*5;
+        formPos.infantrySpeed = desiredWalkingSpeed/2;
+
         if (rows.Count > 0)
         {
             foreach (Row rowItem in rows)

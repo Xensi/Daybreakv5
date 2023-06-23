@@ -29,23 +29,12 @@ public class CamRotate : MonoBehaviour
     private void Start()
     { 
         fightManager = FindObjectOfType<FightManager>().GetComponent<FightManager>();
-        InvokeRepeating("FindFormationsNearMe", 0f, .5f);
+        //InvokeRepeating("FindFormationsNearMe", 0f, .5f);
         //InvokeRepeating("UpdateFarAwayIcons", 0.1f, 0.1f);
 
         Cursor.lockState = CursorLockMode.Confined;
 
         cameraTransform.localRotation = Quaternion.Euler(originalRotation, 0, 0); 
-    }
-    private void FindFormationsNearMe()
-    {
-        if (fightManager.allFormationsList.Count > 0)
-        {
-            for (int i = 0; i < fightManager.allArray.Length; i++)
-            {
-                float distance = Vector3.Distance(transform.position, fightManager.allArray[i].formationPositionBasedOnSoldierModels);
-                fightManager.allArray[i].distanceToCamera = distance;
-            }
-        } 
     }
 
     private void CheckVisibilityOfModelsInVisibleForms()
@@ -104,10 +93,23 @@ public class CamRotate : MonoBehaviour
                 }
             }
             
-        } 
-    } 
+        }
+    }
+    private void FindFormationsNearMe()
+    {
+        if (fightManager.allFormationsList.Count > 0)
+        {
+            for (int i = 0; i < fightManager.allArray.Length; i++)
+            {
+                //float distance = Helper.Instance.GetSquaredMagnitude(transform.position, fightManager.allArray[i].formationPositionBasedOnSoldierModels);
+                float distance = Vector3.Distance(transform.position, fightManager.allArray[i].formationPositionBasedOnSoldierModels);
+                fightManager.allArray[i].distanceToCamera = distance;
+            }
+        }
+    }
     private void Update()
     {
+        FindFormationsNearMe();
         //CheckVisibilityOfModelsInVisibleForms(); 
 
         UpdateTerrainHeightValue();

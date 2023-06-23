@@ -5,6 +5,8 @@ using UnityEngine;
 using Pathfinding;
 using System.Threading.Tasks;
 using System.Threading;
+using Unity.Jobs;
+using Unity.Collections;
 public class Position : MonoBehaviour
 {
     public SoldierModel assignedSoldierModel;
@@ -23,18 +25,69 @@ public class Position : MonoBehaviour
     {
         PlaceOnGround();
     }
-
-    public async void PlaceOnGround()
+    void Awake()
     {
-        Vector3 vec = new Vector3(transform.position.x, 100, transform.position.z);
-        LayerMask layerMask = LayerMask.GetMask("Terrain");
-        RaycastHit hit;
-        if (Physics.Raycast(vec, Vector3.down, out hit, Mathf.Infinity, layerMask))
-        {
-            transform.position = hit.point;
-        }
-        await Task.Yield();
+        _raycastCommands = new NativeArray<RaycastCommand>(1, Allocator.Persistent);
+        _raycastHits = new NativeArray<RaycastHit>(1, Allocator.Persistent);
     }
+    private void OnDestroy()
+    {
+        _jobHandle.Complete();
+        _raycastCommands.Dispose();
+        _raycastHits.Dispose();
+    }
+
+    private NativeArray<RaycastCommand> _raycastCommands;
+    private NativeArray<RaycastHit> _raycastHits;
+    private JobHandle _jobHandle;
+
+    public void PlaceOnGround()
+    {
+        // 1. Process raycast from last frame
+        _jobHandle.Complete();
+        RaycastHit raycastHit = _raycastHits[0];
+        bool didHitYa = raycastHit.collider != null; 
+        if (didHitYa)
+        {
+            transform.position = new Vector3(transform.position.x, raycastHit.point.y, transform.position.z);
+        }
+
+        LayerMask layerMask = LayerMask.GetMask("Terrain");
+        Vector3 origin = new Vector3(transform.position.x, 100, transform.position.z);
+        // 2. Schedule new raycast
+        _raycastCommands[0] = new RaycastCommand(origin, Vector3.down, Mathf.Infinity, layerMask, 1);
+        _jobHandle = RaycastCommand.ScheduleBatch(_raycastCommands, _raycastHits, 1);
+    
+    /*// Perform a single raycast using RaycastCommand and wait for it to complete
+    // Setup the command and result buffers
+    var results = new NativeArray<RaycastHit>(1, Allocator.Temp);
+
+    var commands = new NativeArray<RaycastCommand>(1, Allocator.Temp);
+
+    // Set the data of the first command
+
+    Vector3 direction = Vector3.down;
+
+    commands[0] = new RaycastCommand(origin, direction, Mathf.Infinity, layerMask, 1);
+
+    // Schedule the batch of raycasts
+    JobHandle handle = RaycastCommand.ScheduleBatch(commands, results, 1, default(JobHandle));
+
+    // Wait for the batch processing job to complete
+    handle.Complete();
+
+    // Copy the result. If batchedHit.collider is null there was no hit
+    RaycastHit batchedHit = results[0];
+    if (batchedHit.collider != null)
+    { 
+        transform.position = batchedHit.point;
+    }
+
+    // Dispose the buffers
+    results.Dispose();
+    commands.Dispose(); */
+    }
+
 
     public void SeekReplacement(float range = 5f)
     {
