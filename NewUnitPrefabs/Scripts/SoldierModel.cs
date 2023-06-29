@@ -869,8 +869,7 @@ public class SoldierModel : DamageableEntity
             case ModelState.Idle:
                 animator.SetBool(AnimatorDefines.idleID, true); 
                 if (animatedMesh != null)
-                {
-
+                { 
                     if (deployed)
                     {
                         animatedMesh.Play("downIdle");
@@ -883,25 +882,51 @@ public class SoldierModel : DamageableEntity
                 break;
             case ModelState.Attacking:
                 animator.SetBool(AnimatorDefines.attackingID, true);
-                if (animatedMesh != null)
-                {
 
-                    animatedMesh.Play("attack", false);
+                if (animatedMesh != null)
+                { 
+                    if (attackType == AttackType.Melee)
+                    {
+                        animatedMesh.Play("attack", false);
+                    }
+                    else if (attackType == AttackType.Ranged)
+                    {
+                        animatedMesh.Play("attackFar", false); //far away targets get different attack anim
+                        /*if (targetDamageable != null)
+                        {
+                            float distance = Helper.Instance.GetSquaredMagnitude(transform.position, targetDamageable.transform.position);
+                            if (distance > 100)
+                            { 
+                                animatedMesh.Play("attackFar", false); //far away targets get different attack anim
+                            }
+                            else
+                            { 
+                                animatedMesh.Play("attack", false); //far away targets get different attack anim
+                            }
+                        }*/
+                    }
                 }
                 break;
             case ModelState.Moving:
                 animator.SetBool(AnimatorDefines.movingID, true);
                 if (animatedMesh != null)
                 {
-
-                    if (deployed)
+                    if (attackType == AttackType.Melee)
                     {
-                        animatedMesh.Play("downWalk");
+                        if (deployed)
+                        {
+                            animatedMesh.Play("downWalk");
+                        }
+                        else
+                        {
+                            animatedMesh.Play("upWalk");
+
+                        }
                     }
-                    else
+                    else if (attackType == AttackType.Ranged)
                     {
-                        animatedMesh.Play("upWalk");
 
+                        animatedMesh.Play("downWalk");
                     }
                 }
                 break;
@@ -910,15 +935,22 @@ public class SoldierModel : DamageableEntity
                 if (animatedMesh != null)
                 {
 
-                    if (deployed)
-                    {
-                        animator.Play("WeaponDownDamaged");
-                        animatedMesh.Play("downOuch");
+                    if (attackType == AttackType.Melee)
+                    { 
+                        if (deployed)
+                        {
+                            animator.Play("WeaponDownDamaged");
+                            animatedMesh.Play("downOuch");
+                        }
+                        else
+                        {
+                            animator.Play("WeaponUpDamaged");
+                            animatedMesh.Play("upOuch");
+                        }
                     }
-                    else
-                    {
-                        animator.Play("WeaponUpDamaged");
-                        animatedMesh.Play("upOuch");
+                    else if (attackType == AttackType.Ranged)
+                    { 
+                        animatedMesh.Play("downOuch");
                     }
                 }
                 break;
