@@ -870,13 +870,34 @@ public class SoldierModel : DamageableEntity
                 animator.SetBool(AnimatorDefines.idleID, true); 
                 if (animatedMesh != null)
                 { 
-                    if (deployed)
+                    if (rangedModule != null)
                     {
-                        animatedMesh.Play("downIdle");
+                        if (rangedModule.rangedNeedsLoading)
+                        { 
+                            if (rangedModule.ammo > 0)
+                            { 
+                                animatedMesh.Play("loadedIdle");
+                            }
+                            else
+                            { 
+                                animatedMesh.Play("unloadedIdle");
+                            }
+                        }
+                        else
+                        { 
+                            animatedMesh.Play("downIdle");
+                        }
                     }
                     else
-                    {
-                        animatedMesh.Play("upIdle");
+                    { 
+                        if (deployed)
+                        {
+                            animatedMesh.Play("downIdle");
+                        }
+                        else
+                        {
+                            animatedMesh.Play("upIdle");
+                        }
                     }
                 }
                 break;
@@ -891,7 +912,14 @@ public class SoldierModel : DamageableEntity
                     }
                     else if (attackType == AttackType.Ranged)
                     {
-                        animatedMesh.Play("attackFar", false); //far away targets get different attack anim
+                        if (distanceToClosestDamageable > 100)
+                        { 
+                            animatedMesh.Play("attackFar", false); //far away targets get different attack anim
+                        }
+                        else
+                        {
+                            animatedMesh.Play("attack", false);
+                        }
                         /*if (targetDamageable != null)
                         {
                             float distance = Helper.Instance.GetSquaredMagnitude(transform.position, targetDamageable.transform.position);
@@ -917,7 +945,7 @@ public class SoldierModel : DamageableEntity
                         {
                             animatedMesh.Play("downWalk");
                         }
-                        else
+                        else 
                         {
                             animatedMesh.Play("upWalk");
 
@@ -925,8 +953,21 @@ public class SoldierModel : DamageableEntity
                     }
                     else if (attackType == AttackType.Ranged)
                     {
-
-                        animatedMesh.Play("downWalk");
+                        if (rangedModule.rangedNeedsLoading)
+                        {
+                            if (rangedModule.ammo > 0)
+                            {
+                                animatedMesh.Play("loadedWalk");
+                            }
+                            else
+                            {
+                                animatedMesh.Play("unloadedWalk");
+                            }
+                        }
+                        else
+                        {
+                            animatedMesh.Play("downWalk");
+                        }
                     }
                 }
                 break;
@@ -940,17 +981,31 @@ public class SoldierModel : DamageableEntity
                         if (deployed)
                         {
                             animator.Play("WeaponDownDamaged");
-                            animatedMesh.Play("downOuch");
+                            animatedMesh.Play("downOuch", false);
                         }
                         else
                         {
                             animator.Play("WeaponUpDamaged");
-                            animatedMesh.Play("upOuch");
+                            animatedMesh.Play("upOuch", false);
                         }
                     }
                     else if (attackType == AttackType.Ranged)
-                    { 
-                        animatedMesh.Play("downOuch");
+                    {
+                        if (rangedModule.rangedNeedsLoading)
+                        {
+                            if (rangedModule.ammo > 0)
+                            {
+                                animatedMesh.Play("loadedOuch", false);
+                            }
+                            else
+                            {
+                                animatedMesh.Play("unloadedOuch", false);
+                            }
+                        }
+                        else
+                        {
+                            animatedMesh.Play("downOuch", false);
+                        }
                     }
                 }
                 break;
@@ -973,6 +1028,13 @@ public class SoldierModel : DamageableEntity
                 break;
             case ModelState.Reloading:
                 animator.SetBool(AnimatorDefines.loadingID, true);
+                if (attackType == AttackType.Ranged)
+                {
+                    if (rangedModule.rangedNeedsLoading)
+                    { 
+                        animatedMesh.Play("reload", false);
+                    } 
+                }
                 break;
             case ModelState.Charging:
                 animator.SetBool(AnimatorDefines.movingID, true);
@@ -994,19 +1056,39 @@ public class SoldierModel : DamageableEntity
                 animator.SetBool(AnimatorDefines.movingID, true);
                 if (animatedMesh != null)
                 {
-
-                    if (deployed)
+                    if (rangedModule != null)
                     {
-                        animatedMesh.Play("downRun");
+                        if (rangedModule.rangedNeedsLoading)
+                        {
+                            if (rangedModule.ammo > 0)
+                            {
+                                animatedMesh.Play("loadedRun");
+                            }
+                            else
+                            {
+                                animatedMesh.Play("unloadedRun");
+                            }
+                        }
+                        else
+                        {
+                            animatedMesh.Play("downRun");
+                        }
                     }
                     else
-                    {
-                        animatedMesh.Play("upRun");
+                    { 
+                        if (deployed)
+                        {
+                            animatedMesh.Play("downRun");
+                        }
+                        else
+                        {
+                            animatedMesh.Play("upRun");
+                        }
                     }
                 }
                 break;
             case ModelState.Dead:
-                animator.SetBool(AnimatorDefines.aliveID, false);
+                animator.SetBool(AnimatorDefines.aliveID, false); 
                 break;
             case ModelState.Undeploying:
                 animator.SetBool(AnimatorDefines.deployedID, false); 
@@ -1081,6 +1163,7 @@ public class SoldierModel : DamageableEntity
             TargetClosestDamageable(); //set target enemy to be closest model
         }
     }
+    private float distanceToClosestDamageable = 0; //(squared magnitude)
     public void TargetClosestDamageable()
     {
         float initDist = Mathf.Infinity;
@@ -1094,6 +1177,7 @@ public class SoldierModel : DamageableEntity
                 {
                     targetDamageable = item;
                     compareDist = dist;
+                    distanceToClosestDamageable = dist;
                 }
             }
         }
@@ -1598,13 +1682,35 @@ else if (closestObject != null)
 
         if (animatedMesh != null)
         {
-            if (deployed)
+            if (rangedModule != null)
             {
-                animatedMesh.Play("upDeath", false);
+                if (rangedModule.rangedNeedsLoading)
+                {
+                    if (rangedModule.ammo > 0)
+                    {
+                        animatedMesh.Play("loadedDeath", false);
+                    }
+                    else
+                    {
+                        animatedMesh.Play("unloadedDeath", false);
+                    }
+                }
+                else
+                {
+                    animatedMesh.Play("upDeath", false);
+                }
             }
             else
             {
-                animatedMesh.Play("upDeath", false);
+
+                if (deployed)
+                {
+                    animatedMesh.Play("upDeath", false);
+                }
+                else
+                {
+                    animatedMesh.Play("upDeath", false);
+                }
             }
 
         } 

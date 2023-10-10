@@ -795,8 +795,10 @@ public class FormationPosition : MonoBehaviour
             return;
         }
         float distance = Vector3.Distance(transform.position, enemyFormationToTarget.transform.position);
+        Debug.Log(distance);
         if (!soldierBlock.melee && distance <= rangedRadius)
         {
+            Debug.Log("stop in place");
             StopInPlace();
         }
         else if (distance <= stoppingDistance)
@@ -806,6 +808,7 @@ public class FormationPosition : MonoBehaviour
         }
         else if (enemyFormationToTarget != null)
         {   //chase
+            Debug.Log("chasing foe");
             ChaseFoe();
         }
         await Task.Yield();
@@ -2330,6 +2333,7 @@ public class FormationPosition : MonoBehaviour
     { 
         aiTarget.transform.position = transform.position;
         rotTarget.transform.position = transform.position;
+        SetDestAndSearchPath();
     }
     private void StopInPlace()
     {
@@ -2344,7 +2348,6 @@ public class FormationPosition : MonoBehaviour
         {
             return;
         }
-        Debug.Log("chasing foe");
         aiTarget.transform.position = enemyFormationToTarget.transform.position;
         SetDestAndSearchPath();
         rotTarget.transform.position = enemyFormationToTarget.transform.position;

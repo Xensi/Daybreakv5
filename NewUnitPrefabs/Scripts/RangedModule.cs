@@ -9,12 +9,12 @@ public class RangedModule : MonoBehaviour
 {
     #region RangedUnits
 
-    public enum RangedBehavior
+   /* public enum RangedBehavior
     {
         FireAndRepeat,
         FireAndReload
     }
-    public RangedBehavior behavior = RangedBehavior.FireAndRepeat;
+    public RangedBehavior behavior = RangedBehavior.FireAndRepeat;*/
 
     [Header("Assign these if ranged")]
     [SerializeField] private Transform eyeline;
@@ -485,6 +485,7 @@ public class RangedModule : MonoBehaviour
     }
 
     public float maxProjectileForce = 100;
+    public float minProjectileForce = 50;
     public float maxRange = 200;
 
     void OnDrawGizmos()
@@ -504,7 +505,7 @@ public class RangedModule : MonoBehaviour
         //
 
         float grav = Mathf.Abs(Physics.gravity.y);
-        float projectileStrength = Mathf.Clamp(Mathf.Sqrt(grav * (deltaY + Mathf.Sqrt(Mathf.Pow(deltaY, 2) + Mathf.Pow(deltaXZ, 2)))), 0.01f, maxProjectileForce);
+        float projectileStrength = Mathf.Clamp(Mathf.Sqrt(grav * (deltaY + Mathf.Sqrt(Mathf.Pow(deltaY, 2) + Mathf.Pow(deltaXZ, 2)))), 0, maxProjectileForce);
 
         forceRatio = (1 - (deltaXZ/maxRange))/2;
         projectileStrength = Mathf.Lerp(projectileStrength, maxProjectileForce, forceRatio);
@@ -519,6 +520,10 @@ public class RangedModule : MonoBehaviour
         {
             angle = Mathf.Atan((Mathf.Pow(projectileStrength, 2) - Mathf.Sqrt(Mathf.Pow(projectileStrength, 4) - grav * (grav * Mathf.Pow(deltaXZ, 2) + 2 * deltaY * Mathf.Pow(projectileStrength, 2)))) / (grav * deltaXZ));
         }
+        if (float.IsNaN(angle))
+        {
+            Debug.Log("not reachable angle");
+        } 
         Vector3 initialVelocity = Mathf.Cos(angle) * projectileStrength * displacement.normalized + Mathf.Sin(angle) * projectileStrength * Vector3.up;
 
 
